@@ -112,3 +112,28 @@ function xmlsitemap_node_uninstall() {
   }
 }
 
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_node_update_1() {
+  $ret = array();
+  $result = db_query("SELECT xn.nid FROM {xmlsitemap_node} xn LEFT JOIN {node} n ON n.nid = xn.nid WHERE n.nid IS NULL");
+  $bad_nids = array();
+  while ($node = db_fetch_object($result)) {
+    $bad_nids[] = $node->nid;
+  }
+  $ret[] = update_sql("DELETE FROM {xmlsitemap_node} WHERE nid IN (%s)", implode(', ', $bad_nids));
+  $ret[] = update_sql("
+    INSERT INTO {xmlsitemap_node} (nid, pid, last_changed, last_comment, previous_comment)
+    SELECT n.nid, ua.pid, n.changed, s.last_comment_timestamp, MAX(c.timestamp) FROM {node} n
+    LEFT JOIN {node_comment_statistics} s ON s.nid = n.nid
+    INNER JOIN {comments} c ON c.nid = n.nid
+    LEFT JOIN {url_alias} ua ON ua.src = CONCAT('node/', n.nid)
+    LEFT JOIN {xmlsitemap_node} xn ON xn.nid = n.nid
+    WHERE xn.nid IS NULL AND c.timestamp < s.last_comment_timestamp
+    GROUP BY n.nid
+  ");
+  xmlsitemap_update_sitemap();
+  return $ret;
+}
+
