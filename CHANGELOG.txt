@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 5.x-1.2, 2007-11-12
+-------------------------------
+- #191600 xmlsitemap_node table was empty.
+
 XML Sitemap 5.x-1.1, 2007-11-12
 -------------------------------
 - #190645 Typo prevented node types from being excluded.
