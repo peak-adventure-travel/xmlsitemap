@@ -3,23 +3,23 @@
 # LANGUAGE translation of Drupal (general)
 # Copyright YEAR NAME <EMAIL@ADDRESS>
 # Generated from files:
-#  xmlsitemap.module,v 1.14.2.12 2007/11/09 17:20:49 darrenoh
-#  xmlsitemap.info,v 1.2.2.2 2007/10/30 03:33:45 darrenoh
-#  xmlsitemap_engines.info,v 1.1.2.1 2007/10/30 03:33:45 darrenoh
-#  xmlsitemap_node.info,v 1.1.2.1 2007/10/30 03:33:45 darrenoh
-#  xmlsitemap_term.info,v 1.1.2.2 2007/10/30 17:28:16 darrenoh
-#  xmlsitemap_user.info,v 1.1.2.1 2007/10/30 03:33:46 darrenoh
-#  xmlsitemap_node.module,v 1.1.2.4 2007/11/01 15:42:27 darrenoh
-#  xmlsitemap.php,v 1.2.2.1 2007/10/30 03:33:45 darrenoh
-#  xmlsitemap_engines.module,v 1.1.2.1 2007/10/30 03:33:45 darrenoh
-#  xmlsitemap_user.module,v 1.1.2.3 2007/11/01 15:42:27 darrenoh
-#  xmlsitemap_term.module,v 1.1.2.3 2007/11/01 15:42:27 darrenoh
+#  xmlsitemap.module,v 1.1.2.4 2007/11/12 07:17:06 darrenoh
+#  xmlsitemap.info,v 1.1 2007/11/09 17:56:04 darrenoh
+#  xmlsitemap_engines.info,v 1.1 2007/11/09 17:56:05 darrenoh
+#  xmlsitemap_node.info,v 1.1 2007/11/09 17:56:05 darrenoh
+#  xmlsitemap_term.info,v 1.1 2007/11/09 17:56:05 darrenoh
+#  xmlsitemap_user.info,v 1.1 2007/11/09 17:56:05 darrenoh
+#  xmlsitemap_node.module,v 1.1.2.3 2007/11/12 06:57:39 darrenoh
+#  xmlsitemap.php,v 1.2 2007/11/09 18:44:49 darrenoh
+#  xmlsitemap_engines.module,v 1.1 2007/11/09 17:56:05 darrenoh
+#  xmlsitemap_user.module,v 1.1.2.2 2007/11/12 06:57:39 darrenoh
+#  xmlsitemap_term.module,v 1.1.2.1 2007/11/12 06:57:39 darrenoh
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2007-11-09 12:52-0500\n"
+"POT-Creation-Date: 2007-11-12 09:06-0500\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -48,7 +48,7 @@ msgstr ""
 msgid "Configure site map."
 msgstr ""
 
-#: xmlsitemap.module:41;339 xmlsitemap_node/xmlsitemap_node.module:198
+#: xmlsitemap.module:41;342 xmlsitemap_node/xmlsitemap_node.module:198
 msgid "Site map"
 msgstr ""
 
@@ -68,7 +68,7 @@ msgstr ""
 msgid "Configure additional links."
 msgstr ""
 
-#: xmlsitemap.module:65;339
+#: xmlsitemap.module:65;342
 msgid "Site map index"
 msgstr ""
 
@@ -132,51 +132,47 @@ msgstr ""
 msgid "This is the default priority for additional links."
 msgstr ""
 
-#: xmlsitemap.module:198
+#: xmlsitemap.module:187
 msgid "Enter a Drupal path to add to the site map."
 msgstr ""
 
-#: xmlsitemap.module:204
-msgid "Default: !priority"
-msgstr ""
-
-#: xmlsitemap.module:216
+#: xmlsitemap.module:218
 msgid "Delete"
 msgstr ""
 
-#: xmlsitemap.module:216
+#: xmlsitemap.module:218
 msgid "Path"
 msgstr ""
 
-#: xmlsitemap.module:216
+#: xmlsitemap.module:218
 msgid "Priority"
 msgstr ""
 
-#: xmlsitemap.module:236
+#: xmlsitemap.module:239
 msgid "Save configuration"
 msgstr ""
 
-#: xmlsitemap.module:298
+#: xmlsitemap.module:301
 msgid "Default"
 msgstr ""
 
-#: xmlsitemap.module:307
+#: xmlsitemap.module:310
 msgid "Not in site map"
 msgstr ""
 
-#: xmlsitemap.module:333
+#: xmlsitemap.module:336
 msgid "Site map @chunk"
 msgstr ""
 
-#: xmlsitemap.module:356
+#: xmlsitemap.module:359
 msgid "!sitemap downloaded by @user-agent at @address."
 msgstr ""
 
-#: xmlsitemap.module:417
+#: xmlsitemap.module:420
 msgid "Unable to load site map. Make sure your temporary directory exists and is writable by Drupal."
 msgstr ""
 
-#: xmlsitemap.module:361 docs/xmlsitemap.php:175;178 xmlsitemap_engines/xmlsitemap_engines.module:67;70;119;122;157;160;196;199
+#: xmlsitemap.module:364 docs/xmlsitemap.php:175;178 xmlsitemap_engines/xmlsitemap_engines.module:67;70;119;122;157;160;196;199
 msgid "xmlsitemap"
 msgstr ""
 
@@ -356,11 +352,11 @@ msgstr ""
 msgid "If enabled, the frequency of comments on a post will affect its change frequency and last modification date."
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:317
+#: xmlsitemap_node/xmlsitemap_node.module:325
 msgid "Save content type"
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:317
+#: xmlsitemap_node/xmlsitemap_node.module:325
 msgid "Reset to defaults"
 msgstr ""
 

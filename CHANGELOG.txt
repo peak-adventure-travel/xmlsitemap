@@ -1,0 +1,16 @@
+XML Sitemap 5.x-1.1, 2007-11-12
+-------------------------------
+- #190645 Typo prevented node types from being excluded.
+- #191229 Set variables correctly for cases where user is updated by script
+  rather than through the user form.
+- #189423 Values were being inserted in wrong order.
+- Fixed for cases where node is being inserted or updated by a script rather
+  than the node edit form.
+- Simplified code for removing i18n language prefix.
+- #191345 Added paging to additional links page to prevent memory errors
+  with large numbers of links.
+- Added cron jobs in case link set-up times out during installation.
+
+XML Sitemap 5.x-1.0, 2007-11-09
+-------------------------------
+- Renamed Google Sitemap
