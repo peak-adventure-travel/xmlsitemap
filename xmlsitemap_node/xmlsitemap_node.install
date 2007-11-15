@@ -36,13 +36,28 @@ function xmlsitemap_node_install() {
 }
 
 /**
- * Transfer data for Google Sitemap if it is installed.
+ * Transfer data from Google Sitemap if it is installed.
  */
 function _xmlsitemap_node_gsitemap_replace() {
   if (db_result(db_query("
     SELECT 1 FROM {system}
     WHERE type = 'module' AND name = 'gsitemap' AND (status = 1 OR schema_version >= 0)
   "))) {
+    switch ($GLOBALS['db_type']) {
+      case 'mysql':
+      case 'mysqli':
+        db_query("
+          UPDATE xmlsitemap_node xn, url_alias ua SET xn.pid = ua.pid
+          WHERE xn.pid IS NULL AND ua.src = CONCAT('node/', xn.nid)
+        ");
+        break;
+      case 'pgsql':
+        db_query("
+          UPDATE xmlsitemap_node SET pid = url_alias.pid FROM url_alias
+          WHERE xmlsitemap_node.pid IS NULL AND url_alias.src = CONCAT('node/', xmlsitemap_node.nid)
+        ");
+        break;
+    }
     db_query("INSERT INTO {xmlsitemap_node} SELECT * FROM {gsitemap}");
     $settings = db_query("SELECT * FROM {variable} WHERE name LIKE 'gsitemap\_%wt'");
     while ($variable = db_fetch_object($settings)) {
@@ -114,6 +129,7 @@ function xmlsitemap_node_uninstall() {
 
 /**
  * Implementation of hook_update_N().
+ * Fix scrambled values.
  */
 function xmlsitemap_node_update_1() {
   $ret = array();
@@ -141,6 +157,7 @@ function xmlsitemap_node_update_1() {
 
 /**
  * Implementation of hook_update_N().
+ * Add missing nodes.
  */
 function xmlsitemap_node_update_2() {
   $ret = array();
@@ -155,6 +172,30 @@ function xmlsitemap_node_update_2() {
     GROUP BY n.nid
   ");
   xmlsitemap_update_sitemap();
+  return $ret;
+}
+
+/**
+ * Implementation of hook_update_N().
+ * Add missing URL aliases.
+ */
+function xmlsitemap_node_update_3() {
+  $ret = array();
+  switch ($GLOBALS['db_type']) {
+    case 'mysql':
+    case 'mysqli':
+      $ret[] = update_sql("
+        UPDATE xmlsitemap_node xn, url_alias ua SET xn.pid = ua.pid
+        WHERE xn.pid IS NULL AND ua.src = CONCAT('node/', xn.nid)
+      ");
+      break;
+    case 'pgsql':
+      $ret[] = update_sql("
+        UPDATE xmlsitemap_node SET pid = url_alias.pid FROM url_alias
+        WHERE xmlsitemap_node.pid IS NULL AND url_alias.src = CONCAT('node/', xmlsitemap_node.nid)
+      ");
+      break;
+  }
   return $ret;
 }
 
