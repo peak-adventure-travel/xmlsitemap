@@ -178,6 +178,7 @@ function xmlsitemap_node_update_2() {
 /**
  * Implementation of hook_update_N().
  * Add missing URL aliases.
+ * Update last-changed times.
  */
 function xmlsitemap_node_update_3() {
   $ret = array();
@@ -188,12 +189,14 @@ function xmlsitemap_node_update_3() {
         UPDATE {xmlsitemap_node} xn, {url_alias} ua SET xn.pid = ua.pid
         WHERE xn.pid IS NULL AND ua.src = CONCAT('node/', xn.nid)
       ");
+      $ret[] = update_sql("UPDATE {xmlsitemap_node} xn, {node} n SET xn.last_changed = n.changed WHERE n.nid = xn.nid");
       break;
     case 'pgsql':
       $ret[] = update_sql("
         UPDATE {xmlsitemap_node} SET pid = {url_alias}.pid FROM {url_alias}
         WHERE {xmlsitemap_node}.pid IS NULL AND {url_alias}.src = CONCAT('node/', {xmlsitemap_node}.nid)
       ");
+      $ret[] = update_sql("UPDATE {xmlsitemap_node} SET last_changed = {node}.changed FROM {node} WHERE {node}.nid = {xmlsitemap_node}.nid");
       break;
   }
   $ret = array_merge($ret, xmlsitemap_node_update_2());
