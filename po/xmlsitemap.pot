@@ -3,23 +3,23 @@
 # LANGUAGE translation of Drupal (general)
 # Copyright YEAR NAME <EMAIL@ADDRESS>
 # Generated from files:
-#  xmlsitemap.module,v 1.1.2.4 2007/11/12 07:17:06 darrenoh
+#  xmlsitemap.module,v 1.1.2.5 2007/11/15 01:10:25 darrenoh
 #  xmlsitemap.info,v 1.1 2007/11/09 17:56:04 darrenoh
 #  xmlsitemap_engines.info,v 1.1 2007/11/09 17:56:05 darrenoh
 #  xmlsitemap_node.info,v 1.1 2007/11/09 17:56:05 darrenoh
 #  xmlsitemap_term.info,v 1.1 2007/11/09 17:56:05 darrenoh
 #  xmlsitemap_user.info,v 1.1 2007/11/09 17:56:05 darrenoh
-#  xmlsitemap_node.module,v 1.1.2.3 2007/11/12 06:57:39 darrenoh
+#  xmlsitemap_node.module,v 1.1.2.5 2007/11/13 15:27:37 darrenoh
 #  xmlsitemap.php,v 1.2 2007/11/09 18:44:49 darrenoh
 #  xmlsitemap_engines.module,v 1.1 2007/11/09 17:56:05 darrenoh
 #  xmlsitemap_user.module,v 1.1.2.2 2007/11/12 06:57:39 darrenoh
-#  xmlsitemap_term.module,v 1.1.2.1 2007/11/12 06:57:39 darrenoh
+#  xmlsitemap_term.module,v 1.1.2.2 2007/11/14 14:30:18 darrenoh
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2007-11-12 09:06-0500\n"
+"POT-Creation-Date: 2007-11-17 10:43+0100\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -172,7 +172,7 @@ msgstr ""
 msgid "Unable to load site map. Make sure your temporary directory exists and is writable by Drupal."
 msgstr ""
 
-#: xmlsitemap.module:364 docs/xmlsitemap.php:175;178 xmlsitemap_engines/xmlsitemap_engines.module:67;70;119;122;157;160;196;199
+#: xmlsitemap.module:364;0 docs/xmlsitemap.php:175;178 xmlsitemap_engines/xmlsitemap_engines.module:67;70;119;122;157;160;196;199
 msgid "xmlsitemap"
 msgstr ""
 
@@ -288,6 +288,10 @@ msgstr ""
 msgid "Yahoo verification page"
 msgstr ""
 
+#: xmlsitemap_engines/xmlsitemap_engines.module:0
+msgid "xmlsitemap_engines"
+msgstr ""
+
 #: xmlsitemap_engines/xmlsitemap_engines.info:0
 msgid "XML Sitemap: Engines"
 msgstr ""
@@ -352,12 +356,20 @@ msgstr ""
 msgid "If enabled, the frequency of comments on a post will affect its change frequency and last modification date."
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:325
+#: xmlsitemap_node/xmlsitemap_node.module:322
 msgid "Save content type"
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:325
+#: xmlsitemap_node/xmlsitemap_node.module:322
 msgid "Reset to defaults"
+msgstr ""
+
+#: xmlsitemap_node/xmlsitemap_node.module:159
+msgid "override node priority"
+msgstr ""
+
+#: xmlsitemap_node/xmlsitemap_node.module:0
+msgid "xmlsitemap_node"
 msgstr ""
 
 #: xmlsitemap_node/xmlsitemap_node.info:0
@@ -370,6 +382,14 @@ msgstr ""
 
 #: xmlsitemap_term/xmlsitemap_term.module:161
 msgid "This will be the default priority of terms in this vocabulary."
+msgstr ""
+
+#: xmlsitemap_term/xmlsitemap_term.module:127
+msgid "override term priority"
+msgstr ""
+
+#: xmlsitemap_term/xmlsitemap_term.module:0
+msgid "xmlsitemap_term"
 msgstr ""
 
 #: xmlsitemap_term/xmlsitemap_term.info:0
@@ -390,6 +410,14 @@ msgstr ""
 
 #: xmlsitemap_user/xmlsitemap_user.module:113
 msgid "Delete role"
+msgstr ""
+
+#: xmlsitemap_user/xmlsitemap_user.module:129
+msgid "override profile priority"
+msgstr ""
+
+#: xmlsitemap_user/xmlsitemap_user.module:0
+msgid "xmlsitemap_user"
 msgstr ""
 
 #: xmlsitemap_user/xmlsitemap_user.info:0
