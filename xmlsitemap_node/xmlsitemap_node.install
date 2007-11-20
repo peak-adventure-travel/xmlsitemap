@@ -181,7 +181,7 @@ function xmlsitemap_node_update_2() {
  * Update last-changed times.
  */
 function xmlsitemap_node_update_3() {
-  $ret = array();
+  $ret = array(update_sql("UPDATE {xmlsitemap_node} SET pid = NULL WHERE pid = 0"));
   switch ($GLOBALS['db_type']) {
     case 'mysql':
     case 'mysqli':
