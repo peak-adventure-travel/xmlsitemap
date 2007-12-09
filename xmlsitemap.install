@@ -60,7 +60,10 @@ function _xmlsitemap_gsitemap_replace() {
     SELECT 1 FROM {system}
     WHERE type = 'module' AND name = 'gsitemap' AND (status = 1 OR schema_version >= 0)
   "))) {
-    db_query("INSERT INTO {xmlsitemap_additional} SELECT * FROM {gsitemap_additional}");
+    db_query("
+      INSERT INTO {xmlsitemap_additional} (path, pid, last_changed, previously_changed, priority)
+      SELECT path, pid, last_changed, previously_changed, priority FROM {gsitemap_additional}
+    ");
     $modules = array('xmlsitemap_node', 'xmlsitemap_engines');
     if (variable_get('gsitemap_showterms', FALSE)) {
       $modules[] = 'xmlsitemap_term';

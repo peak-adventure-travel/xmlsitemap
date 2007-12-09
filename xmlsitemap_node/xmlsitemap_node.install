@@ -58,7 +58,10 @@ function _xmlsitemap_node_gsitemap_replace() {
         ");
         break;
     }
-    db_query("INSERT INTO {xmlsitemap_node} SELECT * FROM {gsitemap}");
+    db_query("
+      INSERT INTO {xmlsitemap_node} (nid, pid, last_changed, previously_changed, last_comment, previous_comment, priority_override)
+      SELECT nid, pid, last_changed, previously_changed, last_comment, previous_comment, priority_override FROM {gsitemap}
+    ");
     $settings = db_query("SELECT * FROM {variable} WHERE name LIKE 'gsitemap\_%wt'");
     while ($variable = db_fetch_object($settings)) {
       $ts = strlen('gsitemap_');
