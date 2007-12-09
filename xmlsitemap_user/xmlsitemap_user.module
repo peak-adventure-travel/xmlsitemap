@@ -39,7 +39,7 @@ function _xmlsitemap_user_links() {
     LEFT JOIN {xmlsitemap_user_role} xur ON xur.rid = ur.rid
     LEFT JOIN {xmlsitemap_user} xu ON xu.uid = u.uid
     LEFT JOIN {url_alias} ua ON ua.pid = xu.pid
-    WHERE (xu.priority_override IS NULL OR xu.priority_override >= 0) AND u.uid <> %d AND u.uid > 0
+    WHERE (xu.priority_override IS NULL OR xu.priority_override >= 0) AND u.uid <> %d AND u.uid > 0 AND u.status <> 0
     GROUP BY u.uid, xu.last_changed, xu.previously_changed, xu.priority_override, alias
     HAVING MIN(xur.priority) <> -1 OR COUNT(*) = 1 AND %f <> -1
   ", _xmlsitemap_user_frontpage(), variable_get('xmlsitemap_user_default_priority', 0.1));
