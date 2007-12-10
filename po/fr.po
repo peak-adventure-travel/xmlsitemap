@@ -1,7 +1,7 @@
 # $Id$
 #
 # French translation of Drupal (general)
-# Copyright 2007 Daniel Le Bray <dlb@enity.fr>
+# Copyright YEAR NAME <EMAIL@ADDRESS>
 # Generated from files:
 #  xmlsitemap.module,v 1.1.2.10 2007/12/10 07:30:15 darrenoh
 #  xmlsitemap.info,v 1.1 2007/11/09 17:56:04 darrenoh
@@ -18,11 +18,11 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: French translation of the XML Sitemap module\n"
-"POT-Creation-Date: 2007-12-10 20:57+0100\n"
-"PO-Revision-Date: 2007-12-10 20:57+0100\n"
-"Last-Translator: Daniel Le Bray <dlb@enity.fr>\n"
-"Language-Team: Daniel Le Bray\n"
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2007-12-10 21:25+0100\n"
+"PO-Revision-Date: 2007-12-10 21:25+0100\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: French <EMAIL@ADDRESS>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -180,7 +180,7 @@ msgstr "!plan du site téléchargé par @user-agent depuis @address."
 
 #: xmlsitemap.module:420
 msgid "Unable to load site map. Make sure that there is an xmlsitemap directory in your files directory and that it is writable by Drupal."
-msgstr ""
+msgstr "Incapable de charger le plan du site. Assurez-vous qu'il existe un répertoire xmlsitemap dans votre répertoire files et qu'il est accessible en écriture pour Drupal."
 
 #: xmlsitemap.module:364;0 docs/xmlsitemap.php:176;179 xmlsitemap_engines/xmlsitemap_engines.module:67;70;119;122;157;160;207;210
 msgid "xmlsitemap"
@@ -227,7 +227,7 @@ msgstr "Le plan du site à bien été soumis à Google."
 
 #: docs/xmlsitemap.php:179 xmlsitemap_engines/xmlsitemap_engines.module:70
 msgid "Error occurred submitting sitemap to Google: @code"
-msgstr "Une erreur est survenue lors de la soumission à Google : @code"
+msgstr "Une erreur est apparue lors de la soumission à Google: @code"
 
 #: docs/xmlsitemap.php:185 xmlsitemap_engines/xmlsitemap_engines.module:75
 msgid "!sitemap downloaded by Google."
@@ -243,7 +243,12 @@ msgstr "Soumettre le plan du site à Yahoo!"
 
 #: xmlsitemap_engines/xmlsitemap_engines.module:106
 msgid "Before allowing you to view additional information, Yahoo! will ask you to verify that you control this site by creating a file with a certain name. Enter that name here, and XML Sitemap will create a path to that file name. This will only work if you have clean URLs enabled."
-msgstr "Avant de vous autoriser à voir des informations supplémentaires, Yahoo! vous demandera de vérifier que vous controllez ce site en créant un fichier avec un nom particulier. Entrer ce nom ici et XML Sitemap créera un chemin pour ce fichier. Cela ne fonctionnera que si vous avez activé les URL simplifiées."
+msgstr ""
+"Avant de vous autoriser à voir des informations supplémentaires, "
+"Yahoo! vous demandera de vérifier que vous controllez ce site en "
+"créant un fichier avec un nom particulier. Entrer ce nom ici et XML "
+"Sitemap créera un chemin pour ce fichier. Cela ne fonctionnera que si "
+"vous avez activé les URL simplifiées."
 
 #: xmlsitemap_engines/xmlsitemap_engines.module:110
 msgid "Authentication key"
@@ -251,7 +256,9 @@ msgstr "Clé d'authentification"
 
 #: xmlsitemap_engines/xmlsitemap_engines.module:112
 msgid "Yahoo! will ask you to put an authentication key in the verification file."
-msgstr "Yahoo! vous demandera de mettre une clé d'authentification dans le fichier de vérification."
+msgstr ""
+"Yahoo! vous demandera de mettre une clé d'authentification dans le "
+"fichier de vérification."
 
 #: xmlsitemap_engines/xmlsitemap_engines.module:119
 msgid "Site map successfully submitted to Yahoo!"
@@ -259,7 +266,9 @@ msgstr "Le plan du site à bien été soumis à Yahoo!"
 
 #: xmlsitemap_engines/xmlsitemap_engines.module:122
 msgid "Error occurred submitting site map to Yahoo!: @code"
-msgstr "Une erreur est survenue lors de la soumission du site à Yahoo! : @code"
+msgstr ""
+"Une erreur est survenue lors de la soumission du site à Yahoo! : "
+"@code"
 
 #: xmlsitemap_engines/xmlsitemap_engines.module:137
 msgid "Ask.com"
@@ -275,7 +284,7 @@ msgstr "Le plan du site à bien été soumis à Ask.com."
 
 #: xmlsitemap_engines/xmlsitemap_engines.module:160
 msgid "Error occurred submitting site map to Ask.com: @code"
-msgstr "Une erreur est survenue lors de la soumission à Ask.com : @code"
+msgstr "Une erreur est apparue lors de la soumission à Ask.com: @code"
 
 #: xmlsitemap_engines/xmlsitemap_engines.module:175
 msgid "Windows Live"
@@ -291,7 +300,12 @@ msgstr "Fichier d'authentification"
 
 #: xmlsitemap_engines/xmlsitemap_engines.module:194
 msgid "Before allowing you to view additional information, Windows Live will ask you to verify that you control this site by creating a file with a certain name. Enter that name here, and XML Sitemap will create a path to that file name. This will only work if you have clean URLs enabled."
-msgstr "Avant de vous autoriser à voir des informations supplémentaires, Windows Live vous demandera de vérifier que vous controllez ce site en créant un fichier avec un nom particulier. Entrer ce nom ici et XML Sitemap créera un chemin pour ce fichier. Cela ne fonctionnera que si vous avez activé les URL simplifiées."
+msgstr ""
+"Avant de vous autoriser à voir des informations supplémentaires, "
+"Windows Live vous demandera de vérifier que vous controllez ce site "
+"en créant un fichier avec un nom particulier. Entrer ce nom ici et "
+"XML Sitemap créera un chemin pour ce fichier. Cela ne fonctionnera "
+"que si vous avez activé les URL simplifiées."
 
 #: xmlsitemap_engines/xmlsitemap_engines.module:198
 msgid "Authentication tag"
@@ -449,7 +463,9 @@ msgstr "Priorité utilisateur par défaut"
 
 #: xmlsitemap_user/xmlsitemap_user.module:108
 msgid "Choose the default priority for users who have only the authenticated user role."
-msgstr "Choisir la priorité par défaut pour les utilisateurs qui ont seulement le rôle authentifié."
+msgstr ""
+"Choisir la priorité par défaut pour les utilisateurs qui ont "
+"seulement le rôle authentifié."
 
 #: xmlsitemap_user/xmlsitemap_user.module:116
 msgid "Default site map priority"
