@@ -77,7 +77,7 @@ function _xmlsitemap_engines_google($op, $type = NULL) {
 }
 
 /**
- * Define actions for Yahoo!
+ * Define actions for Yahoo!.
  */
 function _xmlsitemap_engines_yahoo($op) {
   switch ($op) {
@@ -116,7 +116,7 @@ function _xmlsitemap_engines_yahoo($op) {
       if (variable_get('xmlsitemap_engines_yahoo_submit', FALSE)) {
         $result = drupal_http_request(variable_get('xmlsitemap_engines_yahoo_url', 'http://search.yahooapis.com/SiteExplorerService/V1/ping?sitemap='. xmlsitemap_url('sitemap.xml', drupal_lookup_path('alias', 'sitemap.xml') ? drupal_lookup_path('alias', 'sitemap.xml') : NULL, NULL, NULL, TRUE)));
         if ($result->code == 200) {
-          watchdog('xmlsitemap', t('Site map successfully submitted to Yahoo!'));
+          watchdog('xmlsitemap', t('Site map successfully submitted to Yahoo!.'));
         }
         else {
           watchdog('xmlsitemap', t('Error occurred submitting site map to Yahoo!: @code', array('@code' => $result->code)), WATCHDOG_ERROR);

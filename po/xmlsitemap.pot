@@ -3,7 +3,7 @@
 # LANGUAGE translation of Drupal (general)
 # Copyright YEAR NAME <EMAIL@ADDRESS>
 # Generated from files:
-#  xmlsitemap.module,v 1.1.2.11 2007/12/10 23:01:27 darrenoh
+#  xmlsitemap.module,v 1.1.2.12 2007/12/11 22:57:38 darrenoh
 #  xmlsitemap.info,v 1.1 2007/11/09 17:56:04 darrenoh
 #  xmlsitemap_engines.info,v 1.1 2007/11/09 17:56:05 darrenoh
 #  xmlsitemap_node.info,v 1.1 2007/11/09 17:56:05 darrenoh
@@ -13,13 +13,13 @@
 #  xmlsitemap_user.module,v 1.1.2.10 2007/12/10 03:15:12 darrenoh
 #  xmlsitemap.php,v 1.2.2.2 2007/12/06 17:22:20 darrenoh
 #  xmlsitemap_engines.module,v 1.1.2.2 2007/12/10 05:00:40 darrenoh
-#  xmlsitemap_term.module,v 1.1.2.7 2007/12/10 03:15:12 darrenoh
+#  xmlsitemap_term.module,v 1.1.2.8 2007/12/13 02:18:30 darrenoh
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2007-12-11 19:40+0100\n"
+"POT-Creation-Date: 2007-12-12 21:38-0500\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -172,7 +172,7 @@ msgstr ""
 msgid "Unable to load site map. Make sure that there is an xmlsitemap directory in your files directory and that it is writable by Drupal."
 msgstr ""
 
-#: xmlsitemap.module:364;0 docs/xmlsitemap.php:176;179 xmlsitemap_engines/xmlsitemap_engines.module:67;70;119;122;157;160;207;210
+#: xmlsitemap.module:364 docs/xmlsitemap.php:176;179 xmlsitemap_engines/xmlsitemap_engines.module:67;70;119;122;157;160;207;210
 msgid "xmlsitemap"
 msgstr ""
 
@@ -237,7 +237,7 @@ msgid "Yahoo! will ask you to put an authentication key in the verification file
 msgstr ""
 
 #: xmlsitemap_engines/xmlsitemap_engines.module:119
-msgid "Site map successfully submitted to Yahoo!"
+msgid "Site map successfully submitted to Yahoo!."
 msgstr ""
 
 #: xmlsitemap_engines/xmlsitemap_engines.module:122
@@ -302,10 +302,6 @@ msgstr ""
 
 #: xmlsitemap_engines/xmlsitemap_engines.module:247
 msgid "Windows Live verification page"
-msgstr ""
-
-#: xmlsitemap_engines/xmlsitemap_engines.module:0
-msgid "xmlsitemap_engines"
 msgstr ""
 
 #: xmlsitemap_engines/xmlsitemap_engines.info:0
@@ -380,14 +376,6 @@ msgstr ""
 msgid "Reset to defaults"
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:159
-msgid "override node priority"
-msgstr ""
-
-#: xmlsitemap_node/xmlsitemap_node.module:0
-msgid "xmlsitemap_node"
-msgstr ""
-
 #: xmlsitemap_node/xmlsitemap_node.info:0
 msgid "XML Sitemap: Node"
 msgstr ""
@@ -398,14 +386,6 @@ msgstr ""
 
 #: xmlsitemap_term/xmlsitemap_term.module:161
 msgid "This will be the default priority of terms in this vocabulary."
-msgstr ""
-
-#: xmlsitemap_term/xmlsitemap_term.module:127
-msgid "override term priority"
-msgstr ""
-
-#: xmlsitemap_term/xmlsitemap_term.module:0
-msgid "xmlsitemap_term"
 msgstr ""
 
 #: xmlsitemap_term/xmlsitemap_term.info:0
@@ -434,14 +414,6 @@ msgstr ""
 
 #: xmlsitemap_user/xmlsitemap_user.module:141
 msgid "Delete role"
-msgstr ""
-
-#: xmlsitemap_user/xmlsitemap_user.module:159
-msgid "override profile priority"
-msgstr ""
-
-#: xmlsitemap_user/xmlsitemap_user.module:0
-msgid "xmlsitemap_user"
 msgstr ""
 
 #: xmlsitemap_user/xmlsitemap_user.info:0
