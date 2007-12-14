@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Deutsche Übersetzung von Google Sitemap für Drupal\n"
 "POT-Creation-Date: 2007-03-18 17:59-0400\n"
-"PO-Revision-Date: 2007-12-11 20:51+0100\n"
+"PO-Revision-Date: 2007-12-14 08:49+0100\n"
 "Last-Translator: Alexander Hass\n"
 "Language-Team: Alexander Hass\n"
 "MIME-Version: 1.0\n"
@@ -172,7 +172,7 @@ msgstr "!sitemap wurde heruntergeladen von @user-agent über @address."
 msgid "Unable to load site map. Make sure that there is an xmlsitemap directory in your files directory and that it is writable by Drupal."
 msgstr "Die Sitemap konnte nicht geladen werden. Das Verzeichnis „xmlsitemap“ muss im Dateisystem-Pfad vorhanden sein und Drupal darin schreiben können."
 
-#: xmlsitemap.module:364;0
+#: xmlsitemap.module:364
 #: docs/xmlsitemap.php:176;179
 #: xmlsitemap_engines/xmlsitemap_engines.module:67;70;119;122;157;160;207;210
 msgid "xmlsitemap"
@@ -248,7 +248,7 @@ msgid "Yahoo! will ask you to put an authentication key in the verification file
 msgstr "Der von Yahoo! für die Kontrolldatei zur Verfügung gestellte Authentifizierungsschlüssel."
 
 #: xmlsitemap_engines/xmlsitemap_engines.module:119
-msgid "Site map successfully submitted to Yahoo!"
+msgid "Site map successfully submitted to Yahoo!."
 msgstr "Sitemap wurde erfolgreich an Yahoo! übertragen."
 
 #: xmlsitemap_engines/xmlsitemap_engines.module:122
@@ -314,10 +314,6 @@ msgstr "Überprüfungsseite für Yahoo!"
 #: xmlsitemap_engines/xmlsitemap_engines.module:247
 msgid "Windows Live verification page"
 msgstr "Überprüfungsseite für Windows Live"
-
-#: xmlsitemap_engines/xmlsitemap_engines.module:0
-msgid "xmlsitemap_engines"
-msgstr "xmlsitemap_engines"
 
 #: xmlsitemap_engines/xmlsitemap_engines.info:0
 msgid "XML Sitemap: Engines"
@@ -399,14 +395,6 @@ msgstr "Inhaltstyp speichern"
 msgid "Reset to defaults"
 msgstr "Zurücksetzen"
 
-#: xmlsitemap_node/xmlsitemap_node.module:159
-msgid "override node priority"
-msgstr "Priorität des Beitrages überschreiben"
-
-#: xmlsitemap_node/xmlsitemap_node.module:0
-msgid "xmlsitemap_node"
-msgstr "xmlsitemap_node"
-
 #: xmlsitemap_node/xmlsitemap_node.info:0
 msgid "XML Sitemap: Node"
 msgstr "XML-Sitemap: Beitrag"
@@ -418,14 +406,6 @@ msgstr "Fügt Beiträge zur Sitemap hinzu."
 #: xmlsitemap_term/xmlsitemap_term.module:161
 msgid "This will be the default priority of terms in this vocabulary."
 msgstr "Dies wird die Standardpriorität von Begriffen in diesem Vokabular."
-
-#: xmlsitemap_term/xmlsitemap_term.module:127
-msgid "override term priority"
-msgstr "Priorität des Begriffes überschreiben"
-
-#: xmlsitemap_term/xmlsitemap_term.module:0
-msgid "xmlsitemap_term"
-msgstr "xmlsitemap_term"
 
 #: xmlsitemap_term/xmlsitemap_term.info:0
 msgid "XML Sitemap: Term"
@@ -455,14 +435,6 @@ msgstr "Diese Zahl wird der Priorität dieser Benutzerrolle hinzugefügt."
 #: xmlsitemap_user/xmlsitemap_user.module:141
 msgid "Delete role"
 msgstr "Rolle löschen"
-
-#: xmlsitemap_user/xmlsitemap_user.module:159
-msgid "override profile priority"
-msgstr "Priorität des Profils überschreiben"
-
-#: xmlsitemap_user/xmlsitemap_user.module:0
-msgid "xmlsitemap_user"
-msgstr "xmlsitemap_user"
 
 #: xmlsitemap_user/xmlsitemap_user.info:0
 msgid "XML Sitemap: User"
