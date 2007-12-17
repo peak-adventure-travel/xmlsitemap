@@ -1,9 +1,9 @@
 # $Id$
 #
 # French translation of Drupal (general)
-# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Copyright 2007 Daniel Le Bray <dlb@enity.fr>
 # Generated from files:
-#  xmlsitemap.module,v 1.1.2.10 2007/12/10 07:30:15 darrenoh
+#  xmlsitemap.module,v 1.1.2.12 2007/12/11 22:57:38 darrenoh
 #  xmlsitemap.info,v 1.1 2007/11/09 17:56:04 darrenoh
 #  xmlsitemap_engines.info,v 1.1 2007/11/09 17:56:05 darrenoh
 #  xmlsitemap_node.info,v 1.1 2007/11/09 17:56:05 darrenoh
@@ -12,21 +12,21 @@
 #  xmlsitemap_node.module,v 1.1.2.14 2007/12/10 03:15:12 darrenoh
 #  xmlsitemap_user.module,v 1.1.2.10 2007/12/10 03:15:12 darrenoh
 #  xmlsitemap.php,v 1.2.2.2 2007/12/06 17:22:20 darrenoh
-#  xmlsitemap_engines.module,v 1.1.2.2 2007/12/10 05:00:40 darrenoh
-#  xmlsitemap_term.module,v 1.1.2.7 2007/12/10 03:15:12 darrenoh
+#  xmlsitemap_engines.module,v 1.1.2.3 2007/12/13 02:47:54 darrenoh
+#  xmlsitemap_term.module,v 1.1.2.8 2007/12/13 02:18:30 darrenoh
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2007-12-10 21:25+0100\n"
-"PO-Revision-Date: 2007-12-10 21:25+0100\n"
-"Last-Translator: NAME <EMAIL@ADDRESS>\n"
-"Language-Team: French <EMAIL@ADDRESS>\n"
+"Project-Id-Version: French translation of the XML Sitemap module\n"
+"POT-Creation-Date: 2007-12-16 10:13+0100\n"
+"PO-Revision-Date: 2007-12-16 10:13+0100\n"
+"Last-Translator: Daniel Le Bray <dlb@enity.fr>\n"
+"Language-Team: Daniel Le Bray\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+"Plural-Forms: nplurals=2; plural=(n>1);\n"
 
 #: xmlsitemap.module:15
 msgid "Configure the site map. Your site map is at !url."
@@ -66,7 +66,7 @@ msgstr "Supplément"
 
 #: xmlsitemap.module:57
 msgid "Configure additional links."
-msgstr "Configurer des liens additionnels."
+msgstr "Configurer des liens supplémentaires."
 
 #: xmlsitemap.module:65;342
 msgid "Site map index"
@@ -140,7 +140,7 @@ msgstr "Priorité des liens"
 
 #: xmlsitemap.module:179
 msgid "This is the default priority for additional links."
-msgstr "C'est la priorité par défaut pour les liens additionnels."
+msgstr "C'est la priorité par défaut pour les liens supplémentaires."
 
 #: xmlsitemap.module:187
 msgid "Enter a Drupal path to add to the site map."
@@ -180,7 +180,10 @@ msgstr "!plan du site téléchargé par @user-agent depuis @address."
 
 #: xmlsitemap.module:420
 msgid "Unable to load site map. Make sure that there is an xmlsitemap directory in your files directory and that it is writable by Drupal."
-msgstr "Incapable de charger le plan du site. Assurez-vous qu'il existe un répertoire xmlsitemap dans votre répertoire files et qu'il est accessible en écriture pour Drupal."
+msgstr ""
+"Incapable de charger le plan du site. Assurez-vous qu'il existe un "
+"répertoire xmlsitemap dans votre répertoire files et qu'il est "
+"accessible en écriture pour Drupal."
 
 #: xmlsitemap.module:364;0 docs/xmlsitemap.php:176;179 xmlsitemap_engines/xmlsitemap_engines.module:67;70;119;122;157;160;207;210
 msgid "xmlsitemap"
@@ -227,7 +230,7 @@ msgstr "Le plan du site à bien été soumis à Google."
 
 #: docs/xmlsitemap.php:179 xmlsitemap_engines/xmlsitemap_engines.module:70
 msgid "Error occurred submitting sitemap to Google: @code"
-msgstr "Une erreur est apparue lors de la soumission à Google: @code"
+msgstr "Une erreur est apparue lors de la soumission à Google : @code"
 
 #: docs/xmlsitemap.php:185 xmlsitemap_engines/xmlsitemap_engines.module:75
 msgid "!sitemap downloaded by Google."
@@ -261,8 +264,8 @@ msgstr ""
 "fichier de vérification."
 
 #: xmlsitemap_engines/xmlsitemap_engines.module:119
-msgid "Site map successfully submitted to Yahoo!"
-msgstr "Le plan du site à bien été soumis à Yahoo!"
+msgid "Site map successfully submitted to Yahoo!."
+msgstr "Le plan du site à bien été soumis à Yahoo!."
 
 #: xmlsitemap_engines/xmlsitemap_engines.module:122
 msgid "Error occurred submitting site map to Yahoo!: @code"
@@ -284,7 +287,7 @@ msgstr "Le plan du site à bien été soumis à Ask.com."
 
 #: xmlsitemap_engines/xmlsitemap_engines.module:160
 msgid "Error occurred submitting site map to Ask.com: @code"
-msgstr "Une erreur est apparue lors de la soumission à Ask.com: @code"
+msgstr "Une erreur est apparue lors de la soumission à Ask.com : @code"
 
 #: xmlsitemap_engines/xmlsitemap_engines.module:175
 msgid "Windows Live"
@@ -405,7 +408,7 @@ msgstr ""
 
 #: xmlsitemap_node/xmlsitemap_node.module:239
 msgid "Count comments in change date and frequency"
-msgstr "Compter les commentaires dans le changement de date et de fréquence"
+msgstr "Compter les commentaires dans les changements de date et de fréquence"
 
 #: xmlsitemap_node/xmlsitemap_node.module:241
 msgid "If enabled, the frequency of comments on a post will affect its change frequency and last modification date."
