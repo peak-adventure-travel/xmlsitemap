@@ -1,5 +1,28 @@
 $Id$
 
+XML Sitemap 5.x-1.4, 2007-12-18
+-------------------------------
+- #194078 Still using gss.xsl from gsitemap when not found in files
+  directory.
+- Documentation update: replaced "Nothing" with "None" in return values.
+- #191950 Stopped language prefix from being added to additional links.
+- #195124 by Jan Dittberner. Fixed queries for PostgreSQL.
+- #198746 by Andreas Deininger. Make LIMIT clause compatible with
+  PostgreSQL.
+- #191991 by Alexander Hass. Insert values into correct columns when
+  replacing gsitemap.
+- #199181 by Tony Mobily. Exclude blocked users.
+- #196393 Made default paths in gss.xsl work for most installations.
+- #195855 Display correct default priority.
+- #194078 Fixed private file URLs.
+- #194780 by Damian Boune. Handle priority overrides correctly.
+- #195152 Added Windows Live engine.
+- #197104 Updated error message when files cannot be written.
+- #199689 by Alexander Hass. Added quotes to href value.
+- Replaced value with constant for readability.
+- #199311 Fixed query for MySQL, hopefully keeping PostgreSQL compatibility.
+- #195122 Escaped paths used as element IDs.
+
 XML Sitemap 5.x-1.3, 2007-11-20
 -------------------------------
 - #191723 Fixed for cases where node is missing from xmlsitemap_node table.
