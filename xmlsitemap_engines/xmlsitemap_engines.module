@@ -261,7 +261,14 @@ function xmlsitemap_engines_menu($may_cache) {
 function _xmlsitemap_engines_verify($engine) {
   switch ($engine) {
     case 'google':
-      print 'Hello, Google!';
+      print '<html>'."\n";
+      print '  <head>'."\n";
+      print '    <title>Hello, Google!</title>'."\n";
+      print '  </head>'."\n";
+      print '  <body>'."\n";
+      print '    <p>Hello, Google!</p>'."\n";
+      print '  </body>'."\n";
+      print '</html>';
       break;
     case 'yahoo':
       print variable_get('xmlsitemap_engines_yahoo_verify_string', '');
