@@ -52,14 +52,14 @@ function _xmlsitemap_term_excludes() {
 function _xmlsitemap_term_links($excludes = array()) {
   $links = array();
   $result = db_query(db_rewrite_sql("
-    SELECT td.*, v.module, xt.last_changed, xt.previously_changed, xt.priority_override, ua.dst AS alias
-    FROM {term_data} td
-    LEFT JOIN {vocabulary} v ON v.vid = td.vid
-    LEFT JOIN {xmlsitemap_term} xt ON xt.tid = td.tid
+    SELECT t.*, v.module, xt.last_changed, xt.previously_changed, xt.priority_override, ua.dst AS alias
+    FROM {term_data} t
+    LEFT JOIN {vocabulary} v ON v.vid = t.vid
+    LEFT JOIN {xmlsitemap_term} xt ON xt.tid = t.tid
     LEFT JOIN {url_alias} ua ON ua.pid = xt.pid
-    WHERE (td.vid NOT IN (". (empty($excludes) ? 0 : implode(', ', $excludes)) .") AND xt.priority_override IS NULL OR xt.priority_override >= 0)
-    AND td.tid <> %d
-  ", 'td', 'tid'), _xmlsitemap_term_frontpage());
+    WHERE (t.vid NOT IN (". (empty($excludes) ? 0 : implode(', ', $excludes)) .") AND xt.priority_override IS NULL OR xt.priority_override >= 0)
+    AND t.tid <> %d
+  ", 't', 'tid'), _xmlsitemap_term_frontpage());
   while ($term = db_fetch_object($result)) {
     if ($term->module == 'forum') {
       $url = xmlsitemap_url("forum/$term->tid", $term->alias, NULL, NULL, TRUE);
