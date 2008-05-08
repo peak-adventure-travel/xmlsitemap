@@ -268,7 +268,7 @@ function _xmlsitemap_engines_verify($engine) {
       print '  <body>'."\n";
       print '    <p>Hello, Google!</p>'."\n";
       print '  </body>'."\n";
-      print '</html>';
+      print '</html>'."\n";
       break;
     case 'yahoo':
       print variable_get('xmlsitemap_engines_yahoo_verify_string', '');
