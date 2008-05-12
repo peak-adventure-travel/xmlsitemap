@@ -39,24 +39,34 @@ function xmlsitemap_term_enable() {
     db_query("UPDATE {system} SET weight = %d WHERE type = 'module' AND name = 'xmlsitemap_term'", ++$weight);
   }
   $query = "
-    INSERT INTO {xmlsitemap_term} (tid, last_changed, pid)
-    SELECT td.tid, %d, ua.pid FROM {term_data} td
-    LEFT JOIN {xmlsitemap_term} xt ON xt.tid = td.tid";
-  switch ($GLOBALS['db_type']) {
-    case 'mysql':
-    case 'mysqli':
-      $query .= "
-        LEFT JOIN {url_alias} ua ON ua.src = CONCAT('taxonomy/term/', td.tid) OR ua.src = CONCAT('forum/', td.tid)";
-      break;
-    case 'pgsql':
-      $query .= "
-        LEFT JOIN {url_alias} ua ON ua.src = 'taxonomy/term/' || td.tid OR ua.src = 'forum/' || td.tid";
-      break;
-  }
-  $query .= "
+    INSERT INTO {xmlsitemap_term} (tid, last_changed)
+    SELECT td.tid, %d FROM {term_data} td
+    LEFT JOIN {xmlsitemap_term} xt ON xt.tid = td.tid
     WHERE xt.tid IS NULL
   ";
   db_query($query, time());
+  switch ($GLOBALS['db_type']) {
+    case 'mysql':
+    case 'mysqli':
+      $query = "
+        UPDATE {xmlsitemap_term} xt INNER JOIN {url_alias} ua ON
+        ua.src = CONCAT('taxonomy/term/', xt.tid) OR ua.src = CONCAT('forum/', xt.tid)
+        SET xt.pid = ua.pid
+        WHERE xt.pid IS NULL
+      ";
+      break;
+    case 'pgsql':
+      $query = "
+        UPDATE {xmlsitemap_term} xt
+        SET pid = ua.pid
+        FROM {url_alias} ua
+        WHERE ua.src = 'taxonomy/term/' || xt.tid
+        OR ua.src = 'forum/' || xt.tid
+        AND xt.pid IS NULL
+      ";
+      break;
+  }
+  db_query($query);
   xmlsitemap_update_sitemap();
 }
 

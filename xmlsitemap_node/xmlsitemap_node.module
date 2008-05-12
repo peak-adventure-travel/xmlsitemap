@@ -365,26 +365,34 @@ function xmlsitemap_node_node_type($op, $info) {
 function xmlsitemap_node_cron() {
   if (db_result(db_query_range("SELECT COUNT(*) FROM {node} n LEFT JOIN {xmlsitemap_node} xn ON xn.nid = n.nid WHERE xn.nid IS NULL", 0, 1))) {
     $query = "
-      INSERT INTO {xmlsitemap_node} (nid, pid, last_changed, last_comment, previous_comment)
-      SELECT n.nid, MAX(ua.pid), n.changed, s.last_comment_timestamp, MAX(c.timestamp) FROM {node} n
+      INSERT INTO {xmlsitemap_node} (nid, last_changed, last_comment, previous_comment)
+      SELECT n.nid, n.changed, s.last_comment_timestamp, MAX(c.timestamp) FROM {node} n
       LEFT JOIN {node_comment_statistics} s ON s.nid = n.nid
       LEFT OUTER JOIN {comments} c ON c.nid = n.nid AND c.timestamp < s.last_comment_timestamp
-      LEFT JOIN {xmlsitemap_node} xn ON xn.nid = n.nid";
-    switch ($GLOBALS['db_type']) {
-      case 'mysql':
-      case 'mysqli':
-        $query .= "
-          LEFT JOIN {url_alias} ua ON ua.src = CONCAT('node/', n.nid)";
-        break;
-      case 'pgsql':
-        $query .= "
-          LEFT JOIN {url_alias} ua ON ua.src = 'node/' || n.nid";
-        break;
-    }
-    $query .= "
+      LEFT JOIN {xmlsitemap_node} xn ON xn.nid = n.nid
       WHERE xn.nid IS NULL
       GROUP BY n.nid, n.changed, s.last_comment_timestamp
     ";
+    db_query($query);
+    switch ($GLOBALS['db_type']) {
+      case 'mysql':
+      case 'mysqli':
+        $query = "
+          UPDATE {xmlsitemap_node} xn INNER JOIN {url_alias} ua ON
+          ua.src = CONCAT('node/', xn.nid)
+          SET xn.pid = ua.pid
+          WHERE xn.pid IS NULL
+        ";
+        break;
+      case 'pgsql':
+        $query = "
+          UPDATE {xmlsitemap_node} xn
+          SET pid = ua.pid
+          FROM {url_alias} ua
+          WHERE ua.src = 'node/' || xn.nid AND xn.pid IS NULL
+        ";
+        break;
+    }
     db_query($query);
     xmlsitemap_update_sitemap();
   }
