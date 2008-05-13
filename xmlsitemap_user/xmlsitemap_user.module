@@ -248,8 +248,8 @@ function xmlsitemap_user_cron() {
       case 'mysql':
       case 'mysqli':
         db_query("
-          UPDATE {xmlsitemap_user} xu INNER JOIN {url_alias} ua ON
-          ua.src = CONCAT('user/', CAST(xu.uid AS CHAR))
+          UPDATE {xmlsitemap_user} xu INNER JOIN {url_alias} ua
+          ON ua.src = CONCAT('user/', CAST(xu.uid AS CHAR))
           SET xu.pid = ua.pid
           WHERE xu.pid IS NULL
         ");

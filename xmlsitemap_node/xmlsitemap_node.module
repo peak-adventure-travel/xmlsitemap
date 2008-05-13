@@ -377,8 +377,8 @@ function xmlsitemap_node_cron() {
       case 'mysql':
       case 'mysqli':
         db_query("
-          UPDATE {xmlsitemap_node} xn INNER JOIN {url_alias} ua ON
-          ua.src = CONCAT('node/', CAST(xn.nid AS CHAR))
+          UPDATE {xmlsitemap_node} xn INNER JOIN {url_alias} ua
+          ON ua.src = CONCAT('node/', CAST(xn.nid AS CHAR))
           SET xn.pid = ua.pid
           WHERE xn.pid IS NULL
         ");

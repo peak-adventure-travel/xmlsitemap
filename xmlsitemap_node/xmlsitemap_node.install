@@ -152,8 +152,8 @@ function _xmlsitemap_node_updatepid_query() {
     case 'mysql':
     case 'mysqli':
       $query = "
-        UPDATE {xmlsitemap_node} xn INNER JOIN {url_alias} ua ON
-        ua.src = CONCAT('node/', CAST(xn.nid AS CHAR))
+        UPDATE {xmlsitemap_node} xn INNER JOIN {url_alias} ua
+        ON ua.src = CONCAT('node/', CAST(xn.nid AS CHAR))
         SET xn.pid = ua.pid
         WHERE xn.pid IS NULL
       ";
