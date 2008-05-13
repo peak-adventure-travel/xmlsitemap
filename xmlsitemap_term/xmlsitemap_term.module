@@ -241,8 +241,9 @@ function xmlsitemap_term_cron() {
       case 'mysql':
       case 'mysqli':
         $query = "
-          UPDATE {xmlsitemap_term} xt INNER JOIN {url_alias} ua ON
-          ua.src = CONCAT('taxonomy/term/', xt.tid) OR ua.src = CONCAT('forum/', xt.tid)
+          UPDATE {xmlsitemap_term} xt INNER JOIN {url_alias} ua
+          ON ua.src = CONCAT('taxonomy/term/', CAST(xt.tid AS CHAR))
+          OR ua.src = CONCAT('forum/', CAST(xt.tid AS CHAR))
           SET xt.pid = ua.pid
           WHERE xt.pid IS NULL
         ";
@@ -252,10 +253,9 @@ function xmlsitemap_term_cron() {
           UPDATE {xmlsitemap_term}
           SET pid = {url_alias}.pid
           FROM {url_alias}
-          WHERE {xmlsitemap_term}.pid IS NULL
-          AND (
-            {url_alias}.src = CONCAT('taxonomy/term/', tid)
-            OR {url_alias}.src = CONCAT('forum/', tid)
+          WHERE {xmlsitemap_term}.pid IS NULL AND (
+            {url_alias}.src = CONCAT('taxonomy/term/', CAST(tid AS VARCHAR))
+            OR {url_alias}.src = CONCAT('forum/', CAST(tid AS VARCHAR))
           )
         ";
         break;

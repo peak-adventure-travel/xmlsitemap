@@ -64,13 +64,13 @@ function _xmlsitemap_node_gsitemap_replace() {
       case 'mysqli':
         db_query("
           UPDATE {xmlsitemap_node} xn, {url_alias} ua SET xn.pid = ua.pid
-          WHERE xn.pid IS NULL AND ua.src = CONCAT('node/', xn.nid)
+          WHERE xn.pid IS NULL AND ua.src = CONCAT('node/', CAST(xn.nid AS CHAR))
         ");
         break;
       case 'pgsql':
         db_query("
           UPDATE {xmlsitemap_node} SET pid = {url_alias}.pid FROM {url_alias}
-          WHERE {xmlsitemap_node}.pid IS NULL AND {url_alias}.src = CONCAT('node/', nid)
+          WHERE {xmlsitemap_node}.pid IS NULL AND {url_alias}.src = CONCAT('node/', CAST(nid AS VARCHAR))
         ");
         break;
     }
@@ -153,7 +153,7 @@ function _xmlsitemap_node_updatepid_query() {
     case 'mysqli':
       $query = "
         UPDATE {xmlsitemap_node} xn INNER JOIN {url_alias} ua ON
-        ua.src = CONCAT('node/', xn.nid)
+        ua.src = CONCAT('node/', CAST(xn.nid AS CHAR))
         SET xn.pid = ua.pid
         WHERE xn.pid IS NULL
       ";
@@ -163,7 +163,7 @@ function _xmlsitemap_node_updatepid_query() {
         UPDATE {xmlsitemap_node}
         SET pid = {url_alias}.pid
         FROM {url_alias}
-        WHERE {url_alias}.src = CONCAT('node/', nid) AND {xmlsitemap_node}.pid IS NULL
+        WHERE {url_alias}.src = CONCAT('node/', CAST(nid AS VARCHAR)) AND {xmlsitemap_node}.pid IS NULL
       ";
       break;
   }
@@ -230,7 +230,7 @@ function xmlsitemap_node_update_3() {
       $ret[] = update_sql("
         UPDATE {xmlsitemap_node} xn
         INNER JOIN {node} n ON n.nid = xn.nid
-        LEFT JOIN {url_alias} ua ON ua.src = CONCAT('node/', xn.nid) AND xn.pid IS NULL
+        LEFT JOIN {url_alias} ua ON ua.src = CONCAT('node/', CAST(xn.nid AS CHAR)) AND xn.pid IS NULL
         SET xn.last_changed = n.changed, xn.pid = ua.pid
       ");
       break;
@@ -238,7 +238,7 @@ function xmlsitemap_node_update_3() {
       $ret[] = update_sql("
         UPDATE {xmlsitemap_node}
         SET pid = {url_alias}.pid, last_changed = {node}.changed
-        FROM {node} LEFT JOIN {url_alias} ON {url_alias}.src = CONCAT('node/', {xmlsitemap_node}.nid) AND {xmlsitemap_node}.pid IS NULL
+        FROM {node} LEFT JOIN {url_alias} ON {url_alias}.src = CONCAT('node/', CAST({xmlsitemap_node}.nid AS VARCHAR)) AND {xmlsitemap_node}.pid IS NULL
         WHERE {xmlsitemap_node}.nid = {node}.nid
       ");
       break;

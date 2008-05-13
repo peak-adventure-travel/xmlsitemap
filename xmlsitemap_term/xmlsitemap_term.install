@@ -64,25 +64,25 @@ function xmlsitemap_term_enable() {
   switch ($GLOBALS['db_type']) {
     case 'mysql':
     case 'mysqli':
-      $query = "
-        UPDATE {xmlsitemap_term} xt INNER JOIN {url_alias} ua ON
-        ua.src = CONCAT('taxonomy/term/', xt.tid) OR ua.src = CONCAT('forum/', xt.tid)
+      db_query("
+        UPDATE {xmlsitemap_term} xt INNER JOIN {url_alias} ua
+        ON ua.src = CONCAT('taxonomy/term/', CAST(xt.tid AS CHAR))
+        OR ua.src = CONCAT('forum/', CAST(xt.tid AS CHAR))
         SET xt.pid = ua.pid
         WHERE xt.pid IS NULL
-      ";
+      ");
       break;
     case 'pgsql':
-      $query = "
+      db_query("
         UPDATE {xmlsitemap_term}
         SET pid = {url_alias}.pid
         FROM {url_alias}
-        WHERE {url_alias}.src = CONCAT('taxonomy/term/', tid)
-        OR {url_alias}.src = CONCAT('forum/', tid)
+        WHERE {url_alias}.src = CONCAT('taxonomy/term/', CAST(tid AS VARCHAR))
+        OR {url_alias}.src = CONCAT('forum/', CAST(tid AS VARCHAR))
         AND {xmlsitemap_term}.pid IS NULL
-      ";
+      ");
       break;
   }
-  db_query($query);
   xmlsitemap_update_sitemap();
 }
 
@@ -116,17 +116,17 @@ function xmlsitemap_term_update_1() {
       $ret[] = update_sql("
         UPDATE {xmlsitemap_term} xt, {url_alias} ua SET xt.pid = ua.pid
         WHERE xt.pid IS NULL AND (
-          ua.src = CONCAT('taxonomy/term/', xt.tid) OR ua.src = CONCAT('forum/', xt.tid)
+          ua.src = CONCAT('taxonomy/term/', CAST(xt.tid AS CHAR))
+          OR ua.src = CONCAT('forum/', CAST(xt.tid AS CHAR))
         )
       ");
       break;
     case 'pgsql':
       $ret[] = update_sql("
         UPDATE {xmlsitemap_term} SET pid = {url_alias}.pid FROM {url_alias}
-        WHERE {xmlsitemap_term}.pid IS NULL
-        AND (
-          {url_alias}.src = CONCAT('taxonomy/term/', tid)
-          OR {url_alias}.src = CONCAT('forum/', tid)
+        WHERE {xmlsitemap_term}.pid IS NULL AND (
+          {url_alias}.src = CONCAT('taxonomy/term/', CAST(tid AS VARCHAR))
+          OR {url_alias}.src = CONCAT('forum/', CAST(tid AS VARCHAR))
         )
       ");
       break;
