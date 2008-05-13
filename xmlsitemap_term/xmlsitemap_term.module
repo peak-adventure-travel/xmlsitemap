@@ -249,12 +249,14 @@ function xmlsitemap_term_cron() {
         break;
       case 'pgsql':
         $query = "
-          UPDATE {xmlsitemap_term} xt
-          SET pid = ua.pid
-          FROM {url_alias} ua
-          WHERE ua.src = 'taxonomy/term/' || xt.tid
-          OR ua.src = 'forum/' || xt.tid
-          AND xt.pid IS NULL
+          UPDATE {xmlsitemap_term}
+          SET pid = {url_alias}.pid
+          FROM {url_alias}
+          WHERE {xmlsitemap_term}.pid IS NULL
+          AND (
+            {url_alias}.src = CONCAT('taxonomy/term/', tid)
+            OR {url_alias}.src = CONCAT('forum/', tid)
+          )
         ";
         break;
     }

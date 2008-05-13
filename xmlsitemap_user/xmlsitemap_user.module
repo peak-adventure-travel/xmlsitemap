@@ -257,9 +257,9 @@ function xmlsitemap_user_cron() {
         break;
       case 'pgsql':
         $query = "
-          UPDATE {xmlsitemap_user} xu
-          SET pid = ua.pid
-          FROM {url_alias} ua WHERE ua.src = 'user/' || xu.uid AND xu.pid IS NULL
+          UPDATE {xmlsitemap_user}
+          SET pid = {url_alias}.pid
+          FROM {url_alias} WHERE {url_alias}.src = CONCAT('user/', uid) AND {xmlsitemap_user}.pid IS NULL
         ";
         break;
     }

@@ -70,7 +70,7 @@ function _xmlsitemap_node_gsitemap_replace() {
       case 'pgsql':
         db_query("
           UPDATE {xmlsitemap_node} SET pid = {url_alias}.pid FROM {url_alias}
-          WHERE {xmlsitemap_node}.pid IS NULL AND {url_alias}.src = 'node/' || {xmlsitemap_node}.nid
+          WHERE {xmlsitemap_node}.pid IS NULL AND {url_alias}.src = CONCAT('node/', nid)
         ");
         break;
     }
@@ -160,10 +160,10 @@ function _xmlsitemap_node_updatepid_query() {
       break;
     case 'pgsql':
       $query = "
-        UPDATE {xmlsitemap_node} xn
-        SET pid = ua.pid
-        FROM {url_alias} ua
-        WHERE ua.src = 'node/' || xn.nid AND xn.pid IS NULL
+        UPDATE {xmlsitemap_node}
+        SET pid = {url_alias}.pid
+        FROM {url_alias}
+        WHERE {url_alias}.src = CONCAT('node/', nid) AND {xmlsitemap_node}.pid IS NULL
       ";
       break;
   }
@@ -238,8 +238,8 @@ function xmlsitemap_node_update_3() {
       $ret[] = update_sql("
         UPDATE {xmlsitemap_node}
         SET pid = {url_alias}.pid, last_changed = {node}.changed
-        FROM {node} LEFT JOIN {url_alias} ON {url_alias}.src = 'node/' || nid AND pid IS NULL
-        WHERE {node}.nid = nid
+        FROM {node} LEFT JOIN {url_alias} ON {url_alias}.src = CONCAT('node/', {xmlsitemap_node}.nid) AND {xmlsitemap_node}.pid IS NULL
+        WHERE {xmlsitemap_node}.nid = {node}.nid
       ");
       break;
   }

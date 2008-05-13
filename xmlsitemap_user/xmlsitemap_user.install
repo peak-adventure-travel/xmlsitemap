@@ -83,9 +83,9 @@ function xmlsitemap_user_enable() {
       break;
     case 'pgsql':
       $query = "
-        UPDATE {xmlsitemap_user} xu
-        SET pid = ua.pid
-        FROM {url_alias} ua WHERE ua.src = 'user/' || xu.uid AND xu.pid IS NULL
+        UPDATE {xmlsitemap_user}
+        SET pid = {url_alias}.pid
+        FROM {url_alias} WHERE {url_alias}.src = CONCAT('user/', uid) AND {xmlsitemap_user}.pid IS NULL
       ";
       break;
   }
@@ -131,7 +131,7 @@ function xmlsitemap_user_update_1() {
     case 'pgsql':
       $ret[] = update_sql("
         UPDATE {xmlsitemap_user} SET pid = {url_alias}.pid FROM {url_alias}
-        WHERE {xmlsitemap_user}.pid IS NULL AND ua.src = 'user/' || {xmlsitemap_user}.uid
+        WHERE {xmlsitemap_user}.pid IS NULL AND {url_alias}.src = CONCAT('user/', uid)
       ");
       break;
   }

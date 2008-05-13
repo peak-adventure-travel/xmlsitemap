@@ -73,12 +73,12 @@ function xmlsitemap_term_enable() {
       break;
     case 'pgsql':
       $query = "
-        UPDATE {xmlsitemap_term} xt
-        SET pid = ua.pid
-        FROM {url_alias} ua
-        WHERE ua.src = 'taxonomy/term/' || xt.tid
-        OR ua.src = 'forum/' || xt.tid
-        AND xt.pid IS NULL
+        UPDATE {xmlsitemap_term}
+        SET pid = {url_alias}.pid
+        FROM {url_alias}
+        WHERE {url_alias}.src = CONCAT('taxonomy/term/', tid)
+        OR {url_alias}.src = CONCAT('forum/', tid)
+        AND {xmlsitemap_term}.pid IS NULL
       ";
       break;
   }
@@ -125,8 +125,8 @@ function xmlsitemap_term_update_1() {
         UPDATE {xmlsitemap_term} SET pid = {url_alias}.pid FROM {url_alias}
         WHERE {xmlsitemap_term}.pid IS NULL
         AND (
-          {url_alias}.src = 'taxonomy/term/' || {xmlsitemap_term}.tid
-          OR {url_alias}.src = 'forum/' || {xmlsitemap_term}.tid
+          {url_alias}.src = CONCAT('taxonomy/term/', tid)
+          OR {url_alias}.src = CONCAT('forum/', tid)
         )
       ");
       break;
