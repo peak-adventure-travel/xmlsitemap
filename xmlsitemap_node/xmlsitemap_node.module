@@ -316,7 +316,7 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
 /**
  * Implementation of hook_comment().
  */
-function xmlsitemap_node_comment($op, $comment) {
+function xmlsitemap_node_comment($comment, $op) {
   $comment = (object) $comment;
   switch ($op) {
     case 'insert':
