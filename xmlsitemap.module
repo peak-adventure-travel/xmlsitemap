@@ -542,17 +542,18 @@ function _xmlsitemap_format($entries) {
   $links = array();
   foreach ($entries as $entry) {
     if (isset($entry['#loc'])) {
-      $link = '<url><loc>'. check_url($entry['#loc']) .'</loc>';
+      $link = '  <url>'."\n";
+      $link .= '    <loc>'. check_url($entry['#loc']) .'</loc>'."\n";
       if (isset($entry['#lastmod'])) {
-        $link .= '<lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $entry['#lastmod']) .'</lastmod>';
+        $link .= '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $entry['#lastmod']) .'</lastmod>'."\n";
       }
       if (isset($entry['#changefreq'])) {
-        $link .= '<changefreq>'. _xmlsitemap_frequency($entry['#changefreq']) .'</changefreq>';
+        $link .= '    <changefreq>'. _xmlsitemap_frequency($entry['#changefreq']) .'</changefreq>'."\n";
       }
       if (isset($entry['#priority']) && $entry['#priority'] <= 1 && $entry['#priority'] >= 0) {
-        $link .= '<priority>'. number_format($entry['#priority'], 1) .'</priority>';
+        $link .= '    <priority>'. number_format($entry['#priority'], 1) .'</priority>'."\n";
       }
-      $link .= '</url>';
+      $link .= '  </url>';
       $links[] = $link;
     }
   }
