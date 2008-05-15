@@ -35,7 +35,7 @@ function _xmlsitemap_term_excludes() {
     $excludes = array();
     $result = db_query("SELECT vid FROM {vocabulary}");
     while ($vocabulary = db_fetch_object($result)) {
-      if (variable_get("xmlsitemap_term_vocabulary_priority_$vocabulary->vid", .1) < 0) {
+      if (variable_get("xmlsitemap_term_vocabulary_priority_$vocabulary->vid", 0.5) < 0) {
         $excludes[] = $vocabulary->vid;
       }
     }
@@ -114,7 +114,7 @@ function _xmlsitemap_term_frontpage() {
 function _xmlsitemap_term_priority($term) {
   $priority = $term->priority_override;
   if (!isset($term->priority_override)) {
-    $priority = variable_get("xmlsitemap_term_vocabulary_priority_$vocabulary->vid", 0.1);
+    $priority = variable_get("xmlsitemap_term_vocabulary_priority_$vocabulary->vid", 0.5);
     $priority = min($priority, 0.9);
   }
   return $priority;
@@ -137,7 +137,7 @@ function xmlsitemap_term_form_alter($form_id, &$form) {
       $priority = isset($priority) ? $priority : 'NULL';
       if (user_access('override term priority')) {
         $options = xmlsitemap_priority_options('both');
-        $default = variable_get('xmlsitemap_term_vocabulary_priority_'. $form['vid']['#value'], '0.1');
+        $default = variable_get('xmlsitemap_term_vocabulary_priority_'. $form['vid']['#value'], '0.5');
         $form['xmlsitemap_term_priority'] = array(
           '#type' => 'select',
           '#title' => t('Site map priority'),
@@ -156,7 +156,7 @@ function xmlsitemap_term_form_alter($form_id, &$form) {
       $form['xmlsitemap_term_vocabulary_priority'] = array(
         '#type' => 'select',
         '#title' => t('Site map priority'),
-        '#default_value' => variable_get('xmlsitemap_term_vocabulary_priority_'. $form['vid']['#value'], 0.1),
+        '#default_value' => variable_get('xmlsitemap_term_vocabulary_priority_'. $form['vid']['#value'], 0.5),
         '#options' => xmlsitemap_priority_options('exclude'),
         '#description' => t('This will be the default priority of terms in this vocabulary.'),
       );
@@ -178,7 +178,7 @@ function xmlsitemap_term_taxonomy($op, $type, $array = NULL) {
         break;
       case 'insert':
       case 'update':
-        if (variable_get("xmlsitemap_term_vocabulary_priority_$array[vid]", 0.1) != $array['xmlsitemap_term_vocabulary_priority']) {
+        if (variable_get("xmlsitemap_term_vocabulary_priority_$array[vid]", 0.5) != $array['xmlsitemap_term_vocabulary_priority']) {
           variable_set("xmlsitemap_term_vocabulary_priority_$array[vid]", $array['xmlsitemap_term_vocabulary_priority']);
           xmlsitemap_update_sitemap();
         }

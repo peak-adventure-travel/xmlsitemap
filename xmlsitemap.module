@@ -174,7 +174,7 @@ function xmlsitemap_settings_additional() {
   $form['xmlsitemap_additional_links_priority'] = array(
     '#type' => 'select',
     '#title' => t('Link priority'),
-    '#default_value' => variable_get('xmlsitemap_additional_links_priority', 0.1),
+    '#default_value' => variable_get('xmlsitemap_additional_links_priority', 0.5),
     '#options' => xmlsitemap_priority_options(),
     '#description' => t('This is the default priority for additional links.'),
   );

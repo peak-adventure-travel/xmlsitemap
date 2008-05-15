@@ -34,7 +34,7 @@ function _xmlsitemap_node_excludes() {
   if (!isset($excludes)) {
     $excludes = array();
     foreach (node_get_types() as $type => $name) {
-      if (variable_get("xmlsitemap_node_type_priority_$type", 0) < 0) {
+      if (variable_get("xmlsitemap_node_type_priority_$type", 0.5) < 0) {
         $excludes[] = $type;
       }
     }
@@ -139,7 +139,7 @@ function xmlsitemap_node_priority($node) {
   $priority = $node->priority_override;
   if (!isset($node->priority_override)) {
     $priority = 0;
-    $priority += variable_get("xmlsitemap_node_type_priority_$node->type", 0.1);
+    $priority += variable_get("xmlsitemap_node_type_priority_$node->type", 0.5);
     if ($node->promote) {
       $priority += $promote_priority;
     }
@@ -176,7 +176,7 @@ function xmlsitemap_node_form_alter($form_id, &$form) {
             '#weight' => 30,
           );
           $options = xmlsitemap_priority_options('both');
-          $default = variable_get("xmlsitemap_node_type_priority_$node->type", '0.1');
+          $default = variable_get("xmlsitemap_node_type_priority_$node->type", '0.5');
           $form['xmlsitemap_node']['priority_override'] = array(
             '#type' => 'select',
             '#title' => t('Site map priority'),
@@ -202,11 +202,11 @@ function xmlsitemap_node_form_alter($form_id, &$form) {
         $form['xmlsitemap_node']['xmlsitemap_node_type_priority'] = array(
           '#type' => 'select',
           '#title' => t('Priority adjustment'),
-          '#default_value' => variable_get("xmlsitemap_node_type_priority_{$form['#node_type']->type}", 0.1),
+          '#default_value' => variable_get("xmlsitemap_node_type_priority_{$form['#node_type']->type}", 0.5),
           '#options' => xmlsitemap_priority_options('exclude'),
           '#description' => t('This number will be added to the priority of this content type.'),
         );
-        $form['xmlsitemap_old_priority'] = array('#type' => 'value', '#value' => variable_get("xmlsitemap_node_type_priority_{$form['#node_type']->type}", 0.1));
+        $form['xmlsitemap_old_priority'] = array('#type' => 'value', '#value' => variable_get("xmlsitemap_node_type_priority_{$form['#node_type']->type}", 0.5));
         $form['#submit']['_xmlsitemap_node_submit'] = array();
         $form['submit']['#weight'] = 1;
         $form['reset']['#weight'] = 1;
@@ -353,7 +353,7 @@ function _xmlsitemap_node_submit($form_id, $form_values) {
  * Implementation of hook_node_type().
  */
 function xmlsitemap_node_node_type($op, $info) {
-  if ($op == 'delete' && variable_get("xmlsitemap_node_type_priority_$info->old_type", 0.1) != 0.1) {
+  if ($op == 'delete' && variable_get("xmlsitemap_node_type_priority_$info->old_type", 0.5) != 0.5) {
     xmlsitemap_update_sitemap();
   }
 }
