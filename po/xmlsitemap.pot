@@ -3,23 +3,26 @@
 # LANGUAGE translation of Drupal (general)
 # Copyright YEAR NAME <EMAIL@ADDRESS>
 # Generated from files:
-#  xmlsitemap.module,v 1.1.2.12 2007/12/11 22:57:38 darrenoh
+#  xmlsitemap.module,v 1.1.2.17 2008/05/15 04:06:27 darrenoh
 #  xmlsitemap.info,v 1.1 2007/11/09 17:56:04 darrenoh
 #  xmlsitemap_engines.info,v 1.1 2007/11/09 17:56:05 darrenoh
 #  xmlsitemap_node.info,v 1.1 2007/11/09 17:56:05 darrenoh
 #  xmlsitemap_term.info,v 1.1 2007/11/09 17:56:05 darrenoh
 #  xmlsitemap_user.info,v 1.1 2007/11/09 17:56:05 darrenoh
-#  xmlsitemap_node.module,v 1.1.2.14 2007/12/10 03:15:12 darrenoh
-#  xmlsitemap_user.module,v 1.1.2.10 2007/12/10 03:15:12 darrenoh
+#  xmlsitemap_node.module,v 1.1.2.22 2008/05/15 04:06:28 darrenoh
+#  xmlsitemap_user.module,v 1.1.2.15 2008/05/15 04:06:28 darrenoh
 #  xmlsitemap.php,v 1.2.2.2 2007/12/06 17:22:20 darrenoh
-#  xmlsitemap_engines.module,v 1.1.2.2 2007/12/10 05:00:40 darrenoh
-#  xmlsitemap_term.module,v 1.1.2.8 2007/12/13 02:18:30 darrenoh
+#  xmlsitemap_engines.module,v 1.1.2.5 2008/05/08 20:02:45 darrenoh
+#  xmlsitemap_term.module,v 1.1.2.13 2008/05/15 04:06:28 darrenoh
+#  xmlsitemap_node.install,v 1.1.2.17 2008/05/13 17:51:17 darrenoh
+#  xmlsitemap_term.install,v 1.1.2.7 2008/05/13 17:39:18 darrenoh
+#  xmlsitemap_user.install,v 1.1.2.8 2008/05/13 17:39:18 darrenoh
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2007-12-12 21:38-0500\n"
+"POT-Creation-Date: 2008-05-16 18:47-0400\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -48,7 +51,7 @@ msgstr ""
 msgid "Configure site map."
 msgstr ""
 
-#: xmlsitemap.module:41;342 xmlsitemap_node/xmlsitemap_node.module:198 xmlsitemap_user/xmlsitemap_user.module:99
+#: xmlsitemap.module:41;343 xmlsitemap_node/xmlsitemap_node.module:198 xmlsitemap_user/xmlsitemap_user.module:99
 msgid "Site map"
 msgstr ""
 
@@ -68,7 +71,7 @@ msgstr ""
 msgid "Configure additional links."
 msgstr ""
 
-#: xmlsitemap.module:65;342
+#: xmlsitemap.module:65;343
 msgid "Site map index"
 msgstr ""
 
@@ -136,43 +139,43 @@ msgstr ""
 msgid "Enter a Drupal path to add to the site map."
 msgstr ""
 
-#: xmlsitemap.module:218
+#: xmlsitemap.module:219
 msgid "Delete"
 msgstr ""
 
-#: xmlsitemap.module:218
+#: xmlsitemap.module:219
 msgid "Path"
 msgstr ""
 
-#: xmlsitemap.module:218
+#: xmlsitemap.module:219
 msgid "Priority"
 msgstr ""
 
-#: xmlsitemap.module:239
+#: xmlsitemap.module:240
 msgid "Save configuration"
 msgstr ""
 
-#: xmlsitemap.module:301
+#: xmlsitemap.module:302
 msgid "Default"
 msgstr ""
 
-#: xmlsitemap.module:310
+#: xmlsitemap.module:311
 msgid "Not in site map"
 msgstr ""
 
-#: xmlsitemap.module:336
+#: xmlsitemap.module:337
 msgid "Site map @chunk"
 msgstr ""
 
-#: xmlsitemap.module:359
+#: xmlsitemap.module:360
 msgid "!sitemap downloaded by @user-agent at @address."
 msgstr ""
 
-#: xmlsitemap.module:420
+#: xmlsitemap.module:421
 msgid "Unable to load site map. Make sure that there is an xmlsitemap directory in your files directory and that it is writable by Drupal."
 msgstr ""
 
-#: xmlsitemap.module:364 docs/xmlsitemap.php:176;179 xmlsitemap_engines/xmlsitemap_engines.module:67;70;119;122;157;160;207;210
+#: xmlsitemap.module:365;0 docs/xmlsitemap.php:176;179 xmlsitemap_engines/xmlsitemap_engines.module:67;70;119;122;157;160;207;210
 msgid "xmlsitemap"
 msgstr ""
 
@@ -304,6 +307,10 @@ msgstr ""
 msgid "Windows Live verification page"
 msgstr ""
 
+#: xmlsitemap_engines/xmlsitemap_engines.module:0
+msgid "xmlsitemap_engines"
+msgstr ""
+
 #: xmlsitemap_engines/xmlsitemap_engines.info:0
 msgid "XML Sitemap: Engines"
 msgstr ""
@@ -368,16 +375,36 @@ msgstr ""
 msgid "If enabled, the frequency of comments on a post will affect its change frequency and last modification date."
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:346
+#: xmlsitemap_node/xmlsitemap_node.module:345
 msgid "Save content type"
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:346
+#: xmlsitemap_node/xmlsitemap_node.module:345
 msgid "Reset to defaults"
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.info:0
+#: xmlsitemap_node/xmlsitemap_node.module:405
+msgid "XML Sitemap: Sitemap"
+msgstr ""
+
+#: xmlsitemap_node/xmlsitemap_node.module:409
+msgid "XML Sitemap: News"
+msgstr ""
+
+#: xmlsitemap_node/xmlsitemap_node.module:159
+msgid "override node priority"
+msgstr ""
+
+#: xmlsitemap_node/xmlsitemap_node.module:0
+msgid "xmlsitemap_node"
+msgstr ""
+
+#: (duplicate) xmlsitemap_node/xmlsitemap_node.install:12  xmlsitemap_node/xmlsitemap_node.info:0
 msgid "XML Sitemap: Node"
+msgstr ""
+
+#: (duplicate) xmlsitemap_node/xmlsitemap_node.install:13 
+msgid "Your MySQL version is too low. &ldquo;XML Sitemap: Node&rdquo; requires MySQL 4.0.14 or higher."
 msgstr ""
 
 #: xmlsitemap_node/xmlsitemap_node.info:0
@@ -388,8 +415,20 @@ msgstr ""
 msgid "This will be the default priority of terms in this vocabulary."
 msgstr ""
 
-#: xmlsitemap_term/xmlsitemap_term.info:0
+#: xmlsitemap_term/xmlsitemap_term.module:127
+msgid "override term priority"
+msgstr ""
+
+#: xmlsitemap_term/xmlsitemap_term.module:0
+msgid "xmlsitemap_term"
+msgstr ""
+
+#: (duplicate) xmlsitemap_term/xmlsitemap_term.install:12  xmlsitemap_term/xmlsitemap_term.info:0
 msgid "XML Sitemap: Term"
+msgstr ""
+
+#: (duplicate) xmlsitemap_term/xmlsitemap_term.install:13 
+msgid "Your MySQL version is too low. &ldquo;XML Sitemap: Term&rdquo; requires MySQL 4.0.14 or higher."
 msgstr ""
 
 #: xmlsitemap_term/xmlsitemap_term.info:0
@@ -416,11 +455,47 @@ msgstr ""
 msgid "Delete role"
 msgstr ""
 
-#: xmlsitemap_user/xmlsitemap_user.info:0
+#: xmlsitemap_user/xmlsitemap_user.module:159
+msgid "override profile priority"
+msgstr ""
+
+#: xmlsitemap_user/xmlsitemap_user.module:0
+msgid "xmlsitemap_user"
+msgstr ""
+
+#: (duplicate) xmlsitemap_user/xmlsitemap_user.install:12  xmlsitemap_user/xmlsitemap_user.info:0
 msgid "XML Sitemap: User"
+msgstr ""
+
+#: (duplicate) xmlsitemap_user/xmlsitemap_user.install:13 
+msgid "Your MySQL version is too low. &ldquo;XML Sitemap: User&rdquo; requires MySQL 4.0.14 or higher."
 msgstr ""
 
 #: xmlsitemap_user/xmlsitemap_user.info:0
 msgid "Adds user profiles to the site map."
+msgstr ""
+
+#: (duplicate) xmlsitemap_node/xmlsitemap_node.install:12 
+msgid "XML Sitemap: Node"
+msgstr ""
+
+#: (duplicate) xmlsitemap_node/xmlsitemap_node.install:13 
+msgid "Your MySQL version is too low. &ldquo;XML Sitemap: Node&rdquo; requires MySQL 4.0.14 or higher."
+msgstr ""
+
+#: (duplicate) xmlsitemap_term/xmlsitemap_term.install:12 
+msgid "XML Sitemap: Term"
+msgstr ""
+
+#: (duplicate) xmlsitemap_term/xmlsitemap_term.install:13 
+msgid "Your MySQL version is too low. &ldquo;XML Sitemap: Term&rdquo; requires MySQL 4.0.14 or higher."
+msgstr ""
+
+#: (duplicate) xmlsitemap_user/xmlsitemap_user.install:12 
+msgid "XML Sitemap: User"
+msgstr ""
+
+#: (duplicate) xmlsitemap_user/xmlsitemap_user.install:13 
+msgid "Your MySQL version is too low. &ldquo;XML Sitemap: User&rdquo; requires MySQL 4.0.14 or higher."
 msgstr ""
 
