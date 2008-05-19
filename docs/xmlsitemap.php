@@ -12,8 +12,8 @@
  * This hook allows modules to add additional links to the site map. Links
  * may be associated with nodes, terms, or users, as shown in the example.
  * @param $type:
- * If set, a string specifying the type of additional links to add. You can use
- * your own type or a type from one of the included modules:
+ * If set, a string specifying the type of additional links to return. You
+ * can use your own type or a type from one of the included modules:
  * - node:
  *   Links associated with nodes
  * - term:
@@ -29,17 +29,20 @@
  * - For "term", an array of excluded vocabularies
  * - For "user", an array of included roles
  * @return
- * If $type is xml, return an XML site map. Otherwise, each link should be saved
- * to the xmlsitemap table. The xmlsitemap table contains the following columns:
- * - loc:
+ * If $type is xml, return an XML site map. Otherwise, return an array of
+ * links or an empty array. Each link should be an array with the
+ * following keys:
+ * - nid, tid, uid, or custom ID type:
+ *   ID to associate with this link (If you have defined your own link type,
+ *   use the ID key to group related links together.)
+ * - #loc:
  *   The URL of the page
- * - lastmod:
+ * - #lastmod:
  *   Timestamp of last modification
- * - changefreq:
+ * - #changefreq:
  *   Number of seconds between changes
- * - priority:
+ * - #priority:
  *   A number between 0 and 1 indicating the link's priority
- * Only the loc column is required.
  */
 function hook_xmlsitemap_links($type = NULL, $excludes = array()) {
   $links = array();
@@ -65,21 +68,27 @@ function hook_xmlsitemap_links($type = NULL, $excludes = array()) {
       while ($user = db_fetch_object($result)) {
         $age = time() - $user->last_changed;
         $interval = empty($user->previously_changed) ? 0 : $user->last_changed - $user->previously_changed;
-        $link = array(
-          'loc' => xmlsitemap_url("user/$user->uid", $user->alias, NULL, NULL, TRUE),
-          'lastmod' => $user->last_changed,
-          'changefreq' => max($age, $interval),
-          'priority' => _xmlsitemap_user_priority($user),
+        $links[] = array(
+          'uid' => $user->uid,
+          '#loc' => xmlsitemap_url("user/$user->uid", $user->alias, NULL, NULL, TRUE),
+          '#lastmod' => $user->last_changed,
+          '#changefreq' => max($age, $interval),
+          '#priority' => _xmlsitemap_user_priority($user),
         );
-        db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)", $link);
       }
-      // Add other user links to the xmlsitemap table.
-      module_invoke_all('xmlsitemap_links', 'user');
+      // Add other user links to the links array.
+      $links = array_merge($links, module_invoke_all('xmlsitemap_links', 'user'));
       // Sort links by user ID and URL.
+      foreach ($links as $key => $link) {
+        $uid[$key] = $link['uid'];
+        $loc[$key] = $link['#loc'];
+      }
+      array_multisort($uid, $loc, $links);
       break;
     case 'xml':
       // Retrieve an XML site map.
-      return example_sitemap();
+      $links = example_sitemap();
+      break;
     default:
       // Add arbitrary additional links.
       $result = db_query("
@@ -94,16 +103,17 @@ function hook_xmlsitemap_links($type = NULL, $excludes = array()) {
         else {
           $interval = 0;
         }
-        $link = array(
-          'loc' => xmlsitemap_url($link->path, $link->alias, NULL, NULL, TRUE),
-          'lastmod' => $link->last_changed,
-          'changefreq' => max($age, $interval),
-          'priority' => $link->priority,
+        $entry = array(
+          '#loc' => xmlsitemap_url($link->path, $link->alias, NULL, NULL, TRUE),
+          '#lastmod' => $link->last_changed,
+          '#changefreq' => max($age, $interval),
+          '#priority' => $link->priority,
         );
-        db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)", $link);
+        $additional[] = $entry;
       }
       break;
   }
+  return $links;
 }
 
 /**

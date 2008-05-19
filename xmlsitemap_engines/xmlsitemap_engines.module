@@ -280,7 +280,5 @@ function _xmlsitemap_engines_verify($engine) {
       print "</users>\n";
       break;
   }
-  module_invoke_all('exit');
-  exit;
 }
 

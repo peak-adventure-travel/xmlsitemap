@@ -9,10 +9,20 @@
  * Implementation of hook_xmlsitemap_links().
  */
 function xmlsitemap_user_xmlsitemap_links($type = NULL, $excludes = array()) {
+  $links = array();
   if (!isset($type) && user_access('access user profiles')) {
-    _xmlsitemap_user_links();
-    module_invoke_all('xmlsitemap_links', 'user');
+    $links = _xmlsitemap_user_links();
+    $links = array_merge($links, module_invoke_all('xmlsitemap_links', 'user'));
+    $links = array_merge($links, module_invoke_all('gsitemap', 'user'));
+    if (!empty($links)) {
+      foreach ($links as $key => $link) {
+        $uid[$key] = $link['uid'];
+        $loc[$key] = $link['#loc'];
+      }
+      array_multisort($uid, $loc, $links);
+    }
   }
+  return $links;
 }
 
 /**
@@ -21,6 +31,7 @@ function xmlsitemap_user_xmlsitemap_links($type = NULL, $excludes = array()) {
  * values for a site map URL.
  */
 function _xmlsitemap_user_links() {
+  $links = array();
   $result = db_query("
     SELECT u.uid, xu.last_changed, xu.previously_changed, xu.priority_override, SUM(xur.priority) as priority, ua.dst AS alias
     FROM {users} u
@@ -35,15 +46,15 @@ function _xmlsitemap_user_links() {
   while ($user = db_fetch_object($result)) {
     $age = time() - $user->last_changed;
     $interval = empty($user->previously_changed) ? 0 : $user->last_changed - $user->previously_changed;
-    $link = array(
+    $links[] = array(
       'uid' => $user->uid,
       '#loc' => xmlsitemap_url("user/$user->uid", $user->alias, NULL, NULL, TRUE),
       '#lastmod' => $user->last_changed,
       '#changefreq' => max($age, $interval),
       '#priority' => _xmlsitemap_user_priority($user),
     );
-    db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)", $link);
   }
+  return $links;
 }
 
 /**
