@@ -437,7 +437,7 @@ function _xmlsitemap_output_index($link_count) {
   $xsl_path = file_exists($xsl_path) ? _xmlsitemap_file_create_url($xsl_path) : $base_path . drupal_get_path('module', 'xmlsitemap') .'/gss/gss.xsl';
   $output .= '<?xml version="1.0" encoding="UTF-8"?>'."\n";
   $output .= '<?xml-stylesheet type="text/xsl" href="'. $xsl_path .'" ?>'."\n";
-  $output .= '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n";
+  $output .= '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'."\n";
   $output .= '              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'."\n";
   $output .= '              xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9'."\n";
   $output .= '                                  http://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd">'."\n";
