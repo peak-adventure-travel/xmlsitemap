@@ -8,6 +8,12 @@ function xmlsitemap_install() {
   switch ($GLOBALS['db_type']) {
     case 'mysql':
     case 'mysqli':
+      db_query("CREATE TABLE {xmlsitemap} (
+        loc varchar(128) NOT NULL default '',
+        lastmod int(11),
+        changefreq int(11),
+        priority float
+      ) /*!40100 DEFAULT CHARACTER SET utf8 */;");
       db_query("CREATE TABLE {xmlsitemap_additional} (
         path varchar(128) NOT NULL default '',
         pid int,
@@ -18,6 +24,12 @@ function xmlsitemap_install() {
       ) /*!40100 DEFAULT CHARACTER SET utf8 */;");
       break;
     case 'pgsql':
+      db_query("CREATE TABLE {xmlsitemap} (
+        loc varchar(128) NOT NULL default '',
+        lastmod integer,
+        changefreq integer,
+        priority real
+      );");
       db_query("CREATE TABLE {xmlsitemap_additional} (
         path varchar(128) NOT NULL default '',
         pid integer,
@@ -49,52 +61,6 @@ function xmlsitemap_enable() {
   if (file_check_directory(($path = file_directory_path() .'/xmlsitemap'), FILE_CREATE_DIRECTORY)) {
     file_save_data($xsl, "$path/gss.xsl", FILE_EXISTS_REPLACE);
   }
-  _xmlsitemap_gsitemap_replace();
-}
-
-/**
- * Replace Google Sitemap if it is installed.
- */
-function _xmlsitemap_gsitemap_replace() {
-  if (db_result(db_query("
-    SELECT 1 FROM {system}
-    WHERE type = 'module' AND name = 'gsitemap' AND (status = 1 OR schema_version >= 0)
-  "))) {
-    db_query("
-      INSERT INTO {xmlsitemap_additional} (path, pid, last_changed, previously_changed, priority)
-      SELECT path, pid, last_changed, previously_changed, priority FROM {gsitemap_additional}
-    ");
-    $modules = array('xmlsitemap_node', 'xmlsitemap_engines');
-    if (variable_get('gsitemap_showterms', FALSE)) {
-      $modules[] = 'xmlsitemap_term';
-      variable_del('gsitemap_showterms');
-    }
-    if (variable_get('gsitemap_showusers', FALSE)) {
-      $modules[] = 'xmlsitemap_user';
-      variable_del('gsitemap_showusers');
-    }
-    drupal_install_modules($modules);
-    $settings = db_query("SELECT * FROM {variable} WHERE name LIKE 'gsitemap\_%'");
-    while ($variable = db_fetch_object($settings)) {
-      switch ($variable->name) {
-        case 'gsitemap_frontpage':
-          $name = 'xmlsitemap_front_page_priority';
-          break;
-        case 'gsitemap_priority':
-          $name = 'xmlsitemap_additional_links_priority';
-          break;
-        case 'gsitemap_logacc':
-          $name = 'xmlsitemap_log_access';
-          break;
-        default:
-          $name = 'xmlsitemap'. strstr($variable->name, '_');
-          break;
-      }
-      variable_set($name, (float) unserialize($variable->value));
-    }
-    module_disable(array('gsitemap'));
-    drupal_uninstall_module('gsitemap');
-  }
 }
 
 /**
@@ -117,10 +83,38 @@ function xmlsitemap_disable() {
  * Implementation of hook_uninstall().
  */
 function xmlsitemap_uninstall() {
+  db_query("DROP TABLE {xmlsitemap}");
   db_query("DROP TABLE {xmlsitemap_additional}");
   $settings = db_query("SELECT name FROM {variable} WHERE name LIKE 'xmlsitemap\_%'");
   while ($variable = db_fetch_object($settings)) {
     variable_del($variable->name);
   }
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_1() {
+  $ret = array();
+  switch ($GLOBALS['db_type']) {
+    case 'mysql':
+    case 'mysqli':
+      $ret[] = update_sql("CREATE TABLE {xmlsitemap} (
+        loc varchar(128) NOT NULL default '',
+        lastmod int(11),
+        changefreq int(11),
+        priority float
+      ) /*!40100 DEFAULT CHARACTER SET utf8 */;");
+      break;
+    case 'pgsql':
+      $ret[] = update_sql("CREATE TABLE {xmlsitemap} (
+        loc varchar(128) NOT NULL default '',
+        lastmod integer,
+        changefreq integer,
+        priority real
+      );");
+      break;
+  }
+  return $ret;
 }
 

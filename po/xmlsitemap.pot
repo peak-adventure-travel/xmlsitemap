@@ -3,7 +3,7 @@
 # LANGUAGE translation of Drupal (general)
 # Copyright YEAR NAME <EMAIL@ADDRESS>
 # Generated from files:
-#  xmlsitemap.module,v 1.1.2.17 2008/05/15 04:06:27 darrenoh
+#  xmlsitemap.module,v 1.1.2.20 2008/05/19 02:16:05 darrenoh
 #  xmlsitemap.info,v 1.1 2007/11/09 17:56:04 darrenoh
 #  xmlsitemap_engines.info,v 1.1 2007/11/09 17:56:05 darrenoh
 #  xmlsitemap_node.info,v 1.1 2007/11/09 17:56:05 darrenoh
@@ -22,7 +22,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2008-05-16 18:47-0400\n"
+"POT-Creation-Date: 2008-05-19 00:52-0400\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -51,7 +51,7 @@ msgstr ""
 msgid "Configure site map."
 msgstr ""
 
-#: xmlsitemap.module:41;343 xmlsitemap_node/xmlsitemap_node.module:198 xmlsitemap_user/xmlsitemap_user.module:99
+#: xmlsitemap.module:41;358 xmlsitemap_node/xmlsitemap_node.module:187 xmlsitemap_user/xmlsitemap_user.module:88
 msgid "Site map"
 msgstr ""
 
@@ -71,111 +71,107 @@ msgstr ""
 msgid "Configure additional links."
 msgstr ""
 
-#: xmlsitemap.module:65;343
+#: xmlsitemap.module:65;354
 msgid "Site map index"
 msgstr ""
 
-#: xmlsitemap.module:76
+#: xmlsitemap.module:85
 msgid "Site map !number"
 msgstr ""
 
-#: xmlsitemap.module:93
+#: xmlsitemap.module:102
 msgid "Chunk size"
 msgstr ""
 
-#: xmlsitemap.module:97
+#: xmlsitemap.module:106
 msgid "This is the number of links to include in one site map. Values can range between 1 and 50,000. If the total number of links exceeds the chunk size, multiple site maps will be generated."
 msgstr ""
 
-#: xmlsitemap.module:102
+#: xmlsitemap.module:111
 msgid "Front page priority"
 msgstr ""
 
-#: xmlsitemap.module:105
+#: xmlsitemap.module:114
 msgid "This is the absolute priority for the front page."
 msgstr ""
 
-#: xmlsitemap.module:116
+#: xmlsitemap.module:125
 msgid "Cannot send more than 50,000 links at one time."
 msgstr ""
 
-#: xmlsitemap.module:134
+#: xmlsitemap.module:143
 msgid "Submission settings"
 msgstr ""
 
-#: xmlsitemap.module:138
+#: xmlsitemap.module:147
 msgid "Submit site map when updated."
 msgstr ""
 
-#: xmlsitemap.module:140
+#: xmlsitemap.module:149
 msgid "If enabled, search engines will be notified of changes to the site map each time it is updated."
 msgstr ""
 
-#: xmlsitemap.module:144
+#: xmlsitemap.module:153
 msgid "Submit site map on cron run."
 msgstr ""
 
-#: xmlsitemap.module:146
+#: xmlsitemap.module:155
 msgid "If enabled, search engines will be notified of changes to the site map each time cron is run."
 msgstr ""
 
-#: xmlsitemap.module:150
+#: xmlsitemap.module:159
 msgid "Log access."
 msgstr ""
 
-#: xmlsitemap.module:152
+#: xmlsitemap.module:161
 msgid "If enabled, a watchdog entry will be made each time the site map is accessed, containing information about the requestor."
 msgstr ""
 
-#: xmlsitemap.module:176
+#: xmlsitemap.module:185
 msgid "Link priority"
 msgstr ""
 
-#: xmlsitemap.module:179
+#: xmlsitemap.module:188
 msgid "This is the default priority for additional links."
 msgstr ""
 
-#: xmlsitemap.module:187
+#: xmlsitemap.module:196
 msgid "Enter a Drupal path to add to the site map."
 msgstr ""
 
-#: xmlsitemap.module:219
+#: xmlsitemap.module:228
 msgid "Delete"
 msgstr ""
 
-#: xmlsitemap.module:219
+#: xmlsitemap.module:228
 msgid "Path"
 msgstr ""
 
-#: xmlsitemap.module:219
+#: xmlsitemap.module:228
 msgid "Priority"
 msgstr ""
 
-#: xmlsitemap.module:240
+#: xmlsitemap.module:249
 msgid "Save configuration"
 msgstr ""
 
-#: xmlsitemap.module:302
+#: xmlsitemap.module:311
 msgid "Default"
 msgstr ""
 
-#: xmlsitemap.module:311
+#: xmlsitemap.module:320
 msgid "Not in site map"
 msgstr ""
 
-#: xmlsitemap.module:337
+#: xmlsitemap.module:345
 msgid "Site map @chunk"
 msgstr ""
 
-#: xmlsitemap.module:360
+#: xmlsitemap.module:364
 msgid "!sitemap downloaded by @user-agent at @address."
 msgstr ""
 
-#: xmlsitemap.module:421
-msgid "Unable to load site map. Make sure that there is an xmlsitemap directory in your files directory and that it is writable by Drupal."
-msgstr ""
-
-#: xmlsitemap.module:365;0 docs/xmlsitemap.php:176;179 xmlsitemap_engines/xmlsitemap_engines.module:67;70;119;122;157;160;207;210
+#: xmlsitemap.module:369;0 docs/xmlsitemap.php:166;169 xmlsitemap_engines/xmlsitemap_engines.module:67;70;119;122;157;160;207;210
 msgid "xmlsitemap"
 msgstr ""
 
@@ -183,39 +179,39 @@ msgstr ""
 msgid "Creates an XML site map in accordance with the sitemaps.org specification."
 msgstr ""
 
-#: docs/xmlsitemap.php:150 xmlsitemap_engines/xmlsitemap_engines.module:41
+#: docs/xmlsitemap.php:140 xmlsitemap_engines/xmlsitemap_engines.module:41
 msgid "Google"
 msgstr ""
 
-#: docs/xmlsitemap.php:156 xmlsitemap_engines/xmlsitemap_engines.module:47
+#: docs/xmlsitemap.php:146 xmlsitemap_engines/xmlsitemap_engines.module:47
 msgid "Submit site map to Google."
 msgstr ""
 
-#: docs/xmlsitemap.php:161 xmlsitemap_engines/xmlsitemap_engines.module:52;98;148;186
+#: docs/xmlsitemap.php:151 xmlsitemap_engines/xmlsitemap_engines.module:52;98;148;186
 msgid "Submission URL"
 msgstr ""
 
-#: docs/xmlsitemap.php:163 xmlsitemap_engines/xmlsitemap_engines.module:54;100;150;188
+#: docs/xmlsitemap.php:153 xmlsitemap_engines/xmlsitemap_engines.module:54;100;150;188
 msgid "The URL to submit the site map to."
 msgstr ""
 
-#: docs/xmlsitemap.php:167 xmlsitemap_engines/xmlsitemap_engines.module:58;104
+#: docs/xmlsitemap.php:157 xmlsitemap_engines/xmlsitemap_engines.module:58;104
 msgid "Verification link"
 msgstr ""
 
-#: docs/xmlsitemap.php:169 xmlsitemap_engines/xmlsitemap_engines.module:60
+#: docs/xmlsitemap.php:159 xmlsitemap_engines/xmlsitemap_engines.module:60
 msgid "In order to show statistics, Google will ask you to verify that you control this site by creating a file with a certain name. Enter that name here and the XML Sitemap module will create a path to that file name. This will only work if you have clean URLs enabled."
 msgstr ""
 
-#: docs/xmlsitemap.php:176 xmlsitemap_engines/xmlsitemap_engines.module:67
+#: docs/xmlsitemap.php:166 xmlsitemap_engines/xmlsitemap_engines.module:67
 msgid "Sitemap successfully submitted to Google."
 msgstr ""
 
-#: docs/xmlsitemap.php:179 xmlsitemap_engines/xmlsitemap_engines.module:70
+#: docs/xmlsitemap.php:169 xmlsitemap_engines/xmlsitemap_engines.module:70
 msgid "Error occurred submitting sitemap to Google: @code"
 msgstr ""
 
-#: docs/xmlsitemap.php:185 xmlsitemap_engines/xmlsitemap_engines.module:75
+#: docs/xmlsitemap.php:175 xmlsitemap_engines/xmlsitemap_engines.module:75
 msgid "!sitemap downloaded by Google."
 msgstr ""
 
@@ -319,79 +315,79 @@ msgstr ""
 msgid "Submits site map to search engines."
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:173 xmlsitemap_user/xmlsitemap_user.module:172
+#: xmlsitemap_node/xmlsitemap_node.module:162 xmlsitemap_user/xmlsitemap_user.module:161
 msgid "Site map settings"
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:182 xmlsitemap_term/xmlsitemap_term.module:143;158 xmlsitemap_user/xmlsitemap_user.module:185
+#: xmlsitemap_node/xmlsitemap_node.module:171 xmlsitemap_term/xmlsitemap_term.module:132;147 xmlsitemap_user/xmlsitemap_user.module:174
 msgid "Site map priority"
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:185 xmlsitemap_term/xmlsitemap_term.module:146 xmlsitemap_user/xmlsitemap_user.module:188
+#: xmlsitemap_node/xmlsitemap_node.module:174 xmlsitemap_term/xmlsitemap_term.module:135 xmlsitemap_user/xmlsitemap_user.module:177
 msgid "The default priority is %priority."
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:204
+#: xmlsitemap_node/xmlsitemap_node.module:193
 msgid "Priority adjustment"
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:207
+#: xmlsitemap_node/xmlsitemap_node.module:196
 msgid "This number will be added to the priority of this content type."
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:218
+#: xmlsitemap_node/xmlsitemap_node.module:207
 msgid "Content priority"
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:219
+#: xmlsitemap_node/xmlsitemap_node.module:208
 msgid "The default priority for specific content types can be set on the !link pages."
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:220
+#: xmlsitemap_node/xmlsitemap_node.module:209
 msgid "content type settings"
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:225
+#: xmlsitemap_node/xmlsitemap_node.module:214
 msgid "Promotion adjustment"
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:228
+#: xmlsitemap_node/xmlsitemap_node.module:217
 msgid "This number will be added to the priority of each post that is promoted to the front page."
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:232
+#: xmlsitemap_node/xmlsitemap_node.module:221
 msgid "Comment ratio weight"
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:235
+#: xmlsitemap_node/xmlsitemap_node.module:224
 msgid "This number will be multiplied by the ratio of the number of comments on a post to the highest number of comments on any post&#8212;that is, this number will be added to the priority of the post with the most comments."
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:239
+#: xmlsitemap_node/xmlsitemap_node.module:228
 msgid "Count comments in change date and frequency"
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:241
+#: xmlsitemap_node/xmlsitemap_node.module:230
 msgid "If enabled, the frequency of comments on a post will affect its change frequency and last modification date."
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:345
+#: xmlsitemap_node/xmlsitemap_node.module:334
 msgid "Save content type"
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:345
+#: xmlsitemap_node/xmlsitemap_node.module:334
 msgid "Reset to defaults"
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:405
+#: xmlsitemap_node/xmlsitemap_node.module:394
 msgid "XML Sitemap: Sitemap"
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:409
+#: xmlsitemap_node/xmlsitemap_node.module:398
 msgid "XML Sitemap: News"
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:159
+#: xmlsitemap_node/xmlsitemap_node.module:148
 msgid "override node priority"
 msgstr ""
 
@@ -411,11 +407,11 @@ msgstr ""
 msgid "Adds nodes to the site map."
 msgstr ""
 
-#: xmlsitemap_term/xmlsitemap_term.module:161
+#: xmlsitemap_term/xmlsitemap_term.module:150
 msgid "This will be the default priority of terms in this vocabulary."
 msgstr ""
 
-#: xmlsitemap_term/xmlsitemap_term.module:127
+#: xmlsitemap_term/xmlsitemap_term.module:116
 msgid "override term priority"
 msgstr ""
 
@@ -435,27 +431,27 @@ msgstr ""
 msgid "Adds taxonomy terms to the site map."
 msgstr ""
 
-#: xmlsitemap_user/xmlsitemap_user.module:105
+#: xmlsitemap_user/xmlsitemap_user.module:94
 msgid "Default user priority"
 msgstr ""
 
-#: xmlsitemap_user/xmlsitemap_user.module:108
+#: xmlsitemap_user/xmlsitemap_user.module:97
 msgid "Choose the default priority for users who have only the authenticated user role."
 msgstr ""
 
-#: xmlsitemap_user/xmlsitemap_user.module:116
+#: xmlsitemap_user/xmlsitemap_user.module:105
 msgid "Default site map priority"
 msgstr ""
 
-#: xmlsitemap_user/xmlsitemap_user.module:119
+#: xmlsitemap_user/xmlsitemap_user.module:108
 msgid "This number will be added to the priority of this user role."
 msgstr ""
 
-#: xmlsitemap_user/xmlsitemap_user.module:141
+#: xmlsitemap_user/xmlsitemap_user.module:130
 msgid "Delete role"
 msgstr ""
 
-#: xmlsitemap_user/xmlsitemap_user.module:159
+#: xmlsitemap_user/xmlsitemap_user.module:148
 msgid "override profile priority"
 msgstr ""
 
