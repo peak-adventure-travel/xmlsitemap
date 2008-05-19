@@ -9,20 +9,10 @@
  * Implementation of hook_xmlsitemap_links().
  */
 function xmlsitemap_term_xmlsitemap_links($type = NULL, $excludes = array()) {
-  $links = array();
   if (!isset($type)) {
-    $links = _xmlsitemap_term_links(_xmlsitemap_term_excludes());
-    $links = array_merge($links, module_invoke_all('xmlsitemap_links', 'term', _xmlsitemap_term_excludes()));
-    $links = array_merge($links, module_invoke_all('gsitemap', 'term', _xmlsitemap_term_excludes()));
-    if (!empty($links)) {
-      foreach ($links as $key => $link) {
-        $tid[$key] = $link['tid'];
-        $loc[$key] = $link['#loc'];
-      }
-      array_multisort($tid, $loc, $links);
-    }
+    _xmlsitemap_term_links(_xmlsitemap_term_excludes());
+    module_invoke_all('xmlsitemap_links', 'term', _xmlsitemap_term_excludes());
   }
-  return $links;
 }
 
 /**
@@ -50,7 +40,6 @@ function _xmlsitemap_term_excludes() {
  * values for a site map URL.
  */
 function _xmlsitemap_term_links($excludes = array()) {
-  $links = array();
   $result = db_query(db_rewrite_sql("
     SELECT t.*, v.module, xt.last_changed, xt.previously_changed, xt.priority_override, ua.dst AS alias
     FROM {term_data} t
@@ -76,15 +65,15 @@ function _xmlsitemap_term_links($excludes = array()) {
     }
     $age = time() - $term->last_changed;
     $interval = empty($term->previously_changed) ? 0 : $term->last_changed - $term->previously_changed;
-    $links[] = array(
+    $link = array(
       'tid' => $term->tid,
       '#loc' => $url,
       '#lastmod' => $term->last_changed,
       '#changefreq' => max($age, $interval),
       '#priority' => _xmlsitemap_term_priority($term),
     );
+    db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)", $link);
   }
-  return $links;
 }
 
 /**
