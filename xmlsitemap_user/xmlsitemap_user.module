@@ -21,13 +21,22 @@ function xmlsitemap_user_xmlsitemap_links($type = NULL, $excludes = array()) {
  * values for a site map URL.
  */
 function _xmlsitemap_user_links() {
+  switch ($GLOBALS['db_type']) {
+    case 'mysql':
+    case 'mysqli':
+      $cast = 'CHAR';
+      break;
+    case 'pgsql':
+      $cast = 'VARCHAR';
+      break;
+  }
   $result = db_query("
     SELECT u.uid, xu.last_changed, xu.previously_changed, xu.priority_override, SUM(xur.priority) as priority, ua.dst AS alias
     FROM {users} u
     LEFT JOIN {users_roles} ur ON ur.uid = u.uid
     LEFT JOIN {xmlsitemap_user_role} xur ON xur.rid = ur.rid
     LEFT JOIN {xmlsitemap_user} xu ON xu.uid = u.uid
-    LEFT JOIN {url_alias} ua ON ua.pid = xu.pid
+    LEFT JOIN {url_alias} ua ON ua.src = CONCAT('user/', CAST(uid AS $cast))
     WHERE (xu.priority_override IS NULL OR xu.priority_override >= 0) AND u.uid <> %d AND u.uid > 0 AND u.status <> 0
     GROUP BY u.uid, xu.last_changed, xu.previously_changed, xu.priority_override, alias
     HAVING COUNT(xu.priority_override) > 0 OR (COUNT(xur.rid) = 0 AND %f <> -1 OR MIN(xur.priority) <> -1)
@@ -182,8 +191,6 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
       }
       return $form;
     case 'insert':
-      $pid = db_result(db_query("SELECT pid FROM {url_alias} WHERE src = '%s'", "user/$account->uid"));
-      $pid = empty($pid) ? 'NULL' : $pid;
       if (isset($edit['xmlsitemap_user_priority'])) {
         $priority = $edit['xmlsitemap_user_priority'];
       }
@@ -192,14 +199,12 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
         $priority = isset($priority) && $priority !== FALSE ? $priority : 'NULL';
       }
       db_query("
-        INSERT INTO {xmlsitemap_user} (uid, pid, last_changed, priority_override) VALUES (%d, %s, %d, %s)
-      ", $account->uid, $pid, time(), $priority);
+        INSERT INTO {xmlsitemap_user} (uid, last_changed, priority_override) VALUES (%d, %d, %s)
+      ", $account->uid, time(), $priority);
       $edit['xmlsitemap_user_priority'] = NULL;
       xmlsitemap_update_sitemap();
       break;
     case 'update':
-      $pid = db_result(db_query("SELECT pid FROM {url_alias} WHERE src = '%s'", "user/$account->uid"));
-      $pid = empty($pid) ? 'NULL' : $pid;
       if (isset($edit['xmlsitemap_user_priority'])) {
         $priority = $edit['xmlsitemap_user_priority'];
       }
@@ -209,9 +214,9 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
       }
       db_query("
         UPDATE {xmlsitemap_user}
-        SET pid = %s, last_changed = %d, previously_changed = last_changed, priority_override = %s
+        SET last_changed = %d, previously_changed = last_changed, priority_override = %s
         WHERE uid = %d
-      ", $pid, time(), $priority, $account->uid);
+      ", time(), $priority, $account->uid);
       $edit['xmlsitemap_user_priority'] = NULL;
       xmlsitemap_update_sitemap();
       break;
@@ -233,25 +238,6 @@ function xmlsitemap_user_cron() {
       LEFT JOIN {xmlsitemap_user} xu ON xu.uid = u.uid
       WHERE u.uid <> 0 AND xu.uid IS NULL
     ");
-    switch ($GLOBALS['db_type']) {
-      case 'mysql':
-      case 'mysqli':
-        db_query("
-          UPDATE {xmlsitemap_user} xu INNER JOIN {url_alias} ua
-          ON ua.src = CONCAT('user/', CAST(xu.uid AS CHAR))
-          SET xu.pid = ua.pid
-          WHERE xu.pid IS NULL
-        ");
-        break;
-      case 'pgsql':
-        db_query("
-          UPDATE {xmlsitemap_user}
-          SET pid = {url_alias}.pid
-          FROM {url_alias}
-          WHERE {url_alias}.src = CONCAT('user/', CAST(uid AS VARCHAR)) AND {xmlsitemap_user}.pid IS NULL
-        ");
-        break;
-    }
     xmlsitemap_update_sitemap();
   }
 }

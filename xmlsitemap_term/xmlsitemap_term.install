@@ -26,7 +26,6 @@ function xmlsitemap_term_install() {
     case 'mysqli':
       db_query("CREATE TABLE {xmlsitemap_term} (
         tid int,
-        pid int,
         last_changed int(11),
         previously_changed int(11),
         priority_override float,
@@ -36,7 +35,6 @@ function xmlsitemap_term_install() {
     case 'pgsql':
       db_query("CREATE TABLE {xmlsitemap_term} (
         tid integer,
-        pid integer,
         last_changed integer,
         previously_changed integer,
         priority_override real,
@@ -54,35 +52,12 @@ function xmlsitemap_term_enable() {
   if ($weight !== FALSE) {
     db_query("UPDATE {system} SET weight = %d WHERE type = 'module' AND name = 'xmlsitemap_term'", ++$weight);
   }
-  $query = "
+  db_query("
     INSERT INTO {xmlsitemap_term} (tid, last_changed)
     SELECT td.tid, %d FROM {term_data} td
     LEFT JOIN {xmlsitemap_term} xt ON xt.tid = td.tid
     WHERE xt.tid IS NULL
-  ";
-  db_query($query, time());
-  switch ($GLOBALS['db_type']) {
-    case 'mysql':
-    case 'mysqli':
-      db_query("
-        UPDATE {xmlsitemap_term} xt INNER JOIN {url_alias} ua
-        ON ua.src = CONCAT('taxonomy/term/', CAST(xt.tid AS CHAR))
-        OR ua.src = CONCAT('forum/', CAST(xt.tid AS CHAR))
-        SET xt.pid = ua.pid
-        WHERE xt.pid IS NULL
-      ");
-      break;
-    case 'pgsql':
-      db_query("
-        UPDATE {xmlsitemap_term}
-        SET pid = {url_alias}.pid
-        FROM {url_alias}
-        WHERE {url_alias}.src = CONCAT('taxonomy/term/', CAST(tid AS VARCHAR))
-        OR {url_alias}.src = CONCAT('forum/', CAST(tid AS VARCHAR))
-        AND {xmlsitemap_term}.pid IS NULL
-      ");
-      break;
-  }
+  ", time());
   xmlsitemap_update_sitemap();
 }
 
@@ -102,5 +77,17 @@ function xmlsitemap_term_uninstall() {
   while ($variable = db_fetch_object($settings)) {
     variable_del($variable->name);
   }
+}
+
+/**
+ * Implementation of hook_update_N().
+ *
+ * Drop the pid column now that we know how to join on the src index of the
+ * url_alias table.
+ */
+function xmlsitemap_term_update_2() {
+  return array(
+    update_sql("ALTER TABLE {xmlsitemap_term} DROP pid"),
+  );
 }
 

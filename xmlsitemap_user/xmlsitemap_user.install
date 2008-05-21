@@ -26,7 +26,6 @@ function xmlsitemap_user_install() {
     case 'mysqli':
       db_query("CREATE TABLE {xmlsitemap_user} (
         uid int,
-        pid int,
         last_changed int(11),
         previously_changed int(11),
         priority_override float,
@@ -41,7 +40,6 @@ function xmlsitemap_user_install() {
     case 'pgsql':
       db_query("CREATE TABLE {xmlsitemap_user} (
         uid integer,
-        pid integer,
         last_changed integer,
         previously_changed integer,
         priority_override real,
@@ -70,25 +68,6 @@ function xmlsitemap_user_enable() {
     LEFT JOIN {xmlsitemap_user} xu ON xu.uid = u.uid
     WHERE u.uid <> 0 AND xu.uid IS NULL
   ");
-  switch ($GLOBALS['db_type']) {
-    case 'mysql':
-    case 'mysqli':
-      db_query("
-        UPDATE {xmlsitemap_user} xu INNER JOIN {url_alias} ua
-        ON ua.src = CONCAT('user/', CAST(xu.uid AS CHAR))
-        SET xu.pid = ua.pid
-        WHERE xu.pid IS NULL
-      ");
-      break;
-    case 'pgsql':
-      db_query("
-        UPDATE {xmlsitemap_user}
-        SET pid = {url_alias}.pid
-        FROM {url_alias}
-        WHERE {url_alias}.src = CONCAT('user/', CAST(uid AS VARCHAR)) AND {xmlsitemap_user}.pid IS NULL
-      ");
-      break;
-  }
   db_query("
     INSERT INTO {xmlsitemap_user_role} (rid)
     SELECT r.rid FROM {role} r
@@ -115,5 +94,14 @@ function xmlsitemap_user_uninstall() {
   while ($variable = db_fetch_object($settings)) {
     variable_del($variable->name);
   }
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_user_update_2() {
+  return array(
+    update_sql("ALTER TABLE {xmlsitemap_user} DROP pid"),
+  );
 }
 

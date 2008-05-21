@@ -26,7 +26,6 @@ function xmlsitemap_node_install() {
     case 'mysqli':
       db_query("CREATE TABLE {xmlsitemap_node} (
         nid int,
-        pid int,
         last_changed int(11),
         previously_changed int(11),
         last_comment int(11),
@@ -38,7 +37,6 @@ function xmlsitemap_node_install() {
     case 'pgsql':
       db_query("CREATE TABLE {xmlsitemap_node} (
         nid integer,
-        pid integer,
         last_changed integer,
         previously_changed integer,
         last_comment integer,
@@ -62,7 +60,7 @@ function xmlsitemap_node_enable() {
     case 'mysql':
     case 'mysqli':
       db_query("
-        UPDATE {xmlsitemap_node} xn INNER JOIN {node} n ON xn.nid = n.nid LEFT JOIN {node_comment_statistics} s ON s.nid = xn.nid
+        UPDATE {xmlsitemap_node} xn INNER JOIN {node} n ON xn.nid = n.nid LEFT JOIN {node_comment_statistics} s ON xn.nid = s.nid
         SET xn.previously_changed = xn.last_changed, xn.last_changed = n.changed, xn.last_comment = s.last_comment_timestamp
         WHERE xn.nid = n.nid AND (xn.last_changed <> n.changed OR xn.last_comment <> s.last_comment_timestamp)
       ");
@@ -70,39 +68,20 @@ function xmlsitemap_node_enable() {
     case 'pgsql':
       db_query("
         UPDATE {xmlsitemap_node} SET previously_changed = last_changed, last_changed = {node}.changed, last_comment = {node_comment_statistics}.last_comment_timestamp
-        FROM {node} LEFT JOIN {node_comment_statistics} ON {node_comment_statistics}.nid = {node}.nid
-        WHERE {xmlsitemap_node}.nid = {node}.nid AND (last_changed <> {node}.changed OR last_comment <> {node_comment_statistics}.last_comment_timestamp)
+        FROM {node} LEFT JOIN {node_comment_statistics} ON {node}.nid = {node_comment_statistics}.nid
+        WHERE nid = {node}.nid AND (last_changed <> {node}.changed OR last_comment <> {node_comment_statistics}.last_comment_timestamp)
       ");
       break;
   }
   db_query("
     INSERT INTO {xmlsitemap_node} (nid, last_changed, last_comment, previous_comment)
     SELECT n.nid, n.changed, s.last_comment_timestamp, MAX(c.timestamp) FROM {node} n
-    LEFT JOIN {node_comment_statistics} s ON s.nid = n.nid
-    LEFT OUTER JOIN {comments} c ON c.nid = n.nid AND c.timestamp < s.last_comment_timestamp
-    LEFT JOIN {xmlsitemap_node} xn ON xn.nid = n.nid
+    LEFT JOIN {node_comment_statistics} s ON n.nid = s.nid
+    LEFT OUTER JOIN {comments} c ON n.nid = c.nid AND c.timestamp < s.last_comment_timestamp
+    LEFT JOIN {xmlsitemap_node} xn ON n.nid = xn.nid
     WHERE xn.nid IS NULL
     GROUP BY n.nid, n.changed, s.last_comment_timestamp
   ");
-  switch ($GLOBALS['db_type']) {
-    case 'mysql':
-    case 'mysqli':
-      db_query("
-        UPDATE {xmlsitemap_node} xn INNER JOIN {url_alias} ua
-        ON ua.src = CONCAT('node/', CAST(xn.nid AS CHAR))
-        SET xn.pid = ua.pid
-        WHERE xn.pid IS NULL
-      ");
-      break;
-    case 'pgsql':
-      db_query("
-        UPDATE {xmlsitemap_node}
-        SET pid = {url_alias}.pid
-        FROM {url_alias}
-        WHERE {url_alias}.src = CONCAT('node/', CAST(nid AS VARCHAR)) AND {xmlsitemap_node}.pid IS NULL
-      ");
-      break;
-  }
   xmlsitemap_update_sitemap();
 }
 
@@ -122,5 +101,14 @@ function xmlsitemap_node_uninstall() {
   while ($variable = db_fetch_array($settings)) {
     variable_del($variable->name);
   }
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_node_update_4() {
+  return array(
+    update_sql("ALTER TABLE {xmlsitemap_node} DROP pid"),
+  );
 }
 

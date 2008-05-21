@@ -41,23 +41,33 @@ function _xmlsitemap_node_excludes() {
 function _xmlsitemap_node_links($excludes = array()) {
   $links = array();
   if (module_exists('comment')) {
-    $sql = "
+    $query = "
       SELECT n.nid, n.type, n.promote, s.comment_count, n.changed, xn.previously_changed, s.last_comment_timestamp, xn.previous_comment, xn.priority_override, ua.dst AS alias
       FROM {node} n
-      LEFT JOIN {node_comment_statistics} s ON s.nid = n.nid";
+      LEFT JOIN {node_comment_statistics} s ON n.nid = s.nid";
   }
   else {
-    $sql = "
+    $query = "
       SELECT n.nid, n.type, n.promote, n.changed, xn.previously_changed, xn.priority_override, ua.dst AS alias
       FROM {node} n";
   }
-  $sql .= "
-    LEFT JOIN {xmlsitemap_node} xn ON xn.nid = n.nid
-    LEFT JOIN {url_alias} ua ON ua.pid = xn.pid
+  switch ($GLOBALS['db_type']) {
+    case 'mysql':
+    case 'mysqli':
+      $query .= "
+        LEFT JOIN {url_alias} ua ON ua.src = CONCAT('node/', CAST(n.nid AS CHAR))";
+      break;
+    case 'pgsql':
+      $query .= "
+        LEFT JOIN {url_alias} ua ON ua.src = CONCAT('node/', CAST(n.nid AS VARCHAR))";
+      break;
+  }
+  $query .= "
+    LEFT JOIN {xmlsitemap_node} xn ON n.nid = xn.nid
     WHERE n.status > 0
     AND (n.type NOT IN ('". implode("', '", $excludes) ."') AND xn.priority_override IS NULL OR xn.priority_override >= 0)
     AND n.nid <> %d";
-  $result = db_query(db_rewrite_sql($sql), _xmlsitemap_node_frontpage());
+  $result = db_query(db_rewrite_sql($query), _xmlsitemap_node_frontpage());
   while ($node = db_fetch_object($result)) {
     $link = array(
       'loc' => xmlsitemap_url('node/'. $node->nid, $node->alias, NULL, NULL, TRUE),
@@ -245,24 +255,7 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
       break;
     case 'insert':
       $node->priority_override = isset($node->priority_override) ? $node->priority_override : 'NULL';
-      $query = "
-        INSERT INTO {xmlsitemap_node} (nid, pid, last_changed, priority_override)
-        SELECT %d, ua.pid, %d, %s
-        FROM {node} n";
-      switch ($GLOBALS['db_type']) {
-        case 'mysql':
-        case 'mysqli':
-          $query .= "
-        LEFT JOIN {url_alias} ua ON ua.src = CONCAT('node/', CAST(%d AS CHAR))";
-          break;
-        case 'pgsql':
-          $query .= "
-        LEFT JOIN {url_alias} ua ON ua.src = CONCAT('node/', CAST(%d AS VARCHAR))";
-          break;
-      }
-      $query .= "
-        LIMIT 1";
-      db_query($query, $node->nid, $node->changed, $node->priority_override, $node->nid);
+      db_query("INSERT INTO {xmlsitemap_node} (nid, last_changed, priority_override) VALUES (%d, %d, %s)", $node->nid, $node->changed, $node->priority_override);
       if ($node->status) {
         xmlsitemap_update_sitemap();
       }
@@ -272,23 +265,11 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
         $priority = db_result(db_query("SELECT priority_override FROM {xmlsitemap_node} WHERE nid = %d", $node->nid));
         $node->priority_override = isset($priority) && $priority !== FALSE ? $priority : 'NULL';
       }
-      switch ($GLOBALS['db_type']) {
-        case 'mysql':
-        case 'mysqli':
-          db_query("
-            UPDATE {xmlsitemap_node} xn LEFT JOIN {url_alias} ua ON ua.src = CONCAT('node/', CAST(xn.nid AS CHAR))
-            SET xn.pid = ua.pid, xn.previously_changed = xn.last_changed, xn.last_changed = %d, xn.priority_override = %s
-            WHERE xn.nid = %d
-          ", $node->changed, $node->priority_override, $node->nid);
-          break;
-        case 'pgsql':
-          db_query("
-            UPDATE {xmlsitemap_node}
-            SET pid = {url_alias}.pid, previously_changed = last_changed, last_changed = %d, priority_override = %s
-            FROM {url_alias} WHERE nid = %d AND ({url_alias}.src = CONCAT('node/', CAST(nid AS VARCHAR)) OR {url_alias}.src IS NULL)
-          ", $node->changed, $node->priority_override, $node->nid);
-          break;
-      }
+      db_query("
+        UPDATE {xmlsitemap_node} xn
+        SET xn.previously_changed = xn.last_changed, xn.last_changed = %d, xn.priority_override = %s
+        WHERE xn.nid = %d
+      ", $node->changed, $node->priority_override, $node->nid);
       if ($node->status || $node->xmlsitemap_node_status) {
         xmlsitemap_update_sitemap();
       }
@@ -351,36 +332,17 @@ function xmlsitemap_node_node_type($op, $info) {
  * Implementation of hook_cron().
  */
 function xmlsitemap_node_cron() {
-  if (db_result(db_query_range("SELECT COUNT(*) FROM {node} n LEFT JOIN {xmlsitemap_node} xn ON xn.nid = n.nid WHERE xn.nid IS NULL", 0, 1))) {
-    $query = "
+  if (db_result(db_query_range("SELECT COUNT(*) FROM {node} n LEFT JOIN {xmlsitemap_node} xn ON n.nid = xn.nid WHERE xn.nid IS NULL", 0, 1))) {
+    db_query("
       INSERT INTO {xmlsitemap_node} (nid, last_changed, last_comment, previous_comment)
-      SELECT n.nid, n.changed, s.last_comment_timestamp, MAX(c.timestamp) FROM {node} n
-      LEFT JOIN {node_comment_statistics} s ON s.nid = n.nid
-      LEFT OUTER JOIN {comments} c ON c.nid = n.nid AND c.timestamp < s.last_comment_timestamp
-      LEFT JOIN {xmlsitemap_node} xn ON xn.nid = n.nid
+      SELECT n.nid, n.changed, s.last_comment_timestamp, MAX(c.timestamp)
+      FROM {node} n
+      LEFT JOIN {node_comment_statistics} s ON n.nid = s.nid
+      LEFT OUTER JOIN {comments} c ON n.nid = c.nid AND c.timestamp < s.last_comment_timestamp
+      LEFT JOIN {xmlsitemap_node} xn ON n.nid = xn.nid
       WHERE xn.nid IS NULL
       GROUP BY n.nid, n.changed, s.last_comment_timestamp
-    ";
-    db_query($query);
-    switch ($GLOBALS['db_type']) {
-      case 'mysql':
-      case 'mysqli':
-        db_query("
-          UPDATE {xmlsitemap_node} xn INNER JOIN {url_alias} ua
-          ON ua.src = CONCAT('node/', CAST(xn.nid AS CHAR))
-          SET xn.pid = ua.pid
-          WHERE xn.pid IS NULL
-        ");
-        break;
-      case 'pgsql':
-        db_query("
-          UPDATE {xmlsitemap_node}
-          SET pid = {url_alias}.pid
-          FROM {url_alias}
-          WHERE {url_alias}.src = CONCAT('node/', CAST(nid AS VARCHAR)) AND {xmlsitemap_node}.pid IS NULL
-        ");
-        break;
-    }
+    ");
     xmlsitemap_update_sitemap();
   }
 }
@@ -405,6 +367,15 @@ function xmlsitemap_node_views_style_plugins() {
  * Implementation of hook_views_query_alter().
  */
 function xmlsitemap_node_views_query_alter(&$query, &$view, $summary, $level) {
+  switch ($GLOBALS['db_type']) {
+    case 'mysql':
+    case 'mysqli':
+      $cast = 'CHAR';
+      break;
+    case 'pgsql':
+      $cast = 'VARCHAR';
+      break;
+  }
   switch ($view->page_type) {
     case 'xmlsitemap_news':
       $query->add_field('created', 'node');
@@ -420,11 +391,14 @@ function xmlsitemap_node_views_query_alter(&$query, &$view, $summary, $level) {
       );
       $ua_join = array(
         'left' => array(
-          'table' => 'xmlsitemap_node',
+          'table' => 'url_alias',
           'field' => 'pid',
         ),
         'right' => array(
           'field' => 'pid',
+        ),
+        'extra' => array(
+          "src = CONCAT('node/', CAST(node.nid AS $cast))" => NULL,
         ),
       );
       $query->add_table('xmlsitemap_node', FALSE, 1, $xn_join);
