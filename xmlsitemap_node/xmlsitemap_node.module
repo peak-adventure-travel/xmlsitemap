@@ -39,7 +39,6 @@ function _xmlsitemap_node_excludes() {
  * values for a site map URL.
  */
 function _xmlsitemap_node_links($excludes = array()) {
-  $links = array();
   if (module_exists('comment')) {
     $query = "
       SELECT n.nid, n.type, n.promote, s.comment_count, n.changed, xn.previously_changed, s.last_comment_timestamp, xn.previous_comment, xn.priority_override, ua.dst AS alias

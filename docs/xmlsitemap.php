@@ -42,7 +42,6 @@
  * Only the loc column is required.
  */
 function hook_xmlsitemap_links($type = NULL, $excludes = array()) {
-  $links = array();
   switch ($type) {
     case 'node':
       break;
