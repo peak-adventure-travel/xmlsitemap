@@ -1,0 +1,6 @@
+; $Id$
+name = XML Sitemap: File
+description = Adds node file attachments to the site map.
+package = XML Sitemap
+dependencies = xmlsitemap xmlsitemap_node
+
