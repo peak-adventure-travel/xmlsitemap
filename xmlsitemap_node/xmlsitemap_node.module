@@ -2,7 +2,8 @@
 // $Id$
 
 /**
- * @file Adds nodes to the site map.
+ * @file
+ * Adds nodes to the site map.
  */
 
 /**
@@ -82,6 +83,7 @@ function xmlsitemap_node_frequency($node) {
   $age = time() - $node->changed;
   if (variable_get('xmlsitemap_node_count_comments', TRUE)) {
     $age = time() - max($node->changed, $node->last_comment_timestamp);
+    $interval = 0;
     if (!empty($node->previously_changed) && isset($node->previous_comment)) {
       $interval = min($node->changed, $node->last_comment_timestamp) - max($node->previously_changed, $node->previous_comment);
     }
@@ -90,9 +92,6 @@ function xmlsitemap_node_frequency($node) {
     }
     elseif (isset($node->previous_comment)) {
       $interval = min($node->changed, $node->last_comment_timestamp) - $node->previous_comment;
-    }
-    else {
-      $interval = 0;
     }
   }
   else {
@@ -106,13 +105,10 @@ function xmlsitemap_node_frequency($node) {
  * @return Integer of front page node ID, or 0 if front page is not a node.
  */
 function _xmlsitemap_node_frontpage() {
-  static $nid;
-  if (!isset($nid)) {
-    $nid = 0;
-    $frontpage = explode('/', drupal_get_normal_path(variable_get('site_frontpage', 'node')));
-    if (count($frontpage) == 2 && $frontpage[0] == 'node' && is_numeric($frontpage[1])) {
-      $nid = $frontpage[1];
-    }
+  $nid = 0;
+  $frontpage = explode('/', drupal_get_normal_path(variable_get('site_frontpage', 'node')));
+  if (count($frontpage) == 2 && $frontpage[0] == 'node' && is_numeric($frontpage[1])) {
+    $nid = $frontpage[1];
   }
   return $nid;
 }
@@ -265,9 +261,9 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
         $node->priority_override = isset($priority) && $priority !== FALSE ? $priority : 'NULL';
       }
       db_query("
-        UPDATE {xmlsitemap_node} xn
-        SET xn.previously_changed = xn.last_changed, xn.last_changed = %d, xn.priority_override = %s
-        WHERE xn.nid = %d
+        UPDATE {xmlsitemap_node}
+        SET previously_changed = last_changed, last_changed = %d, priority_override = %s
+        WHERE nid = %d
       ", $node->changed, $node->priority_override, $node->nid);
       if ($node->status || $node->xmlsitemap_node_status) {
         xmlsitemap_update_sitemap();
@@ -424,7 +420,7 @@ function xmlsitemap_node_views_query_alter(&$query, &$view, $summary, $level) {
 function theme_xmlsitemap_node_view_sitemap($view, $nodes, $type) {
   drupal_set_header('Content-Type: text/xml; charset=utf-8');
   $xsl_path = file_directory_path() .'/xmlsitemap/gss.xsl';
-  $xsl_path = file_exists($xsl_path) ? _xmlsitemap_file_create_url($xsl_path) : $base_path . drupal_get_path('module', 'xmlsitemap') .'/gss/gss.xsl';
+  $xsl_path = file_exists($xsl_path) ? xmlsitemap_file_create_url($xsl_path) : $base_path . drupal_get_path('module', 'xmlsitemap') .'/gss/gss.xsl';
   print '<?xml version="1.0" encoding="UTF-8"?>'."\n";
   print '<?xml-stylesheet type="text/xsl" href="'. $xsl_path .'" ?>'."\n";
   print '<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'."\n";
@@ -436,7 +432,7 @@ function theme_xmlsitemap_node_view_sitemap($view, $nodes, $type) {
     print '  <url>'."\n";
     print '    <loc>'. xmlsitemap_url('node/'. $node->nid, $node->alias, NULL, NULL, TRUE) .'</loc>'."\n";
     print '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $lastmod) .'</lastmod>'."\n";
-    print '    <changefreq>'. _xmlsitemap_frequency(xmlsitemap_node_frequency($node)) .'</changefreq>'."\n";
+    print '    <changefreq>'. xmlsitemap_frequency(xmlsitemap_node_frequency($node)) .'</changefreq>'."\n";
     print '    <priority>'. number_format(xmlsitemap_node_priority($node), 1) .'</priority>'."\n";
     print '  </url>'."\n";
   }
@@ -461,7 +457,7 @@ function theme_xmlsitemap_node_view_news($view, $nodes, $type) {
     print '  <url>'."\n";
     print '    <loc>'. xmlsitemap_url('node/'. $node->nid, $node->alias, NULL, NULL, TRUE) .'</loc>'."\n";
     print '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $lastmod) .'</lastmod>'."\n";
-    print '    <changefreq>'. _xmlsitemap_frequency(xmlsitemap_node_frequency($node)) .'</changefreq>'."\n";
+    print '    <changefreq>'. xmlsitemap_frequency(xmlsitemap_node_frequency($node)) .'</changefreq>'."\n";
     print '    <priority>'. number_format(xmlsitemap_node_priority($node), 1) .'</priority>'."\n";
     print '    <news:news>'."\n";
     print '      <news:publication_date>'. gmdate('Y-m-d\TH:i:s+00:00', $node->created) .'</news:publication_date>'."\n";

@@ -2,6 +2,11 @@
 // $Id$
 
 /**
+ * @file
+ * Install file for XML Sitemap: Term
+ */
+
+/**
  * Implementation of hook_requirements().
  */
 function xmlsitemap_term_requirements($phase) {
@@ -20,7 +25,7 @@ function xmlsitemap_term_requirements($phase) {
 /**
  * Implementation of hook_install().
  */
-function xmlsitemap_term_install() {           
+function xmlsitemap_term_install() {
   switch ($GLOBALS['db_type']) {
     case 'mysql':
     case 'mysqli':

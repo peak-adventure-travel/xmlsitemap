@@ -2,6 +2,11 @@
 // $Id$
 
 /**
+ * @file
+ * XML Sitemap API
+ */
+
+/**
  * @addtogroup hooks
  * @{
  */
@@ -42,6 +47,7 @@
  * Only the loc column is required.
  */
 function hook_xmlsitemap_links($type = NULL, $excludes = array()) {
+
   switch ($type) {
     case 'node':
       break;

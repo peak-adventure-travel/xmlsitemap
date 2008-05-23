@@ -2,6 +2,11 @@
 // $Id$
 
 /**
+ * @file
+ * Install file for XML Sitemap
+ */
+
+/**
  * Implementation of hook_install().
  */
 function xmlsitemap_install() {

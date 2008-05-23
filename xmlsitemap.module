@@ -2,7 +2,8 @@
 // $Id$
 
 /**
- * @file Creates a site map compatible with the sitemaps.org schema.
+ * @file
+ * Creates a site map compatible with the sitemaps.org schema.
  */
 
 /**
@@ -380,7 +381,7 @@ function _xmlsitemap_output($chunk = NULL) {
  */
 function _xmlsitemap_output_index($link_count) {
   $xsl_path = file_directory_path() .'/xmlsitemap/gss.xsl';
-  $xsl_path = file_exists($xsl_path) ? _xmlsitemap_file_create_url($xsl_path) : base_path() . drupal_get_path('module', 'xmlsitemap') .'/gss/gss.xsl';
+  $xsl_path = file_exists($xsl_path) ? xmlsitemap_file_create_url($xsl_path) : base_path() . drupal_get_path('module', 'xmlsitemap') .'/gss/gss.xsl';
   print '<?xml version="1.0" encoding="UTF-8"?>'."\n";
   print '<?xml-stylesheet type="text/xsl" href="'. $xsl_path .'" ?>'."\n";
   print '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'."\n";
@@ -417,7 +418,7 @@ function _xmlsitemap_output_chunk($chunk = 0) {
     set_time_limit(240);
   }
   $xsl_path = file_directory_path() .'/xmlsitemap/gss.xsl';
-  $xsl_path = file_exists($xsl_path) ? _xmlsitemap_file_create_url($xsl_path) : base_path() . drupal_get_path('module', 'xmlsitemap') .'/gss/gss.xsl';
+  $xsl_path = file_exists($xsl_path) ? xmlsitemap_file_create_url($xsl_path) : base_path() . drupal_get_path('module', 'xmlsitemap') .'/gss/gss.xsl';
   print '<?xml version="1.0" encoding="UTF-8"?>'."\n";
   print '<?xml-stylesheet type="text/xsl" href="'. $xsl_path .'" ?>'."\n";
   print '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'."\n";
@@ -447,10 +448,10 @@ function _xmlsitemap_output_link($link) {
   print '  <url>'."\n";
   print '    <loc>'. check_url($link['loc']) .'</loc>'."\n";
   if (isset($link['lastmod'])) {
-    print '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', (int) $link['lastmod']) .'</lastmod>'."\n";
+    print '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $link['lastmod']) .'</lastmod>'."\n";
   }
   if (isset($link['changefreq'])) {
-    print '    <changefreq>'. _xmlsitemap_frequency($link['changefreq']) .'</changefreq>'."\n";
+    print '    <changefreq>'. xmlsitemap_frequency($link['changefreq']) .'</changefreq>'."\n";
   }
   if (isset($link['priority']) && $link['priority'] <= 1 && $link['priority'] >= 0) {
     print '    <priority>'. number_format($link['priority'], 1) .'</priority>'."\n";
@@ -464,13 +465,13 @@ function _xmlsitemap_output_link($link) {
  * @param $path: the path to the file
  * @return A URL to the file
  */
-function _xmlsitemap_file_create_url($path) {
+function xmlsitemap_file_create_url($path, $alias = NULL) {
   $path = trim(substr($path, strlen(file_directory_path())), '\\/');
-  switch (variable_get('file_downloads', FILE_DOWNLOADS_PUBLIC)) {
-    case FILE_DOWNLOADS_PUBLIC:
-      return "$GLOBALS[base_url]/". file_directory_path() .'/'. str_replace('\\', '/', $path);
-    case FILE_DOWNLOADS_PRIVATE:
-      return xmlsitemap_url('system/files/'. $path, NULL, NULL, NULL, TRUE);
+  if (isset($alias) || variable_get('file_downloads', FILE_DOWNLOADS_PUBLIC) == FILE_DOWNLOADS_PRIVATE) {
+    return xmlsitemap_url('system/files/'. $path, $alias, NULL, NULL, TRUE);
+  }
+  else {
+    return "$GLOBALS[base_url]/". file_directory_path() .'/'. str_replace('\\', '/', $path);
   }
 }
 
@@ -489,7 +490,7 @@ function xmlsitemap_file_download($file) {
  * @return A string representing the update frequency according to the
  * sitemaps.org protocol
  */
-function _xmlsitemap_frequency($interval) {
+function xmlsitemap_frequency($interval) {
   $frequencies = array(
     'always' => 3600,
     'hourly' => 86400,
