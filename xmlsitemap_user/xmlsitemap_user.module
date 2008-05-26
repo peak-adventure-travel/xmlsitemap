@@ -18,8 +18,8 @@ function xmlsitemap_user_xmlsitemap_links($type = NULL, $excludes = array()) {
 
 /**
  * Get user profile links.
- * @return An array of links. Each link is an array containing the XML
- * values for a site map URL.
+ * @return An array of links. Each link is an array containing the XML values
+ * for a site map URL.
  */
 function _xmlsitemap_user_links() {
   switch ($GLOBALS['db_type']) {

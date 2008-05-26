@@ -3,7 +3,7 @@
 
 /**
  * @file
- * XML Sitemap API
+ * XML Sitemap API documentation
  */
 
 /**
@@ -14,8 +14,8 @@
 /**
  * Define additional links to add to the site map.
  *
- * This hook allows modules to add additional links to the site map. Links
- * may be associated with nodes, terms, or users, as shown in the example.
+ * This hook allows modules to add additional links to the site map. Links may
+ * be associated with nodes, terms, or users, as shown in the example.
  * @param $type:
  * If set, a string specifying the type of additional links to add. You can use
  * your own type or a type from one of the included modules:

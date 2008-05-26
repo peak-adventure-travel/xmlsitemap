@@ -10,6 +10,7 @@
  * Implementation of hook_install().
  */
 function xmlsitemap_install() {
+  $t = get_t();
   switch ($GLOBALS['db_type']) {
     case 'mysql':
     case 'mysqli':
@@ -19,14 +20,6 @@ function xmlsitemap_install() {
         changefreq int(11),
         priority float
       ) /*!40100 DEFAULT CHARACTER SET utf8 */;");
-      db_query("CREATE TABLE {xmlsitemap_additional} (
-        path varchar(128) NOT NULL default '',
-        pid int,
-        last_changed int(11),
-        previously_changed int(11),
-        priority float,
-        PRIMARY KEY (path)
-      ) /*!40100 DEFAULT CHARACTER SET utf8 */;");
       break;
     case 'pgsql':
       db_query("CREATE TABLE {xmlsitemap} (
@@ -35,17 +28,16 @@ function xmlsitemap_install() {
         changefreq integer,
         priority real
       );");
-      db_query("CREATE TABLE {xmlsitemap_additional} (
-        path varchar(128) NOT NULL default '',
-        pid integer,
-        last_changed integer,
-        previously_changed integer,
-        priority real,
-        PRIMARY KEY (path)
-      );");
       break;
   }
   db_query("DELETE FROM {url_alias} WHERE dst LIKE 'sitemap%.xml'");
+  $item = array(
+    'title' => $t('XML Sitemap'),
+    'description' => $t('Menu items to include in the site map'),
+    'type' => MENU_CUSTOM_MENU | MENU_MODIFIED_BY_ADMIN,
+  );
+  menu_save_item($item);
+  menu_rebuild();
 }
 
 /**
@@ -88,11 +80,20 @@ function xmlsitemap_disable() {
  * Implementation of hook_uninstall().
  */
 function xmlsitemap_uninstall() {
+  $t = get_t();
   db_query("DROP TABLE {xmlsitemap}");
-  db_query("DROP TABLE {xmlsitemap_additional}");
   $settings = db_query("SELECT name FROM {variable} WHERE name LIKE 'xmlsitemap\_%'");
   while ($variable = db_fetch_object($settings)) {
     variable_del($variable->name);
+  }
+  $menu = menu_get_menu();
+  $pid = db_result(db_query_range("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", $t('XML Sitemap'), 0, 1));
+  if ($pid !== FALSE) {
+    foreach ($menu['visible'][$pid]['children'] as $mid) {
+      menu_delete_item($mid);
+    }
+    menu_delete_item($pid);
+    menu_rebuild();
   }
 }
 
@@ -101,6 +102,7 @@ function xmlsitemap_uninstall() {
  */
 function xmlsitemap_update_1() {
   $ret = array();
+  $t = get_t();
   switch ($GLOBALS['db_type']) {
     case 'mysql':
     case 'mysqli':
@@ -120,6 +122,28 @@ function xmlsitemap_update_1() {
       );");
       break;
   }
+  $item = array(
+    'title' => $t('XML Sitemap'),
+    'description' => $t('Menu items to include in the site map'),
+    'type' => MENU_CUSTOM_MENU | MENU_MODIFIED_BY_ADMIN,
+  );
+  menu_save_item($item);
+  $mid = db_result(db_query_range("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", $t('XML Sitemap'), 0, 1));
+  $result = db_query("SELECT * FROM {xmlsitemap_additional}");
+  while ($link = db_fetch_object($result)) {
+    $link->priority = isset($link->priority) ? $link->priority : variable_get('xmlsitemap_additional_links_priority', 0.5);
+    $item = array(
+      'title' => $link->path,
+      'path' => $link->path,
+      'pid' => $mid,
+      'weight' => $link->priority * 20 - 10,
+      'type' => MENU_CUSTOM_ITEM | MENU_MODIFIED_BY_ADMIN,
+    );
+    menu_save_item($item);
+  }
+  menu_rebuild();
+  $ret[] = update_sql("DROP TABLE {xmlsitemap_additional}");
+  variable_del('xmlsitemap_additional_links_priority');
   return $ret;
 }
 

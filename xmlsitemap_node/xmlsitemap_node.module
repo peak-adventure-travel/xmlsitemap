@@ -79,6 +79,11 @@ function _xmlsitemap_node_links($excludes = array()) {
   }
 }
 
+/**
+ * Calculate the change frequency of a node.
+ * @param $node: Data for a node retrieved by _xmlsitemap_node_links().
+ * @return Number of seconds between updates
+ */
 function xmlsitemap_node_frequency($node) {
   $age = time() - $node->changed;
   if (variable_get('xmlsitemap_node_count_comments', TRUE)) {
@@ -418,7 +423,7 @@ function theme_xmlsitemap_node_view_sitemap($view, $nodes, $type) {
     print '  </url>'."\n";
   }
   print '</urlset>';
-  module_invoke_all('exit');
+  drupal_page_footer();
   exit;
 }
 
@@ -446,7 +451,7 @@ function theme_xmlsitemap_node_view_news($view, $nodes, $type) {
     print '  </url>'."\n";
   }
   print '</urlset>';
-  module_invoke_all('exit');
+  drupal_page_footer();
   exit;
 }
 
