@@ -215,8 +215,14 @@ function _xmlsitemap_output($chunk = NULL) {
     global $user;
     $current_user = $user;
     $user = user_load(array('uid' => 0));
+    if (module_exists('i18n')) {
+      i18n_selection_mode('off');
+    }
     module_invoke_all('xmlsitemap_links');
     _xmlsitemap_menu_links();
+    if (module_exists('i18n')) {
+      i18n_selection_mode('reset');
+    }
     $user = $current_user;
     menu_rebuild();
     variable_set('xmlsitemap_update', FALSE);
