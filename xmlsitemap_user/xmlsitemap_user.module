@@ -59,13 +59,10 @@ function _xmlsitemap_user_links() {
  * Get the uid of the front page profile.
  */
 function _xmlsitemap_user_frontpage() {
-  static $uid;
-  if (!isset($uid)) {
-    $uid = 0;
-    $frontpage = explode('/', drupal_get_normal_path(variable_get('site_frontpage', 'node')));
-    if (count($frontpage == 2) && $frontpage[0] == 'user' && is_numeric($frontpage[1])) {
-      $uid = $frontpage[1];
-    }
+  $uid = 0;
+  $frontpage = explode('/', drupal_get_normal_path(variable_get('site_frontpage', 'node')));
+  if (count($frontpage == 2) && $frontpage[0] == 'user' && is_numeric($frontpage[1])) {
+    $uid = $frontpage[1];
   }
   return $uid;
 }
@@ -78,9 +75,7 @@ function _xmlsitemap_user_frontpage() {
 function _xmlsitemap_user_priority($user) {
   $priority = $user->priority_override;
   if (!isset($user->priority_override)) {
-    static $default;
-    $default = isset($default) ? $default : variable_get('xmlsitemap_user_default_priority', 0.5);
-    $user->priority = isset($user->priority) ? $user->priority : $default;
+    $user->priority = isset($user->priority) ? $user->priority : variable_get('xmlsitemap_user_default_priority', 0.5);
     $priority = min($user->priority, 0.9);
   }
   return $priority;

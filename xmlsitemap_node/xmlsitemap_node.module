@@ -124,11 +124,7 @@ function _xmlsitemap_node_frontpage() {
  * @return A number between 0 and 1, or -1
  */
 function xmlsitemap_node_priority($node) {
-  static $promote_priority;
-  static $comment_priority;
   static $maxcomments;
-  $promote_priority = isset($promote_priority) ? $promote_priority : variable_get('xmlsitemap_node_promote_priority', 0.3);
-  $comment_priority = isset($comment_priority) ? $comment_priority : variable_get('xmlsitemap_node_comment_priority', 0.5);
   if (!isset($maxcomments)) {
     $maxcomments = 0;
     if (module_exists('comment')) {
@@ -140,10 +136,10 @@ function xmlsitemap_node_priority($node) {
     $priority = 0;
     $priority += variable_get("xmlsitemap_node_type_priority_$node->type", 0.5);
     if ($node->promote) {
-      $priority += $promote_priority;
+      $priority += variable_get('xmlsitemap_node_promote_priority', 0.3);
     }
     if (!empty($maxcomments)) {
-      $priority += $node->comment_count / $maxcomments * $comment_priority;
+      $priority += $node->comment_count / $maxcomments * variable_get('xmlsitemap_node_comment_priority', 0.5);
     }
     $priority = round($priority, 1);
     $priority = min($priority, 0.9);

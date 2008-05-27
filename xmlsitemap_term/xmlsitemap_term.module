@@ -90,16 +90,13 @@ function _xmlsitemap_term_links($excludes = array()) {
  * @return Integer of front page term ID, or 0 if front page is not a term.
  */
 function _xmlsitemap_term_frontpage() {
-  static $tid;
-  if (!isset($tid)) {
-    $tid = 0;
-    $frontpage = explode('/', drupal_get_normal_path(variable_get('site_frontpage', 'node')));
-    if (count($frontpage) == 3 && $frontpage[0] == 'taxonomy' && $frontpage[1] == 'term' && is_numeric($frontpage[2])) {
-      $tid = $frontpage[2];
-    }
-    elseif (count($frontpage == 2) && $frontpage[0] == 'forum' && is_numeric($frontpage[1])) {
-      $tid = $frontpage[1];
-    }
+  $tid = 0;
+  $frontpage = explode('/', drupal_get_normal_path(variable_get('site_frontpage', 'node')));
+  if (count($frontpage) == 3 && $frontpage[0] == 'taxonomy' && $frontpage[1] == 'term' && is_numeric($frontpage[2])) {
+    $tid = $frontpage[2];
+  }
+  elseif (count($frontpage == 2) && $frontpage[0] == 'forum' && is_numeric($frontpage[1])) {
+    $tid = $frontpage[1];
   }
   return $tid;
 }
