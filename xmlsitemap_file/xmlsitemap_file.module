@@ -12,7 +12,7 @@
 function xmlsitemap_file_xmlsitemap_links($type = NULL, $excludes = array()) {
   if ($type == 'node') {
     $result = db_query(db_rewrite_sql("
-      SELECT xf.*, n.nid, f.filepath, n.type, n.promote, s.comment_count, xn.priority_override, ua.dst AS alias
+      SELECT xf.*, n.nid, f.filepath, n.type, n.promote, s.comment_count, xn.priority_override, COALESCE(ua.dst) AS alias
       FROM {node} n
       INNER JOIN {files} f ON n.nid = f.nid
       INNER JOIN {file_revisions} r ON f.fid = r.fid AND n.vid = r.vid
@@ -24,6 +24,7 @@ function xmlsitemap_file_xmlsitemap_links($type = NULL, $excludes = array()) {
       AND (n.type NOT IN ('". implode("', '", $excludes) ."') AND xn.priority_override IS NULL OR xn.priority_override >= 0)
       AND r.list = 1
       AND f.filepath <> '%s'
+      GROUP BY f.fid
     "), strlen(file_directory_path()) + 2, _xmlsitemap_file_frontpage());
     while ($file = db_fetch_object($result)) {
       $link = array(
