@@ -344,7 +344,7 @@ function xmlsitemap_node_views_style_plugins() {
 /**
  * Implementation of hook_views_query_alter().
  */
-function xmlsitemap_node_views_query_alter(&$query, &$view, $summary, $level) {
+function xmlsitemap_node_views_query_alter(&$query, &$view, $summary = NULL, $level = NULL) {
   switch ($GLOBALS['db_type']) {
     case 'mysql':
     case 'mysqli':
