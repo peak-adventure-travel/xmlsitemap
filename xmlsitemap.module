@@ -16,8 +16,8 @@ function xmlsitemap_help($section) {
       return t('Configure the site map. Your site map is at !url.', array('!url' => '<a href="'. xmlsitemap_url('sitemap.xml', drupal_lookup_path('alias', 'sitemap.xml') ? drupal_lookup_path('alias', 'sitemap.xml') : NULL, NULL, NULL, TRUE) .'">'. xmlsitemap_url('sitemap.xml', drupal_lookup_path('alias', 'sitemap.xml') ? drupal_lookup_path('alias', 'sitemap.xml') : NULL, NULL, NULL, TRUE) .'</a>'));
     case 'admin/settings/xmlsitemap/engines':
       return t('Configure behavior for search engines.');
-    case 'admin/settings/xmlsitemap/additional':
-      return t('Set up additional links for your site map.');
+    case 'admin/help#xmlsitemap':
+      return '<p />';
   }
 }
 
@@ -200,7 +200,7 @@ function xmlsitemap_priority_options($option = NULL) {
  * Implementation of hook_robotstxt().
  */
 function xmlsitemap_robotstxt() {
-  return array("Sitemap: ". xmlsitemap_url('sitemap.xml', drupal_lookup_path('alias', 'sitemap.xml') ? drupal_lookup_path('alias', 'sitemap.xml') : NULL, NULL, NULL, TRUE));
+  return array('Sitemap: '. xmlsitemap_url('sitemap.xml', drupal_lookup_path('alias', 'sitemap.xml') ? drupal_lookup_path('alias', 'sitemap.xml') : NULL, NULL, NULL, TRUE));
 }
 
 /**
