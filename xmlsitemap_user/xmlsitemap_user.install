@@ -38,7 +38,7 @@ function xmlsitemap_user_install() {
       ) /*!40100 DEFAULT CHARACTER SET utf8 */;");
       db_query("CREATE TABLE {xmlsitemap_user_role} (
         rid int,
-        priority float NOT NULL DEFAULT 0,
+        priority float,
         PRIMARY KEY (rid)
       ) /*!40100 DEFAULT CHARACTER SET utf8 */;");
       break;
@@ -52,7 +52,7 @@ function xmlsitemap_user_install() {
       );");
       db_query("CREATE TABLE {xmlsitemap_user_role} (
         rid integer,
-        priority real NOT NULL DEFAULT 0,
+        priority real,
         PRIMARY KEY (rid)
       ) /*!40100 DEFAULT CHARACTER SET utf8 */;");
       break;
@@ -105,8 +105,17 @@ function xmlsitemap_user_uninstall() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_user_update_2() {
-  return array(
-    update_sql("ALTER TABLE {xmlsitemap_user} DROP pid"),
-  );
+  $ret = array();
+  $ret[] = update_sql("ALTER TABLE {xmlsitemap_user} DROP pid");
+  switch ($GLOBALS['db_type']) {
+    case 'mysql':
+    case 'mysqli':
+      $ret[] = update_sql("ALTER TABLE {xmlsitemap_user_role} CHANGE priority priority float");
+      break;
+    case 'pgsql':
+      db_change_column($ret, 'xmlsitemap_user_role', 'priority', 'priority', 'real');
+      break;
+  }
+  return $ret;
 }
 
