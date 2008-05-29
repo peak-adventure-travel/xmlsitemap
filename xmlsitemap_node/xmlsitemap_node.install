@@ -72,9 +72,9 @@ function xmlsitemap_node_enable() {
       break;
     case 'pgsql':
       db_query("
-        UPDATE {xmlsitemap_node} SET previously_changed = last_changed, last_changed = {node}.changed, last_comment = {node_comment_statistics}.last_comment_timestamp
+        UPDATE {xmlsitemap_node} SET previously_changed = last_changed, last_changed = changed, last_comment = last_comment_timestamp
         FROM {node} LEFT JOIN {node_comment_statistics} ON {node}.nid = {node_comment_statistics}.nid
-        WHERE nid = {node}.nid AND (last_changed <> {node}.changed OR last_comment <> {node_comment_statistics}.last_comment_timestamp)
+        WHERE {xmlsitemap_node}.nid = {node}.nid AND (last_changed <> changed OR last_comment <> last_comment_timestamp)
       ");
       break;
   }

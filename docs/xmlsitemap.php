@@ -47,7 +47,6 @@
  * Only the loc column is required.
  */
 function hook_xmlsitemap_links($type = NULL, $excludes = array()) {
-
   switch ($type) {
     case 'node':
       break;
@@ -56,14 +55,14 @@ function hook_xmlsitemap_links($type = NULL, $excludes = array()) {
     case 'user':
       // Load profiles.
       $result = db_query("
-        SELECT u.uid, xu.last_changed, xu.previously_changed, xu.priority_override, SUM(xur.priority), ua.dst AS alias
+        SELECT u.uid, xu.last_changed, xu.previously_changed, xu.priority_override, SUM(xur.priority), COALESCE(ua.dst) AS alias
         FROM {users} u
         LEFT JOIN {users_roles} ur ON ur.uid = u.uid
         LEFT JOIN {xmlsitemap_user_role} xur ON xur.rid = ur.rid
         LEFT JOIN {xmlsitemap_user} xu ON xu.uid = u.uid
         LEFT JOIN {url_alias} ua ON ua.pid = xu.pid
         WHERE (xu.priority_override IS NULL OR xu.priority_override >= 0) AND u.uid <> %d
-        GROUP BY u.uid, xu.last_changed, xu.previously_changed, xu.priority_override, ua.dst
+        GROUP BY u.uid, xu.last_changed, xu.previously_changed, xu.priority_override
         HAVING MIN(xur.priority) <> -1
       ", _xmlsitemap_user_frontpage());
       // Create link array for each profile.

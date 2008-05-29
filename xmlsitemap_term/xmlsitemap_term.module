@@ -51,14 +51,14 @@ function _xmlsitemap_term_links($excludes = array()) {
       break;
   }
   $result = db_query(db_rewrite_sql("
-    SELECT t.*, v.module, xt.last_changed, xt.previously_changed, xt.priority_override, COALESCE(ua.dst) AS alias
+    SELECT t.tid, t.vid, v.module, xt.last_changed, xt.previously_changed, xt.priority_override, COALESCE(ua.dst) AS alias
     FROM {term_data} t
-    LEFT JOIN {vocabulary} v ON v.vid = t.vid
-    LEFT JOIN {xmlsitemap_term} xt ON xt.tid = t.tid
+    LEFT JOIN {vocabulary} v ON t.vid = v.vid
+    LEFT JOIN {xmlsitemap_term} xt ON t.tid = xt.tid
     LEFT JOIN {url_alias} ua ON ua.src = CONCAT('forum/', CAST(t.tid AS $cast))
     WHERE (t.vid NOT IN (". (empty($excludes) ? 0 : implode(', ', $excludes)) .") AND xt.priority_override IS NULL OR xt.priority_override >= 0)
     AND t.tid <> %d
-    GROUP BY t.tid
+    GROUP BY t.tid, t.vid, v.module, xt.last_changed, xt.previously_changed, xt.priority_override
   ", 't', 'tid'), _xmlsitemap_term_frontpage());
   while ($term = db_fetch_object($result)) {
     if ($term->module == 'forum') {
@@ -110,8 +110,8 @@ function _xmlsitemap_term_frontpage() {
 function _xmlsitemap_term_priority($term) {
   $priority = $term->priority_override;
   if (!isset($term->priority_override)) {
-    $priority = variable_get("xmlsitemap_term_vocabulary_priority_$vocabulary->vid", 0.5);
-    $priority = min($priority, 0.9);
+    $priority = variable_get("xmlsitemap_term_vocabulary_priority_$term->vid", 0.5);
+    $priority = min($priority, 1);
   }
   return $priority;
 }
