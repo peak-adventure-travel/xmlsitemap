@@ -114,7 +114,7 @@ function _xmlsitemap_term_frontpage() {
 function _xmlsitemap_term_priority($term) {
   $priority = $term->priority_override;
   if (!isset($term->priority_override)) {
-    $priority = variable_get("xmlsitemap_term_vocabulary_priority_$vocabulary->vid", 0.5);
+    $priority = variable_get("xmlsitemap_term_vocabulary_priority_$term->vid", 0.5);
     $priority = min($priority, 0.9);
   }
   return $priority;
