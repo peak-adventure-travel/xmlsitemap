@@ -25,14 +25,16 @@ function _xmlsitemap_user_links() {
   switch ($GLOBALS['db_type']) {
     case 'mysql':
     case 'mysqli':
+      $coalesce = 'COALESCE';
       $cast = 'CHAR';
       break;
     case 'pgsql':
+      $coalesce = 'FIRST';
       $cast = 'VARCHAR';
       break;
   }
   $result = db_query("
-    SELECT u.uid, xu.last_changed, xu.previously_changed, xu.priority_override, SUM(xur.priority) as priority, COALESCE(ua.dst) AS alias
+    SELECT u.uid, xu.last_changed, xu.previously_changed, xu.priority_override, SUM(xur.priority) as priority, $coalesce(ua.dst) AS alias
     FROM {users} u
     LEFT JOIN {users_roles} ur ON u.uid = ur.uid
     LEFT JOIN {xmlsitemap_user_role} xur ON ur.rid = xur.rid

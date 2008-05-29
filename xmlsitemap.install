@@ -22,6 +22,13 @@ function xmlsitemap_install() {
       ) /*!40100 DEFAULT CHARACTER SET utf8 */;");
       break;
     case 'pgsql':
+      db_query('CREATE OR REPLACE FUNCTION first(anyelement, anyelement) RETURNS anyelement AS \'SELECT COALESCE($1, $2);\' LANGUAGE \'sql\';');
+      @db_query("DROP AGGREGATE first(anyelement)");
+      db_query("CREATE AGGREGATE first(
+        sfunc = first,
+        basetype = anyelement,
+        stype = anyelement
+      );");
       db_query("CREATE TABLE {xmlsitemap} (
         loc varchar(128) NOT NULL default '',
         lastmod integer,

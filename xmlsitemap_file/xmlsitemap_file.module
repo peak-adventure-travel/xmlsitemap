@@ -11,8 +11,17 @@
  */
 function xmlsitemap_file_xmlsitemap_links($type = NULL, $excludes = array()) {
   if ($type == 'node') {
+    switch ($GLOBALS['db_type']) {
+      case 'mysql':
+      case 'mysqli':
+        $coalesce = 'COALESCE';
+        break;
+      case 'pgsql':
+        $coalesce = 'FIRST';
+        break;
+    }
     $result = db_query(db_rewrite_sql("
-      SELECT n.nid, n.type, n.promote, f.fid, f.filepath, s.comment_count, xn.priority_override, xf.changed, xf.previously_changed, COALESCE(ua.dst) AS alias
+      SELECT n.nid, n.type, n.promote, f.fid, f.filepath, s.comment_count, xn.priority_override, xf.changed, xf.previously_changed, $coalesce(ua.dst) AS alias
       FROM {node} n
       INNER JOIN {files} f ON n.nid = f.nid
       INNER JOIN {file_revisions} r ON f.fid = r.fid AND n.vid = r.vid

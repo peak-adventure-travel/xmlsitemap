@@ -47,6 +47,17 @@
  * Only the loc column is required.
  */
 function hook_xmlsitemap_links($type = NULL, $excludes = array()) {
+  switch ($GLOBALS['db_type']) {
+    case 'mysql':
+    case 'mysqli':
+      $coalesce = 'COALESCE';
+      $cast = 'CHAR';
+      break;
+    case 'pgsql':
+      $coalesce = 'FIRST';
+      $cast = 'VARCHAR';
+      break;
+  }
   switch ($type) {
     case 'node':
       break;
@@ -55,16 +66,16 @@ function hook_xmlsitemap_links($type = NULL, $excludes = array()) {
     case 'user':
       // Load profiles.
       $result = db_query("
-        SELECT u.uid, xu.last_changed, xu.previously_changed, xu.priority_override, SUM(xur.priority), COALESCE(ua.dst) AS alias
+        SELECT u.uid, xu.last_changed, xu.previously_changed, xu.priority_override, SUM(xur.priority) as priority, $coalesce(ua.dst) AS alias
         FROM {users} u
-        LEFT JOIN {users_roles} ur ON ur.uid = u.uid
-        LEFT JOIN {xmlsitemap_user_role} xur ON xur.rid = ur.rid
-        LEFT JOIN {xmlsitemap_user} xu ON xu.uid = u.uid
-        LEFT JOIN {url_alias} ua ON ua.pid = xu.pid
-        WHERE (xu.priority_override IS NULL OR xu.priority_override >= 0) AND u.uid <> %d
+        LEFT JOIN {users_roles} ur ON u.uid = ur.uid
+        LEFT JOIN {xmlsitemap_user_role} xur ON ur.rid = xur.rid
+        LEFT JOIN {xmlsitemap_user} xu ON u.uid = xu.uid
+        LEFT JOIN {url_alias} ua ON ua.src = CONCAT('user/', CAST(u.uid AS $cast))
+        WHERE (xu.priority_override IS NULL OR xu.priority_override >= 0) AND u.uid <> %d AND u.uid > 0 AND u.status <> 0
         GROUP BY u.uid, xu.last_changed, xu.previously_changed, xu.priority_override
-        HAVING MIN(xur.priority) <> -1
-      ", _xmlsitemap_user_frontpage());
+        HAVING COUNT(xu.priority_override) > 0 OR (SUM(xur.priority) IS NULL AND %f <> -1 OR MIN(xur.priority) <> -1)
+      ", _xmlsitemap_user_frontpage(), variable_get('xmlsitemap_user_default_priority', 0.5));
       // Create link array for each profile.
       while ($user = db_fetch_object($result)) {
         $age = time() - $user->last_changed;
@@ -79,7 +90,6 @@ function hook_xmlsitemap_links($type = NULL, $excludes = array()) {
       }
       // Add other user links to the xmlsitemap table.
       module_invoke_all('xmlsitemap_links', 'user');
-      // Sort links by user ID and URL.
       break;
     case 'xml':
       // Retrieve an XML site map.

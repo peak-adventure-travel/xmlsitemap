@@ -40,17 +40,26 @@ function _xmlsitemap_node_excludes() {
  * values for a site map URL.
  */
 function _xmlsitemap_node_links($excludes = array()) {
+  switch ($GLOBALS['db_type']) {
+    case 'mysql':
+    case 'mysqli':
+      $coalesce = 'COALESCE';
+      break;
+    case 'pgsql':
+      $coalesce = 'FIRST';
+      break;
+  }
   if (module_exists('comment')) {
     $columns = 'n.nid, n.type, n.promote, s.comment_count, n.changed, xn.previously_changed, s.last_comment_timestamp, xn.previous_comment, xn.priority_override';
     $query = "
-      SELECT $columns, COALESCE(ua.dst) AS alias
+      SELECT $columns, $coalesce(ua.dst) AS alias
       FROM {node} n
       LEFT JOIN {node_comment_statistics} s ON n.nid = s.nid";
   }
   else {
     $columns = 'n.nid, n.type, n.promote, n.changed, xn.previously_changed, xn.priority_override';
     $query = "
-      SELECT $columns, COALESCE(ua.dst) AS alias
+      SELECT $columns, $coalesce(ua.dst) AS alias
       FROM {node} n";
   }
   switch ($GLOBALS['db_type']) {
