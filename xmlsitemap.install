@@ -39,11 +39,12 @@ function xmlsitemap_install() {
   }
   db_query("DELETE FROM {url_alias} WHERE dst LIKE 'sitemap%.xml'");
   $item = array(
+    'mid' => db_next_id('{menu}_mid'),
     'title' => $t('XML Sitemap'),
     'description' => $t('Menu items to include in the site map'),
     'type' => MENU_CUSTOM_MENU | MENU_MODIFIED_BY_ADMIN,
   );
-  menu_save_item($item);
+  db_query("INSERT INTO {menu} (mid, title, description, type) VALUES (%d, '%s', '%s', %d)", $item);
   menu_rebuild();
 }
 
@@ -97,9 +98,9 @@ function xmlsitemap_uninstall() {
   $pid = db_result(db_query_range("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", $t('XML Sitemap'), 0, 1));
   if ($pid !== FALSE) {
     foreach ($menu['visible'][$pid]['children'] as $mid) {
-      menu_delete_item($mid);
+      db_query('DELETE FROM {menu} WHERE mid = %d', $mid);
     }
-    menu_delete_item($pid);
+    db_query('DELETE FROM {menu} WHERE mid = %d', $pid);
     menu_rebuild();
   }
 }
@@ -129,24 +130,26 @@ function xmlsitemap_update_1() {
       );");
       break;
   }
+  $mid = db_next_id('{menu}_mid');
   $item = array(
+    'mid' => $mid,
     'title' => $t('XML Sitemap'),
     'description' => $t('Menu items to include in the site map'),
     'type' => MENU_CUSTOM_MENU | MENU_MODIFIED_BY_ADMIN,
   );
-  menu_save_item($item);
-  $mid = db_result(db_query_range("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", $t('XML Sitemap'), 0, 1));
+  db_query("INSERT INTO {menu} (mid, title, description, type) VALUES (%d, '%s', '%s', %d)", $item);
   $result = db_query("SELECT * FROM {xmlsitemap_additional}");
   while ($link = db_fetch_object($result)) {
     $link->priority = isset($link->priority) ? $link->priority : variable_get('xmlsitemap_additional_links_priority', 0.5);
     $item = array(
-      'title' => $link->path,
-      'path' => $link->path,
+      'mid' => db_next_id('{menu}_mid'),
       'pid' => $mid,
+      'path' => $link->path,
+      'title' => $link->path,
       'weight' => $link->priority * 20 - 10,
       'type' => MENU_CUSTOM_ITEM | MENU_MODIFIED_BY_ADMIN,
     );
-    menu_save_item($item);
+    db_query("INSERT INTO {menu} (mid, pid, path, title, weight, type) VALUES (%d, %d, '%s', '%s', %d, %d)", $item);
   }
   menu_rebuild();
   $ret[] = update_sql("DROP TABLE {xmlsitemap_additional}");

@@ -7,6 +7,11 @@
  */
 
 /**
+ * @addtogroup xmlsitemap
+ * @{
+ */
+
+/**
  * Implementation of hook_xmlsitemap_links().
  */
 function xmlsitemap_file_xmlsitemap_links($type = NULL, $excludes = array()) {
@@ -141,4 +146,8 @@ function xmlsitemap_file_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
     }
   }
 }
+
+/**
+ * @} End of "addtogroup xmlsitemap".
+ */
 

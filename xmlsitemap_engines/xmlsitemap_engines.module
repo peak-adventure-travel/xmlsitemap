@@ -7,6 +7,11 @@
  */
 
 /**
+ * @addtogroup xmlsitemap
+ * @{
+ */
+
+/**
  * Implementation of hook_xmlsitemap_engines().
  */
 function xmlsitemap_engines_xmlsitemap_engines($op, $type = NULL) {
@@ -284,4 +289,8 @@ function _xmlsitemap_engines_verify($engine) {
   drupal_page_footer();
   exit;
 }
+
+/**
+ * @} End of "addtogroup xmlsitemap".
+ */
 
