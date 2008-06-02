@@ -527,7 +527,13 @@ function xmlsitemap_file_download($file) {
 function _xmlsitemap_links() {
   static $links;
   if (!isset($links)) {
+    if (module_exists('i18n')) {
+      i18n_selection_mode('off');
+    }
     $entries = module_invoke_all('xmlsitemap_links');
+    if (module_exists('i18n')) {
+      i18n_selection_mode('reset');
+    }
     if (!empty($entries)) {
       foreach ($entries as $key => $link) {
         $lastmod[$key] = $link['#lastmod'];
