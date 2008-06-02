@@ -6,6 +6,11 @@
  */
 
 /**
+ * @addtogroup xmlsitemap
+ * @{
+ */
+
+/**
  * Implementation of hook_help().
  */
 function xmlsitemap_help($section) {
@@ -825,4 +830,8 @@ function _xmlsitemap_ping() {
     variable_set('xmlsitemap_changed', FALSE);
   }
 }
+
+/**
+ * @} End of "addtogroup xmlsitemap".
+ */
 

@@ -6,6 +6,11 @@
  */
 
 /**
+ * @addtogroup xmlsitemap
+ * @{
+ */
+
+/**
  * Implementation of hook_xmlsitemap_links().
  */
 function xmlsitemap_node_xmlsitemap_links($type = NULL, $excludes = array()) {
@@ -512,4 +517,8 @@ function theme_xmlsitemap_node_view_news($view, $nodes, $type) {
   module_invoke_all('exit');
   exit;
 }
+
+/**
+ * @} End of "addtogroup xmlsitemap".
+ */
 

@@ -2,6 +2,16 @@
 // $Id$
 
 /**
+ * @file
+ * XML Sitemap API documentation
+ */
+
+/**
+ * @defgroup xmlsitemap XML Sitemap
+ * @{
+ */
+
+/**
  * @addtogroup hooks
  * @{
  */
@@ -190,5 +200,9 @@ function hook_xmlsitemap_engines($op, $type = NULL) {
 
 /**
  * @} End of "addtogroup hooks".
+ */
+
+/**
+ * @} End of "defgroup xmlsitemap".
  */
 

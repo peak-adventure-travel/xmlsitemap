@@ -6,6 +6,11 @@
  */
 
 /**
+ * @addtogroup xmlsitemap
+ * @{
+ */
+
+/**
  * Implementation of hook_xmlsitemap_links().
  */
 function xmlsitemap_term_xmlsitemap_links($type = NULL, $excludes = array()) {
@@ -264,4 +269,8 @@ function xmlsitemap_term_cron() {
     xmlsitemap_update_sitemap();
   }
 }
+
+/**
+ * @} End of "addtogroup xmlsitemap".
+ */
 
