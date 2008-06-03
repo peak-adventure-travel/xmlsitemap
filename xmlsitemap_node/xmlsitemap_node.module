@@ -410,10 +410,8 @@ function xmlsitemap_node_views_query_alter(&$query, &$view, $summary = NULL, $le
  */
 function theme_xmlsitemap_node_view_sitemap($view, $nodes, $type) {
   drupal_set_header('Content-Type: text/xml; charset=utf-8');
-  $xsl_path = file_directory_path() .'/xmlsitemap/gss.xsl';
-  $xsl_path = file_exists($xsl_path) ? xmlsitemap_file_create_url($xsl_path) : $base_path . drupal_get_path('module', 'xmlsitemap') .'/gss/gss.xsl';
   print '<?xml version="1.0" encoding="UTF-8"?>'."\n";
-  print '<?xml-stylesheet type="text/xsl" href="'. $xsl_path .'" ?>'."\n";
+  print '<?xml-stylesheet type="text/xsl" href="'. xmlsitemap_url(drupal_get_path('module', 'xmlsitemap') .'/gss/gss.xsl') .'" ?>'."\n";
   print '<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'."\n";
   print '        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9"'."\n";
   print '        url="http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"'."\n";

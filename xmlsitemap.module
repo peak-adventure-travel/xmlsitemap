@@ -58,6 +58,13 @@ function xmlsitemap_menu($may_cache) {
       'type' => MENU_LOCAL_TASK,
     );
     $items[] = array(
+      'path' => drupal_get_path('module', 'xmlsitemap') .'/gss/gss.xsl',
+      'title' => 'gss.xsl',
+      'callback' => '_xmlsitemap_xsl',
+      'type' => MENU_CALLBACK,
+      'access' => $access_content,
+    );
+    $items[] = array(
       'path' => 'sitemap.xml',
       'title' => t('Site map index'),
       'callback' => '_xmlsitemap_output',
@@ -209,6 +216,17 @@ function xmlsitemap_robotstxt() {
 }
 
 /**
+ * Menu callback; get XSL style sheet.
+ * @return None
+ */
+function _xmlsitemap_xsl() {
+  drupal_set_header('Content-Type: application/xml; charset=utf-8');
+  include drupal_get_path('module', 'xmlsitemap') .'/gss/gss.php';
+  drupal_page_footer();
+  exit;
+}
+
+/**
  * Menu callback; display the site map.
  * @param $chunk:
  * An integer specifying which chunk of the site map is being requested. If not
@@ -274,10 +292,8 @@ function _xmlsitemap_output($chunk = NULL) {
  * @return A string containing the site map index
  */
 function _xmlsitemap_output_index($link_count) {
-  $xsl_path = file_directory_path() .'/xmlsitemap/gss.xsl';
-  $xsl_path = file_exists($xsl_path) ? xmlsitemap_file_create_url($xsl_path) : base_path() . drupal_get_path('module', 'xmlsitemap') .'/gss/gss.xsl';
   print '<?xml version="1.0" encoding="UTF-8"?>'."\n";
-  print '<?xml-stylesheet type="text/xsl" href="'. $xsl_path .'" ?>'."\n";
+  print '<?xml-stylesheet type="text/xsl" href="'. xmlsitemap_url(drupal_get_path('module', 'xmlsitemap') .'/gss/gss.xsl') .'" ?>'."\n";
   print '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'."\n";
   print '              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'."\n";
   print '              xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9'."\n";
@@ -310,10 +326,8 @@ function _xmlsitemap_output_chunk($chunk = 0) {
   if (!ini_get('safe_mode')) {
     set_time_limit(240);
   }
-  $xsl_path = file_directory_path() .'/xmlsitemap/gss.xsl';
-  $xsl_path = file_exists($xsl_path) ? xmlsitemap_file_create_url($xsl_path) : base_path() . drupal_get_path('module', 'xmlsitemap') .'/gss/gss.xsl';
   print '<?xml version="1.0" encoding="UTF-8"?>'."\n";
-  print '<?xml-stylesheet type="text/xsl" href="'. $xsl_path .'" ?>'."\n";
+  print '<?xml-stylesheet type="text/xsl" href="'. xmlsitemap_url(drupal_get_path('module', 'xmlsitemap') .'/gss/gss.xsl') .'" ?>'."\n";
   print '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'."\n";
   print '        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'."\n";
   print '        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9'."\n";
@@ -376,15 +390,6 @@ function xmlsitemap_file_create_url($path, $alias = NULL) {
   }
   else {
     return "$GLOBALS[base_url]/". file_directory_path() .'/'. str_replace('\\', '/', $path);
-  }
-}
-
-/**
- * Implementation of hook_file_download().
- */
-function xmlsitemap_file_download($file) {
-  if ($file == 'xmlsitemap/gss.xsl') {
-    return array('Content-Type:');
   }
 }
 

@@ -38,6 +38,7 @@ function xmlsitemap_install() {
       break;
   }
   db_query("DELETE FROM {url_alias} WHERE dst LIKE 'sitemap%.xml'");
+  menu_rebuild();
   $item = array(
     'mid' => db_next_id('{menu}_mid'),
     'title' => $t('XML Sitemap'),
@@ -46,42 +47,6 @@ function xmlsitemap_install() {
   );
   db_query("INSERT INTO {menu} (mid, title, description, type) VALUES (%d, '%s', '%s', %d)", $item);
   menu_rebuild();
-}
-
-/**
- * Implementation of hook_enable().
- */
-function xmlsitemap_enable() {
-  global $base_path;
-  $xsl = file_get_contents(drupal_get_path('module', 'xmlsitemap') .'/gss/gss.xsl');
-
-  $css_start = strpos($xsl, '<link href="') + strlen('<link href="');
-  $css_length = strpos($xsl, '" type="text/css" rel="stylesheet"/>') - $css_start;
-  $xsl = substr_replace($xsl, $base_path . drupal_get_path('module', 'xmlsitemap') .'/gss/gss.css', $css_start, $css_length);
-
-  $js_start = strpos($xsl, '<script src="') + strlen('<script src="');
-  $js_length = strpos($xsl, '"></script>') - $js_start;
-  $xsl = substr_replace($xsl, $base_path . drupal_get_path('module', 'xmlsitemap') .'/gss/gss.js', $js_start, $js_length);
-
-  if (file_check_directory(($path = file_directory_path() .'/xmlsitemap'), FILE_CREATE_DIRECTORY)) {
-    file_save_data($xsl, "$path/gss.xsl", FILE_EXISTS_REPLACE);
-  }
-}
-
-/**
- * Implementation of hook_disable().
- */
-function xmlsitemap_disable() {
-  $path = file_directory_path() .'/xmlsitemap';
-  if ($dir = @opendir($path)) {
-    while (($file = readdir($dir)) !== FALSE) {
-      if ($file != '.' && $file != '..') {
-        unlink("$path/$file");
-      }
-    }
-    closedir($dir);
-    rmdir($path);
-  }
 }
 
 /**
@@ -154,6 +119,16 @@ function xmlsitemap_update_1() {
   menu_rebuild();
   $ret[] = update_sql("DROP TABLE {xmlsitemap_additional}");
   variable_del('xmlsitemap_additional_links_priority');
+  $path = file_directory_path() .'/xmlsitemap';
+  if ($dir = @opendir($path)) {
+    while (($file = readdir($dir)) !== FALSE) {
+      if ($file != '.' && $file != '..') {
+        unlink("$path/$file");
+      }
+    }
+    closedir($dir);
+    rmdir($path);
+  }
   return $ret;
 }
 
