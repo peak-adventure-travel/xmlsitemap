@@ -410,23 +410,15 @@ function xmlsitemap_xmlsitemap_links($type = NULL, $excludes = array()) {
       'priority' => variable_get('xmlsitemap_front_page_priority', 1)
     );
     db_query("INSERT INTO {xmlsitemap} (loc, changefreq, priority) VALUES ('%s', %d, %f)", $link);
-    _xmlsitemap_menu_links();
-  }
-}
-
-/**
- * Add links from enabled menus to the site map.
- * @return None
- */
-function _xmlsitemap_menu_links() {
-  unset($GLOBALS['_menu']);
-  $menu = menu_get_menu();
-  $mid = db_result(db_query_range("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", t('XML Sitemap'), 0, 1));
-  $menus = $mid === FALSE ? array() : array($mid);
-  $menus = variable_get('xmlsitemap_menus', $menus);
-  foreach ($menus as $mid) {
-    if (!empty($mid)) {
-      _xmlsitemap_menu_process($mid, $menu);
+    unset($GLOBALS['_menu']);
+    $menu = menu_get_menu();
+    $mid = db_result(db_query_range("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", t('XML Sitemap'), 0, 1));
+    $menus = $mid === FALSE ? array() : array($mid);
+    $menus = variable_get('xmlsitemap_menus', $menus);
+    foreach ($menus as $mid) {
+      if (!empty($mid)) {
+        _xmlsitemap_menu_process($mid, $menu);
+      }
     }
   }
 }
