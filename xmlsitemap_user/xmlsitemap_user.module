@@ -174,6 +174,7 @@ function xmlsitemap_user_perm() {
  */
 function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
   switch ($op) {
+    case 'register':
     case 'form':
       $priority = db_result(db_query("SELECT priority_override FROM {xmlsitemap_user} WHERE uid = %d", $account->uid));
       if (user_access('override profile priority')) {
@@ -184,11 +185,13 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
           '#weight' => 7,
         );
         $options = xmlsitemap_priority_options('both');
-        $default = db_fetch_object(db_query("
-          SELECT MIN(priority) AS min, SUM(priority) AS sum FROM {xmlsitemap_user_role}
-          WHERE rid IN (". implode(', ', array_keys($account->roles)) .")
-        "));
-        $default = $default->min < 0 ? -1 : min($default->sum, 1);
+        if (isset($account->roles)) {
+          $default = db_fetch_object(db_query("
+            SELECT MIN(priority) AS min, SUM(priority) AS sum FROM {xmlsitemap_user_role}
+            WHERE rid IN (". implode(', ', array_keys($account->roles)) .")
+          "));
+          $default = $default->min < 0 ? -1 : min($default->sum, 1);
+        }
         $default = isset($default) ? (string) $default : variable_get('xmlsitemap_user_default_priority', '0.5');
         $form['xmlsitemap_user']['xmlsitemap_user_priority'] = array(
           '#type' => 'select',
