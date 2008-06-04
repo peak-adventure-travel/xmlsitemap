@@ -96,6 +96,15 @@ function xmlsitemap_menu($may_cache) {
  * Menu callback; return site map settings form.
  */
 function xmlsitemap_settings_sitemap() {
+  $mid = db_result(db_query_range("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", t('XML Sitemap'), 0, 1));
+  $menus = $mid === FALSE ? array() : array($mid);
+  $form['xmlsitemap_menus'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Menus to include in site map'),
+    '#default_value' => variable_get('xmlsitemap_menus', $menus),
+    '#options' => menu_get_root_menus(),
+    '#weight' => -3,
+  );
   $form['xmlsitemap_chunk_size'] = array(
     '#type' => 'textfield',
     '#title' => t('Chunk size'),
@@ -104,14 +113,6 @@ function xmlsitemap_settings_sitemap() {
     '#maxlength' => 5,
     '#description' => t('This is the number of links to include in one site map. Values can range between 1 and 50,000. If the total number of links exceeds the chunk size, multiple site maps will be generated.'),
     '#weight' => -2,
-  );
-  $mid = db_result(db_query_range("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", t('XML Sitemap'), 0, 1));
-  $menus = $mid === FALSE ? array() : array($mid);
-  $form['xmlsitemap_menus'] = array(
-    '#type' => 'checkboxes',
-    '#title' => t('Menus to include in site map'),
-    '#default_value' => variable_get('xmlsitemap_menus', $menus),
-    '#options' => menu_get_root_menus(),
   );
   $form['xmlsitemap_front_page_priority'] = array(
     '#type' => 'select',
@@ -243,7 +244,6 @@ function _xmlsitemap_output($chunk = NULL) {
       i18n_selection_mode('off');
     }
     module_invoke_all('xmlsitemap_links');
-    _xmlsitemap_menu_links();
     if (module_exists('i18n')) {
       i18n_selection_mode('reset');
     }
@@ -310,14 +310,9 @@ function _xmlsitemap_output_index($link_count) {
     print '  <sitemap>'."\n";
     print '    <loc>'. xmlsitemap_url("sitemap$chunk.xml", NULL, NULL, NULL, TRUE) .'</loc>'."\n";
     if ($chunk < $link_count / $chunk_size) {
-      $from = $chunk * $chunk_size - 1;
-      $count = $chunk_size;
-      if (empty($chunk)) {
-        $from++;
-        $count--;
-      }
-      if (!empty($count)) {
-        $lastmod = db_result(db_query_range("SELECT lastmod FROM {xmlsitemap} ORDER BY lastmod DESC, loc", $from, $count));
+      $from = $chunk * $chunk_size;
+      if (!empty($chunk_size)) {
+        $lastmod = db_result(db_query_range("SELECT lastmod FROM {xmlsitemap} ORDER BY lastmod DESC, loc", $from, $chunk_size));
         if (isset($lastmod) && $lastmod !== FALSE) {
           print '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $lastmod) .'</lastmod>'."\n";
         }
@@ -341,49 +336,23 @@ function _xmlsitemap_output_chunk($chunk = 0) {
   print '        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9'."\n";
   print '                            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">'."\n";
   $chunk_size = variable_get('xmlsitemap_chunk_size', 50000);
-  $start = $chunk * $chunk_size - 1;
-  if (empty($chunk)) {
-    $link = array(
-      'loc' => "$GLOBALS[base_url]/",
-      'changefreq' => 'always',
-      'priority' => variable_get('xmlsitemap_front_page_priority', 1)
-    );
-    _xmlsitemap_output_link($link);
-    $chunk_size--;
-    $start++;
-  }
-  $links = db_query_range("SELECT * FROM {xmlsitemap} ORDER BY lastmod DESC, loc", $start , $chunk_size);
+  $start = $chunk * $chunk_size;
+  $links = db_query_range("SELECT * FROM {xmlsitemap} ORDER BY lastmod DESC, changefreq, priority DESC, loc", $start , $chunk_size);
   while ($link = db_fetch_array($links)) {
-    _xmlsitemap_output_link($link);
+    print '  <url>'."\n";
+    print '    <loc>'. check_url($link['loc']) .'</loc>'."\n";
+    if (isset($link['lastmod'])) {
+      print '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $link['lastmod']) .'</lastmod>'."\n";
+    }
+    if (isset($link['changefreq'])) {
+      print '    <changefreq>'. xmlsitemap_frequency($link['changefreq']) .'</changefreq>'."\n";
+    }
+    if (isset($link['priority']) && $link['priority'] <= 1 && $link['priority'] >= 0) {
+      print '    <priority>'. number_format($link['priority'], 1) .'</priority>'."\n";
+    }
+    print '  </url>'."\n";
   }
   print '</urlset>';
-}
-
-/**
- * Display a single site map link.
- * @param $link: An array with data for a single link from the xmlsitemap table
- * - loc: Link URL
- * - lastmod:
- *   Timestamp of last modification
- * - changefreq:
- *   Number of seconds between changes
- * - priority:
- *   A number between 0 and 1 indicating the link's priority
- * @return None
- */
-function _xmlsitemap_output_link($link) {
-  print '  <url>'."\n";
-  print '    <loc>'. check_url($link['loc']) .'</loc>'."\n";
-  if (isset($link['lastmod'])) {
-    print '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $link['lastmod']) .'</lastmod>'."\n";
-  }
-  if (isset($link['changefreq'])) {
-    print '    <changefreq>'. xmlsitemap_frequency($link['changefreq']) .'</changefreq>'."\n";
-  }
-  if (isset($link['priority']) && $link['priority'] <= 1 && $link['priority'] >= 0) {
-    print '    <priority>'. number_format($link['priority'], 1) .'</priority>'."\n";
-  }
-  print '  </url>'."\n";
 }
 
 /**
@@ -428,6 +397,21 @@ function xmlsitemap_frequency($interval) {
     }
   }
   return $frequency;
+}
+
+/**
+ * Implementation of hook_xmlsitmap_links().
+ */
+function xmlsitemap_xmlsitemap_links($type = NULL, $excludes = array()) {
+  if (!isset($type)) {
+    $link = array(
+      'loc' => "$GLOBALS[base_url]/",
+      'changefreq' => 'always',
+      'priority' => variable_get('xmlsitemap_front_page_priority', 1)
+    );
+    db_query("INSERT INTO {xmlsitemap} (loc, changefreq, priority) VALUES ('%s', %d, %f)", $link);
+    _xmlsitemap_menu_links();
+  }
 }
 
 /**
