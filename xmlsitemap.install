@@ -38,15 +38,6 @@ function xmlsitemap_install() {
       break;
   }
   db_query("DELETE FROM {url_alias} WHERE dst LIKE 'sitemap%.xml'");
-  menu_rebuild();
-  $item = array(
-    'mid' => db_next_id('{menu}_mid'),
-    'title' => $t('XML Sitemap'),
-    'description' => $t('Menu items to include in the site map'),
-    'type' => MENU_CUSTOM_MENU | MENU_MODIFIED_BY_ADMIN,
-  );
-  db_query("INSERT INTO {menu} (mid, title, description, type) VALUES (%d, '%s', '%s', %d)", $item);
-  menu_rebuild();
 }
 
 /**
@@ -60,20 +51,10 @@ function xmlsitemap_enable() {
  * Implementation of hook_uninstall().
  */
 function xmlsitemap_uninstall() {
-  $t = get_t();
   db_query("DROP TABLE {xmlsitemap}");
   $settings = db_query("SELECT name FROM {variable} WHERE name LIKE 'xmlsitemap\_%'");
   while ($variable = db_fetch_object($settings)) {
     variable_del($variable->name);
-  }
-  $menu = menu_get_menu();
-  $pid = db_result(db_query_range("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", $t('XML Sitemap'), 0, 1));
-  if ($pid !== FALSE) {
-    foreach ($menu['visible'][$pid]['children'] as $mid) {
-      db_query('DELETE FROM {menu} WHERE mid = %d', $mid);
-    }
-    db_query('DELETE FROM {menu} WHERE mid = %d', $pid);
-    menu_rebuild();
   }
 }
 
@@ -102,14 +83,7 @@ function xmlsitemap_update_1() {
       );");
       break;
   }
-  $mid = db_next_id('{menu}_mid');
-  $item = array(
-    'mid' => $mid,
-    'title' => $t('XML Sitemap'),
-    'description' => $t('Menu items to include in the site map'),
-    'type' => MENU_CUSTOM_MENU | MENU_MODIFIED_BY_ADMIN,
-  );
-  db_query("INSERT INTO {menu} (mid, title, description, type) VALUES (%d, '%s', '%s', %d)", $item);
+  drupal_install_modules(array('xmlsitemap_menu'));
   $result = db_query("SELECT * FROM {xmlsitemap_additional}");
   while ($link = db_fetch_object($result)) {
     $link->priority = isset($link->priority) ? $link->priority : variable_get('xmlsitemap_additional_links_priority', 0.5);
