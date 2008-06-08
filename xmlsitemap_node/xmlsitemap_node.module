@@ -470,10 +470,10 @@ function theme_xmlsitemap_node_view_sitemap($view, $nodes, $type) {
   $xsl_path = file_exists($xsl_path) ? _xmlsitemap_file_create_url($xsl_path) : $base_path . drupal_get_path('module', 'xmlsitemap') .'/gss/gss.xsl';
   $output .= '<?xml version="1.0" encoding="UTF-8"?>'."\n";
   $output .= '<?xml-stylesheet type="text/xsl" href="'. $xsl_path .'" ?>'."\n";
-  $output .= '<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'."\n";
-  $output .= '        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9"'."\n";
-  $output .= '        url="http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"'."\n";
-  $output .= '        xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n";
+  $output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'."\n";
+  $output .= '        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'."\n";
+  $output .= '        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9'."\n";
+  $output .= '                            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">'."\n";
   foreach ($nodes as $node) {
     $lastmod = variable_get('xmlsitemap_node_count_comments', TRUE) ? max($node->changed, $node->last_comment_timestamp) : $node->changed;
     $output .= '  <url>'."\n";
@@ -495,11 +495,11 @@ function theme_xmlsitemap_node_view_sitemap($view, $nodes, $type) {
 function theme_xmlsitemap_node_view_news($view, $nodes, $type) {
   drupal_set_header('Content-Type: text/xml; charset=utf-8');
   $output .= '<?xml version="1.0" encoding="UTF-8"?>'."\n";
-  $output .= '<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'."\n";
-  $output .= '        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9"'."\n";
-  $output .= '        url="http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"'."\n";
-  $output .= '        xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'."\n";
-  $output .= '        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">'."\n";
+  $output .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'."\n";
+  $output .= '        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"'."\n";
+  $output .= '        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'."\n";
+  $output .= '        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9'."\n";
+  $output .= '                            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">'."\n";
   foreach ($nodes as $node) {
     $lastmod = variable_get('xmlsitemap_node_count_comments', TRUE) ? max($node->changed, $node->last_comment_timestamp) : $node->changed;
     $output .= '  <url>'."\n";
