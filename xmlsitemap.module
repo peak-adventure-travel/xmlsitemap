@@ -235,7 +235,7 @@ function _xmlsitemap_output($chunk = NULL) {
       i18n_selection_mode('off');
     }
     $link = array(
-      'loc' => "$GLOBALS[base_url]/",
+      'loc' => xmlsitemap_url(NULL, NULL, NULL, NULL, TRUE),
       'changefreq' => 'always',
       'priority' => variable_get('xmlsitemap_front_page_priority', 1)
     );
