@@ -413,7 +413,7 @@ function _xmlsitemap_output_chunk($chunk = 0) {
  */
 function xmlsitemap_file_create_url($path, $alias = NULL) {
   $path = trim(substr($path, strlen(file_directory_path())), '\\/');
-  if (isset($alias) || variable_get('file_downloads', FILE_DOWNLOADS_PUBLIC) == FILE_DOWNLOADS_PRIVATE) {
+  if (variable_get('file_downloads', FILE_DOWNLOADS_PUBLIC) == FILE_DOWNLOADS_PRIVATE) {
     return xmlsitemap_url('system/files/'. $path, $alias, NULL, NULL, TRUE);
   }
   else {
