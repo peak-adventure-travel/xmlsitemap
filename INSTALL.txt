@@ -33,3 +33,12 @@ Install the latest 5.x-1.x release of XML Sitemap. To ensure that your Google
 Sitemap settings are transferred correctly, enable XML Sitemap before removing
 gsitemap from your modules directory.
 
+UNINSTALLATION
+--------------
+
+1. Go to http://www.example.com/?q=admin/build/modules and disable all XML
+   Sitemap modules.
+
+2. Go to http://www.example.com/?q=admin/build/modules/uninstall and uninstall
+   all XML Sitemap modules.
+
