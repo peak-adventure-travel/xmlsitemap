@@ -25,8 +25,10 @@ function xmlsitemap_help($section) {
       $output .= t('Configure behavior for search engines.');
       break;
     case 'admin/help#xmlsitemap':
-      $output .= '<p>'. t('XML Sitemap automatically creates a site map that conforms to the !sitemaps.org specification. This helps search engines keep their search results up to date. More information is available in the !XML Sitemap documentation.', array('!sitemaps.org' => l('sitemaps.org', 'http://www.sitemaps.org'), '!XML Sitemap documentation' => l('XML Sitemap documentation', 'http://drupal.org/handbook/modules/gsitemap'))) ."</p>\n";
-      $output .= '<p>'. t('Your site map is at !sitemap.xml. By itself, the XML Sitemap module adds only the front page of your site to the site map. Other types of links are handled by supporting modules.', array('!sitemap.xml' => l(xmlsitemap_url('sitemap.xml', drupal_lookup_path('alias', 'sitemap.xml') ? drupal_lookup_path('alias', 'sitemap.xml') : NULL, NULL, NULL, TRUE), xmlsitemap_url('sitemap.xml', drupal_lookup_path('alias', 'sitemap.xml') ? drupal_lookup_path('alias', 'sitemap.xml') : NULL, NULL, NULL, TRUE)))) .'</p>';
+      $output .= '<p>'. t('XML Sitemap automatically creates a site map that conforms to the !sitemaps.org specification. This helps search engines keep their search results up to date.', array('!sitemaps.org' => l('sitemaps.org', 'http://www.sitemaps.org'))) ."</p>\n";
+      $output .= '<p>'. t('Your site map is at !sitemap.xml.', array('!sitemap.xml' => l(xmlsitemap_url('sitemap.xml', drupal_lookup_path('alias', 'sitemap.xml') ? drupal_lookup_path('alias', 'sitemap.xml') : NULL, NULL, NULL, TRUE), xmlsitemap_url('sitemap.xml', drupal_lookup_path('alias', 'sitemap.xml') ? drupal_lookup_path('alias', 'sitemap.xml') : NULL, NULL, NULL, TRUE)))) .'</p>';
+      $output .= '<h3>'. t('Supporting modules') ."</h3>\n";
+      $output .= '<p>'. t('By itself, the XML Sitemap module adds only the front page of your site to the site map. Other types of links are handled by supporting modules.') ."</p>\n";
       $optional = '';
       if (module_exists('xmlsitemap_menu')) {
         $optional .= '<dt>'. t('XML Sitemap: Menu') ."</dt>\n";
@@ -45,10 +47,10 @@ function xmlsitemap_help($section) {
         $optional .= '<dd>'. t('<em>XML Sitemap: User</em> adds user profiles to the site map. The <em>anonymous user</em> role must be given permission to access user profiles on the !access control page. You can change the default user priority on the !user settings page. The !user role priority will override the default user priority. You can override both the default priority and the role priority when you add or edit a user.', array('!access control' => l('access control', 'admin/user/access'), '!user settings' => l('user settings', 'admin/user/settings'), '!user role' => l('user role', 'admin/user/roles'))) ."</dd>\n";
       }
       if (!empty($optional)) {
-        $output .= '<p>'. t('Links may be assigned a priority between 0.0 and 1.0. The default priority is 0.5. A priority of <em>Not in site map</em> excludes a link from the site map.') ."</p>\n";
-        $output .= '<h3>'. t('Supporting modules') ."</h3>\n";
         $output .= "<dl>\n$optional</dl>\n";
       }
+      $output .= '<p>'. t('Links may be assigned a priority between 0.0 and 1.0. The default priority is 0.5. A priority of <em>Not in site map</em> excludes a link from the site map.') .'</p>';
+      $output .= '<p>'. t('More information is available in the !XML Sitemap documentation.', array('!sitemaps.org' => l('sitemaps.org', 'http://www.sitemaps.org'), '!XML Sitemap documentation' => l('XML Sitemap documentation', 'http://drupal.org/handbook/modules/gsitemap'))) ."</p>\n";
       break;
   }
   return $output;
