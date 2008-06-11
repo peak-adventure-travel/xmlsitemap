@@ -54,6 +54,9 @@ function _xmlsitemap_menu_process_link($mid, $menu) {
   }
 }
 
+/**
+ * Implementation of hook_form_alter().
+ */
 function xmlsitemap_menu_form_alter($form_id, &$form) {
   switch ($form_id) {
     case 'xmlsitemap_settings_sitemap':

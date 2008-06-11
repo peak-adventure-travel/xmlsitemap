@@ -34,7 +34,7 @@ function xmlsitemap_help($section) {
       }
       if (module_exists('xmlsitemap_node')) {
         $optional .= '<dt>'. t('XML Sitemap: Node') ."</dt>\n";
-        $optional .= '<dd>'. t('<em>XML Sitemap: Node</em> adds nodes (content) to the site map. The default priority of a node is determined from a combination of its !content type priority, whether it appears on the front page of your site, and the number of comments it has received. You can override the default priority for individual nodes when you add or edit a node.', array('!content type' => l('content type', 'admin/content/types'))) ."</dd>\n";
+        $optional .= '<dd>'. t('<em>XML Sitemap: Node</em> adds nodes (content) to the site map. The default priority of a node is determined by a combination of its !content type priority, whether it appears on the front page of your site, and the number of comments it has received. You can override the default priority for individual nodes when you add or edit a node.', array('!content type' => l('content type', 'admin/content/types'))) ."</dd>\n";
       }
       if (module_exists('xmlsitemap_term')) {
         $optional .= '<dt>'. t('XML Sitemap: Term') ."</dt>\n";
@@ -559,7 +559,7 @@ function xmlsitemap_update_sitemap() {
   variable_set('xmlsitemap_changed', TRUE);
   variable_set('xmlsitemap_update', TRUE);
   db_query("DELETE FROM {xmlsitemap}");
-  cache_clear_all(url('sitemap', NULL, NULL, TRUE), 'cache_page', TRUE);
+  cache_clear_all(xmlsitemap_url('sitemap', NULL, NULL, NULL, TRUE), 'cache_page', TRUE);
   if (variable_get('xmlsitemap_submit', FALSE)) {
     _xmlsitemap_submit_on_exit();
   }
