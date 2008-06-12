@@ -74,6 +74,18 @@ function xmlsitemap_menu_form_alter($form_id, &$form) {
 }
 
 /**
+ * Implementation of hook_menu().
+ */
+function xmlsitemap_menu_menu($may_cache) {
+  if ($may_cache) {
+    global $user;
+    if (!empty($user->uid)) {
+      xmlsitemap_update_sitemap();
+    }
+  }
+}
+
+/**
  * @} End of "addtogroup xmlsitemap".
  */
 
