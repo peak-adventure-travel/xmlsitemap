@@ -256,49 +256,7 @@ function _xmlsitemap_xsl() {
  */
 function _xmlsitemap_output($chunk = NULL) {
   if (variable_get('xmlsitemap_update', FALSE)) {
-    global $user;
-    $current_user = $user;
-    $user = user_load(array('uid' => 0));
-    if (module_exists('i18n')) {
-      $language = i18n_get_lang();
-      i18n_selection_mode('strict');
-      $languages = locale_supported_languages();
-      unset($languages['name'][$language]);
-      foreach ($languages['name'] as $key => $lang) {
-        i18n_get_lang($key);
-        $key = $key == i18n_default_language() ? NULL : $key;
-        $link = array(
-          'loc' => xmlsitemap_url($key, NULL, NULL, NULL, TRUE),
-          'changefreq' => 'always',
-          'priority' => variable_get('xmlsitemap_front_page_priority', 1)
-        );
-        db_query("INSERT INTO {xmlsitemap} (loc, changefreq, priority) VALUES ('%s', %d, %f)", $link);
-        module_invoke_all('xmlsitemap_links');
-      }
-      i18n_get_lang($language);
-      $language = $language == i18n_default_language() ? NULL : $language;
-      $link = array(
-        'loc' => xmlsitemap_url($language, NULL, NULL, NULL, TRUE),
-        'changefreq' => 'always',
-        'priority' => variable_get('xmlsitemap_front_page_priority', 1)
-      );
-      db_query("INSERT INTO {xmlsitemap} (loc, changefreq, priority) VALUES ('%s', %d, %f)", $link);
-      i18n_selection_mode('simple');
-      module_invoke_all('xmlsitemap_links');
-      i18n_selection_mode('reset');
-    }
-    else {
-      $link = array(
-        'loc' => xmlsitemap_url(NULL, NULL, NULL, NULL, TRUE),
-        'changefreq' => 'always',
-        'priority' => variable_get('xmlsitemap_front_page_priority', 1)
-      );
-      db_query("INSERT INTO {xmlsitemap} (loc, changefreq, priority) VALUES ('%s', %d, %f)", $link);
-      module_invoke_all('xmlsitemap_links');
-    }
-    $user = $current_user;
-    menu_rebuild();
-    variable_set('xmlsitemap_update', FALSE);
+    _xmlsitemap_update();
   }
   drupal_set_header('Content-type: text/xml; charset=utf-8');
   $chunk_size = variable_get('xmlsitemap_chunk_size', 50000);
@@ -540,6 +498,9 @@ function _xmlsitemap_get_path_alias($path, $alias = NULL) {
  */
 function xmlsitemap_cron() {
   if (variable_get('xmlsitemap_cron_submit', FALSE) && variable_get('xmlsitemap_changed', FALSE)) {
+    if (variable_get('xmlsitemap_update', FALSE)) {
+      _xmlsitemap_update();
+    }
     _xmlsitemap_ping();
   }
 }
@@ -551,8 +512,6 @@ function xmlsitemap_cron() {
 function xmlsitemap_update_sitemap() {
   variable_set('xmlsitemap_changed', TRUE);
   variable_set('xmlsitemap_update', TRUE);
-  db_query("DELETE FROM {xmlsitemap}");
-  cache_clear_all(xmlsitemap_url('sitemap', NULL, NULL, NULL, TRUE), 'cache_page', TRUE);
   if (variable_get('xmlsitemap_submit', FALSE)) {
     _xmlsitemap_submit_on_exit();
   }
@@ -576,42 +535,63 @@ function _xmlsitemap_submit_on_exit() {
  */
 function xmlsitemap_exit() {
   if (_xmlsitemap_submit_on_exit()) {
+    _xmlsitemap_update();
     _xmlsitemap_ping();
   }
   if (variable_get('xmlsitemap_log_access', FALSE)) {
-    $items = array();
-    $chunk_size = variable_get('xmlsitemap_chunk_size', 50000);
-    if (_xmlsitemap_link_count() / $chunk_size > 1 || count(_xmlsitemap_xml()) > 0) {
-      for ($chunk = 0; $chunk < _xmlsitemap_link_count() / $chunk_size + count(_xmlsitemap_xml()); ++$chunk) {
-        $items["sitemap$chunk.xml"] = $chunk;
-      }
-    }
-    drupal_bootstrap(DRUPAL_BOOTSTRAP_PATH);
-    if (in_array(arg(0), $items) && is_null(arg(1))) {
-      $chunk = $items[arg(0)];
-      if ($chunk < _xmlsitemap_link_count() / $chunk_size || $chunk < _xmlsitemap_link_count() / $chunk_size + count(_xmlsitemap_xml())) {
-        $type = t('Site map !chunk', array('!chunk' => $chunk));
-      }
-    }
-    elseif (arg(0) == 'sitemap.xml' && is_null(arg(1))) {
-      if (_xmlsitemap_link_count() > $chunk_size || count(_xmlsitemap_xml()) > 0) {
-        $type = t('Site map index');
-      }
-      else {
-        $type = t('Site map');
-      }
-    }
-    if (isset($type)) {
-      drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
-      $message = array_shift(module_invoke_all('xmlsitemap_engines', 'access', $type));
-      $message = isset($message) ? $message : t('!sitemap downloaded by @user-agent at @address.', array(
-        '!sitemap' => $type,
-        '@user-agent' => $_SERVER['HTTP_USER_AGENT'],
-        '@address' => $_SERVER['REMOTE_ADDR'],
-      ));
-      watchdog('xmlsitemap', $message);
-    }
+    _xmlsitemap_log();
   }
+}
+
+/**
+ * Update the site map if content has changed.
+ */
+function _xmlsitemap_update() {
+  db_query("DELETE FROM {xmlsitemap}");
+  global $user;
+  $current_user = $user;
+  $user = user_load(array('uid' => 0));
+  if (module_exists('i18n')) {
+    $language = i18n_get_lang();
+    i18n_selection_mode('strict');
+    $languages = locale_supported_languages();
+    unset($languages['name'][$language]);
+    foreach ($languages['name'] as $key => $lang) {
+      i18n_get_lang($key);
+      $key = $key == i18n_default_language() ? NULL : $key;
+      $link = array(
+        'loc' => xmlsitemap_url($key, NULL, NULL, NULL, TRUE),
+        'changefreq' => 'always',
+        'priority' => variable_get('xmlsitemap_front_page_priority', 1)
+      );
+      db_query("INSERT INTO {xmlsitemap} (loc, changefreq, priority) VALUES ('%s', %d, %f)", $link);
+      module_invoke_all('xmlsitemap_links');
+    }
+    i18n_get_lang($language);
+    $language = $language == i18n_default_language() ? NULL : $language;
+    $link = array(
+      'loc' => xmlsitemap_url($language, NULL, NULL, NULL, TRUE),
+      'changefreq' => 'always',
+      'priority' => variable_get('xmlsitemap_front_page_priority', 1)
+    );
+    db_query("INSERT INTO {xmlsitemap} (loc, changefreq, priority) VALUES ('%s', %d, %f)", $link);
+    i18n_selection_mode('simple');
+    module_invoke_all('xmlsitemap_links');
+    i18n_selection_mode('reset');
+  }
+  else {
+    $link = array(
+      'loc' => xmlsitemap_url(NULL, NULL, NULL, NULL, TRUE),
+      'changefreq' => 'always',
+      'priority' => variable_get('xmlsitemap_front_page_priority', 1)
+    );
+    db_query("INSERT INTO {xmlsitemap} (loc, changefreq, priority) VALUES ('%s', %d, %f)", $link);
+    module_invoke_all('xmlsitemap_links');
+  }
+  $user = $current_user;
+  menu_rebuild();
+  cache_clear_all(xmlsitemap_url('sitemap', NULL, NULL, NULL, TRUE), 'cache_page', TRUE);
+  variable_set('xmlsitemap_update', FALSE);
 }
 
 /**
@@ -621,6 +601,44 @@ function xmlsitemap_exit() {
 function _xmlsitemap_ping() {
   module_invoke_all('xmlsitemap_engines', 'ping');
   variable_set('xmlsitemap_changed', FALSE);
+}
+
+/**
+ * Log downloads of the site map.
+ */
+function _xmlsitemap_log() {
+  $items = array();
+  $chunk_size = variable_get('xmlsitemap_chunk_size', 50000);
+  if (_xmlsitemap_link_count() / $chunk_size > 1 || count(_xmlsitemap_xml()) > 0) {
+    for ($chunk = 0; $chunk < _xmlsitemap_link_count() / $chunk_size + count(_xmlsitemap_xml()); ++$chunk) {
+      $items["sitemap$chunk.xml"] = $chunk;
+    }
+  }
+  drupal_bootstrap(DRUPAL_BOOTSTRAP_PATH);
+  if (in_array(arg(0), $items) && is_null(arg(1))) {
+    $chunk = $items[arg(0)];
+    if ($chunk < _xmlsitemap_link_count() / $chunk_size || $chunk < _xmlsitemap_link_count() / $chunk_size + count(_xmlsitemap_xml())) {
+      $type = t('Site map !chunk', array('!chunk' => $chunk));
+    }
+  }
+  elseif (arg(0) == 'sitemap.xml' && is_null(arg(1))) {
+    if (_xmlsitemap_link_count() > $chunk_size || count(_xmlsitemap_xml()) > 0) {
+      $type = t('Site map index');
+    }
+    else {
+      $type = t('Site map');
+    }
+  }
+  if (isset($type)) {
+    drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
+    $message = array_shift(module_invoke_all('xmlsitemap_engines', 'access', $type));
+    $message = isset($message) ? $message : t('!sitemap downloaded by @user-agent at @address.', array(
+      '!sitemap' => $type,
+      '@user-agent' => $_SERVER['HTTP_USER_AGENT'],
+      '@address' => $_SERVER['REMOTE_ADDR'],
+    ));
+    watchdog('xmlsitemap', $message);
+  }
 }
 
 /**
