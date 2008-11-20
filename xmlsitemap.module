@@ -15,17 +15,16 @@
  * Implementation of hook_help().
  */
 function xmlsitemap_help($section) {
-  $output = '';
   switch ($section) {
     case 'admin/settings/xmlsitemap':
     case 'admin/settings/xmlsitemap/settings':
-      $output .= t('Configure the site map. Your site map is at !url.', array('!url' => l(xmlsitemap_url('sitemap.xml', drupal_lookup_path('alias', 'sitemap.xml') ? drupal_lookup_path('alias', 'sitemap.xml') : NULL, NULL, NULL, TRUE), xmlsitemap_url('sitemap.xml', drupal_lookup_path('alias', 'sitemap.xml') ? drupal_lookup_path('alias', 'sitemap.xml') : NULL, NULL, NULL, TRUE))));
+      $output = t('Configure the site map. Your site map is at !url.', array('!url' => l(xmlsitemap_url('sitemap.xml', drupal_lookup_path('alias', 'sitemap.xml') ? drupal_lookup_path('alias', 'sitemap.xml') : NULL, NULL, NULL, TRUE), xmlsitemap_url('sitemap.xml', drupal_lookup_path('alias', 'sitemap.xml') ? drupal_lookup_path('alias', 'sitemap.xml') : NULL, NULL, NULL, TRUE))));
       break;
     case 'admin/settings/xmlsitemap/engines':
-      $output .= t('Configure behavior for search engines.');
+      $output = t('Configure behavior for search engines.');
       break;
     case 'admin/help#xmlsitemap':
-      $output .= '<p>'. t('XML Sitemap automatically creates a site map that conforms to the !sitemaps.org specification. This helps search engines keep their search results up to date.', array('!sitemaps.org' => l('sitemaps.org', 'http://www.sitemaps.org'))) ."</p>\n";
+      $output = '<p>'. t('XML Sitemap automatically creates a site map that conforms to the !sitemaps.org specification. This helps search engines keep their search results up to date.', array('!sitemaps.org' => l('sitemaps.org', 'http://www.sitemaps.org'))) ."</p>\n";
       $output .= '<p>'. t('Your site map is at !sitemap.xml.', array('!sitemap.xml' => l(xmlsitemap_url('sitemap.xml', drupal_lookup_path('alias', 'sitemap.xml') ? drupal_lookup_path('alias', 'sitemap.xml') : NULL, NULL, NULL, TRUE), xmlsitemap_url('sitemap.xml', drupal_lookup_path('alias', 'sitemap.xml') ? drupal_lookup_path('alias', 'sitemap.xml') : NULL, NULL, NULL, TRUE)))) .'</p>';
       $output .= '<h3>'. t('Supporting modules') ."</h3>\n";
       $output .= '<p>'. t('By itself, the XML Sitemap module adds only the front page of your site to the site map. Other types of links are handled by supporting modules.') ."</p>\n";
@@ -52,6 +51,8 @@ function xmlsitemap_help($section) {
       $output .= '<p>'. t('Links may be assigned a priority between 0.0 and 1.0. The default priority is 0.5. A priority of <em>Not in site map</em> excludes a link from the site map.') .'</p>';
       $output .= '<p>'. t('More information is available in the !XML Sitemap documentation.', array('!sitemaps.org' => l('sitemaps.org', 'http://www.sitemaps.org'), '!XML Sitemap documentation' => l('XML Sitemap documentation', 'http://drupal.org/handbook/modules/gsitemap'))) ."</p>\n";
       break;
+    default:
+      $output = '';
   }
   return $output;
 }
@@ -525,10 +526,8 @@ function xmlsitemap_update_sitemap() {
  * @return TRUE if the function has been called previously, FALSE otherwise.
  */
 function _xmlsitemap_submit_on_exit() {
-  static $called = FALSE;
-  $return = $called;
-  $called = TRUE;
-  return $return;
+  static $count = 0;
+  return ($count++ <> 0);
 }
 
 /**
