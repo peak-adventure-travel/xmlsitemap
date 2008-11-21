@@ -43,11 +43,7 @@ function _xmlsitemap_menu_process_link($mid, $menu) {
     $priority = round($menu['items'][$mid]['weight'] / 20 + 0.5, 1);
     $priority = $priority < 0 ? 0 : $priority;
     $priority = $priority > 1 ? 1 : $priority;
-    $link = array(
-      'loc' => xmlsitemap_url($item['path'], $alias, NULL, NULL, TRUE),
-      'priority' => $priority,
-    );
-    db_query("INSERT INTO {xmlsitemap} (loc, priority) VALUES ('%s', %f)", $link);
+    db_query("INSERT INTO {xmlsitemap} (loc, priority) VALUES ('%s', %f)", xmlsitemap_url($item['path'], $alias, NULL, NULL, TRUE), $priority);
   }
   foreach ($item['children'] as $mid) {
     _xmlsitemap_menu_process_link($mid, $menu);

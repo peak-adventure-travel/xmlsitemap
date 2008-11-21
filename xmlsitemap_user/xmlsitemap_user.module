@@ -52,13 +52,7 @@ function _xmlsitemap_user_links() {
   while ($user = db_fetch_object($result)) {
     $age = time() - $user->last_changed;
     $interval = empty($user->previously_changed) ? 0 : $user->last_changed - $user->previously_changed;
-    $link = array(
-      'loc' => xmlsitemap_url("user/$user->uid", $user->alias, NULL, NULL, TRUE),
-      'lastmod' => $user->last_changed,
-      'changefreq' => max($age, $interval),
-      'priority' => _xmlsitemap_user_priority($user),
-    );
-    db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)", $link);
+    db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)", xmlsitemap_url("user/$user->uid", $user->alias, NULL, NULL, TRUE), $user->last_changed, max($age, $interval), _xmlsitemap_user_priority($user));
   }
 }
 

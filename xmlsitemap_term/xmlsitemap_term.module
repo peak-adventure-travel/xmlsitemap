@@ -83,13 +83,7 @@ function _xmlsitemap_term_links($excludes = array()) {
     }
     $age = time() - $term->last_changed;
     $interval = empty($term->previously_changed) ? 0 : $term->last_changed - $term->previously_changed;
-    $link = array(
-      'loc' => $url,
-      'lastmod' => $term->last_changed,
-      'changefreq' => max($age, $interval),
-      'priority' => _xmlsitemap_term_priority($term),
-    );
-    db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)", $link);
+    db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)", $url, $term->last_changed, max($age, $interval), _xmlsitemap_term_priority($term));
   }
 }
 
