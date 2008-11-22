@@ -45,6 +45,7 @@ function _xmlsitemap_node_excludes() {
  * values for a site map URL.
  */
 function _xmlsitemap_node_links($excludes = array()) {
+  switch ($GLOBALS['db_type']) {
     case 'mysql':
     case 'mysqli':
       $coalesce = 'COALESCE';
