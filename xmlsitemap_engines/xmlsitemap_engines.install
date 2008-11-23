@@ -10,9 +10,6 @@
  * Implementation of hook_uninstall().
  */
 function xmlsitemap_engines_uninstall() {
-  $settings = db_query("SELECT name FROM {variable} WHERE name LIKE 'xmlsitemap\_engines\_'");
-  while ($variable = db_fetch_object($settings)) {
-    variable_del($variable->name);
-  }
+  db_query("DELETE FROM {variable} WHERE name LIKE 'xmlsitemap\_engines\_'");
 }
 
