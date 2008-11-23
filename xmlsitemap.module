@@ -560,18 +560,18 @@ function _xmlsitemap_update() {
     foreach ($languages['name'] as $key => $lang) {
       i18n_get_lang($key);
       $key = $key == i18n_default_language() ? NULL : $key;
-      db_query("INSERT INTO {xmlsitemap} (loc, changefreq, priority) VALUES ('%s', %d, %f)", xmlsitemap_url($key, NULL, NULL, NULL, TRUE), 1, $fp_priority);
+      db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)", xmlsitemap_url($key, NULL, NULL, NULL, TRUE), time() - 1, 1, $fp_priority);
       module_invoke_all('xmlsitemap_links');
     }
     i18n_get_lang($language);
     $language = $language == i18n_default_language() ? NULL : $language;
-    db_query("INSERT INTO {xmlsitemap} (loc, changefreq, priority) VALUES ('%s', %d, %f)", xmlsitemap_url($language, NULL, NULL, NULL, TRUE), 1, $fp_priority);
+    db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)", xmlsitemap_url($language, NULL, NULL, NULL, TRUE), time() - 1, 1, $fp_priority);
     i18n_selection_mode('simple');
     module_invoke_all('xmlsitemap_links');
     i18n_selection_mode('reset');
   }
   else {
-    db_query("INSERT INTO {xmlsitemap} (loc, changefreq, priority) VALUES ('%s', %d, %f)", xmlsitemap_url(NULL, NULL, NULL, NULL, TRUE), 1, $fp_priority);
+    db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)", xmlsitemap_url(NULL, NULL, NULL, NULL, TRUE), time() - 1, 1, $fp_priority);
     module_invoke_all('xmlsitemap_links');
   }
   $user = $current_user;
