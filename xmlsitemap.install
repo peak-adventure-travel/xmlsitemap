@@ -62,6 +62,16 @@ function xmlsitemap_update_1() {
       ) /*!40100 DEFAULT CHARACTER SET utf8 */;");
       break;
     case 'pgsql':
+      $ret[] = update_sql('CREATE OR REPLACE FUNCTION first(anyelement, anyelement) RETURNS anyelement AS \'SELECT COALESCE($1, $2);\' LANGUAGE \'sql\';');
+      $result = @update_sql("DROP AGGREGATE first(anyelement)");
+      if ($result['success']) {
+        $ret[] = $result;
+      }
+      $ret[] = update_sql("CREATE AGGREGATE first(
+        sfunc = first,
+        basetype = anyelement,
+        stype = anyelement
+      );");
       $ret[] = update_sql("CREATE TABLE {xmlsitemap} (
         loc varchar(128) NOT NULL default '',
         lastmod integer,
@@ -97,27 +107,6 @@ function xmlsitemap_update_1() {
     }
     closedir($dir);
     rmdir($path);
-  }
-  return $ret;
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_2() {
-  $ret = array();
-  $result = array();
-  if ($GLOBALS['db_type'] == 'pgsql') {
-    $ret[] = update_sql('CREATE OR REPLACE FUNCTION first(anyelement, anyelement) RETURNS anyelement AS \'SELECT COALESCE($1, $2);\' LANGUAGE \'sql\';');
-    $result = @update_sql("DROP AGGREGATE first(anyelement)");
-    if ($result['success']) {
-      $ret[] = $result;
-    }
-    $ret[] = update_sql("CREATE AGGREGATE first(
-      sfunc = first,
-      basetype = anyelement,
-      stype = anyelement
-    );");
   }
   return $ret;
 }
