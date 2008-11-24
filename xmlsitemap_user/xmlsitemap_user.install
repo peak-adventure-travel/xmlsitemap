@@ -97,8 +97,5 @@ function xmlsitemap_user_update_2() {
 function xmlsitemap_user_uninstall() {
   db_query("DROP TABLE {xmlsitemap_user}");
   db_query("DROP TABLE {xmlsitemap_user_role}");
-  $settings = db_query("SELECT name FROM {variable} WHERE name LIKE 'xmlsitemap\_user\_%'");
-  while ($variable = db_fetch_object($settings)) {
-    variable_del($variable->name);
-  }
+  db_query("DELETE FROM {variable} WHERE name LIKE 'xmlsitemap\_user\_%'");
 }
