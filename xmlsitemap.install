@@ -21,25 +21,25 @@ function xmlsitemap_install() {
     case 'mysql':
     case 'mysqli':
       db_query("CREATE TABLE {xmlsitemap} (
-        loc varchar(128) NOT NULL default '',
+        loc varchar(256) NOT NULL default '',
         lastmod int(11),
         changefreq int(11),
         priority float
       ) /*!40100 DEFAULT CHARACTER SET utf8 */;");
       break;
     case 'pgsql':
+      db_query("CREATE TABLE {xmlsitemap} (
+        loc varchar(256) NOT NULL default '',
+        lastmod integer,
+        changefreq integer,
+        priority real
+      );");
       db_query('CREATE OR REPLACE FUNCTION first(anyelement, anyelement) RETURNS anyelement AS \'SELECT COALESCE($1, $2);\' LANGUAGE \'sql\';');
       @db_query("DROP AGGREGATE first(anyelement)");
       db_query("CREATE AGGREGATE first(
         sfunc = first,
         basetype = anyelement,
         stype = anyelement
-      );");
-      db_query("CREATE TABLE {xmlsitemap} (
-        loc varchar(128) NOT NULL default '',
-        lastmod integer,
-        changefreq integer,
-        priority real
       );");
       break;
   }
@@ -120,6 +120,23 @@ function xmlsitemap_update_2() {
   return $ret;
 }
 
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_3() {
+  $ret = array();
+  switch ($GLOBALS['db_type']) {
+    case 'mysql':
+    case 'mysqli':
+      $ret[] = update_sql("ALTER TABLE {xmlsitemap} CHANGE loc loc varchar(256) NOT NULL default ''");
+      break;
+    case 'pgsql':
+      db_change_column($ret, 'xmlsitemap', 'loc', 'loc', 'varchar(256)', array('not null' => TRUE, 'default' => "''"));
+      break;
+  }
+  return $ret;
+}
+  
 /**
  * Implementation of hook_uninstall().
  */
