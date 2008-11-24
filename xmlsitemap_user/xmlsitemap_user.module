@@ -168,8 +168,11 @@ function xmlsitemap_user_perm() {
  */
 function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
   switch ($op) {
-    case 'register':
     case 'form':
+      if ($category != 'account') {
+        return array();
+      }
+    case 'register':
       $priority = db_result(db_query("SELECT priority_override FROM {xmlsitemap_user} WHERE uid = %d", $account->uid));
       if (user_access('override profile priority')) {
         $form['xmlsitemap_user'] = array(
