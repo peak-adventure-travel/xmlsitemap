@@ -27,15 +27,28 @@ function xmlsitemap_menu_install() {
   $t = get_t();
   $mid = db_result(db_query_range("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", t('XML Sitemap'), 0, 1));
   if ($mid === FALSE) {
-    $item = array(
-      'mid' => db_next_id('{menu}_mid'),
-      'title' => $t('XML Sitemap'),
-      'description' => $t('Menu items to include in the site map.'),
-      'type' => MENU_CUSTOM_MENU | MENU_MODIFIED_BY_ADMIN,
-    );
-    db_query("INSERT INTO {menu} (mid, title, description, type) VALUES (%d, '%s', '%s', %d)", $item);
+    $mid = db_next_id('{menu}_mid');
+    db_query("INSERT INTO {menu} (mid, title, description, type) VALUES (%d, '%s', '%s', %d)", $mid, $t('XML Sitemap'), $t('Menu items to include in the site map.'), MENU_CUSTOM_MENU | MENU_MODIFIED_BY_ADMIN);
     menu_rebuild();
   }
+  variable_set('xmlsitemap_menu_custom_menu', $mid);
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_menu_update_1() {
+  $ret = array();
+  $t = get_t();
+  $mid = db_result(db_query_range("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", t('XML Sitemap'), 0, 1));
+  if ($mid !== FALSE) {
+    variable_set('xmlsitemap_menu_custom_menu', $mid);
+    $ret[] = array(
+      'success' => TRUE,
+      'query' => 'ADD MODULE VARIABLE xmlsitemap_menu_custom_menu',
+    );
+  }
+  return $ret;
 }
 
 /**
@@ -51,4 +64,3 @@ function xmlsitemap_menu_uninstall() {
   }
   db_query("DELETE FROM {variable} WHERE name LIKE 'xmlsitemap\_menu\_%'");
 }
-

@@ -18,13 +18,9 @@ function xmlsitemap_menu_xmlsitemap_links($type = NULL, $excludes = array()) {
   if (!isset($type)) {
     unset($GLOBALS['_menu']);
     $menu = menu_get_menu();
-    $mid = db_result(db_query_range("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", t('XML Sitemap'), 0, 1));
-    $menus = $mid === FALSE ? array() : array($mid);
     $menus = variable_get('xmlsitemap_menu_menus', $menus);
     foreach ($menus as $mid) {
-      if (!empty($mid)) {
-        _xmlsitemap_menu_process_link($mid, $menu);
-      }
+      _xmlsitemap_menu_process_link($mid, $menu);
     }
   }
 }
@@ -54,8 +50,9 @@ function _xmlsitemap_menu_process_link($mid, $menu) {
 function xmlsitemap_menu_form_alter($form_id, &$form) {
   switch ($form_id) {
     case 'xmlsitemap_settings_sitemap':
-      $mid = db_result(db_query_range("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", t('XML Sitemap'), 0, 1));
-      $menus = $mid === FALSE ? array() : array($mid);
+      $mid = variable_get('xmlsitemap_menu_custom_menu', 0);
+      $options = menu_get_root_menus();
+      $menus = (!isset($options[$mid])) ? array() : array($mid);
       $form['xmlsitemap_menu_menus'] = array(
         '#type' => 'checkboxes',
         '#title' => t('Menus to include in site map'),
