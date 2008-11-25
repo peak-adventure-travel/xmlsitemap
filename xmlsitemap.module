@@ -231,6 +231,55 @@ function xmlsitemap_priority_options($option = NULL) {
 }
 
 /**
+ * Generate placeholders for an array of query arguments of a single type.
+ * Given a database field type, return correct %-placeholders to
+ * embed in a query.
+ * This is the backport of a function present in Drupal 6.
+ *
+ * @param $arguments
+ *  An array with at least one element.
+ * @param $type
+ *   The database type of a field (e.g. 'int', 'text', or 'varchar').
+ * @return
+ *   An array of placeholders for the passed database type.
+ */
+ function xmlsitemap_placeholders($arguments, $type = 'int') {
+  $placeholder = xmlsitemap_placeholder($type);
+  return implode(',', array_fill(0, count($arguments), $placeholder));
+}
+
+/**
+ * Given a database field type, return the correct %-placeholder.
+ * Embed the placeholder in a query to be passed to db_query and and pass as an
+ * argument to db_query a value of the specified type.
+ * This is the backport of the function present in Drupal 6.
+ *
+ * @param $type
+ *   The type of a database field.
+ * @return
+ *   The placeholder string to embed in a query for that type.
+ */
+function xmlsitemap_placeholder($type) {
+  switch ($type) {
+    case 'varchar':
+    case 'char':
+    case 'text':
+    case 'datetime':
+      return "'%s'";
+    case 'numeric':
+      return '%n';
+    case 'serial':
+    case 'int':
+      return '%d';
+    case 'float':
+      return '%f';
+    case 'blob':
+      return '%b';
+  }
+  return 'unsupported type '. $type .'for xmlsitemap_placeholder';
+}
+
+/**
  * Implementation of hook_robotstxt().
  */
 function xmlsitemap_robotstxt() {

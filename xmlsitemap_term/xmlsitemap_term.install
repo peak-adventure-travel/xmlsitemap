@@ -58,17 +58,6 @@ function xmlsitemap_term_disable() {
 }
 
 /**
- * Implementation of hook_uninstall().
- */
-function xmlsitemap_term_uninstall() {
-  db_query("DROP TABLE {xmlsitemap_term}");
-  $settings = db_query("SELECT name FROM {variable} WHERE name LIKE 'xmlsitemap\_term\_%'");
-  while ($variable = db_fetch_object($settings)) {
-    variable_del($variable->name);
-  }
-}
-
-/**
  * Implementation of hook_update_N().
  *
  * Drop the pid column now that we know how to join on the src index of the
@@ -80,3 +69,28 @@ function xmlsitemap_term_update_2() {
   );
 }
 
+/**
+ * Implementation of hook_update_N().
+ *
+ * Force a sitemap update.
+ */
+function xmlsitemap_term_update_3() {
+  variable_set('xmlsitemap_update', TRUE);
+  return array(
+    0 => array(
+      'success' => TRUE,
+      'query' => 'FORCE SITEMAP UPDATE',
+    )
+  );
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function xmlsitemap_term_uninstall() {
+  db_query("DROP TABLE {xmlsitemap_term}");
+  $settings = db_query("SELECT name FROM {variable} WHERE name LIKE 'xmlsitemap\_term\_%'");
+  while ($variable = db_fetch_object($settings)) {
+    variable_del($variable->name);
+  }
+}

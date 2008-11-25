@@ -7,37 +7,6 @@
  */
 
 /**
- * Implementation of hook_install().
- */
-function xmlsitemap_node_install() {
-  switch ($GLOBALS['db_type']) {
-    case 'mysql':
-    case 'mysqli':
-      db_query("CREATE TABLE {xmlsitemap_node} (
-        nid int,
-        last_changed int(11),
-        previously_changed int(11),
-        last_comment int(11),
-        previous_comment int(11),
-        priority_override float,
-        PRIMARY KEY (nid)
-      ) /*!40100 DEFAULT CHARACTER SET utf8 */;");
-      break;
-    case 'pgsql':
-      db_query("CREATE TABLE {xmlsitemap_node} (
-        nid integer,
-        last_changed integer,
-        previously_changed integer,
-        last_comment integer,
-        previous_comment integer,
-        priority_override real,
-        PRIMARY KEY (nid)
-      );");
-      break;
-  }
-}
-
-/**
  * Implementation of hook_enable().
  */
 function xmlsitemap_node_enable() {
@@ -82,11 +51,34 @@ function xmlsitemap_node_disable() {
 }
 
 /**
- * Implementation of hook_uninstall().
+ * Implementation of hook_install().
  */
-function xmlsitemap_node_uninstall() {
-  db_query("DROP TABLE {xmlsitemap_node}");
-  db_query("DELETE FROM {variable} WHERE name LIKE 'xmlsitemap\_node\_%'");
+function xmlsitemap_node_install() {
+  switch ($GLOBALS['db_type']) {
+    case 'mysql':
+    case 'mysqli':
+      db_query("CREATE TABLE {xmlsitemap_node} (
+        nid int,
+        last_changed int(11),
+        previously_changed int(11),
+        last_comment int(11),
+        previous_comment int(11),
+        priority_override float,
+        PRIMARY KEY (nid)
+      ) /*!40100 DEFAULT CHARACTER SET utf8 */;");
+      break;
+    case 'pgsql':
+      db_query("CREATE TABLE {xmlsitemap_node} (
+        nid integer,
+        last_changed integer,
+        previously_changed integer,
+        last_comment integer,
+        previous_comment integer,
+        priority_override real,
+        PRIMARY KEY (nid)
+      );");
+      break;
+  }
 }
 
 /**
@@ -98,3 +90,10 @@ function xmlsitemap_node_update_4() {
   );
 }
 
+/**
+ * Implementation of hook_uninstall().
+ */
+function xmlsitemap_node_uninstall() {
+  db_query("DROP TABLE {xmlsitemap_node}");
+  db_query("DELETE FROM {variable} WHERE name LIKE 'xmlsitemap\_node\_%'");
+}
