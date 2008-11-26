@@ -83,7 +83,7 @@ function xmlsitemap_update_1() {
   }
   $ret[] = update_sql("DROP TABLE {xmlsitemap_additional}");
   variable_del('xmlsitemap_additional_links_priority');
-  if (_xmlsitemap_remove_tmp_files(file_directory_path() .'/xmlsitemap')) {
+  if (_xmlsitemap_delete_tmp_files(file_directory_path() .'/xmlsitemap')) {
     $ret[] = array(
       'success' => TRUE,
       'query' => 'DELETE TEMPORARY FILES',
@@ -143,7 +143,7 @@ function xmlsitemap_update_3() {
  */
 function xmlsitemap_update_4() {
   $ret = array();
-  if (_xmlsitemap_remove_tmp_files(file_directory_path() .'/xmlsitemap')) {
+  if (_xmlsitemap_delete_tmp_files(file_directory_path() .'/xmlsitemap')) {
     $ret[] = array(
       'success' => TRUE,
       'query' => 'DELETE TEMPORARY FILES',
@@ -172,7 +172,7 @@ function xmlsitemap_uninstall() {
  * @return
  *        Boolean value; TRUE on success.
  */
-function _xmmsitemap_delete_temp_files($path) {
+function _xmlsitemap_delete_tmp_files($path) {
   static $count = 0;
   $error = FALSE;
   $count++;

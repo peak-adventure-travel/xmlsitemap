@@ -37,7 +37,7 @@ function xmlsitemap_file_install() {
  * Implementation of hook_enable().
  */
 function xmlsitemap_file_enable() {
-  $weight = db_result(db_query("SELECT MAX(weight) FROM {system} WHERE type = 'module' AND name IN('pathauto', 'upload')"));
+  $weight = db_result(db_query("SELECT MAX(weight) FROM {system} WHERE type = 'module' AND name IN ('pathauto', 'upload')"));
   if ($weight !== FALSE) {
     db_query("UPDATE {system} SET weight = %d WHERE type = 'module' AND name = 'xmlsitemap_file'", ++$weight);
   }
