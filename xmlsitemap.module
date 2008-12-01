@@ -656,30 +656,33 @@ function _xmlsitemap_log() {
   if (in_array(arg(0), $items) && is_null(arg(1))) {
     $chunk = $items[arg(0)];
     if ($chunk < _xmlsitemap_link_count() / $chunk_size || $chunk < _xmlsitemap_link_count() / $chunk_size + count(_xmlsitemap_xml())) {
-      $type = t('Site map !chunk', array('!chunk' => $chunk));
+      $type = 'Site map';
     }
   }
   elseif (arg(0) == 'sitemap.xml' && is_null(arg(1))) {
     if (_xmlsitemap_link_count() > $chunk_size || count(_xmlsitemap_xml()) > 0) {
-      $type = t('Site map index');
+      $type = 'Site map index';
     }
     else {
-      $type = t('Site map');
+      $type = 'Site map';
     }
   }
   if (isset($type)) {
     drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
-    $message = array_shift(module_invoke_all('xmlsitemap_engines', 'access', $type));
-    $message = isset($message) ? $message : t('!sitemap downloaded by @user-agent at @address.', array(
-      '!sitemap' => $type,
-      '@user-agent' => $_SERVER['HTTP_USER_AGENT'],
-      '@address' => $_SERVER['REMOTE_ADDR'],
-    ));
-    watchdog('xmlsitemap', $message);
+    $message = array_shift(module_invoke_all('xmlsitemap_engines', 'access'));
+    if (!isset($message)) {
+      $message = '!sitemap downloaded by @user-agent at @address.';
+    }
+    watchdog('xmlsitemap', t($message,
+      array(
+        '!sitemap' => $type,
+        '@user-agent' => $_SERVER['HTTP_USER_AGENT'],
+        '@address' => $_SERVER['REMOTE_ADDR'],
+      )
+    );
   }
 }
 
 /**
  * @} End of "addtogroup xmlsitemap".
  */
-

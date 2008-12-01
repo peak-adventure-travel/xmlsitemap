@@ -78,7 +78,7 @@ function _xmlsitemap_engines_google($op, $type = NULL) {
       }
       break;
     case 'access':
-      return t('!sitemap downloaded by Google.', array('!sitemap' => $type));
+      return '!sitemap downloaded by Google.';
   }
 }
 
