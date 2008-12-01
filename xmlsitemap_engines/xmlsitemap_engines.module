@@ -39,7 +39,7 @@ function xmlsitemap_engines_xmlsitemap_engines($op, $type = NULL) {
 /**
  * Define actions for Google.
  */
-function _xmlsitemap_engines_google($op, $type = NULL) {
+function _xmlsitemap_engines_google($op) {
   switch ($op) {
     case 'form':
       $form['google'] = array(
