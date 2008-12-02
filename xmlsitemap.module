@@ -679,7 +679,7 @@ function _xmlsitemap_log() {
         '@user-agent' => $_SERVER['HTTP_USER_AGENT'],
         '@address' => $_SERVER['REMOTE_ADDR'],
       )
-    );
+    ));
   }
 }
 
