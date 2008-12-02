@@ -24,11 +24,10 @@ function xmlsitemap_menu_disable() {
  * Implementation of hook_install().
  */
 function xmlsitemap_menu_install() {
-  $t = get_t();
-  $mid = db_result(db_query_range("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", $t('XML Sitemap'), 0, 1));
+  $mid = db_result(db_query_range("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", t('XML Sitemap'), 0, 1));
   if ($mid === FALSE) {
     $mid = db_next_id('{menu}_mid');
-    db_query("INSERT INTO {menu} (mid, title, description, type) VALUES (%d, '%s', '%s', %d)", $mid, $t('XML Sitemap'), $t('Menu items to include in the site map.'), MENU_CUSTOM_MENU | MENU_MODIFIED_BY_ADMIN);
+    db_query("INSERT INTO {menu} (mid, title, description, type) VALUES (%d, '%s', '%s', %d)", $mid, t('XML Sitemap'), t('Menu items to include in the site map.'), MENU_CUSTOM_MENU | MENU_MODIFIED_BY_ADMIN);
     menu_rebuild();
   }
   variable_set('xmlsitemap_menu_custom_menu', $mid);
@@ -39,8 +38,7 @@ function xmlsitemap_menu_install() {
  */
 function xmlsitemap_menu_update_1() {
   $ret = array();
-  $t = get_t();
-  $mid = db_result(db_query_range("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", $t('XML Sitemap'), 0, 1));
+  $mid = db_result(db_query_range("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", t('XML Sitemap'), 0, 1));
   if ($mid !== FALSE) {
     variable_set('xmlsitemap_menu_custom_menu', $mid);
     $ret[] = array(
@@ -62,8 +60,7 @@ function xmlsitemap_menu_update_2() {
  * Implementation of hook_uninstall().
  */
 function xmlsitemap_menu_uninstall() {
-  $t = get_t();
-  $xid = db_result(db_query_range("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", $t('XML Sitemap'), 0, 1));
+  $xid = db_result(db_query_range("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", t('XML Sitemap'), 0, 1));
   if ($xid !== FALSE) {
     db_query('DELETE FROM {menu} WHERE pid = %d', $xid);
     db_query('DELETE FROM {menu} WHERE mid = %d', $xid);
