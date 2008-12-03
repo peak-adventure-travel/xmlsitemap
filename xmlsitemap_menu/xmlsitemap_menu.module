@@ -18,9 +18,14 @@ function xmlsitemap_menu_xmlsitemap_links($type = NULL, $excludes = array()) {
   if (!isset($type)) {
     unset($GLOBALS['_menu']);
     $menu = menu_get_menu();
-    $menus = variable_get('xmlsitemap_menu_menus', $menus);
-    foreach ($menus as $mid) {
-      _xmlsitemap_menu_process_link($mid, $menu);
+    $root_menus = array();
+    foreach ($menu['items'][0]['children'] as $mid) {
+      $root_menus[$mid] = $menu['items'][$mid]['title'];
+    }
+    foreach (variable_get('xmlsitemap_menu_menus', array()) as $mid) {
+      if (isset($root_menus[$mid])) {
+        _xmlsitemap_menu_process_link($mid, $menu);
+      }
     }
   }
 }
@@ -50,13 +55,10 @@ function _xmlsitemap_menu_process_link($mid, $menu) {
 function xmlsitemap_menu_form_alter($form_id, &$form) {
   switch ($form_id) {
     case 'xmlsitemap_settings_sitemap':
-      $mid = variable_get('xmlsitemap_menu_custom_menu', 0);
-      $options = menu_get_root_menus();
-      $menus = (!isset($options[$mid])) ? array() : array($mid);
       $form['xmlsitemap_menu_menus'] = array(
         '#type' => 'checkboxes',
         '#title' => t('Menus to include in site map'),
-        '#default_value' => variable_get('xmlsitemap_menu_menus', $menus),
+        '#default_value' => variable_get('xmlsitemap_menu_menus', array()),
         '#options' => menu_get_root_menus(),
       );
       $form['buttons']['#weight'] = 1;

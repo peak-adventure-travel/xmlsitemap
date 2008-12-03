@@ -65,12 +65,15 @@ function _xmlsitemap_user_frontpage() {
  * @return A number between 0 and 1, or -1
  */
 function _xmlsitemap_user_priority($user) {
-  $priority = $user->priority_override;
   if (!isset($user->priority_override)) {
-    $user->priority = isset($user->priority) ? $user->priority : variable_get('xmlsitemap_user_default_priority', 0.5);
-    $priority = min($user->priority, 1);
+    if (!isset($user->priority)) {
+      $user->priority = variable_get('xmlsitemap_user_default_priority', 0.5);
+    }
+    return min($user->priority, 1);
   }
-  return $priority;
+  else {
+    return $user->priority_override;
+  }
 }
 
 /**

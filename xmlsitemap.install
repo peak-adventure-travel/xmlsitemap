@@ -25,7 +25,7 @@ function xmlsitemap_install() {
     case 'mysql':
     case 'mysqli':
       db_query("CREATE TABLE {xmlsitemap} (
-        loc varchar(256) NOT NULL default '',
+        loc varchar(255) NOT NULL default '',
         lastmod int(11),
         changefreq int(11),
         priority float
@@ -33,7 +33,7 @@ function xmlsitemap_install() {
       break;
     case 'pgsql':
       db_query("CREATE TABLE {xmlsitemap} (
-        loc varchar(256) NOT NULL default '',
+        loc varchar(255) NOT NULL default '',
         lastmod integer,
         changefreq integer,
         priority real
@@ -124,17 +124,7 @@ function xmlsitemap_update_2() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_update_3() {
-  $ret = array();
-  switch ($GLOBALS['db_type']) {
-    case 'mysql':
-    case 'mysqli':
-      $ret[] = update_sql("ALTER TABLE {xmlsitemap} CHANGE loc loc varchar(256) NOT NULL default ''");
-      break;
-    case 'pgsql':
-      db_change_column($ret, 'xmlsitemap', 'loc', 'loc', 'varchar(256)', array('not null' => TRUE, 'default' => "''"));
-      break;
-  }
-  return $ret;
+  return array();
 }
   
 /**
@@ -152,6 +142,23 @@ function xmlsitemap_update_4() {
   return $ret;
 }
 
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_5() {
+  $ret = array();
+  switch ($GLOBALS['db_type']) {
+    case 'mysql':
+    case 'mysqli':
+      $ret[] = update_sql("ALTER TABLE {xmlsitemap} CHANGE loc loc varchar(255) NOT NULL default ''");
+      break;
+    case 'pgsql':
+      db_change_column($ret, 'xmlsitemap', 'loc', 'loc', 'varchar(255)', array('not null' => TRUE, 'default' => "''"));
+      break;
+  }
+  return $ret;
+}
+  
 /**
  * Implementation of hook_uninstall().
  */
