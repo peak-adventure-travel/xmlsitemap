@@ -72,8 +72,9 @@ function _xmlsitemap_node_links($excludes = array()) {
     AND n.nid <> %d
     GROUP BY $columns";
   $result = db_query(db_rewrite_sql($query), array_merge($excludes, array(_xmlsitemap_node_frontpage())));
+  $count_comments = (variable_get('xmlsitemap_node_count_comments', TRUE) && module_exists('comment'));
   while ($node = db_fetch_object($result)) {
-    db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)", xmlsitemap_url('node/'. $node->nid, $node->alias, NULL, NULL, TRUE), variable_get('xmlsitemap_node_count_comments', TRUE) ? max($node->changed, $node->last_comment_timestamp) : $node->changed, xmlsitemap_node_frequency($node), xmlsitemap_node_priority($node));
+    db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)", xmlsitemap_url('node/'. $node->nid, $node->alias, NULL, NULL, TRUE), $count_comments ? max($node->changed, $node->last_comment_timestamp) : $node->changed, xmlsitemap_node_frequency($node), xmlsitemap_node_priority($node));
   }
 }
 
@@ -84,7 +85,7 @@ function _xmlsitemap_node_links($excludes = array()) {
  */
 function xmlsitemap_node_frequency($node) {
   $age = time() - $node->changed;
-  if (variable_get('xmlsitemap_node_count_comments', TRUE)) {
+  if (variable_get('xmlsitemap_node_count_comments', TRUE) && module_exists('comment')) {
     $age = time() - max($node->changed, $node->last_comment_timestamp);
     $interval = 0;
     if (!empty($node->previously_changed) && isset($node->previous_comment)) {
@@ -405,8 +406,14 @@ function theme_xmlsitemap_node_view_sitemap($view, $nodes, $type) {
   print '        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'."\n";
   print '        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9'."\n";
   print '                            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">'."\n";
+  $count_comments = (variable_get('xmlsitemap_node_count_comments', TRUE) && module_exists('comment'));
   foreach ($nodes as $node) {
-    $lastmod = variable_get('xmlsitemap_node_count_comments', TRUE) ? max($node->changed, $node->last_comment_timestamp) : $node->changed;
+    if ($count_comments) {
+      $lastmod = max($node->changed, $node->last_comment_timestamp);
+    }
+    else {
+      $lastmod = $node->changed;
+    }
     print '  <url>'."\n";
     print '    <loc>'. xmlsitemap_url('node/'. $node->nid, $node->alias, NULL, NULL, TRUE) .'</loc>'."\n";
     print '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $lastmod) .'</lastmod>'."\n";
