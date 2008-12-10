@@ -67,7 +67,7 @@ function xmlsitemap_update_1() {
       break;
   }
   drupal_install_modules(array('xmlsitemap_menu'));
-  $mid = db_result(db_query_range("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", t('XML Sitemap'), 0, 1));
+  $mid = db_result(db_query("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", t('XML Sitemap')));
   $result = db_query("SELECT * FROM {xmlsitemap_additional}");
   while ($link = db_fetch_object($result)) {
     $link->priority = isset($link->priority) ? $link->priority : variable_get('xmlsitemap_additional_links_priority', 0.5);

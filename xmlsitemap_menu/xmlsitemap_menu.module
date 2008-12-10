@@ -39,7 +39,7 @@ function xmlsitemap_menu_xmlsitemap_links($type = NULL, $excludes = array()) {
 function _xmlsitemap_menu_process_link($mid, $menu) {
   $item = $menu['visible'][$mid];
   if (!empty($item['path']) && strpos($item['path'], '://') === FALSE && $item['path'] != variable_get('site_frontpage', 'node')) {
-    $alias = db_result(db_query_range("SELECT dst FROM {url_alias} WHERE src = '%s'", $item['path'], 0, 1));
+    $alias = db_result(db_query("SELECT dst FROM {url_alias} WHERE src = '%s'", $item['path']));
     $alias = $alias === FALSE ? NULL : $alias;
     $priority = min(max(round($menu['items'][$mid]['weight'] / 20 + 0.5, 1), 0), 1);
     db_query("INSERT INTO {xmlsitemap} (loc, priority) VALUES ('%s', %f)", xmlsitemap_url($item['path'], $alias, NULL, NULL, TRUE), $priority);
