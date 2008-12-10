@@ -169,7 +169,7 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
         if (isset($account->roles)) {
           $roles = array_keys($account->roles);
           $default = db_fetch_object(
-            db_query("SELECT MIN(priority) AS min, SUM(priority) AS sum FROM {xmlsitemap_user_role} WHERE rid IN (". db_placeholders($roles, 'int') .")",
+            db_query("SELECT MIN(priority) AS min, SUM(priority) AS sum FROM {xmlsitemap_user_role} WHERE rid IN (". xmlsitemap_placeholders($roles, 'int') .")",
               $roles
             )
           );
