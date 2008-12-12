@@ -220,36 +220,29 @@ function xmlsitemap_term_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
   switch ($op) {
     case 'insert':
       if (!empty($node->taxonomy)) {
-        $taxonomy_keys = array_keys($node->taxonomy);
-        db_query(
-          "UPDATE {xmlsitemap_term} SET previously_changed = last_changed, last_changed = %d WHERE tid IN(". xmlsitemap_placeholders($taxonomy_keys, 'int') .")",
-          array_merge(array($node->created), $taxonomy_keys)
-        );
-        xmlsitemap_update_sitemap();
+        $terms = array_keys($node->taxonomy);
+        $query_args = array_merge(array($node->changed), $terms);
       }
       break;
     case 'update':
       $taxonomy = empty($node->taxonomy) ? array() : array_keys($node->taxonomy);
       $xmlsitemap_term_taxonomy = empty($node->xmlsitemap_term_taxonomy) ? array() : array_keys($node->xmlsitemap_term_taxonomy);
       $terms = array_merge(array_diff($taxonomy, $xmlsitemap_term_taxonomy), array_diff($xmlsitemap_term_taxonomy, $taxonomy));
-      if (!empty($terms)) {
-        db_query(
-          "UPDATE {xmlsitemap_term} SET previously_changed = last_changed, last_changed = %d WHERE tid IN(". xmlsitemap_placeholders($terms, 'int') .")",
-          array_merge(array($node->changed), $terms)
-        );
-        xmlsitemap_update_sitemap();
-      }
+      $query_args = array_merge(array($node->changed), $terms);
       break;
     case 'delete':
       if (!empty($node->taxonomy)) {
-        $taxonomy_keys = array_keys($node->taxonomy);
-        db_query(
-          "UPDATE {xmlsitemap_term} SET previously_changed = last_changed, last_changed = %d WHERE tid IN(". xmlsitemap_placeholders($taxonomy_keys, 'int') .")",
-          array_merge(array(time()), $taxonomy_keys)
-        );
-        xmlsitemap_update_sitemap();
+        $terms = array_keys($node->taxonomy);
+        $query_args = array_merge(time(), $terms);
       }
       break;
+  }
+  if (!empty($terms)) {
+    db_query(
+      "UPDATE {xmlsitemap_term} SET previously_changed = last_changed, last_changed = %d WHERE tid IN(". xmlsitemap_placeholders($terms, 'int') .")",
+      $query_args
+    );
+    xmlsitemap_update_sitemap();
   }
 }
 

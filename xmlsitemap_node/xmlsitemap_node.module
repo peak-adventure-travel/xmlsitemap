@@ -74,7 +74,12 @@ function _xmlsitemap_node_links($excludes = array()) {
   $result = db_query(db_rewrite_sql($query), array_merge($excludes, array(_xmlsitemap_node_frontpage())));
   $count_comments = (variable_get('xmlsitemap_node_count_comments', TRUE) && module_exists('comment'));
   while ($node = db_fetch_object($result)) {
-    db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)", xmlsitemap_url('node/'. $node->nid, $node->alias, NULL, NULL, TRUE), $count_comments ? max($node->changed, $node->last_comment_timestamp) : $node->changed, xmlsitemap_node_frequency($node), xmlsitemap_node_priority($node));
+    db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)",
+      xmlsitemap_url('node/'. $node->nid, $node->alias, NULL, NULL, TRUE),
+      $count_comments ? max($node->changed, $node->last_comment_timestamp) : $node->changed,
+      xmlsitemap_node_frequency($node),
+      xmlsitemap_node_priority($node)
+    );
   }
 }
 
