@@ -62,8 +62,11 @@ function _xmlsitemap_term_links($excludes = array()) {
     if ($term->module == 'forum') {
       $path = "forum/$term->tid";
     }
+    elseif ($term->module != 'taxonomy' && $term_path = module_invoke($term->module, 'term_path', $term)) {
+      $path = $term_path;
+    }
     else {
-      $path = taxonomy_term_path($term);
+      $path = 'taxonomy/term/'. $term->tid;
     }
     $alias = drupal_lookup_path('alias', $path);
     if ($alias === FALSE) {
