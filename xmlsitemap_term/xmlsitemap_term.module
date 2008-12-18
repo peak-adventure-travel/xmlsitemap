@@ -236,7 +236,7 @@ function xmlsitemap_term_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
     case 'delete':
       if (!empty($node->taxonomy)) {
         $terms = array_keys($node->taxonomy);
-        $query_args = array_merge(time(), $terms);
+        $query_args = array_merge(array(time()), $terms);
       }
       break;
   }
