@@ -214,9 +214,7 @@ function xmlsitemap_node_form_alter($form_id, &$form) {
         $form['xmlsitemap_node'] = array(
           '#type' => 'fieldset',
           '#title' => t('Content priority'),
-          '#description' => t('The default priority for specific content types can be set on the !link pages.', array(
-            '!link' => l(t('content type settings'), 'admin/content/types'),
-          )),
+          '#description' => t('The settings for the content to include in the site map.'),
         );
         $form['xmlsitemap_node']['xmlsitemap_node_promote_priority'] = array(
           '#type' => 'select',
