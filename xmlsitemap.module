@@ -24,7 +24,7 @@ function xmlsitemap_help($section) {
       $output = t('Configure the behavior for search engines.');
       break;
     case 'admin/help#xmlsitemap':
-      $output = '<p>'. t('XML Sitemap automatically creates a site map that conforms to the <a href="@sitemaps.org">sitemaps.org specification</a>. This helps search engines keep their search results up to date.', array('@sitemaps.org' => url('http://www.sitemaps.org', array('absolute' => TRUE)))) .'</p>';
+      $output = '<p>'. t('XML Sitemap automatically creates a site map that conforms to the <a href="@sitemaps.org">sitemaps.org specification</a>. This helps search engines keep their search results up to date.', array('@sitemaps.org' => 'http://www.sitemaps.org')) .'</p>';
       $output .= '<h3>'. t('Supporting modules') .'</h3>';
       $output .= '<p>'. t('By itself, the XML Sitemap module adds only the front page of your site to the site map. Other types of links are handled by supporting modules.') .'</p>';
       $optional = '';
@@ -48,7 +48,7 @@ function xmlsitemap_help($section) {
         $output .= "<dl>\n$optional</dl>";
       }
       $output .= '<p>'. t('Links may be assigned a priority between 0.0 and 1.0. The default priority is 0.5. A priority of <em>Not in site map</em> excludes a link from the site map.') .'</p>';
-      $output .= '<p>'. t('More information is available in the <a href="@module_docs">XML Sitemap documentation</a>.', array('@module_docs' => url('http://drupal.org/handbook/modules/gsitemap', array('absolute' => TRUE)))) .'</p>';
+      $output .= '<p>'. t('More information is available in the <a href="@module_docs">XML Sitemap documentation</a>.', array('@module_docs' => 'http://drupal.org/handbook/modules/gsitemap')) .'</p>';
       break;
     default:
       $output = '';
