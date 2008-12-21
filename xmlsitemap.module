@@ -105,8 +105,9 @@ function xmlsitemap_menu($may_cache) {
   }
   else {
     $chunk_size = variable_get('xmlsitemap_chunk_size', 50000);
-    if (_xmlsitemap_link_count() / $chunk_size > 1 || !empty($xml)) {
-      for ($chunk = 0; $chunk < _xmlsitemap_link_count() / $chunk_size + count(_xmlsitemap_xml()); ++$chunk) {
+    $link_count = _xmlsitemap_link_count();
+    if ($link_count / $chunk_size > 1) {
+      for ($chunk = 0; $chunk < $link_count / $chunk_size); ++$chunk) {
         $items[] = array(
           'path' => "sitemap$chunk.xml",
           'title' => t('Site map !number', array('!number' => $chunk)),
@@ -317,21 +318,17 @@ function _xmlsitemap_output($chunk = NULL) {
   }
   drupal_set_header('Content-type: text/xml; charset=utf-8');
   $chunk_size = variable_get('xmlsitemap_chunk_size', 50000);
-  $xml = _xmlsitemap_xml();
+  $link_count = _xmlsitemap_link_count();
   if (isset($chunk)) {
-    if ($chunk < _xmlsitemap_link_count() / $chunk_size) {
+    if ($chunk < $link_count / $chunk_size) {
       _xmlsitemap_output_chunk($chunk);
-    }
-    elseif ($chunk < _xmlsitemap_link_count() / $chunk_size + count($xml)) {
-      $previous = (integer) _xmlsitemap_link_count() / $chunk_size + 1;
-      print $xml[$chunk - $previous];
     }
     else {
       drupal_not_found();
     }
   }
   else {
-    if (_xmlsitemap_link_count() > $chunk_size || count($xml) > 0) {
+    if ($link_count > $chunk_size) {
       _xmlsitemap_output_index();
     }
     else {
@@ -353,12 +350,12 @@ function _xmlsitemap_output_index() {
   print '              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'."\n";
   print '              xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9'."\n";
   print '                                  http://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd">'."\n";
-  $xml = count(_xmlsitemap_xml());
   $chunk_size = variable_get('xmlsitemap_chunk_size', 50000);
-  for ($chunk = 0; $chunk < _xmlsitemap_link_count() / $chunk_size + $xml; ++$chunk) {
+  $link_count = _xmlsitemap_link_count();
+  for ($chunk = 0; $chunk < $link_count / $chunk_size; ++$chunk) {
     print '  <sitemap>'."\n";
     print '    <loc>'. xmlsitemap_url("sitemap$chunk.xml", NULL, NULL, NULL, TRUE) .'</loc>'."\n";
-    if ($chunk < _xmlsitemap_link_count() / $chunk_size) {
+    if ($chunk < $link_count / $chunk_size) {
       $from = $chunk * $chunk_size;
       if (!empty($chunk_size)) {
         $lastmod = db_result(db_query_range("SELECT lastmod FROM {xmlsitemap} ORDER BY lastmod DESC, loc", $from, $chunk_size));
@@ -457,24 +454,6 @@ function _xmlsitemap_link_count() {
     $link_count = db_result(db_query("SELECT COUNT(*) FROM {xmlsitemap}"));
   }
   return $link_count;
-}
-
-/**
- * Get site maps returned by hook_xmlsitemap_links().
- * @return An array of site maps or an empty array.
- */
-function _xmlsitemap_xml() {
-  static $xml;
-  if (!isset($xml)) {
-    $xml = array();
-    foreach (module_implements('xmlsitemap_links') as $module) {
-      $sitemap = module_invoke($module, 'xmlsitemap_links', 'xml');
-      if (!empty($sitemap)) {
-        $xml[] = $sitemap;
-      }
-    }
-  }
-  return $xml;
 }
 
 /**
@@ -657,20 +636,21 @@ function _xmlsitemap_ping() {
 function _xmlsitemap_log() {
   $items = array();
   $chunk_size = variable_get('xmlsitemap_chunk_size', 50000);
-  if (_xmlsitemap_link_count() / $chunk_size > 1 || count(_xmlsitemap_xml()) > 0) {
-    for ($chunk = 0; $chunk < _xmlsitemap_link_count() / $chunk_size + count(_xmlsitemap_xml()); ++$chunk) {
+  $link_count = _xmlsitemap_link_count();
+  if ($link_count / $chunk_size > 1) {
+    for ($chunk = 0; $chunk < $link_count / $chunk_size; ++$chunk) {
       $items["sitemap$chunk.xml"] = $chunk;
     }
   }
   drupal_bootstrap(DRUPAL_BOOTSTRAP_PATH);
   if (in_array(arg(0), $items) && is_null(arg(1))) {
     $chunk = $items[arg(0)];
-    if ($chunk < _xmlsitemap_link_count() / $chunk_size || $chunk < _xmlsitemap_link_count() / $chunk_size + count(_xmlsitemap_xml())) {
+    if ($chunk < $link_count / $chunk_size) {
       $type = 'Site map';
     }
   }
   elseif (arg(0) == 'sitemap.xml' && is_null(arg(1))) {
-    if (_xmlsitemap_link_count() > $chunk_size || count(_xmlsitemap_xml()) > 0) {
+    if ($link_count > $chunk_size) {
       $type = 'Site map index';
     }
     else {
