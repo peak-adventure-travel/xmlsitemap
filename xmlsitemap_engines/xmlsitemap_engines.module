@@ -73,7 +73,7 @@ function _xmlsitemap_engines_google($op) {
           watchdog('xmlsitemap', t('Sitemap successfully submitted to Google.'));
         }
         else {
-          watchdog('xmlsitemap', t('Error occurred submitting sitemap to Google: @code', array('@code' => $result->code)), WATCHDOG_ERROR);
+          watchdog('xmlsitemap', t('Error occurred submitting sitemap to Google: !code', array('!code' => $result->code)), WATCHDOG_ERROR);
         }
       }
       break;
@@ -125,7 +125,7 @@ function _xmlsitemap_engines_yahoo($op) {
           watchdog('xmlsitemap', t('Site map successfully submitted to Yahoo!.'));
         }
         else {
-          watchdog('xmlsitemap', t('Error occurred submitting site map to Yahoo!: @code', array('@code' => $result->code)), WATCHDOG_ERROR);
+          watchdog('xmlsitemap', t('Error occurred submitting site map to Yahoo!: !code', array('!code' => $result->code)), WATCHDOG_ERROR);
         }
       }
       break;
@@ -163,7 +163,7 @@ function _xmlsitemap_engines_ask($op) {
           watchdog('xmlsitemap', t('Site map successfully submitted to Ask.com.'));
         }
         else {
-          watchdog('xmlsitemap', t('Error occurred submitting site map to Ask.com: @code', array('@code' => $result->code)), WATCHDOG_ERROR);
+          watchdog('xmlsitemap', t('Error occurred submitting site map to Ask.com: !code', array('!code' => $result->code)), WATCHDOG_ERROR);
         }
       }
       break;
@@ -213,7 +213,7 @@ function _xmlsitemap_engines_live($op) {
           watchdog('xmlsitemap', t('Site map successfully submitted to Windows Live.'));
         }
         else {
-          watchdog('xmlsitemap', t('Error occurred submitting site map to Windows Live: @code', array('@code' => $result->code)), WATCHDOG_ERROR);
+          watchdog('xmlsitemap', t('Error occurred submitting site map to Windows Live: !code', array('!code' => $result->code)), WATCHDOG_ERROR);
         }
       }
       break;
