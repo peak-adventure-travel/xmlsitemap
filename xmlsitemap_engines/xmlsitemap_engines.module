@@ -190,7 +190,7 @@ function xmlsitemap_engines_xmlsitemap_engines($op) {
       break;
     case 'access':
       if (strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot') !== FALSE) {
-        return '!sitemap downloaded by Google.';
+        return 'Sitemap downloaded by Google.';
       }
   }
 }
