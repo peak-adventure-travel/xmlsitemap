@@ -74,7 +74,7 @@ function xmlsitemap_menu($may_cache) {
       'access' => $access_config,
     );
     $items[] = array(
-      'path' => 'admin/settings/xmlsitemap/settings',
+      'path' => 'admin/settings/xmlsitemap/sitemap',
       'title' => t('Site map'),
       'description' => t('Configure site map.'),
       'type' => MENU_DEFAULT_LOCAL_TASK,
@@ -285,13 +285,6 @@ function xmlsitemap_placeholder($type) {
       return '%b';
   }
   return 'unsupported type '. $type .'for xmlsitemap_placeholder';
-}
-
-/**
- * Implementation of hook_robotstxt().
- */
-function xmlsitemap_robotstxt() {
-  return array('Sitemap: '. xmlsitemap_url('sitemap.xml', drupal_lookup_path('alias', 'sitemap.xml') ? drupal_lookup_path('alias', 'sitemap.xml') : NULL, NULL, NULL, TRUE));
 }
 
 /**

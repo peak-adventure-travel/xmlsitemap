@@ -209,7 +209,7 @@ function hook_xmlsitemap_engines($op, $type = NULL) {
       break;
     case 'access':
       if (strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot') !== FALSE) {
-        return t('!sitemap downloaded by Google.', array('!sitemap' => $type));
+        return t('Sitemap downloaded by Google.');
       }
       break;
   }
