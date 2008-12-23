@@ -404,11 +404,10 @@ function xmlsitemap_node_views_query_alter(&$query, &$view, $summary = NULL, $le
 function theme_xmlsitemap_node_view_sitemap($view, $nodes, $type) {
   drupal_set_header('Content-Type: text/xml; charset=utf-8');
   print '<?xml version="1.0" encoding="UTF-8"?>'."\n";
-  print '<?xml-stylesheet type="text/xsl" href="'. xmlsitemap_url(drupal_get_path('module', 'xmlsitemap') .'/gss/gss.xsl') .'" ?>'."\n";
   print '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'."\n";
-  print '        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'."\n";
-  print '        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9'."\n";
-  print '                            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">'."\n";
+  print '  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'."\n";
+  print '  xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9'."\n";
+  print '  http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">'."\n";
   $count_comments = (variable_get('xmlsitemap_node_count_comments', TRUE) && module_exists('comment'));
   foreach ($nodes as $node) {
     if ($count_comments) {
@@ -436,10 +435,10 @@ function theme_xmlsitemap_node_view_news($view, $nodes, $type) {
   drupal_set_header('Content-Type: text/xml; charset=utf-8');
   print '<?xml version="1.0" encoding="UTF-8"?>'."\n";
   print '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'."\n";
-  print '        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"'."\n";
-  print '        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'."\n";
-  print '        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9'."\n";
-  print '                            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">'."\n";
+  print '  xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"'."\n";
+  print '  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'."\n";
+  print '  xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9'."\n";
+  print '  http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">'."\n";
   foreach ($nodes as $node) {
     $lastmod = variable_get('xmlsitemap_node_count_comments', TRUE) ? max($node->changed, $node->last_comment_timestamp) : $node->changed;
     print '  <url>'."\n";
