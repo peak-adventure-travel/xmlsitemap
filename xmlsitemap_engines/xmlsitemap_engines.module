@@ -245,7 +245,7 @@ function xmlsitemap_engines_verify($engine) {
 function xmlsitemap_engines_submit_sitemap($engine, $url_var, $default_url) {
   $url = strtr(
     variable_get($url_var, $default_url),
-    array('[sitemap]' => url('sitemap.xml', NULL, NULL, TRUE)))
+    array('[sitemap]' => url('sitemap.xml', NULL, NULL, TRUE))
   );
   $result = drupal_http_request($url);
   if ($result->code == 200) {

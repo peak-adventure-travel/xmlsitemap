@@ -107,7 +107,7 @@ function xmlsitemap_menu($may_cache) {
     $chunk_size = variable_get('xmlsitemap_chunk_size', 50000);
     $link_count = _xmlsitemap_link_count();
     if ($link_count / $chunk_size > 1) {
-      for ($chunk = 0; $chunk < $link_count / $chunk_size); ++$chunk) {
+      for ($chunk = 0; $chunk < $link_count / $chunk_size; ++$chunk) {
         $items[] = array(
           'path' => "sitemap$chunk.xml",
           'title' => t('Site map !number', array('!number' => $chunk)),
