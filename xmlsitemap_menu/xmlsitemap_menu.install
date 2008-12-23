@@ -39,13 +39,27 @@ function xmlsitemap_menu_install() {
 function xmlsitemap_menu_update_1() {
   $ret = array();
   $mid = db_result(db_query("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", t('XML Sitemap')));
-  if ($mid !== FALSE) {
+  if (($mid = db_result(db_query("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", t('XML Sitemap')))) !== FALSE) {
+    $result = db_query("SELECT * FROM {xmlsitemap_additional}");
+    while ($link = db_fetch_object($result)) {
+      $link->priority = isset($link->priority) ? $link->priority : variable_get('xmlsitemap_additional_links_priority', 0.5);
+      $item = array(
+        'mid' => db_next_id('{menu}_mid'),
+        'pid' => $mid,
+        'path' => $link->path,
+        'title' => $link->path,
+        'weight' => $link->priority * 20 - 10,
+        'type' => MENU_CUSTOM_ITEM | MENU_MODIFIED_BY_ADMIN,
+      );
+      db_query("INSERT INTO {menu} (mid, pid, path, title, weight, type) VALUES (%d, %d, '%s', '%s', %d, %d)", $item);
+    }
     variable_set('xmlsitemap_menu_custom_menu', $mid);
     $ret[] = array(
       'success' => TRUE,
       'query' => 'ADD MODULE VARIABLE xmlsitemap_menu_custom_menu',
     );
   }
+  $ret[] = update_sql("DROP TABLE {xmlsitemap_additional}");
   return $ret;
 }
 

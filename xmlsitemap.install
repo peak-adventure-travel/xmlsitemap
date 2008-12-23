@@ -66,29 +66,6 @@ function xmlsitemap_update_1() {
       ) /*!40100 DEFAULT CHARACTER SET utf8 */;");
       break;
   }
-  drupal_install_modules(array('xmlsitemap_menu'));
-  $mid = db_result(db_query("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", t('XML Sitemap')));
-  $result = db_query("SELECT * FROM {xmlsitemap_additional}");
-  while ($link = db_fetch_object($result)) {
-    $link->priority = isset($link->priority) ? $link->priority : variable_get('xmlsitemap_additional_links_priority', 0.5);
-    $item = array(
-      'mid' => db_next_id('{menu}_mid'),
-      'pid' => $mid,
-      'path' => $link->path,
-      'title' => $link->path,
-      'weight' => $link->priority * 20 - 10,
-      'type' => MENU_CUSTOM_ITEM | MENU_MODIFIED_BY_ADMIN,
-    );
-    db_query("INSERT INTO {menu} (mid, pid, path, title, weight, type) VALUES (%d, %d, '%s', '%s', %d, %d)", $item);
-  }
-  $ret[] = update_sql("DROP TABLE {xmlsitemap_additional}");
-  variable_del('xmlsitemap_additional_links_priority');
-  if (_xmlsitemap_delete_tmp_files(file_directory_path() .'/xmlsitemap')) {
-    $ret[] = array(
-      'success' => TRUE,
-      'query' => 'DELETE TEMPORARY FILES',
-    );
-  }
   return $ret;
 }
 
@@ -132,14 +109,7 @@ function xmlsitemap_update_3() {
  * Try to remove any temporary files left.
  */
 function xmlsitemap_update_4() {
-  $ret = array();
-  if (_xmlsitemap_delete_tmp_files(file_directory_path() .'/xmlsitemap')) {
-    $ret[] = array(
-      'success' => TRUE,
-      'query' => 'DELETE TEMPORARY FILES',
-    );
-  }
-  return $ret;
+  return array();
 }
 
 /**
@@ -165,40 +135,4 @@ function xmlsitemap_update_5() {
 function xmlsitemap_uninstall() {
   db_query("DROP TABLE {xmlsitemap}");
   db_query("DELETE FROM {variable} WHERE name LIKE 'xmlsitemap\_%'");
-}
-
-/*****************************************************************************
- * Private functions.
- ****************************************************************************/
-
-/**
- * Remove temporary files, and folders up to four levels.
- *
- * @param $path
- *        The path of the folder to remove.
- * @return
- *        Boolean value; TRUE on success.
- */
-function _xmlsitemap_delete_tmp_files($path) {
-  static $count = 0;
-  $error = FALSE;
-  $count++;
-  if ($dir = @opendir($path)) {
-    while (($file = readdir($dir)) !== FALSE) {
-      if ($file != '.' && $file != '..') {
-        $fpath = "$path/$file";
-        if (is_dir($fpath)) {
-          if ($count < 5) {
-            $error |= _xmmsitemap_delete_temp_files($fpath);
-          }
-        }
-        else {
-          $error |= @unlink($fpath);
-        }
-      }
-    }
-    closedir($dir);
-    $error |= @rmdir($path);
-  }
-  return $error;
 }
