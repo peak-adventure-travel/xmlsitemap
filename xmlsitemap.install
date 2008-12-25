@@ -123,6 +123,13 @@ function xmlsitemap_update_5() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_update_6() {
+  return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_7() {
   $ret = array();
   switch ($GLOBALS['db_type']) {
     case 'mysql':
@@ -134,7 +141,7 @@ function xmlsitemap_update_6() {
       break;
   }
   $ret[] = update_sql("DELETE FROM {cache_page}
-    WHERE cid LIKE '%%gss.xsl' OR cid LIKE '%%sitemap%.xml'"
+    WHERE cid LIKE '%%gss.xsl' OR cid LIKE '%%sitemap%%.xml'"
   );
   return $ret;
 }
