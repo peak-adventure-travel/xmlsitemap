@@ -68,7 +68,7 @@ function xmlsitemap_engines_xmlsitemap_engines($op) {
       );
       $form['google']['xmlsitemap_engines_google_submit'] = array(
         '#type' => 'checkbox',
-        '#title' => t('Submit site map to Google.'),
+        '#title' => t('Submit the site map to Google.'),
         '#default_value' => variable_get('xmlsitemap_engines_google_submit', FALSE),
       );
       $form['google']['xmlsitemap_engines_google_url'] = array(
@@ -92,7 +92,7 @@ function xmlsitemap_engines_xmlsitemap_engines($op) {
       );
       $form['yahoo']['xmlsitemap_engines_yahoo_submit'] = array(
         '#type' => 'checkbox',
-        '#title' => t('Submit site map to Yahoo!'),
+        '#title' => t('Submit the site map to Yahoo!'),
         '#default_value' => variable_get('xmlsitemap_engines_yahoo_submit', FALSE),
       );
       $form['yahoo']['xmlsitemap_engines_yahoo_url'] = array(
@@ -122,7 +122,7 @@ function xmlsitemap_engines_xmlsitemap_engines($op) {
       );
       $form['ask']['xmlsitemap_engines_ask_submit'] = array(
         '#type' => 'checkbox',
-        '#title' => t('Submit site map to Ask.com.'),
+        '#title' => t('Submit the site map to Ask.com.'),
         '#default_value' => variable_get('xmlsitemap_engines_ask_submit', FALSE),
       );
       $form['ask']['xmlsitemap_engines_ask_url'] = array(
@@ -140,7 +140,7 @@ function xmlsitemap_engines_xmlsitemap_engines($op) {
       );
       $form['live']['xmlsitemap_engines_live_submit'] = array(
         '#type' => 'checkbox',
-        '#title' => t('Submit site map to Windows Live.'),
+        '#title' => t('Submit the site map to Windows Live.'),
         '#default_value' => variable_get('xmlsitemap_engines_live_submit', FALSE),
       );
       $form['live']['xmlsitemap_engines_live_url'] = array(
@@ -249,12 +249,12 @@ function xmlsitemap_engines_submit_sitemap($engine, $url_var, $default_url) {
   );
   $result = drupal_http_request($url);
   if ($result->code == 200) {
-    watchdog('xmlsitemap', t('Site map successfully submitted to !engine.',
+    watchdog('xmlsitemap', t('The site map has been successfully submitted to !engine.',
       array('!engine' => $engine))
     );
   }
   else {
-    watchdog('xmlsitemap', t('Error occurred submitting sitemap to !engine: !code',
+    watchdog('xmlsitemap', t('An error occurred while submitting the site map to !engine: !code',
       array('!engine' => $engine, '!code' => 0 + $result->code)), WATCHDOG_ERROR
     );
   }

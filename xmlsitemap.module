@@ -68,7 +68,7 @@ function xmlsitemap_menu($may_cache) {
     $items[] = array(
       'path' => 'admin/settings/xmlsitemap',
       'title' => t('XML Sitemap'),
-      'description' => t('Configure site map.'),
+      'description' => t('Configure the XML site map.'),
       'callback' => 'drupal_get_form',
       'callback arguments' => array('xmlsitemap_settings_sitemap'),
       'access' => $access_config,
@@ -76,14 +76,14 @@ function xmlsitemap_menu($may_cache) {
     $items[] = array(
       'path' => 'admin/settings/xmlsitemap/sitemap',
       'title' => t('Site map'),
-      'description' => t('Configure site map.'),
+      'description' => t('Configure the site map.'),
       'type' => MENU_DEFAULT_LOCAL_TASK,
       'weight' => -1,
     );
     $items[] = array(
       'path' => 'admin/settings/xmlsitemap/engines',
       'title' => t('Search engines'),
-      'description' => t('Configure search engines.'),
+      'description' => t('Configure the submission settings for the XML site map to the search engines.'),
       'callback' => 'drupal_get_form',
       'callback arguments' => array('xmlsitemap_settings_engines'),
       'type' => MENU_LOCAL_TASK,
@@ -166,13 +166,13 @@ function xmlsitemap_settings_engines() {
   );
   $form['submission']['xmlsitemap_submit'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Submit site map when updated.'),
+    '#title' => t('Submit the site map when updated.'),
     '#default_value' => variable_get('xmlsitemap_submit', FALSE),
     '#description' => t('If enabled, search engines will be notified of changes to the site map each time it is updated.'),
   );
   $form['submission']['xmlsitemap_cron_submit'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Submit site map on cron run.'),
+    '#title' => t('Submit the site map on cron run.'),
     '#default_value' => variable_get('xmlsitemap_cron_submit', FALSE),
     '#description' => t('If enabled, search engines will be notified of changes to the site map each time cron is run.'),
   );
