@@ -14,42 +14,26 @@
 /**
  * Implementation of hook_xmlsitemap_links().
  */
-function xmlsitemap_term_xmlsitemap_links($type = NULL, $excludes = array()) {
-  if (!isset($type)) {
-    _xmlsitemap_term_links(_xmlsitemap_term_excludes());
-    module_invoke_all('xmlsitemap_links', 'term', _xmlsitemap_term_excludes());
-  }
-}
-
-/**
- * Get array of excluded vocabularies.
- * @return An array of vocabulary IDs to exclude.
- */
-function _xmlsitemap_term_excludes() {
-  static $excludes;
-  if (!isset($excludes)) {
-    $excludes = array();
-    $result = db_query("SELECT vid FROM {vocabulary}");
-    while ($vocabulary = db_fetch_object($result)) {
-      if (variable_get('xmlsitemap_term_vocabulary_priority_'. $vocabulary->vid, 0.5) < 0) {
-        $excludes[] = $vocabulary->vid;
-      }
+function xmlsitemap_term_xmlsitemap_links() {
+  $excludes = array();
+  $result = db_query("SELECT vid FROM {vocabulary}");
+  while ($vocabulary = db_fetch_object($result)) {
+    if (variable_get('xmlsitemap_term_vocabulary_priority_'. $vocabulary->vid, 0.5) < 0) {
+      $excludes[] = $vocabulary->vid;
     }
   }
-  return $excludes;
-}
-
-/**
- * Get term links.
- * @param $excludes: An array of node types to exclude.
- * @return An array of links. Each link is an array containing the XML
- * values for a site map URL.
- */
-function _xmlsitemap_term_links($excludes = array()) {
   if (empty($excludes)) {
     $excludes = array(0);
   }
-  $query_args = array_merge($excludes, array(_xmlsitemap_term_frontpage()));
+  $tid = 0;
+  $frontpage = explode('/', drupal_get_normal_path(variable_get('site_frontpage', 'node')));
+  if (count($frontpage) == 3 && $frontpage[0] == 'taxonomy' && $frontpage[1] == 'term' && is_numeric($frontpage[2])) {
+    $tid = $frontpage[2];
+  }
+  elseif (count($frontpage) == 2 && $frontpage[0] == 'forum' && is_numeric($frontpage[1])) {
+    $tid = $frontpage[1];
+  }
+  $query_args = array_merge($excludes, array($tid));
   $result = db_query(db_rewrite_sql("SELECT t.tid, t.vid, v.module, xt.last_changed, xt.previously_changed, xt.priority_override
     FROM {term_data} t
     LEFT JOIN {vocabulary} v ON t.vid = v.vid
@@ -75,38 +59,14 @@ function _xmlsitemap_term_links($excludes = array()) {
     $url = xmlsitemap_url($path, $alias, NULL, NULL, TRUE);
     $age = time() - $term->last_changed;
     $interval = empty($term->previously_changed) ? 0 : $term->last_changed - $term->previously_changed;
-    db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)", $url, $term->last_changed, max($age, $interval), _xmlsitemap_term_priority($term));
+    if (isset($term->priority_override)) {
+      $priority = $term->priority_override;
+    }
+    else {
+      $priority = min(variable_get("xmlsitemap_term_vocabulary_priority_$term->vid", 0.5), 1);
+    }
+    db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)", $url, $term->last_changed, max($age, $interval), $priority);
   }
-}
-
-/**
- * Get the tid of the front page term.
- * @return Integer of front page term ID, or 0 if front page is not a term.
- */
-function _xmlsitemap_term_frontpage() {
-  $tid = 0;
-  $frontpage = explode('/', drupal_get_normal_path(variable_get('site_frontpage', 'node')));
-  if (count($frontpage) == 3 && $frontpage[0] == 'taxonomy' && $frontpage[1] == 'term' && is_numeric($frontpage[2])) {
-    $tid = $frontpage[2];
-  }
-  elseif (count($frontpage) == 2 && $frontpage[0] == 'forum' && is_numeric($frontpage[1])) {
-    $tid = $frontpage[1];
-  }
-  return $tid;
-}
-
-/**
- * Calculate the priority of a term.
- * @param $term: A term object
- * @return A number between 0 and 1, or -1
- */
-function _xmlsitemap_term_priority($term) {
-  $priority = $term->priority_override;
-  if (!isset($term->priority_override)) {
-    $priority = variable_get("xmlsitemap_term_vocabulary_priority_$term->vid", 0.5);
-    $priority = min($priority, 1);
-  }
-  return $priority;
 }
 
 /**

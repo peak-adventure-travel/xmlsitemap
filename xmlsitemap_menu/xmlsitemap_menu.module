@@ -14,18 +14,16 @@
 /**
  * Implementation of hook_xmlsitmap_links().
  */
-function xmlsitemap_menu_xmlsitemap_links($type = NULL, $excludes = array()) {
-  if (!isset($type)) {
-    unset($GLOBALS['_menu']);
-    $menu = menu_get_menu();
-    $root_menus = array();
-    foreach ($menu['items'][0]['children'] as $mid) {
-      $root_menus[$mid] = $menu['items'][$mid]['title'];
-    }
-    foreach (variable_get('xmlsitemap_menu_menus', array()) as $mid) {
-      if (isset($root_menus[$mid])) {
-        _xmlsitemap_menu_process_link($mid, $menu);
-      }
+function xmlsitemap_menu_xmlsitemap_links() {
+  unset($GLOBALS['_menu']);
+  $menu = menu_get_menu();
+  $root_menus = array();
+  foreach ($menu['items'][0]['children'] as $mid) {
+    $root_menus[$mid] = $menu['items'][$mid]['title'];
+  }
+  foreach (variable_get('xmlsitemap_menu_menus', array()) as $mid) {
+    if (isset($root_menus[$mid])) {
+      _xmlsitemap_menu_process_link($mid, $menu);
     }
   }
 }
