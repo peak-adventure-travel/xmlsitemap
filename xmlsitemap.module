@@ -119,7 +119,12 @@ function xmlsitemap_menu($may_cache) {
  * Menu callback; return site map settings form.
  */
 function xmlsitemap_settings_sitemap() {
-  $form['xmlsitemap_chunk_size'] = array(
+  $form['general'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('General settings'),
+    '#collapsible' => TRUE,
+  );
+  $form['general']['xmlsitemap_chunk_size'] = array(
     '#type' => 'textfield',
     '#title' => t('Chunk size'),
     '#default_value' => variable_get('xmlsitemap_chunk_size', 50000),
@@ -128,7 +133,7 @@ function xmlsitemap_settings_sitemap() {
     '#description' => t('This is the number of links to include in one site map. Values can range between 1 and 50,000. If the total number of links exceeds the chunk size, multiple site maps will be generated.'),
     '#weight' => -2,
   );
-  $form['xmlsitemap_front_page_priority'] = array(
+  $form['general']['xmlsitemap_front_page_priority'] = array(
     '#type' => 'select',
     '#title' => t('Front page priority'),
     '#default_value' => variable_get('xmlsitemap_front_page_priority', 1),
