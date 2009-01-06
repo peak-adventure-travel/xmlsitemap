@@ -154,7 +154,7 @@ function xmlsitemap_node_priority($node) {
  * Implementation of hook_perm().
  */
 function xmlsitemap_node_perm() {
-  return array('override node priority');
+  return array('override node settings');
 }
 
 /**
@@ -163,28 +163,26 @@ function xmlsitemap_node_perm() {
 function xmlsitemap_node_form_alter($form_id, &$form) {
   if (isset($form['type']) && $form_id == $form['type']['#value'] .'_node_form') {
     $node = $form['#node'];
-    if (user_access('override node priority')) {
-      $form['xmlsitemap_node'] = array(
-        '#type' => 'fieldset',
-        '#title' => t('XML site map'),
-        '#collapsible' => TRUE,
-        '#collapsed' => TRUE,
-        '#weight' => 30,
-      );
-      $options = xmlsitemap_priority_options('both');
-      $default = variable_get("xmlsitemap_node_type_priority_$node->type", '0.5');
-      $form['xmlsitemap_node']['priority_override'] = array(
-        '#type' => 'select',
-        '#title' => t('Priority'),
-        '#default_value' => $node->priority_override,
-        '#options' => $options,
-        '#description' => t('The default priority is %priority.', array('%priority' => $options[$default])),
-      );
+    $form['xmlsitemap_node'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('XML site map'),
+      '#collapsible' => TRUE,
+      '#weight' => 30,
+    );
+    $options = xmlsitemap_priority_options('both');
+    $default = variable_get('xmlsitemap_node_type_priority_'. $node->type, '0.5');
+    $disabled = !user_access('override node settings');
+    $form['xmlsitemap_node']['priority_override'] = array(
+      '#type' => 'select',
+      '#title' => t('Priority'),
+      '#default_value' => $node->priority_override,
+      '#options' => $options,
+      '#disabled' => $disabled,
+      '#description' => t('The default priority is %priority.', array('%priority' => $options[$default])),
+    );
+    if ($disabled) {
+      $form['xmlsitemap_node']['priority_override']['#description'] .= ' '. t('This option is only modifiable from users with the right permission.');
     }
-    else {
-      $form['priority_override'] = array('#type' => 'value', '#value' => $node->priority_override);
-    }
-    $form['xmlsitemap_node_status'] = array('#type' => 'value', '#value' => $node->status);
   }
   else {
     switch ($form_id) {
@@ -269,9 +267,7 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
         WHERE nid = %d",
         $node->changed, $node->priority_override, $node->nid
       );
-      if ($node->status || $node->xmlsitemap_node_status) {
-        xmlsitemap_update_sitemap();
-      }
+      xmlsitemap_update_sitemap();
       break;
     case 'delete':
       db_query("DELETE FROM {xmlsitemap_node} WHERE nid = %d", $node->nid);
