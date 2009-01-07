@@ -11,41 +11,9 @@
  * @{
  */
 
-/**
- * Implementation of hook_xmlsitmap_links().
- */
-function xmlsitemap_menu_xmlsitemap_links() {
-  unset($GLOBALS['_menu']);
-  $menu = menu_get_menu();
-  $root_menus = array();
-  foreach ($menu['items'][0]['children'] as $mid) {
-    $root_menus[$mid] = $menu['items'][$mid]['title'];
-  }
-  foreach (variable_get('xmlsitemap_menu_menus', array()) as $mid) {
-    if (isset($root_menus[$mid])) {
-      _xmlsitemap_menu_process_link($mid, $menu);
-    }
-  }
-}
-
-/**
- * Add links for a menu item and all its children to the site map.
- * @param $mid: The ID of the menu to process
- * @param $menu: The full menu structure for a user
- * @return None
- */
-function _xmlsitemap_menu_process_link($mid, $menu) {
-  $item = $menu['visible'][$mid];
-  if (!empty($item['path']) && strpos($item['path'], '://') === FALSE && $item['path'] != variable_get('site_frontpage', 'node')) {
-    $alias = db_result(db_query("SELECT dst FROM {url_alias} WHERE src = '%s'", $item['path']));
-    $alias = $alias === FALSE ? NULL : $alias;
-    $priority = min(max(round($menu['items'][$mid]['weight'] / 20 + 0.5, 1), 0), 1);
-    db_query("INSERT INTO {xmlsitemap} (loc, priority) VALUES ('%s', %f)", xmlsitemap_url($item['path'], $alias, NULL, NULL, TRUE), $priority);
-  }
-  foreach ($item['children'] as $mid) {
-    _xmlsitemap_menu_process_link($mid, $menu);
-  }
-}
+/*****************************************************************************
+ * Drupal hooks.
+ ****************************************************************************/
 
 /**
  * Implementation of hook_form_alter().
@@ -73,6 +41,46 @@ function xmlsitemap_menu_menu($may_cache) {
     if (!empty($user->uid)) {
       xmlsitemap_update_sitemap();
     }
+  }
+}
+
+/**
+ * Implementation of hook_xmlsitmap_links().
+ */
+function xmlsitemap_menu_xmlsitemap_links() {
+  unset($GLOBALS['_menu']);
+  $menu = menu_get_menu();
+  $root_menus = array();
+  foreach ($menu['items'][0]['children'] as $mid) {
+    $root_menus[$mid] = $menu['items'][$mid]['title'];
+  }
+  foreach (variable_get('xmlsitemap_menu_menus', array()) as $mid) {
+    if (isset($root_menus[$mid])) {
+      _xmlsitemap_menu_process_link($mid, $menu);
+    }
+  }
+}
+
+/*****************************************************************************
+ * Private functions.
+ ****************************************************************************/
+
+/**
+ * Add links for a menu item and all its children to the site map.
+ * @param $mid: The ID of the menu to process
+ * @param $menu: The full menu structure for a user
+ * @return None
+ */
+function _xmlsitemap_menu_process_link($mid, $menu) {
+  $item = $menu['visible'][$mid];
+  if (!empty($item['path']) && strpos($item['path'], '://') === FALSE && $item['path'] != variable_get('site_frontpage', 'node')) {
+    $alias = db_result(db_query("SELECT dst FROM {url_alias} WHERE src = '%s'", $item['path']));
+    $alias = $alias === FALSE ? NULL : $alias;
+    $priority = min(max(round($menu['items'][$mid]['weight'] / 20 + 0.5, 1), 0), 1);
+    db_query("INSERT INTO {xmlsitemap} (loc, priority) VALUES ('%s', %f)", xmlsitemap_url($item['path'], $alias, NULL, NULL, TRUE), $priority);
+  }
+  foreach ($item['children'] as $mid) {
+    _xmlsitemap_menu_process_link($mid, $menu);
   }
 }
 
