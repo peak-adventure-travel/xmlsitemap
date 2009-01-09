@@ -182,7 +182,7 @@ function xmlsitemap_user_xmlsitemap_links() {
       }
       db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)",
         xmlsitemap_url("user/$user->uid", $user->alias, NULL, NULL, TRUE),
-        $user->last_changed, max($age, $interval), _xmlsitemap_user_priority($user)
+        $user->last_changed, max($age, $interval), $priority
       );
     }
   }

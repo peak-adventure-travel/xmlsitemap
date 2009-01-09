@@ -96,7 +96,10 @@ function xmlsitemap_node_update_4() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_node_update_5() {
-  $ret[] = update_sql("ALTER TABLE {xmlsitemap_node} DROP pid");
+  $result = @update_sql("ALTER TABLE {xmlsitemap_node} DROP pid");
+  if ($result['success']) {
+    $ret[] = $result;
+  }
   menu_rebuild();
   $ret[] = array(
     'success' => TRUE,
