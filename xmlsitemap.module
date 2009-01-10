@@ -233,8 +233,8 @@ function xmlsitemap_settings_sitemap() {
  * Validate site map settings form.
  */
 function xmlsitemap_settings_sitemap_validate($form_id, $form_values) {
-  if ($form_values['xmlsitemap_chunk_size'] > 50000) {
-    form_set_error('xmlsitemap_chunk_size', t('Cannot send more than 50,000 links at one time.'));
+  if ($form_values['xmlsitemap_chunk_size'] <= 0 || $form_values['xmlsitemap_chunk_size'] > 50000) {
+    form_set_error('xmlsitemap_chunk_size', t('The number of links in a site map chunk must be a number between 1, and 50,000.'));
   }
 }
 
