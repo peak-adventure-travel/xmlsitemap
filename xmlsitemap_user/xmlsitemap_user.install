@@ -69,8 +69,8 @@ function xmlsitemap_user_install() {
       db_query("CREATE TABLE {xmlsitemap_user_role} (
         rid integer,
         priority real,
-        PRIMARY KEY (rid)
-      ) /*!40100 DEFAULT CHARACTER SET utf8 */;");
+        PRIMARY KEY (rid));"
+      );
       break;
   }
 }
