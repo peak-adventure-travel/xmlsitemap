@@ -168,10 +168,10 @@ function xmlsitemap_node_views_query_alter(&$query, &$view, $summary = NULL, $le
   switch ($GLOBALS['db_type']) {
     case 'mysql':
     case 'mysqli':
-      $cast = 'CHAR';
+      $cast = 'CAST(node.nid AS CHAR CHARACTER SET utf8_general_ci)';
       break;
     case 'pgsql':
-      $cast = 'VARCHAR';
+      $cast = 'CAST(node.nid AS VARCHAR)';
       break;
   }
   switch ($view->page_type) {
@@ -196,7 +196,7 @@ function xmlsitemap_node_views_query_alter(&$query, &$view, $summary = NULL, $le
           'field' => 'pid',
         ),
         'extra' => array(
-          "src = CONCAT('node/', CAST(node.nid AS $cast))" => NULL,
+          "src = CONCAT('node/', $cast)" => NULL,
         ),
       );
       $query->add_table('xmlsitemap_node', FALSE, 1, $xn_join);
@@ -250,11 +250,11 @@ function xmlsitemap_node_xmlsitemap_links() {
     case 'mysql':
     case 'mysqli':
       $coalesce = 'COALESCE';
-      $cast = 'CHAR';
+      $cast = 'CAST(n.nid AS CHAR CHARSET SET utf8_general_ci)';
       break;
     case 'pgsql':
       $coalesce = 'FIRST';
-      $cast = 'VARCHAR';
+      $cast = 'CAST(n.nid AS VARCHAR)';
       break;
   }
   if (module_exists('comment')) {
@@ -268,7 +268,7 @@ function xmlsitemap_node_xmlsitemap_links() {
   $query = "SELECT $columns, $coalesce(ua.dst) AS alias FROM {node} n
     LEFT JOIN {xmlsitemap_node} xn ON n.nid = xn.nid
     $left_join
-    LEFT JOIN {url_alias} ua ON ua.src = CONCAT('node/', CAST(n.nid AS $cast))
+    LEFT JOIN {url_alias} ua ON ua.src = CONCAT('node/', $cast)
     WHERE n.status > 0
       AND n.type NOT IN (". xmlsitemap_placeholders($excludes, 'varchar') .")
       AND (n.type NOT IN (". xmlsitemap_placeholders($excludes, 'varchar') .") AND xn.priority_override IS NULL OR xn.priority_override >= 0)

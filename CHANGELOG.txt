@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 5.x-2.x-dev, 2009-01-24
+-----------------------------------
+#303363: Illegal mix of collations.
+
 XML Sitemap 5.x-2.x-dev, 2009-01-09
 -----------------------------------
 #356109: Undefined function.
