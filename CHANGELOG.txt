@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 5.x-2.x-dev, 2009-01-28
+-----------------------------------
+#365616: SQL query error caused by wrong use of CAST().
+
 XML Sitemap 5.x-2.x-dev, 2009-01-24
 -----------------------------------
 #303363: Illegal mix of collations.
