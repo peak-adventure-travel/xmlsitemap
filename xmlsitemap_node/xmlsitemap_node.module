@@ -163,11 +163,9 @@ function xmlsitemap_node_xmlsitemap_links() {
     case 'mysql':
     case 'mysqli':
       $coalesce = 'COALESCE';
-      $cast = 'CAST(n.nid AS CHAR CHARACTER SET utf8_general_ci)';
       break;
     case 'pgsql':
       $coalesce = 'FIRST';
-      $cast = 'CAST(n.nid AS VARCHAR)';
       break;
   }
   if (module_exists('comment')) {
@@ -181,7 +179,7 @@ function xmlsitemap_node_xmlsitemap_links() {
   $query = "SELECT $columns, $coalesce(ua.dst) AS alias FROM {node} n
     LEFT JOIN {xmlsitemap_node} xn ON n.nid = xn.nid
     $left_join
-    LEFT JOIN {url_alias} ua ON ua.src = CONCAT('node/', $cast)
+    LEFT JOIN {url_alias} ua ON ua.src = CONCAT('node/', n.nid)
     WHERE n.status > 0
       AND n.type NOT IN (". db_placeholders($excludes, 'varchar') .")
       AND (xn.priority_override = -2 OR xn.priority_override >= 0)
