@@ -364,9 +364,6 @@ function _xmlsitemap_node_module_table_add_rows(&$context) {
       LEFT JOIN {xmlsitemap_node} xn ON xn.nid = n.nid
       WHERE xn.nid IS NULL')
     );
-    if (module_exists('comment')) {
-      $context['sandbox']['maxcomments'] = (integer) db_result(db_query('SELECT MAX(comment_count) FROM {node_comment_statistics}'));
-    }
     $context['sandbox']['progress'] = 0;
   }
   if ($context['sandbox']['max']) {
@@ -379,17 +376,6 @@ function _xmlsitemap_node_module_table_add_rows(&$context) {
       $context['sandbox']['current_node'], 0, 1
     );
     if ($row = db_fetch_object($result)) {
-      $anonymous = user_load(array('uid' => 0));
-      $node = node_load($row->nid);
-      $row->anonym_access = node_access('view', $node, $anonymous);
-      if (isset($context['sandbox']['maxcomments']) && $context['sandbox']['maxcomments'] > 1) {
-        $comments = (integer) db_result(db_query('SELECT comment_count
-          FROM {node_comment_statistics}
-          WHERE nid = %d',
-          $row->nid)
-        );
-        $row->comment_ratio = $comments / $context['sandbox']['maxcomments'];
-      }
       drupal_write_record('xmlsitemap_node', $row);
       $context['sandbox']['progress']++;
       $context['sandbox']['current_node'] = $row->nid;
@@ -436,9 +422,6 @@ function _xmlsitemap_node_module_table_update_rows(&$context) {
       INNER JOIN {xmlsitemap_node} xn ON xn.nid = n.nid
       WHERE n.changed > xn.changed')
     );
-    if (module_exists('comment')) {
-      $context['sandbox']['maxcomments'] = (integer) db_result(db_query('SELECT MAX(comment_count) FROM {node_comment_statistics}'));
-    }
     $context['sandbox']['progress'] = 0;
   }
   if ($context['sandbox']['max']) {
@@ -451,17 +434,6 @@ function _xmlsitemap_node_module_table_update_rows(&$context) {
       $context['sandbox']['current_node'], 0, 1
     );
     if ($row = db_fetch_object($result)) {
-      $anonymous = user_load(array('uid' => 0));
-      $node = node_load($row->nid);
-      $row->anonym_access = node_access('view', $node, $anonymous);
-      if (isset($context['sandbox']['maxcomments']) && $context['sandbox']['maxcomments'] > 1) {
-        $comments = (integer) db_result(db_query('SELECT comment_count
-          FROM {node_comment_statistics}
-          WHERE nid = %d',
-          $row->nid)
-        );
-        $row->comment_ratio = $comments / $context['sandbox']['maxcomments'];
-      }
       drupal_write_record('xmlsitemap_node', $row, 'nid');
       $context['sandbox']['progress']++;
       $context['sandbox']['current_node'] = $row->nid;
