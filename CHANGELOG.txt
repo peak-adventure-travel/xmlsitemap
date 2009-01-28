@@ -2,6 +2,8 @@ $Id$
 
 XML Sitemap 6.x-1.x-dev, 2009-01-28
 -----------------------------------
+#365733: Call to undefined function.
+#365515: Unknown character set.
 #363355: Illegal mix of collations.
 #355149: Not closed parenthesis in SQL query.
 #349530: xmlsitemap_menu_xmlsitemap_links() is not working for URL alias.

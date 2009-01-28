@@ -223,6 +223,7 @@ function xmlsitemap_output($chunk = NULL) {
  * Menu callback; return the search engine settings form.
  */
 function xmlsitemap_settings_engines() {
+  xmlsitemap_show_admin_messages();
   $form['submission'] = array(
     '#type' => 'fieldset',
     '#title' => t('Submission settings'),
@@ -263,6 +264,7 @@ function xmlsitemap_settings_engines_submit($form, &$form_state) {
  * Menu callback; return the site map settings form.
  */
 function xmlsitemap_settings_sitemap() {
+  xmlsitemap_show_admin_messages();
   $form['xmlsitemap_chunk_size'] = array(
     '#type' => 'textfield',
     '#title' => t('Chunk size'),
@@ -388,6 +390,35 @@ function xmlsitemap_tools_update_database_submit($form, &$form_state) {
  ****************************************************************************/
 
 /**
+ * Add a message to the list of the messages shown in the module administration
+ * pages.
+ * @param $message
+ *  The text of the message to be shown.
+ * @param $type
+ *  The type of the message, chosen between 'status', 'warning', and 'error';
+ *  the default type is 'status'.
+ */
+function xmlsitemap_add_admin_message($message, $type = 'status') {
+  if ($message) {
+    switch ($type) {
+      case 'error':
+        $var = 'xmlsitemap_admin_error_messages';
+        break;
+      case 'warning':
+        $var = 'xmlsitemap_admin_warning_messages';
+        break;
+      case 'status':
+        $var = 'xmlsitemap_admin_status_messages';
+        break;
+    }
+    if (isset($var)) {
+      $messages = variable_get($var, array());
+      array_unshift($messages, $message);
+    }
+  }
+}
+
+/**
  * Function called when the database batch is finished.
  * @param $success
  *  TRUE if the batch operation has been concluded sucessfully, FALSE otherwise.
@@ -398,21 +429,24 @@ function xmlsitemap_tools_update_database_submit($form, &$form_state) {
  */
 function xmlsitemap_database_update_finished($success, $results, $operations) {
   if ($success) {
-    if (!empty($results['add'])) {
+    if (!empty($results['added'])) {
       drupal_set_message(
-        format_plural($results['add'], 'Added 1 row.', 'Added @count rows.')
+        format_plural($results['added'], 'Added 1 row.', 'Added @count rows.')
       );
     }
-    if (!empty($results['update'])) {
+    if (!empty($results['deleted'])) {
       drupal_set_message(
-        format_plural($results['update'], 'Updated 1 row.', 'Updated @count rows.')
+        format_plural($results['deleted'], 'Deleted 1 row.', 'Deleted @count rows.')
+      );
+    }
+    if (!empty($results['updated'])) {
+      drupal_set_message(
+        format_plural($results['updated'], 'Updated 1 row.', 'Updated @count rows.')
       );
     }
   }
   else {
-    $error_operation = reset($operations);
-    $message = 'An error occurred while processing '. $error_operation[0] .' with arguments :'. print_r($error_operation[0], TRUE);
-    drupal_set_message($message);
+    drupal_set_message(t("An error occured, and the database update processing didn't complete."));
   }
 }
 
@@ -477,6 +511,28 @@ function xmlsitemap_priority_options($option = '') {
     $options['-2'] = t('Default');
   }
   return $options;
+}
+
+/**
+ * Show all the messages set with xmlsitemap_add_admin_message().
+ * The function must be called at the beginning of every menu callback function
+ * that creates an XML Sitemap administration page.
+ */
+function xmlsitemap_show_admin_messages() {
+  $types = array(
+    'error' => 'xmlsitemap_admin_error_messages',
+    'warning' => 'xmlsitemap_admin_warning_messages',
+    'status' => 'xmlsitemap_admin_status_messages',
+  );
+  foreach ($types as $type => $var) {
+    $messages = variable_get($var, array());
+    if (count($messages)) {
+      foreach ($messages as $message) {
+        drupal_set_message($message, $type);
+      }
+      variable_set($var, array());
+    }
+  }
 }
 
 /**
