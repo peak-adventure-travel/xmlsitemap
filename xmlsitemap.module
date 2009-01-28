@@ -1,4 +1,4 @@
-<?php 
+<?php
 // $Id$
 
 /**
@@ -296,27 +296,46 @@ function xmlsitemap_settings_sitemap_validate($form, &$form_state) {
 }
 
 /**
- * Menu callback; return the update database form.
+ * Form builder; return the database update form.
  */
-function xmlsitemap_tools_update_database() {
-  $options = array();
-  foreach (module_implements('xmlsitemap_database_batch_operation') as $module) {
-    $options[$module] = $module .'.module';
+function xmlsitemap_tools_update_database($form_state = NULL) {
+  xmlsitemap_show_admin_messages();
+  $form = array();
+  $step = isset($form_state['storage']['step']) ? $form_state['storage']['step'] : 1;
+  switch ($step) {
+    case 1:
+      $title = t('First step');
+      $hook = 'xmlsitemap_update_module_tables_batch_operations';
+      break;
+    case 2:
+      $title = t('Second step');
+      $hook = 'xmlsitemap_update_main_table_batch_operations';
+      break;
   }
-  if (empty($options)) {
-    $form['xmlsitemap_description'] = array(
+  if (isset($hook)) {
+    foreach (module_implements($hook) as $module) {
+      $modules[] = $module;
+      $modules_list[] = $module .'.module';
+    }
+    if (!empty($modules)) {
+      $form['#modules'] = $modules;
+      asort($modules_list);
+    }
+    $form['title'] = array(
+      '#prefix' => '<h3>',
+      '#suffix' => '</h3>',
+      '#value' => $title,
+    );
+    if (empty($modules)) {
+      $modules_list[] = t('No modules implement the required code for this database update step');
+    }
+    $form['list'] = array(
       '#prefix' => '<div>',
       '#suffix' => '</div>',
-      '#value' => t('There is no module which implements the required code to update its own internal database tables.'),
+      '#value' => theme('item_list', $modules_list),
     );
   }
-  else {
-    $form['xmlsitemap_database_modules'] = array(
-      '#type' => 'select', 
-      '#title' => t('XML Sitemap modules'),
-      '#options' => $options,
-      '#description' => t('The drop-down menu lists all the modules which save links in the site map, and which implement the required code to update their own database tables; select the module that needs to update its database tables.'),
-    );
+  if ($step < 3) {
     $form['submit'] = array(
       '#type' => 'submit',
       '#value' => t('Continue'),
@@ -325,26 +344,43 @@ function xmlsitemap_tools_update_database() {
   return $form;
 }
 
+/**
+ * Submission function for the database update form.
+ */
 function xmlsitemap_tools_update_database_submit($form, &$form_state) {
-  $module = $form_state['values']['xmlsitemap_database_modules'];
-  $function = $module .'_xmlsitemap_database_batch_operation';
-  if (function_exists($function)) {
-    $database_batch = $function();
-    if (isset($database_batch['update function'])) {
-      $batch['operations'][] = array($database_batch['update function'], array());
-    }
-    $batch['operations'][] = array($database_batch['add function'], array());
-    $batch['file'] = drupal_get_path('module', $module) .'/'. $database_batch['file'];
-    if (isset($database_batch['final callback'])) {
-       $final_callback = $database_batch['final callback'];
-    }
-    else {
-      $final_callback = 'xmlsitemap_database_update_finished';
-    }
-    $batch['finished'] = $final_callback;
-    batch_set($batch);
-
+  $step = isset($form_state['storage']['step']) ? $form_state['storage']['step'] : 1;
+  switch ($step) {
+    case 1:
+      $hook = '_xmlsitemap_update_module_tables_batch_operations';
+      break;
+    case 2:
+      $hook = '_xmlsitemap_update_main_table_batch_operations';
+      break;
   }
+  if (isset($form['#modules']) && isset($hook)) {
+    foreach ($form['#modules'] as $module) {
+      $function = $module . $hook;
+      if (function_exists($function)) {
+        $result = $function();
+        if (isset($result)) {
+          if (is_array($result)) {
+            foreach ($result as $operation) {
+              $batch['operations'][] = array($operation, array());
+            }
+          }
+          elseif (is_string($result)) {
+            $batch['operations'][] = array($result, array());
+          }
+        }
+      }
+    }
+  }
+  if (isset($batch)) {
+    $batch['title'] = t('Updating database');
+    $batch['finished'] = 'xmlsitemap_database_update_finished';
+    batch_set($batch);
+  }
+  $form_state['storage']['step'] = $step + 1;
 }
 
 /*****************************************************************************

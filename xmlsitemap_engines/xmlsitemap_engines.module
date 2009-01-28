@@ -28,7 +28,6 @@ function xmlsitemap_engines_menu() {
       'page arguments' => array('google'),
       'access arguments' => $access_content,
       'type' => MENU_CALLBACK,
-      'file' => 'includes/xmlsitemap_engines.pages.inc',
     );
   }
   if (($verify = variable_get('xmlsitemap_engines_yahoo_verify', '')) != '') {
@@ -38,7 +37,6 @@ function xmlsitemap_engines_menu() {
       'page arguments' => array('yahoo'),
       'access arguments' => $access_content,
       'type' => MENU_CALLBACK,
-      'file' => 'includes/xmlsitemap_engines.pages.inc',
     );
   }
   if (($verify = variable_get('xmlsitemap_engines_live_verify', 'LiveSearchSiteAuth.xml')) != '') {
@@ -48,10 +46,8 @@ function xmlsitemap_engines_menu() {
       'page arguments' => array('live'),
       'access arguments' => $access_content,
       'type' => MENU_CALLBACK,
-      'file' => 'includes/xmlsitemap_engines.pages.inc',
     );
   }
- 
   return $items;
 }
 

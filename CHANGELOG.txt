@@ -1,9 +1,17 @@
 $Id$
 
+XML Sitemap 6.x-1.x-dev, 2009-01-28
+-----------------------------------
+#363355: Illegal mix of collations.
+#355149: Not closed parenthesis in SQL query.
+#349530: xmlsitemap_menu_xmlsitemap_links() is not working for URL alias.
+#361985: require_once() fails to open a file.
+#352046: Division by zero.
+
 XML Sitemap 6.x-1.x-dev, 2008-12-27
 -----------------------------------
 #349125: Change "site map" in the user interface.
-#351501: Node priority is not set to default. 
+#351501: Node priority is not set to default.
 #351307: Call to undefined function.
 
 XML Sitemap 6.x-1.x-dev, 2008-12-25
@@ -66,7 +74,7 @@ Fixed an issue with xmlsitemap_file.module which was not looking for the right U
 
 XML Sitemap 6.x-1.x-dev, 2008-12-07
 -----------------------------------
-Resolved an issue with xmlsitemap_user.module which didn't populate the 
+Resolved an issue with xmlsitemap_user.module which didn't populate the
 xmsitemap_user_role table.
 Resolved an issue with the user interface not showing the default value for
 the priority.
@@ -79,7 +87,7 @@ XML Sitemap 6.x-1.x-dev, 2008-12-06
 #342019: Wrong argument type for array_merge().
 Ported the fix for #342122.
 #341730: Code typo in xmlsitemap_menu.install.
-Changed the time zone reference for the log dates to Europe/London. 
+Changed the time zone reference for the log dates to Europe/London.
 
 XML Sitemap 6.x-1.x-dev, 2008-12-01
 -----------------------------------

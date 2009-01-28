@@ -166,16 +166,6 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
 }
 
 /**
- * Implementation of hook_xmlsitemap_database_batch_operation().
- */
-function xmlsitemap_user_xmlsitemap_database_batch_operation() {
-  return array(
-    'file' => 'xmlsitemap_user.batch.inc',
-    'add function' => 'xmlsitemap_user_update_database',
-  );
-}
-
-/**
  * Implementation of hook_xmlsitemap_links().
  */
 function xmlsitemap_user_xmlsitemap_links() {
@@ -184,11 +174,11 @@ function xmlsitemap_user_xmlsitemap_links() {
       case 'mysql':
       case 'mysqli':
         $coalesce = 'COALESCE';
-        $cast = 'CHAR';
+        $cast = 'CAST(u.uid AS CHAR CHARACTER SET utf8_general_ci)';
         break;
       case 'pgsql':
         $coalesce = 'FIRST';
-        $cast = 'VARCHAR';
+        $cast = 'CAST(u.uid AS VARCHAR)';
         break;
     }
     $uid = 0;
@@ -201,7 +191,7 @@ function xmlsitemap_user_xmlsitemap_links() {
       INNER JOIN {users} u ON xu.uid = u.uid
       LEFT JOIN {users_roles} ur ON xu.uid = ur.uid
       LEFT JOIN {xmlsitemap_user_role} xur ON ur.rid = xur.rid
-      LEFT JOIN {url_alias} ua ON ua.src = CONCAT('user/', CAST(u.uid AS $cast))
+      LEFT JOIN {url_alias} ua ON ua.src = CONCAT('user/', $cast)
       WHERE u.status <> 0
         AND u.uid <> %d
       GROUP BY u.uid, xu.last_changed, xu.previously_changed, xu.priority_override
@@ -222,6 +212,16 @@ function xmlsitemap_user_xmlsitemap_links() {
         $user->last_changed, max($age, $interval), $priority);
     }
   }
+}
+
+/**
+ * Implementation of hook_xmlsitemap_update_module_tables_batch_operations().
+ */
+function xmlsitemap_user_xmlsitemap_update_module_tables_batch_operations() {
+  return array(
+    '_xmlsitemap_user_module_table_delete_rows',
+    '_xmlsitemap_user_module_table_add_rows',
+  );
 }
 
 /*****************************************************************************
@@ -251,6 +251,47 @@ function xmlsitemap_user_form_submit($form, &$form_state) {
       $row->priority = $form_values['xmlsitemap_user_role_priority'];
       drupal_write_record('xmlsitemap_user_role', $row, $priority !== FALSE ? 'rid' : NULL);
       xmlsitemap_update_sitemap();
+    }
+  }
+}
+
+/*****************************************************************************
+ * Private functions - database batch operation.
+ ****************************************************************************/
+
+/**
+ * Batch function used to update the module tables.
+ * @param $context
+ *  The context parameter passed from batch_process().
+ */
+function _xmlsitemap_user_module_table_add_rows(&$context) {
+  if (!isset($context['sandbox']['progress'])) {
+    $context['sandbox']['progress'] = 0;
+    $context['sandbox']['current_user'] = 0;
+    $context['sandbox']['max'] = (integer) db_result(db_query('SELECT COUNT(u.uid)
+      FROM {users} u
+      LEFT JOIN {xmlsitemap_user} xu ON xu.uid = u.uid
+      WHERE u.uid <> 0
+        AND xu.uid IS NULL')
+    );
+  }
+  if ($context['sandbox']['max']) {
+    $result = db_query_range('SELECT u.uid, u.created AS changed
+      FROM {users} u
+      LEFT JOIN {xmlsitemap_user} xu ON xu.uid = u.uid
+      WHERE xu.uid IS NULL
+        AND u.uid > %d
+      ORDER BY u.uid ASC',
+      $context['sandbox']['current_user'], 0, 1
+    );
+    if ($row = db_fetch_object($result)) {
+      drupal_write_record('xmlsitemap_user', $row);
+      $context['sandbox']['progress']++;
+      $context['sandbox']['current_user'] = $row->uid;
+      $context['results']['added'] = $context['sandbox']['progress'];
+    }
+    if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
+      $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
     }
   }
 }

@@ -35,7 +35,7 @@ function xmlsitemap_menu_xmlsitemap_links($type = NULL) {
         if (!$link['external'] && !$link['hidden']) {
           _xmlsitemap_menu_link_translate($link);
           if ($link['access'] == 1) {
-            if (($alias = drupal_lookup_path('alias', $link['href']) === FALSE)) {
+            if (($alias = drupal_lookup_path('alias', $link['href'])) === FALSE) {
               $alias = NULL;
             }
             $url = xmlsitemap_url($link['href'], $alias, NULL, NULL, TRUE);
@@ -48,7 +48,7 @@ function xmlsitemap_menu_xmlsitemap_links($type = NULL) {
     }
   }
 }
-  
+
 /**
  * Implementation of hook_xmlsitemap_sitemap_settings_alter().
  */
