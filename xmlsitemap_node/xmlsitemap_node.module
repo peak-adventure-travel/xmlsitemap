@@ -118,7 +118,7 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
         FROM {xmlsitemap_node} WHERE nid = %d",
         $node->nid)
       );
-      return array('priory_override' => $priority !== FALSE ? $priority : -2.0);
+      return array('priority_override' => $priority !== FALSE ? $priority : -2.0);
     case 'insert':
       db_query("INSERT INTO {xmlsitemap_node} (nid, last_changed, priority_override) VALUES (%d, %d, %s)",
         $node->nid, $node->changed, $node->priority_override
