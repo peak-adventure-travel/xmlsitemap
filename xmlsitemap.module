@@ -386,7 +386,7 @@ function xmlsitemap_tools_update_database_submit($form, &$form_state) {
 }
 
 /*****************************************************************************
- * Public functions.
+ * Public functions - messages shown in the administration page.
  ****************************************************************************/
 
 /**
@@ -414,9 +414,36 @@ function xmlsitemap_add_admin_message($message, $type = 'status') {
     if (isset($var)) {
       $messages = variable_get($var, array());
       array_unshift($messages, $message);
+      variable_set($var, $messages);
     }
   }
 }
+
+/**
+ * Show all the messages set with xmlsitemap_add_admin_message().
+ * The function must be called at the beginning of every menu callback function
+ * that creates an XML Sitemap administration page.
+ */
+function xmlsitemap_show_admin_messages() {
+  $types = array(
+    'error' => 'xmlsitemap_admin_error_messages',
+    'warning' => 'xmlsitemap_admin_warning_messages',
+    'status' => 'xmlsitemap_admin_status_messages',
+  );
+  foreach ($types as $type => $var) {
+    $messages = variable_get($var, array());
+    if (count($messages)) {
+      foreach ($messages as $message) {
+        drupal_set_message($message, $type);
+      }
+      variable_set($var, array());
+    }
+  }
+}
+
+/*****************************************************************************
+ * Public functions.
+ ****************************************************************************/
 
 /**
  * Function called when the database batch is finished.
@@ -511,28 +538,6 @@ function xmlsitemap_priority_options($option = '') {
     $options['-2'] = t('Default');
   }
   return $options;
-}
-
-/**
- * Show all the messages set with xmlsitemap_add_admin_message().
- * The function must be called at the beginning of every menu callback function
- * that creates an XML Sitemap administration page.
- */
-function xmlsitemap_show_admin_messages() {
-  $types = array(
-    'error' => 'xmlsitemap_admin_error_messages',
-    'warning' => 'xmlsitemap_admin_warning_messages',
-    'status' => 'xmlsitemap_admin_status_messages',
-  );
-  foreach ($types as $type => $var) {
-    $messages = variable_get($var, array());
-    if (count($messages)) {
-      foreach ($messages as $message) {
-        drupal_set_message($message, $type);
-      }
-      variable_set($var, array());
-    }
-  }
 }
 
 /**
