@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 6.x-1.x-dev, 2009-01-29
+-----------------------------------
+#354453: priority_override doesn't get a value.
+
 XML Sitemap 6.x-1.x-dev, 2009-01-28
 -----------------------------------
 #365733: Call to undefined function.
