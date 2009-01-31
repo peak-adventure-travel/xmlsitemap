@@ -15,7 +15,12 @@
  */
 function xmlsitemap_menu_install() {
   if (db_result(db_query("SELECT menu_name FROM {menu_custom} WHERE menu_name = 'menu-xmlsitemap'")) != 'menu-xmlsitemap') {
-    db_query("INSERT INTO {menu_custom} (menu_name, title, description) VALUES ('menu-xmlsitemap', '%s', '%s')", t('XML Sitemap'), t('The menu from where <em>XML Sitemap: Menu</em> looks for the menus to add to the sitemap.'));
+    db_query("INSERT INTO {menu_custom} (menu_name, title, description) VALUES ('menu-xmlsitemap', '%s', '%s')",
+      array(
+        t('XML Sitemap'),
+        t('The menu from where <em>XML Sitemap: Menu</em> looks for the menus to add to the sitemap.'),
+      )
+    );
     menu_rebuild();
   }
 }

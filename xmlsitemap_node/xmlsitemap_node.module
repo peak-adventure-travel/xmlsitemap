@@ -25,7 +25,12 @@ function xmlsitemap_node_comment($comment, $op) {
     case 'update':
     case 'moderate':
     case 'delete':
-      db_query("UPDATE {xmlsitemap_node} SET previous_comment = last_comment, last_comment = %d WHERE nid = %d", $comment->timestamp, $comment->nid);
+      db_query("UPDATE {xmlsitemap_node} SET previous_comment = last_comment, last_comment = %d WHERE nid = %d",
+        array(
+          $comment->timestamp,
+          $comment->nid,
+        )
+      );
       if (variable_get('xmlsitemap_node_count_comments', TRUE)) {
         xmlsitemap_update_sitemap();
       }
@@ -121,7 +126,11 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
       return array('priority_override' => $priority !== FALSE ? $priority : -2.0);
     case 'insert':
       db_query("INSERT INTO {xmlsitemap_node} (nid, last_changed, priority_override) VALUES (%d, %d, %s)",
-        $node->nid, $node->changed, $node->priority_override
+        array(
+          $node->nid,
+          $node->changed,
+          isset($node->priority_override) ? $node->priority_override : -2.0,
+        )
       );
       if ($node->status) {
         xmlsitemap_update_sitemap();
@@ -131,7 +140,11 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
       db_query("UPDATE {xmlsitemap_node}
         SET previously_changed = last_changed, last_changed = %d, priority_override = %s
         WHERE nid = %d",
-        array($node->changed, $node->priority_override, $node->nid)
+        array(
+          $node->changed,
+          isset($node->priority_override) ? $node->priority_override : -2.0,
+          $node->nid
+        )
       );
       if ($node->status || $node->xmlsitemap_node_status) {
         xmlsitemap_update_sitemap();
@@ -193,9 +206,11 @@ function xmlsitemap_node_xmlsitemap_links() {
   $result = db_query(db_rewrite_sql($query), $query_args);
   while ($node = db_fetch_object($result)) {
     db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)",
-      xmlsitemap_url('node/'. $node->nid, $node->alias, NULL, NULL, TRUE),
-      variable_get('xmlsitemap_node_count_comments', TRUE) ? max($node->changed, $node->last_comment_timestamp) : $node->changed,
-      xmlsitemap_node_frequency($node), xmlsitemap_node_priority($node)
+      array(
+        xmlsitemap_url('node/'. $node->nid, $node->alias, NULL, NULL, TRUE),
+        variable_get('xmlsitemap_node_count_comments', TRUE) ? max($node->changed, $node->last_comment_timestamp) : $node->changed,
+        xmlsitemap_node_frequency($node), xmlsitemap_node_priority($node),
+      )
     );
   }
 }

@@ -206,8 +206,11 @@ function xmlsitemap_user_xmlsitemap_links() {
         $priority = min(isset($user->priority) ? $user->priority : variable_get('xmlsitemap_user_default_priority', 0.5), 1);
       }
       db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)",
-        xmlsitemap_url('user/'. $user->uid, $user->alias, NULL, NULL, TRUE),
-        $user->last_changed, max($age, $interval), $priority);
+        array(
+          xmlsitemap_url('user/'. $user->uid, $user->alias, NULL, NULL, TRUE),
+          $user->last_changed, max($age, $interval), $priority,
+        )
+      );
     }
   }
 }
