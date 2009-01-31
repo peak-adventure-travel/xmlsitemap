@@ -181,11 +181,11 @@ function xmlsitemap_node_xmlsitemap_links() {
       break;
   }
   if (module_exists('comment')) {
-    $columns = 'n.nid, n.type, n.promote, n.changed, xn.previously_changed, xn.priority_override, s.comment_count, s.last_comment_timestamp, xn.previous_comment';
+    $columns = 'n.nid, n.type, n.promote, xn.last_changed, xn.previously_changed, xn.priority_override, s.comment_count, s.last_comment_timestamp, xn.previous_comment';
     $left_join = "LEFT JOIN {node_comment_statistics} s ON n.nid = s.nid";
   }
   else {
-    $columns = 'n.nid, n.type, n.promote, n.changed, xn.previously_changed, xn.priority_override';
+    $columns = 'n.nid, n.type, n.promote, xn.last_changed, xn.previously_changed, xn.priority_override';
     $left_join = '';
   }
   $query = "SELECT $columns, $coalesce(ua.dst) AS alias FROM {node} n
@@ -208,7 +208,7 @@ function xmlsitemap_node_xmlsitemap_links() {
     db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)",
       array(
         xmlsitemap_url('node/'. $node->nid, $node->alias, NULL, NULL, TRUE),
-        variable_get('xmlsitemap_node_count_comments', TRUE) ? max($node->changed, $node->last_comment_timestamp) : $node->changed,
+        variable_get('xmlsitemap_node_count_comments', TRUE) ? max($node->last_changed, $node->last_comment_timestamp) : $node->last_changed,
         xmlsitemap_node_frequency($node), xmlsitemap_node_priority($node),
       )
     );
@@ -308,22 +308,22 @@ function xmlsitemap_node_excludes() {
  *  The number of seconds between updates.
  */
 function xmlsitemap_node_frequency($node) {
-  $age = time() - $node->changed;
+  $age = time() - $node->last_changed;
   if (variable_get('xmlsitemap_node_count_comments', TRUE)) {
-    $age = time() - max($node->changed, $node->last_comment_timestamp);
+    $age = time() - max($node->last_changed, $node->last_comment_timestamp);
     $interval = 0;
     if (!empty($node->previously_changed) && isset($node->previous_comment)) {
-      $interval = min($node->changed, $node->last_comment_timestamp) - max($node->previously_changed, $node->previous_comment);
+      $interval = min($node->last_changed, $node->last_comment_timestamp) - max($node->previously_changed, $node->previous_comment);
     }
     elseif (!empty($node->previously_changed)) {
-      $interval = min($node->changed, $node->last_comment_timestamp) - $node->previously_changed;
+      $interval = min($node->last_changed, $node->last_comment_timestamp) - $node->previously_changed;
     }
     elseif (isset($node->previous_comment)) {
-      $interval = min($node->changed, $node->last_comment_timestamp) - $node->previous_comment;
+      $interval = min($node->last_changed, $node->last_comment_timestamp) - $node->previous_comment;
     }
   }
   else {
-    $interval = empty($node->previously_changed) ? 0 : $node->changed - $node->previously_changed;
+    $interval = empty($node->previously_changed) ? 0 : $node->last_changed - $node->previously_changed;
   }
   return max($age, $interval);
 }
@@ -379,7 +379,7 @@ function _xmlsitemap_node_module_table_add_rows(&$context) {
     $context['sandbox']['progress'] = 0;
   }
   if ($context['sandbox']['max']) {
-    $result = db_query_range('SELECT n.nid, n.created AS previously_changed, n.changed
+    $result = db_query_range('SELECT n.nid, n.created AS previously_changed, n.changed AS last_changed
       FROM {node} n
       LEFT JOIN {xmlsitemap_node} xn ON xn.nid = n.nid
       WHERE xn.nid IS NULL
@@ -412,9 +412,9 @@ function _xmlsitemap_node_module_table_delete_rows(&$context) {
   );
   db_query('DELETE FROM {xmlsitemap_node} xn
     WHERE xn.nid IN (
-      SELECT xn.nid
-        FROM {xmlsitemap_node} xn
-        LEFT JOIN {node} n ON n.nid = xn.nid
+      SELECT xnn.nid
+        FROM {xmlsitemap_node} xnn
+        LEFT JOIN {node} n ON n.nid = xnn.nid
         WHERE n.nid IS NULL
       )'
   );
@@ -432,16 +432,16 @@ function _xmlsitemap_node_module_table_update_rows(&$context) {
     $context['sandbox']['max'] = (integer) db_result(db_query('SELECT COUNT(n.nid)
       FROM {node} n
       INNER JOIN {xmlsitemap_node} xn ON xn.nid = n.nid
-      WHERE n.changed > xn.changed')
+      WHERE n.changed > xn.last_changed')
     );
     $context['sandbox']['progress'] = 0;
   }
   if ($context['sandbox']['max']) {
-    $result = db_query_range('SELECT n.nid, xn.changed AS previously_changed, n.changed
+    $result = db_query_range('SELECT n.nid, xn.changed AS previously_changed, n.changed as last_changed
       FROM {node} n
       INNER JOIN {xmlsitemap_node} xn ON xn.nid = n.nid
       WHERE n.nid > %d
-        AND n.changed > xn.changed
+        AND n.changed > xn.last_changed
       ORDER BY n.nid ASC',
       $context['sandbox']['current_node'], 0, 1
     );
