@@ -100,7 +100,6 @@ function xmlsitemap_install() {
  */
 function xmlsitemap_update_6000() {
   $ret = array();
-  $schema = xmlsitemap_schema();
   if ($GLOBALS['db_type'] == 'pgsql') {
     $ret[] = update_sql('CREATE OR REPLACE FUNCTION first(anyelement, anyelement) RETURNS anyelement AS \'SELECT COALESCE($1, $2);\' LANGUAGE \'sql\';');
     $result = @update_sql("DROP AGGREGATE first(anyelement)");
@@ -143,45 +142,160 @@ function xmlsitemap_update_6000() {
       $ret[] = $result;
     }
     db_change_field($ret, 'xmlsitemap', 'loc', 'loc',
-      $schema['xmlsitemap']['fields']['loc'],
+      array(
+        'description' => 'The relative URL.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
       array('primary key' => array('loc'))
     );
     if (!db_column_exists('xmlsitemap', 'module')) {
       db_add_field($ret, 'xmlsitemap', 'module',
-        $schema['xmlsitemap']['fields']['module'],
+        array(
+          'description' => 'The module handling this link.',
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => TRUE,
+          'default' => '',
+        ),
         array('indexes' => array('link_module' => array('module')))
       );
     }
     if (!db_column_exists('xmlsitemap', 'type')) {
       db_add_field($ret, 'xmlsitemap', 'type',
-        $schema['xmlsitemap']['fields']['type'],
+        array(
+          'description' => 'The type of link.',
+          'type' => 'varchar',
+          'length' => 32,
+          'not null' => TRUE,
+          'default' => '',
+        ),
         array('indexes' => array('link_type' => array('type')))
       );
     }
     if (!db_column_exists('xmlsitemap', 'id')) {
       db_add_field($ret, 'xmlsitemap', 'id',
-        $schema['xmlsitemap']['fields']['id']
+        array(
+          'description' => 'The ID associated with the link.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0,
+        )
       );
     }
     if (!db_column_exists('xmlsitemap', 'sid')) {
       db_add_field($ret, 'xmlsitemap', 'sid',
-        $schema['xmlsitemap']['fields']['sid']
+        array(
+          'description' => 'The sub ID associated with the link.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0,
+        )
       );
     }
     db_change_field($ret, 'xmlsitemap', 'lastmod', 'lastmod',
-      $schema['xmlsitemap']['fields']['lastmod'],
+      array(
+        'description' => 'The Unix timestamp of the last change.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
       array('indexes' => array('link_changed' => array('lastmod')))
     );
     db_change_field($ret, 'xmlsitemap', 'changefreq', 'changefreq',
-      $schema['xmlsitemap']['fields']['changefreq']
+      array(
+        'description' => 'The frequency of the changes.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      )
     );
     db_change_field($ret, 'xmlsitemap', 'priority', 'priority',
-      $schema['xmlsitemap']['fields']['priority'],
+      array(
+        'description' => 'The priority of this node in the site map.',
+        'type' => 'float',
+        'not null' => TRUE,
+        'default' => 0.5,
+      ),
       array('indexes' => array('link_priority' => array('priority')))
     );
   }
   else {
-    db_create_table($ret, 'xmlsitemap', $schema['xmlsitemap']);
+    db_create_table($ret, 'xmlsitemap',
+      array(
+        'description' => 'The base table for xmlsitemap.',
+        'fields' => array(
+          'loc' => array(
+            'description' => 'The relative URL.',
+            'type' => 'varchar',
+            'length' => 255,
+            'not null' => TRUE,
+            'default' => '',
+          ),
+          'module' => array(
+            'description' => 'The module handling this link.',
+            'type' => 'varchar',
+            'length' => 255,
+            'not null' => TRUE,
+            'default' => '',
+          ),
+          'type' => array(
+            'description' => 'The type of link.',
+            'type' => 'varchar',
+            'length' => 32,
+            'not null' => TRUE,
+            'default' => '',
+          ),
+          'id' => array(
+            'description' => 'The ID associated with the link.',
+            'type' => 'int',
+            'unsigned' => TRUE,
+            'not null' => TRUE,
+            'default' => 0,
+          ),
+          'sid' => array(
+            'description' => 'The sub ID associated with the link.',
+            'type' => 'int',
+            'unsigned' => TRUE,
+            'not null' => TRUE,
+            'default' => 0,
+          ),
+          'lastmod' => array(
+            'description' => 'The Unix timestamp of the last change.',
+            'type' => 'int',
+            'unsigned' => TRUE,
+            'not null' => TRUE,
+            'default' => 0,
+          ),
+          'changefreq' => array(
+            'description' => 'The frequency of the changes.',
+            'type' => 'int',
+            'unsigned' => TRUE,
+            'not null' => TRUE,
+            'default' => 0,
+          ),
+          'priority' => array(
+            'description' => 'The priority of this node in the site map.',
+            'type' => 'float',
+            'not null' => TRUE,
+            'default' => 0.5,
+          ),
+        ),
+        'indexes' => array(
+          'link_module' => array('module'),
+          'link_type' => array('type'),
+          'link_changed' => array('lastmod'),
+          'link_priority' => array('priority'),
+        ),
+        'primary key' => array('loc'),
+      )
+    );
   }
   $ret[] = update_sql("DELETE FROM {cache_page}
     WHERE cid LIKE '%%gss.xsl' OR cid LIKE '%%sitemap%%.xml'"
@@ -303,6 +417,13 @@ function xmlsitemap_update_6113() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_update_6114() {
+  return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_6115() {
   return xmlsitemap_update_6000();
 }
 

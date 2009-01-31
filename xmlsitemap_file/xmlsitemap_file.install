@@ -58,11 +58,7 @@ function xmlsitemap_file_install() {
  */
 function xmlsitemap_file_update_6000() {
   $ret = array();
-  $schema = xmlsitemap_file_schema();
-  if (!db_table_exists('xmlsitemap_file')) {
-    db_create_table($ret, 'xmlsitemap_file', $schema['xmlsitemap_file']);
-  }
-  else {
+  if (db_table_exists('xmlsitemap_file')) {
     $result = array();
     @db_drop_primary_key($result, 'xmlsitemap_file');
     if ($result[0]['success']) {
@@ -74,18 +70,36 @@ function xmlsitemap_file_update_6000() {
       $ret[] = $result[0];
     }
     db_change_field($ret, 'xmlsitemap_file', 'fid', 'fid',
-      $schema['xmlsitemap_file']['fields']['nid'],
+      array(
+        'description' => 'The ID of the file.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
       array('primary keys' => array('fid'))
     );
-    if (!db_column_exists('xmlsitemap_file', 'nid')) {
-      db_add_field($ret, 'xmlsitemap_file', 'nid',
-        $schema['xmlsitemap_file']['fields']['nid'],
+    if (db_column_exists('xmlsitemap_file', 'nid')) {
+      db_change_field($ret, 'xmlsitemap_file', 'nid', 'nid',
+        array(
+          'description' => 'The ID of the node containing the file.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0,
+        ),
         array('unique keys' => array('fid_nid' => array('fid', 'nid')))
       );
     }
     else {
-      db_change_field($ret, 'xmlsitemap_file', 'nid', 'nid',
-        $schema['xmlsitemap_file']['fields']['nid'],
+      db_add_field($ret, 'xmlsitemap_file', 'nid',
+        array(
+          'description' => 'The ID of the node containing the file.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0,
+        ),
         array('unique keys' => array('fid_nid' => array('fid', 'nid')))
       );
     }
@@ -93,6 +107,39 @@ function xmlsitemap_file_update_6000() {
     if ($result['success']) {
       $ret[] = $result;
     }
+  }
+  else {
+    db_create_table($ret, 'xmlsitemap_file',
+      array(
+        'description' => 'The base table for xmlsitemap_file.',
+        'fields' => array(
+          'fid' => array(
+            'description' => 'The ID of the file.',
+            'type' => 'int',
+            'unsigned' => TRUE,
+            'not null' => TRUE,
+            'default' => 0,
+          ),
+          'nid' => array(
+            'description' => 'The ID of the node containing the file.',
+            'type' => 'int',
+            'unsigned' => TRUE,
+            'not null' => TRUE,
+            'default' => 0,
+          ),
+          'changed' => array(
+            'description' => 'The change time of the file.',
+            'type' => 'int',
+          ),
+          'previously_changed' => array(
+            'description' => 'The previous change time of the file.',
+            'type' => 'int',
+          ),
+        ),
+        'unique keys' => array('fid_nid' => array('fid', 'nid')),
+        'primary keys' => array('fid'),
+      )
+    );
   }
   $ret[] = update_sql("UPDATE {system} SET weight = 10 WHERE name = 'xmlsitemap_file'");
   return $ret;
@@ -130,6 +177,13 @@ function xmlsitemap_file_update_6103() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_file_update_6104() {
+  return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_file_update_6105() {
   return xmlsitemap_file_update_6000();
 }
 

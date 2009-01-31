@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 6.x-1.x-dev, 2009-01-31
+-----------------------------------
+#367158: SQL errors when using the tools page.
+
 XML Sitemap 6.x-1.x-dev, 2009-01-29
 -----------------------------------
 #354453: priority_override doesn't get a value.

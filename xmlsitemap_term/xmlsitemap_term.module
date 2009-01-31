@@ -98,7 +98,7 @@ function xmlsitemap_term_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       if (!empty($node->taxonomy)) {
         $taxonomy_keys = array_keys($node->taxonomy);
         db_query(
-          "UPDATE {xmlsitemap_term} SET previously_changed = last_changed, last_changed = %d WHERE tid IN(". db_placeholders($taxonomy_keys, 'int') .")",
+          "UPDATE {xmlsitemap_term} SET previously_changed = changed, changed = %d WHERE tid IN(". db_placeholders($taxonomy_keys, 'int') .")",
           array_merge(array($node->created), $taxonomy_keys)
         );
         xmlsitemap_update_sitemap();
@@ -110,7 +110,7 @@ function xmlsitemap_term_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       $terms = array_merge(array_diff($taxonomy, $xmlsitemap_term_taxonomy), array_diff($xmlsitemap_term_taxonomy, $taxonomy));
       if (!empty($terms)) {
         db_query(
-          "UPDATE {xmlsitemap_term} SET previously_changed = last_changed, last_changed = %d WHERE tid IN(". db_placeholders($terms, 'varchar') .")",
+          "UPDATE {xmlsitemap_term} SET previously_changed = changed, changed = %d WHERE tid IN(". db_placeholders($terms, 'varchar') .")",
           array_merge(array($node->changed), $terms)
         );
         xmlsitemap_update_sitemap();
@@ -120,7 +120,7 @@ function xmlsitemap_term_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       if (!empty($node->taxonomy)) {
         $taxonomy_keys = array_keys($node->taxonomy);
         db_query(
-          "UPDATE {xmlsitemap_term} SET previously_changed = last_changed, last_changed = %d WHERE tid IN(". db_placeholders($taxonomy_keys, 'int') .")",
+          "UPDATE {xmlsitemap_term} SET previously_changed = changed, changed = %d WHERE tid IN(". db_placeholders($taxonomy_keys, 'int') .")",
           array_merge(array(time(), $taxonomy_keys))
         );
         xmlsitemap_update_sitemap();
@@ -162,7 +162,7 @@ function xmlsitemap_term_taxonomy($op, $type, $array = NULL) {
         db_query("DELETE FROM {xmlsitemap_term} WHERE tid = %d", $array['tid']);
         break;
       case 'insert':
-        db_query("INSERT INTO {xmlsitemap_term} (tid, last_changed, priority_override) VALUES (%d, %d, %s)",
+        db_query("INSERT INTO {xmlsitemap_term} (tid, changed, priority_override) VALUES (%d, %d, %s)",
           $array['tid'], time(), $array['xmlsitemap_term_priority']
         );
         break;
@@ -208,14 +208,14 @@ function xmlsitemap_term_xmlsitemap_links() {
     $tid = $frontpage[1];
   }
   $query_args = array_merge($excludes, array($tid));
-  $result = db_query(db_rewrite_sql("SELECT t.tid, t.vid, v.module, xt.last_changed, xt.previously_changed, xt.priority_override
+  $result = db_query(db_rewrite_sql("SELECT t.tid, t.vid, v.module, xt.changed, xt.previously_changed, xt.priority_override
     FROM {term_data} t
     LEFT JOIN {vocabulary} v ON t.vid = v.vid
     LEFT JOIN {xmlsitemap_term} xt ON t.tid = xt.tid
     WHERE t.vid NOT IN (". db_placeholders($excludes, 'int') .")
       AND xt.priority_override <> -1
       AND t.tid <> %d
-    GROUP BY t.tid, t.vid, v.module, xt.last_changed, xt.previously_changed, xt.priority_override", 't', 'tid'),
+    GROUP BY t.tid, t.vid, v.module, xt.changed, xt.previously_changed, xt.priority_override", 't', 'tid'),
     $query_args
   );
   while ($term = db_fetch_object($result)) {
@@ -230,8 +230,8 @@ function xmlsitemap_term_xmlsitemap_links() {
       $alias = NULL;
     }
     $url = xmlsitemap_url($path, $alias, NULL, NULL, TRUE);
-    $age = time() - $term->last_changed;
-    $interval = empty($term->previously_changed) ? 0 : $term->last_changed - $term->previously_changed;
+    $age = time() - $term->changed;
+    $interval = empty($term->previously_changed) ? 0 : $term->changed - $term->previously_changed;
     if ($term->priority_override != -2.0) {
       $priority = $term->priority_override;
     }
@@ -239,7 +239,7 @@ function xmlsitemap_term_xmlsitemap_links() {
       $priority = variable_get('xmlsitemap_term_vocabulary_priority_'. $term->vid, 0.5);
     }
     db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)",
-      $url, $term->last_changed, max($age, $interval), $priority
+      $url, $term->changed, max($age, $interval), $priority
     );
   }
 }
