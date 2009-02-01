@@ -104,7 +104,7 @@ function xmlsitemap_file_update_6000() {
       );
     }
     if (db_column_exists('xmlsitemap_file', 'last_changed')) {
-      db_change_field($ret, 'xmlsitemap_file', 'last_change', 'changed',
+      db_change_field($ret, 'xmlsitemap_file', 'last_changed', 'changed',
         array(
           'description' => 'The Unix timestamp of the last change.',
           'type' => 'int',

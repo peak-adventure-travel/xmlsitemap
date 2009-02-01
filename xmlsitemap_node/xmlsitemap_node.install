@@ -69,7 +69,7 @@ function xmlsitemap_node_update_6000() {
       db_drop_field($ret, 'xmlsitemap_node', 'pid');
     }
     if (db_column_exists('xmlsitemap_node', 'last_changed')) {
-      db_change_field($ret, 'xmlsitemap_node', 'last_change', 'changed',
+      db_change_field($ret, 'xmlsitemap_node', 'last_changed', 'changed',
         array(
           'description' => 'The Unix timestamp of the last change.',
           'type' => 'int',
