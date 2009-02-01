@@ -93,6 +93,7 @@ function xmlsitemap_install() {
       stype = anyelement
     );");
   }
+  variable_set('xmlsitemap_chunk_size', 200);
 }
 
 /**
@@ -424,7 +425,20 @@ function xmlsitemap_update_6114() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_update_6115() {
-  return xmlsitemap_update_6000();
+  return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_6116() {
+  $ret = xmlsitemap_update_6000();
+  variable_get('xmlsitemap_chunk_size', 200);
+  $ret[] = array(
+    'success' => TRUE,
+    'query' => 'UPDATE XMLSITEMAP_CHUNK_SIZE'
+  );
+  return $ret;
 }
 
 /**
