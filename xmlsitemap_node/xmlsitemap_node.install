@@ -76,6 +76,14 @@ function xmlsitemap_node_update_6000() {
         )
       );
     }
+    if (!db_column_exists('xmlsitemap_node', 'changed')) {
+      db_add_field($ret, 'xmlsitemap_node', 'changed',
+        array(
+          'description' => 'The Unix timestamp of the last change.',
+          'type' => 'int',
+        )
+      );
+    }
     $ret[] = update_sql("UPDATE {xmlsitemap_node}
       SET priority_override = -2
       WHERE priority_override IS NULL"
@@ -166,6 +174,14 @@ function xmlsitemap_node_update_6102() {
  *
  */
 function xmlsitemap_node_update_6103() {
+  return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ *
+ */
+function xmlsitemap_node_update_6104() {
   return xmlsitemap_node_update_6000();
 }
 

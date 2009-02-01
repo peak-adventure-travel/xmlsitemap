@@ -103,6 +103,22 @@ function xmlsitemap_file_update_6000() {
         array('unique keys' => array('fid_nid' => array('fid', 'nid')))
       );
     }
+    if (db_column_exists('xmlsitemap_file', 'last_changed')) {
+      db_change_field($ret, 'xmlsitemap_file', 'last_change', 'changed',
+        array(
+          'description' => 'The Unix timestamp of the last change.',
+          'type' => 'int',
+        )
+      );
+    }
+    if (!db_column_exists('xmlsitemap_file', 'changed')) {
+      db_add_field($ret, 'xmlsitemap_file', 'changed',
+        array(
+          'description' => 'The Unix timestamp of the last change.',
+          'type' => 'int',
+        )
+      );
+    }
     $result = update_sql("DELETE FROM {xmlsitemap_file} WHERE nid = 0");
     if ($result['success']) {
       $ret[] = $result;
@@ -184,6 +200,13 @@ function xmlsitemap_file_update_6104() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_file_update_6105() {
+  return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_file_update_6106() {
   return xmlsitemap_file_update_6000();
 }
 
