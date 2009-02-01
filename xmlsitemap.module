@@ -19,7 +19,7 @@
  * Implementation of hook_cron().
  */
 function xmlsitemap_cron() {
-  if (variable_get('xmlsitemap_cron_submit', FALSE) && variable_get('xmlsitemap_changed', FALSE)) {
+  if (!variable_get('site_offline', 0) && variable_get('xmlsitemap_cron_submit', FALSE) && variable_get('xmlsitemap_changed', FALSE)) {
     _xmlsitemap_ping();
   }
 }

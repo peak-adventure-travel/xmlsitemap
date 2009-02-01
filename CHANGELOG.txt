@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1.x-dev, 2009-02-01
 -----------------------------------
+#367626: Don't submit on cron maintenance tasks when site is offline.
 #354462: $links_count is not initialized.
 #367395: SQL error on updating last_changed.
 
