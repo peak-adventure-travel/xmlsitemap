@@ -77,7 +77,7 @@ function xmlsitemap_file_update_6000() {
         'not null' => TRUE,
         'default' => 0,
       ),
-      array('primary keys' => array('fid'))
+      array('primary key' => array('fid'))
     );
     if (db_column_exists('xmlsitemap_file', 'nid')) {
       db_change_field($ret, 'xmlsitemap_file', 'nid', 'nid',
@@ -207,6 +207,13 @@ function xmlsitemap_file_update_6105() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_file_update_6106() {
+  return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_file_update_6107() {
   return xmlsitemap_file_update_6000();
 }
 

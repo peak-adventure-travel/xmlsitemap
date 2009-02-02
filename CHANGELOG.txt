@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1.x-dev, 2009-02-02
 -----------------------------------
+#368115: SQL error during update.
 #345185: api.moreover.com.
 #312628: Table keys are not declared NOT NULL.
 
