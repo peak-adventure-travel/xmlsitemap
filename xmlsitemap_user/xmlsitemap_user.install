@@ -16,6 +16,8 @@ function xmlsitemap_user_schema() {
         'description' => 'The user ID.',
         'type' => 'int',
         'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
       ),
       'changed' => array(
         'description' => 'The Unix timestamp of the last change.',
@@ -76,6 +78,23 @@ function xmlsitemap_user_update_6000() {
         $ret = $result;
       }
       db_drop_field($ret, 'xmlsitemap_user', 'pid');
+    }
+    if (db_column_exists('xmlsitemap_user', 'uid')) {
+      $result = array();
+      @db_drop_primary_key($result, 'xmlsitemap_user');
+      if ($result[0]['success']) {
+        $ret[] = $result[0];
+      }
+      db_change_field($ret, 'xmlsitemap_user', 'uid', 'uid',
+        array(
+          'description' => 'The user ID.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0,
+        ),
+        array('primary key' => array('uid'))
+      );
     }
     if (db_column_exists('xmlsitemap_user', 'last_changed')) {
       db_change_field($ret, 'xmlsitemap_user', 'last_changed', 'changed',
