@@ -118,7 +118,7 @@ function xmlsitemap_node_node_type($op, $info) {
  */
 function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
   switch ($op) {
-    case 'load':
+    case 'prepare':
       $priority = db_result(db_query("SELECT priority_override
         FROM {xmlsitemap_node} WHERE nid = %d",
         $node->nid)
