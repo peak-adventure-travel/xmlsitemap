@@ -216,15 +216,18 @@ function xmlsitemap_settings_sitemap() {
     '#size' => 10,
     '#maxlength' => 5,
     '#description' => t('This is the number of links to include in one site map. Values can range between 1 and 50,000. If the total number of links exceeds the chunk size, multiple site maps will be generated.'),
-    '#weight' => -2,
   );
-  $form['general']['xmlsitemap_front_page_priority'] = array(
+  $form['general']['priority'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Priority parameters'),
+    '#collapsible' => TRUE,
+  );
+  $form['general']['priority']['xmlsitemap_front_page_priority'] = array(
     '#type' => 'select',
     '#title' => t('Front page priority'),
+    '#description' => t('This is the absolute priority for the front page.'),
     '#default_value' => variable_get('xmlsitemap_front_page_priority', 1),
     '#options' => xmlsitemap_priority_options(),
-    '#description' => t('This is the absolute priority for the front page.'),
-    '#weight' => -1,
   );
   return system_settings_form($form);
 }
