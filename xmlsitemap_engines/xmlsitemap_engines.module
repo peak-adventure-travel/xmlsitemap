@@ -106,7 +106,7 @@ function xmlsitemap_engines_xmlsitemap_engine_settings_alter(&$form) {
   );
   $form['moreover']['xmlsitemap_engines_moreover_submit'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Submit the site map to Moreover.com.'),
+    '#title' => t('Submit the site map to Moreover.com'),
     '#default_value' => variable_get('xmlsitemap_engines_moreover_submit', FALSE),
   );
   $form['moreover']['xmlsitemap_engines_moreover_url'] = array(
