@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 6.x-1.x-dev, 2009-02-03
+-----------------------------------
+#368457: Wrong implementation of hook_exit().
+
 XML Sitemap 6.x-1.x-dev, 2009-02-02
 -----------------------------------
 #368115: SQL error during update.

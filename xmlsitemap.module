@@ -28,8 +28,9 @@ function xmlsitemap_cron() {
  * Implementation of hook_exit().
  */
 function xmlsitemap_exit() {
-  if (_xmlsitemap_submit_on_exit()) {
-    _xmlsitemap_ping();
+  drupal_bootstrap(DRUPAL_BOOTSTRAP_PATH);
+  if (variable_get('site_offline', 0) || arg(0) == 'batch') {
+    return;
   }
   if (variable_get('xmlsitemap_log_access', FALSE)) {
     $items = array();
@@ -40,7 +41,6 @@ function xmlsitemap_exit() {
         $items["sitemap$chunk.xml"] = $chunk;
       }
     }
-    drupal_bootstrap(DRUPAL_BOOTSTRAP_PATH);
     if (isset($items[arg(0)]) && is_null(arg(1))) {
       $chunk = $items[arg(0)];
       if ($chunk < $link_count / $chunk_size) {
@@ -63,6 +63,10 @@ function xmlsitemap_exit() {
         )
       );
     }
+  }
+  if (!isset($write_log) && variable_get('xmlsitemap_submit', FALSE) && variable_get('xmlsitemap_changed', FALSE)) {
+    drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
+    _xmlsitemap_ping();
   }
 }
 
@@ -550,9 +554,6 @@ function xmlsitemap_update_sitemap() {
   if (!variable_get('xmlsitemap_update', FALSE)) {
     variable_set('xmlsitemap_update', TRUE);
   }
-  if (variable_get('xmlsitemap_submit', FALSE)) {
-    _xmlsitemap_submit_on_exit();
-  }
 }
 
 /**
@@ -727,18 +728,6 @@ function _xmlsitemap_output_index() {
 function _xmlsitemap_ping() {
   module_invoke_all('xmlsitemap_engines', 'ping');
   variable_set('xmlsitemap_changed', FALSE);
-}
-
-/**
- * Schedule a call to _xmlsitemap_ping() to be run on exit. Use this
- * function instead of _xmlsitemap_ping() to avoid a delay in outputting
- * the page to the user.
- * @return
- *  TRUE if the function has been called previously, FALSE otherwise.
- */
-function _xmlsitemap_submit_on_exit() {
-  static $count = 0;
-  return ($count++ <> 0);
 }
 
 /**
