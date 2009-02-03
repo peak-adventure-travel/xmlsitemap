@@ -204,10 +204,10 @@ function xmlsitemap_engines_xmlsitemap_engines($op) {
         xmlsitemap_engines_submit_sitemap('Yahoo!', 'xmlsitemap_engines_yahoo_url', 'http://search.yahooapis.com/SiteExplorerService/V1/ping?sitemap=[sitemap]');
       }
       break;
-     case 'access':
-       if (strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot') !== FALSE) {
-         return 'Sitemap downloaded by Google.';
-       }
+    case 'access':
+      if (strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot') !== FALSE) {
+        return 'Sitemap downloaded by Google.';
+      }
       break;
   }
 }
