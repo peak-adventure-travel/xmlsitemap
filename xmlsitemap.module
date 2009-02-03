@@ -88,7 +88,7 @@ function xmlsitemap_help($section) {
       $output .= '<p>'. t('By itself, the XML Sitemap module adds only the front page of your site to the site map. Other types of links are handled by supporting modules.') .'</p>';
       $optional = '';
       foreach (module_implements('xmlsitemap_description', TRUE) as $module) {
-        $function = $module .'_xmlsitemap_description'; 
+        $function = $module .'_xmlsitemap_description';
         $optional .= $function();
       }
       if (!empty($optional)) {
@@ -256,19 +256,19 @@ function xmlsitemap_settings_engines() {
   );
   $form['submission']['xmlsitemap_submit'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Submit the site map when updated.'),
+    '#title' => t('Submit the site map when updated'),
     '#default_value' => variable_get('xmlsitemap_submit', FALSE),
     '#description' => t('If enabled, the search engines will be notified of changes to the site map each time it is updated.'),
   );
   $form['submission']['xmlsitemap_cron_submit'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Submit the site map on cron run.'),
+    '#title' => t('Submit the site map on cron run'),
     '#default_value' => variable_get('xmlsitemap_cron_submit', FALSE),
     '#description' => t('If enabled, the search engines will be notified of changes to the site map each time cron is run.'),
   );
   $form['submission']['xmlsitemap_log_access'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Log access.'),
+    '#title' => t('Log access'),
     '#default_value' => variable_get('xmlsitemap_log_access', FALSE),
     '#description' => t('If enabled, a watchdog entry will be made each time the site map is accessed, containing information about the requestor.'),
   );
@@ -301,7 +301,7 @@ function xmlsitemap_settings_engines_submit($form_id, $form_values) {
  *   - disabled: TRUE if some of the fields added to the fieldsets are disabled;
  *   - weight: the weight of the fieldset;
  *   - buttons: an array of strings which identify the form items that will have
- *     their weight increased of of 1. 
+ *     their weight increased of of 1.
  */
 function xmlsitemap_add_settings_fieldset(&$form, $settings = array()) {
   if (!isset($form['xmlsitemap'])) {
