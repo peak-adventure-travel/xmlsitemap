@@ -60,11 +60,22 @@ function xmlsitemap_menu_update_6101() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_menu_update_6102() {
-  $ret = xmlsitemap_menu_update_6000();
   $ret[] = update_sql("DELETE FROM {menu_custom} WHERE menu_name = '1'");
   return $ret;
 }
 
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_menu_update_6103() {
+  $ret = xmlsitemap_menu_update_6000();
+  menu_rebuild();
+  $ret[] = array(
+    'success' => TRUE,
+    'query' => 'UPDATE DRUPAL MENUS'
+  );
+  return $ret;
+}
 /**
  * Implementation of hook_uninstall().
  */
