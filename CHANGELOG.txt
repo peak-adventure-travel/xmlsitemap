@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1.x-dev, 2009-02-03
 -----------------------------------
+#368537: Implement the support for Checkall.
 #366973: Add an option for site map submissions based on time intervals.
 #368457: Wrong implementation of hook_exit().
 

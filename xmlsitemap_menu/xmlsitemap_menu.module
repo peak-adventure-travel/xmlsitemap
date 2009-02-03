@@ -71,6 +71,7 @@ function xmlsitemap_menu_xmlsitemap_sitemap_settings_alter(&$form) {
       '#title' => t('Menus to include in the site map'),
       '#default_value' => $default_values,
       '#options' => $opts,
+      '#checkall' => TRUE,
     );
   }
 }
