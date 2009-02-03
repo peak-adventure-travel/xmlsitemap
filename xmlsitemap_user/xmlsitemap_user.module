@@ -34,9 +34,9 @@ function xmlsitemap_user_form_alter($form_id, &$form) {
       $form['xmlsitemap_user']['xmlsitemap_user_default_priority'] = array(
         '#type' => 'select',
         '#title' => t('Default user priority'),
+        '#description' => t('Choose the default priority for users who have only the authenticated user role.'),
         '#default_value' => $default,
         '#options' => xmlsitemap_priority_options('exclude'),
-        '#description' => t('Choose the default priority for users who have only the authenticated user role.'),
       );
       $form['buttons']['#weight'] = 1;
       $form['#submit'][] = 'xmlsitemap_user_form_submit';
@@ -58,9 +58,9 @@ function xmlsitemap_user_form_alter($form_id, &$form) {
       $form['xmlsitemap_user']['xmlsitemap_user_role_priority'] = array(
         '#type' => 'select',
         '#title' => t('Default priority'),
+        '#description' => t("The priority of all a user's roles will be added together to set the user's default priority. If all role priorities are left at default, the user's default priority will be %priority.", array('%priority' => $options[variable_get('xmlsitemap_user_default_priority', '0.5')])),
         '#default_value' => $priority,
         '#options' => $options,
-        '#description' => t("The priority of all a user's roles will be added together to set the user's default priority. If all role priorities are left at default, the user's default priority will be %priority.", array('%priority' => $options[variable_get('xmlsitemap_user_default_priority', '0.5')])),
       );
       $form['submit']['#weight'] = 1;
       $form['delete']['#weight'] = 1;
@@ -117,9 +117,9 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
         $form['xmlsitemap_user']['xmlsitemap_user_priority'] = array(
           '#type' => 'select',
           '#title' => t('Priority'),
+          '#description' => t('The default priority is %priority.', array('%priority' => $options[(string)$default_priority])),
           '#default_value' => $priority !== FALSE ? $priority : -2.0,
           '#options' => $options,
-          '#description' => t('The default priority is %priority.', array('%priority' => $options[(string)$default_priority])),
         );
       }
       else {

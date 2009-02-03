@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1.x-dev, 2009-02-03
 -----------------------------------
+#366973: Add an option for site map submissions based on time intervals.
 #368457: Wrong implementation of hook_exit().
 
 XML Sitemap 6.x-1.x-dev, 2009-02-02

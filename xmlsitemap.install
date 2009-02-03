@@ -432,11 +432,29 @@ function xmlsitemap_update_6115() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_update_6116() {
-  $ret = xmlsitemap_update_6000();
   variable_get('xmlsitemap_chunk_size', 200);
   $ret[] = array(
     'success' => TRUE,
     'query' => 'UPDATE XMLSITEMAP_CHUNK_SIZE'
+  );
+  return $ret;
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_6117() {
+  $ret = xmlsitemap_update_6000();
+  if (variable_get('xmlsitemap_cron_submit', FALSE)) {
+    $frequency = 0;
+  }
+  else {
+    $frequency = -1;
+  }
+  variable_set('xmlsitemap_cron_submit_frequency', $frequency);
+  $ret[] = array(
+    'success' => TRUE,
+    'query' => 'UPDATE MODULE SETTINGS'
   );
   return $ret;
 }
