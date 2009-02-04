@@ -31,10 +31,6 @@ function xmlsitemap_cron() {
  * Implementation of hook_exit().
  */
 function xmlsitemap_exit() {
-  if (_xmlsitemap_submit_on_exit()) {
-    _xmlsitemap_update();
-    _xmlsitemap_ping();
-  }
   if (variable_get('xmlsitemap_log_access', FALSE)) {
     $items = array();
     $chunk_size = variable_get('xmlsitemap_chunk_size', 50000);
@@ -66,6 +62,13 @@ function xmlsitemap_exit() {
           '@address' => $_SERVER['REMOTE_ADDR'],
         )
       ));
+    }
+  }
+  if (!isset($write_log)) {
+    if (_xmlsitemap_submit_on_exit()) {
+      drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
+      _xmlsitemap_update();
+      _xmlsitemap_ping();
     }
   }
 }
