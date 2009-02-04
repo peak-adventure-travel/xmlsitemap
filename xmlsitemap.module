@@ -254,12 +254,23 @@ function xmlsitemap_settings_engines() {
     '#default_value' => variable_get('xmlsitemap_log_access', FALSE),
   );
   $form['submission']['xmlsitemap_cron_submit_frequency'] = array(
-    '#type' => 'textfield',
+    '#type' => 'select',
     '#title' => t('Frequency of cron site map submission'),
-    '#description' => t('If the given value is zero, then the site map will be submitted each time the cron maintenance tasks are executed; if the value is negative, then the site map will never be submitted at cron time.'),
+    '#description' => t('The rate at which the site map is submitted to the search engines over the number of times the cron maintenance tasks are executed.'),
     '#default_value' => variable_get('xmlsitemap_cron_submit_frequency', -1),
-    '#size' => 10,
-    '#maxlength' => 5,
+    '#options' => array(
+      '10' => t('Once every ten times'),
+      '9' => t('Once every nine times'),
+      '8' => t('Once every eight times'),
+      '7' => t('Once every seven times'),
+      '6' => t('Once every six times'),
+      '5' => t('Once every five times'),
+      '4' => t('Once every four times'),
+      '3' => t('Once every three times'),
+      '2' => t('Once every two times'),
+      '1' => t('Always'),
+      '-1' => t('Never'),
+    ),
   );
   drupal_alter('xmlsitemap_engine_settings', $form);
   $form = system_settings_form($form);
@@ -307,6 +318,7 @@ function xmlsitemap_settings_sitemap() {
   drupal_alter('xmlsitemap_sitemap_settings', $form);
   $form = system_settings_form($form);
   $form['#submit'][] = 'xmlsitemap_settings_sitemap_submit';
+  $form['#validate'][] = 'xmlsitemap_settings_sitemap_validate';
   return $form;
 }
 
@@ -314,8 +326,9 @@ function xmlsitemap_settings_sitemap() {
  * Validate the site map settings form.
  */
 function xmlsitemap_settings_sitemap_validate($form, &$form_state) {
-  if ($form_state['values']['xmlsitemap_chunk_size'] > 50000) {
-    form_set_error('xmlsitemap_chunk_size', t('The number of links in a site map cannot be higher than 50,000.'));
+  $chunk_size = $form_state['values']['xmlsitemap_chunk_size'];
+  if (!is_numeric($chunk_size) || $chunk_size <= 0 || $chunk_size > 50000) {
+    form_set_error('xmlsitemap_chunk_size', t('The number of links in a site map chunk must be a number between 1, and 50,000 (1 and 50,000 included).'));
   }
 }
 
