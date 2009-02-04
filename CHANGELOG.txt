@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 6.x-1.x-dev, 2009-02-04
+-----------------------------------
+#368855: Node priority is not correct.
+
 XML Sitemap 6.x-1.x-dev, 2009-02-03
 -----------------------------------
 #368537: Implement the support for Checkall.
