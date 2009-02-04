@@ -129,11 +129,11 @@ function xmlsitemap_node_node_type($op, $info) {
 function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
   switch ($op) {
     case 'prepare':
-      $priority = db_result(db_query("SELECT priority_override
+      $priority_override = db_result(db_query("SELECT priority_override
         FROM {xmlsitemap_node}
         WHERE nid = %d", $node->nid)
       );
-      $node->priority_override = isset($priority) && $priority !== FALSE ? $priority : 'NULL';
+      $node->priority_override = $priority_override === FALSE ? 'NULL' : $priority;
       break;
     case 'insert':
       $node->priority_override = isset($node->priority_override) ? $node->priority_override : 'NULL';
