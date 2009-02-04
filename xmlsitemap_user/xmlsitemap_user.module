@@ -21,8 +21,9 @@
 function xmlsitemap_user_form_alter($form_id, &$form) {
   switch ($form_id) {
     case 'user_admin_settings':
-      xmlsitemap_add_settings_fieldset($form,
-        array('buttons' => array('buttons'))
+      $form['xmlsitemap'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Site map'),
       );
       $default = variable_get('xmlsitemap_user_default_priority', 0.5);
       $form['xmlsitemap']['xmlsitemap_user_old_default_priority'] = array(
@@ -36,27 +37,22 @@ function xmlsitemap_user_form_alter($form_id, &$form) {
         '#options' => xmlsitemap_priority_options('exclude'),
         '#description' => t('Choose the default priority for users who have only the authenticated user role.'),
       );
+      $form['buttons']['#weight'] = 1;
       $form['#submit']['_xmlsitemap_user_submit'] = array();
       break;
     case 'user_admin_role':
       $options = xmlsitemap_priority_options('both');
-      $priority = db_result(db_query("SELECT priority
-        FROM {xmlsitemap_user_role}
-        WHERE rid = %d", $form['rid']['#value'])
-      );
-      if ($priority === FALSE) {
-        $priority =  'NULL';
-      }
-      xmlsitemap_add_settings_fieldset($form,
-        array('buttons' => array('delete', 'submit'))
-      );
-      $form['xmlsitemap']['xmlsitemap_user_role_priority'] = array(
+      $priority = db_result(db_query("SELECT priority FROM {xmlsitemap_user_role} WHERE rid = %d", $form['rid']['#value']));
+      $priority = $priority === FALSE ? 'NULL' : $priority;
+      $form['xmlsitemap_user_role_priority'] = array(
         '#type' => 'select',
-        '#title' => t('Default priority'),
+        '#title' => t('Default site map priority'),
         '#default_value' => $priority,
         '#options' => $options,
         '#description' => t("The priority of all a user's roles will be added together to set the user's default priority. If all role priorities are left at default, the user's default priority will be %priority.", array('%priority' => $options[variable_get('xmlsitemap_user_default_priority', '0.5')])),
       );
+      $form['submit']['#weight'] = 1;
+      $form['delete']['#weight'] = 1;
       $form['#submit']['_xmlsitemap_user_submit'] = array();
       break;
   }
@@ -89,21 +85,33 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
       }
       $disabled = !user_access('administer users');
       $form = array();
-      xmlsitemap_add_settings_fieldset($form,
-        array(
-          'disabled' => $disabled,
-          'weight' => 7,
-        )
-      );
-      $options = xmlsitemap_priority_options('both');
-      $form['xmlsitemap']['xmlsitemap_user_priority'] = array(
-        '#type' => 'select',
-        '#title' => t('Priority'),
-        '#default_value' => $priority !== FALSE ? $priority : 'NULL',
-        '#options' => $options,
-        '#disabled' => $disabled,
-        '#description' => t('The default priority is %priority.', array('%priority' => $options[(string)$default_priority])),
-      );
+      if (user_access('override profile priority')) {
+        $form['xmlsitemap_user'] = array(
+          '#type' => 'fieldset',
+          '#title' => t('Site map settings'),
+          '#collapsible' => TRUE,
+          '#weight' => 7,
+        );
+        $options = xmlsitemap_priority_options('both');
+        $form['xmlsitemap']['xmlsitemap_user_priority'] = array(
+          '#type' => 'select',
+          '#title' => t('Priority'),
+          '#default_value' => $priority !== FALSE ? $priority : 'NULL',
+          '#options' => $options,
+          '#disabled' => $disabled,
+          '#description' => t('The default priority is %priority.', array('%priority' => $options[(string)$default_priority])),
+        );
+        $form['xmlsitemap_user']['xmlsitemap_user_priority'] = array(
+          '#type' => 'select',
+          '#title' => t('Site map priority'),
+          '#default_value' => isset($priority) ? $priority : 'NULL',
+          '#options' => $options,
+          '#description' => t('The default priority is %priority.', array('%priority' => $options[$default])),
+        );
+      }
+      else {
+        $form['xmlsitemap_user_priority'] = array('#type' => 'value', '#value' => isset($priority) ? $priority : 'NULL');
+      }
       return $form;
     case 'insert':
       if (isset($edit['xmlsitemap_user_priority'])) {
