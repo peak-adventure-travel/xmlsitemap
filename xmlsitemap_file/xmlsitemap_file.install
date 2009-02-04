@@ -41,7 +41,7 @@ function xmlsitemap_file_schema() {
       ),
     ),
     'unique keys' => array('fid_nid' => array('fid', 'nid')),
-    'primary keys' => array('fid'),
+    'primary key' => array('fid'),
   );
   return $schema;
 }
@@ -153,7 +153,7 @@ function xmlsitemap_file_update_6000() {
           ),
         ),
         'unique keys' => array('fid_nid' => array('fid', 'nid')),
-        'primary keys' => array('fid'),
+        'primary key' => array('fid'),
       )
     );
   }
@@ -214,6 +214,13 @@ function xmlsitemap_file_update_6106() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_file_update_6107() {
+  return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_file_update_6108() {
   return xmlsitemap_file_update_6000();
 }
 

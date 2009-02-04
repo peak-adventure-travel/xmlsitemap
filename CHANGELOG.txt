@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1.x-dev, 2009-02-04
 -----------------------------------
+#368564: Duplicate ID.
 #368855: Node priority is not correct.
 
 XML Sitemap 6.x-1.x-dev, 2009-02-03
