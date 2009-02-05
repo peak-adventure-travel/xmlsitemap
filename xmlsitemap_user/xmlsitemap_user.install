@@ -37,7 +37,7 @@ function xmlsitemap_user_schema() {
     'primary key' => array('uid'),
   );
   $schema['xmlsitemap_user_role'] = array(
-    'description' => 'The base table for xmlsitemap.',
+    'description' => 'The user roles settings table.',
     'fields' => array(
       'rid' => array(
         'description' => 'The role ID.',
