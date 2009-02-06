@@ -19,73 +19,67 @@
  * Implementation of hook_form_alter().
  */
 function xmlsitemap_term_form_alter(&$form, $form_state, $form_id) {
-  if (isset($form['type']['#value']) && $form_id == $form['type']['#value'] .'_node_form') {
-    $node = $form['#node'];
-    if (isset($form['type']) && isset($node->nid)) {
-      if (isset($node->taxonomy)) {
-        $terms = $node->taxonomy;
-      }
-      else {
-        $terms = taxonomy_node_get_terms($node->nid);
-      }
-      $form['xmlsitemap_term_taxonomy'] = array(
-        '#type' => 'value',
-        '#value' => $terms,
+  switch ($form_id) {
+    case 'taxonomy_form_term':
+      $priority = db_result(db_query("SELECT priority_override
+        FROM {xmlsitemap_term}
+        WHERE tid = %d", $form['tid']['#value'])
       );
-    }
-  }
-  else {
-    switch ($form_id) {
-      case 'taxonomy_form_term':
-        $priority = db_result(db_query("SELECT priority_override
-          FROM {xmlsitemap_term}
-          WHERE tid = %d", $form['tid']['#value'])
-        );
-        if ($priority === FALSE) {
-          $priority = -2;
-        }
-        if (user_access('override term priority')) {
-          $options = xmlsitemap_priority_options('both');
-          $default = variable_get('xmlsitemap_term_vocabulary_priority_'. $form['vid']['#value'], '0.5');
-          $form['xmlsitemap_term'] = array(
-            '#type' => 'fieldset',
-            '#title' => t('XML site map'),
-            '#collapsible' => TRUE,
-          );
-          $form['xmlsitemap_term']['xmlsitemap_term_priority'] = array(
-            '#type' => 'select',
-            '#title' => t('Priority'),
-            '#description' => t('The default priority is %priority.', array('%priority' => $options[$default])),
-            '#default_value' => $priority,
-            '#options' => $options,
-          );
-          $form['submit']['#weight'] = 1;
-          $form['delete']['#weight'] = 1;
-        }
-        else {
-          $form['xmlsitemap_term_priority'] = array(
-            '#type' => 'value',
-            '#value' => $priority
-          );
-        }
-        break;
-      case 'taxonomy_form_vocabulary':
-        $form['xmlsitemap_term'] = array(
+      if ($priority === FALSE) {
+        $priority = -2;
+      }
+      $options = xmlsitemap_priority_options('both');
+      $default = variable_get('xmlsitemap_term_vocabulary_priority_'. $form['vid']['#value'], '0.5');
+      if (!isset($form['xmlsitemap'])) {
+        $form['xmlsitemap'] = array(
           '#type' => 'fieldset',
           '#title' => t('XML site map'),
           '#collapsible' => TRUE,
         );
-        $form['xmlsitemap_term']['xmlsitemap_term_vocabulary_priority'] = array(
-          '#type' => 'select',
-          '#title' => t('Priority'),
-          '#description' => t('This will be the default priority of terms in this vocabulary.'),
-          '#default_value' => variable_get('xmlsitemap_term_vocabulary_priority_'. $form['vid']['#value'], 0.5),
-          '#options' => xmlsitemap_priority_options('exclude'),
+      }
+      $form['xmlsitemap']['xmlsitemap_term_priority'] = array(
+        '#type' => 'select',
+        '#title' => t('Priority'),
+        '#description' => t('The default priority is %priority.', array('%priority' => $options[$default])),
+        '#default_value' => $priority,
+        '#options' => $options,
+      );
+      $form['submit']['#weight'] = isset($form['submit']['#weight']) ? $form['submit']['#weight'] + 1 : 1;
+      $form['delete']['#weight'] = isset($form['delete']['#weight']) ? $form['delete']['#weight'] + 1 : 1;
+      break;
+    case 'taxonomy_form_vocabulary':
+      $form['xmlsitemap'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('XML site map'),
+        '#collapsible' => TRUE,
+      );
+      $form['xmlsitemap']['xmlsitemap_term_vocabulary_priority'] = array(
+        '#type' => 'select',
+        '#title' => t('Priority'),
+        '#description' => t('This will be the default priority of terms in this vocabulary.'),
+        '#default_value' => variable_get('xmlsitemap_term_vocabulary_priority_'. $form['vid']['#value'], 0.5),
+        '#options' => xmlsitemap_priority_options('exclude'),
+      );
+      $form['submit']['#weight'] = isset($form['submit']['#weight']) ? $form['submit']['#weight'] + 1 : 1;
+      $form['delete']['#weight'] = isset($form['delete']['#weight']) ? $form['delete']['#weight'] + 1 : 1;
+      break;
+    default:
+    if (isset($form['type']['#value']) && $form_id == $form['type']['#value'] .'_node_form') {
+      $node = $form['#node'];
+      if (isset($form['type']) && isset($node->nid)) {
+        if (isset($node->taxonomy)) {
+          $terms = $node->taxonomy;
+        }
+        else {
+          $terms = taxonomy_node_get_terms($node->nid);
+        }
+        $form['xmlsitemap_term_taxonomy'] = array(
+          '#type' => 'value',
+          '#value' => $terms,
         );
-        $form['submit']['#weight'] = 1;
-        $form['delete']['#weight'] = 1;
-        break;
+      }
     }
+    break;
   }
 }
 
@@ -127,13 +121,6 @@ function xmlsitemap_term_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       }
       break;
   }
-}
-
-/**
- * Implementation of hook_perm().
- */
-function xmlsitemap_term_perm() {
-  return array('override term priority');
 }
 
 /**
