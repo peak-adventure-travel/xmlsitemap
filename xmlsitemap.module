@@ -97,28 +97,20 @@ function xmlsitemap_help($path, $arg) {
       $output .= '<h3>'. t('Supporting modules') .'</h3>';
       $output .= '<p>'. t('By itself, the XML Sitemap module adds only the front page of your site to the site map. Other types of links are handled by supporting modules.') .'</p>';
       $optional = '';
-      if (module_exists('xmlsitemap_menu')) {
-        $optional .= '<dt>'. t('XML Sitemap: Menu') .'</dt>';
-        $optional .= '<dd>'. t('<em>XML Sitemap: Menu</em> allows menu items to be added to the site map. You can choose the menus to include on the XML Sitemap administration page and can add and remove menu items on the <a href="@menu">menu administration</a> page. The priority of a menu item is determined by its weight.', array('@menu' => url('admin/build/menu'))) .'</dd>';
-      }
-      if (module_exists('xmlsitemap_node')) {
-        $optional .= '<dt>'. t('XML Sitemap: Node') .'</dt>';
-        $optional .= '<dd>'. t('<em>XML Sitemap: Node</em> adds nodes (content) to the site map. The default priority of a node is determined by a combination of its <a href="@content">content type</a> priority, whether it appears on the front page of your site, and the number of comments it has received. You can override the default priority for individual nodes when you add or edit a node.', array('@content' => url('admin/content/types'))) .'</dd>';
-      }
-      if (module_exists('xmlsitemap_term')) {
-        $optional .= '<dt>'. t('XML Sitemap: Term') .'</dt>';
-        $optional .= '<dd>'. t('<em>XML Sitemap: Term</em> adds <a href="@terms">taxonomy terms</a> (categories) to the site map. You can change the default priority when you add or edit a vocabulary, and you can override the default priority when you add or edit individual terms.', array('@terms' => url('admin/content/taxonomy'))) .'</dd>';
-      }
-      if (module_exists('xmlsitemap_user')) {
-        $optional .= '<dt>'. t('XML Sitemap: User') .'</dt>';
-        $optional .= '<dd>'. t('<em>XML Sitemap: User</em> adds user profiles to the site map. The <em>anonymous user</em> role must be given permission to access user profiles on the <a href="@access">access control page</a>. You can change the default user priority on the <a href="@user_settings">user settings</a> page. The <a href="@user">user role priority</a> will override the default user priority. You can override both the default priority and the role priority when you add or edit a user.', array('@access' => url('admin/user/access'), '@user_settings' => url('admin/user/settings'), '@user_role' => url('admin/user/roles'))) .'</dd>';
+      foreach (module_implements('xmlsitemap_description', TRUE) as $module) {
+        $function = $module .'_xmlsitemap_description';
+        $optional .= $function();
       }
       if (!empty($optional)) {
-        $output .= "<dl>\n$optional</dl>";
+        $output .= "<dl>$optional</dl>";
       }
       $output .= '<p>'. t('Links may be assigned a priority between 0.0 and 1.0. The default priority is 0.5. A priority of <em>Not in site map</em> excludes a link from the site map.') .'</p>';
       $output .= '<p>'. t('More information is available in the <a href="@module_docs">XML Sitemap documentation</a>.', array('@module_docs' => 'http://drupal.org/handbook/modules/gsitemap')) .'</p>';
       break;
+      if (module_exists('xmlsitemap_node')) {
+        $optional .= '<dt>'. t('XML Sitemap: Node') .'</dt>';
+        $optional .= '<dd>'. t('<em>XML Sitemap: Node</em> adds nodes (content) to the site map. The default priority of a node is determined by a combination of its <a href="@content">content type</a> priority, whether it appears on the front page of your site, and the number of comments it has received. You can override the default priority for individual nodes when you add or edit a node.', array('@content' => url('admin/content/types'))) .'</dd>';
+      }
     default:
       $output = '';
       break;
