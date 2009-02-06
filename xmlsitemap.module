@@ -243,7 +243,7 @@ function xmlsitemap_settings_engines() {
   $form['submission']['xmlsitemap_cron_submit_frequency'] = array(
     '#type' => 'select',
     '#title' => t('Frequency of cron site map submission'),
-    '#description' => t('The rate at which the site map is submitted to the search engines over the number of times the cron maintenance tasks are executed.'),
+    '#description' => t('The rate at which the site map is submitted to the search engines over the times the cron maintenance tasks are executed.'),
     '#default_value' => variable_get('xmlsitemap_cron_submit_frequency', -1),
     '#options' => array(
       '10' => t('Once every ten times'),
