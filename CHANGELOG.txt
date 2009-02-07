@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 5.x-2.x-dev, 2009-02-07
+-----------------------------------
+#345185: api.moreover.com.
+
 XML Sitemap 5.x-2.x-dev, 2009-02-04
 -----------------------------------
 #368457: Wrong implementation of hook_exit().
