@@ -133,7 +133,7 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
       }
       break;
     case 'update':
-      if (($result = db_fetch_object(db_query("SELECT * FROM {xmlsitemap_node} WHERE nid = %d"))) === FALSE) {
+      if (($result = db_fetch_object(db_query("SELECT * FROM {xmlsitemap_node} WHERE nid = %d", $node->nid))) === FALSE) {
         $row = new stdClass();
         $row->nid = $node->nid;
         $row->changed = $row->previously_changed = $node->changed;

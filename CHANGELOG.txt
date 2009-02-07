@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 6.x-1.x-dev, 2009-02-07
+-----------------------------------
+#370490: Duplicate entry in query execution.
+
 XML Sitemap 6.x-1.x-dev, 2009-02-06
 -----------------------------------
 #370189: Change the implementation of hook_nodeapi('update').
