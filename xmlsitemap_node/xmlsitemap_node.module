@@ -127,6 +127,7 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
       $row = new stdClass();
       $row->nid = $node->nid;
       $row->changed = $row->previously_changed = $node->changed;
+      $row->priority_override = isset($node->priority_override) ? $node->priority_override : -2.0;
       drupal_write_record('xmlsitemap_node', $row);
       if ($node->status) {
         xmlsitemap_update_sitemap();
@@ -137,12 +138,15 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
         $row = new stdClass();
         $row->nid = $node->nid;
         $row->changed = $row->previously_changed = $node->changed;
+        $row->priority_override = isset($node->priority_override) ? $node->priority_override : -2.0;
       }
       else {
         $row = $result;
         $row->previously_changed = $row->changed;
         $row->changed = $node->changed;
-        $row->priority_override = isset($node->priority_override) ? $node->priority_override : -2.0;
+        if (isset($node->priority_override)) {
+          $row->priority_override =  $node->priority_override;
+        }
       }
       drupal_write_record('xmlsitemap_node', $row, $result === FALSE ? NULL : 'nid');
       if ($node->status || $node->xmlsitemap_node_status) {

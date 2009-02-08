@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 6.x-1.x-dev, 2009-02-08
+-----------------------------------
+#371002: priority_override is set to 'default' for users without 'override node priority' permission.
+
 XML Sitemap 6.x-1.x-dev, 2009-02-07
 -----------------------------------
 #370490: Duplicate entry in query execution.
