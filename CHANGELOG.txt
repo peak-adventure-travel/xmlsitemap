@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1.x-dev, 2009-02-08
 -----------------------------------
+#371025: Undefined index.
 #371023: Use '#access' for the form field set fields.
 #371002: priority_override is set to 'default' for users without 'override node priority' permission.
 
