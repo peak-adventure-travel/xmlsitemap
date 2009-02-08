@@ -126,6 +126,7 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
         '#description' => t('The default priority is %priority.', array('%priority' => $options[(string)$default_priority])),
         '#default_value' => $priority !== FALSE ? $priority : -2.0,
         '#options' => $options,
+        '#access' => user_access('override profile priority') || user_access('administer users'),
       );
       return $form;
     case 'insert':

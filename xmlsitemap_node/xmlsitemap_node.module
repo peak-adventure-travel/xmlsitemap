@@ -87,6 +87,7 @@ function xmlsitemap_node_form_alter(&$form, &$form_state, $form_id) {
           '#description' => t('The default priority is %priority.', array('%priority' => $options[$default])),
           '#default_value' => isset($node->priority_override) ? $node->priority_override : -2.0,
           '#options' => $options,
+          '#access' => user_access('override node priority') || user_access('administer nodes'),
         );
         $form['xmlsitemap_node_status'] = array(
           '#type' => 'value',
