@@ -222,7 +222,7 @@ function xmlsitemap_settings_sitemap() {
   );
   $form['general']['priority'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Priority parameters'),
+    '#title' => t('Priority'),
     '#collapsible' => TRUE,
   );
   $form['general']['priority']['xmlsitemap_front_page_priority'] = array(
