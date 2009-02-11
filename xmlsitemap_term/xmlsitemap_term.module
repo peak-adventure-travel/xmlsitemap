@@ -84,6 +84,30 @@ function xmlsitemap_term_form_alter(&$form, $form_state, $form_id) {
 }
 
 /**
+ * Implementation of hook_node_operations().
+ */
+function xmlsitemap_term_node_operations() {
+  $operations = array(
+    'xmlsitemap_add_terms' => array(
+      'label' => t('Add the vocabulary terms of the selected posts to the XML site map'),
+      'callback' => '_xmlsitemap_term_priority_operations',
+      'callback arguments' => array('priority' => 0.5),
+    ),
+    'xmlsitemap_change_terms_priority' => array(
+      'label' => t('Change the XML site map priority of the selected posts vocabulary terms to default'),
+      'callback' => '_xmlsitemap_term_priority_operations',
+      'callback arguments' => array('piority' => -2.0),
+    ),
+    'xmlsitemap_remove_terms' => array(
+      'label' => t('Remove the vocabulary terms of the selected posts from the XML site map'),
+      'callback' => '_xmlsitemap_term_priority_operations',
+      'callback arguments' => array('priority' => -1.0),
+    ),
+  );
+  return $operations;
+}
+
+/**
  * Implementation of hook_nodeapi().
  */
 function xmlsitemap_term_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
@@ -236,6 +260,77 @@ function xmlsitemap_term_xmlsitemap_links() {
     db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)",
       $url, $term->changed, max($age, $interval), $priority
     );
+  }
+}
+
+/*****************************************************************************
+ * Private functions - node operation callbacks.
+ ****************************************************************************/
+
+/**
+ * Node operations callback.
+ */
+function _xmlsitemap_term_priority_operations($nodes, $priority) {
+  if (count($nodes) > 0) {
+    $batch = array(
+      'operations' => array(
+        array('_xmlsitemap_term_batch_process', array($nodes, $priority))
+      ),
+      'finished' => 'xmlsitemap_batch_operations_finished',
+      'title' => t('Processing'),
+      'progress_message' => '',
+      'error_message' => t('The update has encountered an error.'),
+    );
+    batch_set($batch);
+  }
+}
+
+/*****************************************************************************
+ * Private functions - batch operation callbacks.
+ ****************************************************************************/
+
+/**
+ * Node operations batch process callback.
+ */
+function _xmlsitemap_term_batch_process($nodes, $priority, &$context) {
+  if (!isset($context['sandbox']['progress'])) {
+    $context['sandbox']['progress'] = 0;
+    $context['sandbox']['max'] = count($nodes);
+    $context['sandbox']['nodes'] = $nodes;
+    $context['sandbox']['terms'] = array();
+  }
+  if (empty($context['sandbox']['terms'])) {
+    $nid = array_shift($context['sandbox']['nodes']);
+    if ($node = node_load($nid)) {
+      $context['sandbox']['terms'] = taxonomy_node_get_terms($node);
+      $context['sandbox']['node'] = $node;
+    }
+  }
+  $term = array_shift($context['sandbox']['terms']);
+  if (isset($term)) {
+    $node = $context['sandbox']['node'];
+    $result = db_fetch_object(db_query("SELECT * FROM {xmlsitemap_term} WHERE tid = %d", $term->tid));
+    if ($result === FALSE) {
+      $row = new stdClass();
+      $row->tid = $term->tid;
+      $row->changed = $node->changed;
+      $row->previously_changed = $node->created;
+    }
+    else {
+      $row = $result;
+      if ($node->changed > $row->changed) {
+        $row->previously_changed = $row->changed;
+        $row->changed = $node->changed;
+      }
+    }
+    $row->priority_override = $priority;
+    drupal_write_record('xmlsitemap_term', $row, $result === FALSE ? NULL : 'tid');
+  }
+  if (empty($context['sandbox']['terms'])) {
+    $context['sandbox']['progress']++;
+  }
+  if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
+    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
   }
 }
 

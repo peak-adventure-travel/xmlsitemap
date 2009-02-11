@@ -99,6 +99,30 @@ function xmlsitemap_node_form_alter(&$form, &$form_state, $form_id) {
 }
 
 /**
+ * Implementation of hook_node_operations().
+ */
+function xmlsitemap_node_node_operations() {
+  $operations = array(
+    'xmlsitemap_add_nodes' => array(
+      'label' => t('Add the selected posts to the XML site map'),
+      'callback' => '_xmlsitemap_node_priority_operations',
+      'callback arguments' => array('priority' => 0.5),
+    ),
+    'xmlsitemap_change_nodes_priority' => array(
+      'label' => t('Change the XML site map priority of the selected posts to default'),
+      'callback' => '_xmlsitemap_node_priority_operations',
+      'callback arguments' => array('piority' => -2.0),
+    ),
+    'xmlsitemap_remove_nodes' => array(
+      'label' => t('Remove the selected posts from the XML site map'),
+      'callback' => '_xmlsitemap_node_priority_operations',
+      'callback arguments' => array('priority' => -1.0),
+    ),
+  );
+  return $operations;
+}
+
+/**
  * Implementation of hook_node_type().
  */
 function xmlsitemap_node_node_type($op, $info) {
@@ -260,17 +284,6 @@ function xmlsitemap_node_xmlsitemap_sitemap_settings_alter(&$form) {
   );
 }
 
-/**
- * Implementation of hook_xmlsitemap_update_module_tables_batch_operations().
- */
-function xmlsitemap_node_xmlsitemap_update_module_tables_batch_operations() {
-  return array(
-    '_xmlsitemap_node_module_table_delete_rows',
-    '_xmlsitemap_node_module_table_update_rows',
-    '_xmlsitemap_node_module_table_add_rows',
-  );
-}
-
 /*****************************************************************************
  * Menu callbacks / form builders, submit/validate functions.
  ****************************************************************************/
@@ -373,119 +386,90 @@ function xmlsitemap_node_priority($node) {
 }
 
 /*****************************************************************************
- * Private functions - database batch operations.
+ * Private functions - node operation callbacks.
  ****************************************************************************/
 
 /**
- * Batch function used to update the module database tables.
- * @param $context
- *  The context parameter passed from batch_process().
+ * Node operations callback.
  */
-function _xmlsitemap_node_module_table_add_rows(&$context) {
-  if (!isset($context['sandbox']['progress'])) {
-    $context['sandbox']['current_node'] = 0;
-    $context['sandbox']['max'] = (integer) db_result(db_query('SELECT COUNT(n.nid)
-      FROM {node} n
-      LEFT JOIN {xmlsitemap_node} xn ON xn.nid = n.nid
-      WHERE xn.nid IS NULL')
+function _xmlsitemap_node_priority_operations($nodes, $priority) {
+  if (count($nodes) > 10) {
+    $batch = array(
+      'operations' => array(
+        array('_xmlsitemap_node_batch_process', array($nodes, $priority))
+      ),
+      'finished' => 'xmlsitemap_batch_operations_finished',
+      'title' => t('Processing'),
+      'progress_message' => '',
+      'error_message' => t('The update has encountered an error.'),
     );
-    $context['sandbox']['progress'] = 0;
+    batch_set($batch);
   }
-  if ($context['sandbox']['max']) {
-    $result = db_query_range('SELECT n.nid, n.created AS previously_changed, n.changed
-      FROM {node} n
-      LEFT JOIN {xmlsitemap_node} xn ON xn.nid = n.nid
-      WHERE xn.nid IS NULL
-        AND n.nid > %d
-      ORDER BY n.nid ASC',
-      $context['sandbox']['current_node'], 0, 1
-    );
-    if ($row = db_fetch_object($result)) {
-      drupal_write_record('xmlsitemap_node', $row);
-      $context['sandbox']['progress']++;
-      $context['sandbox']['current_node'] = $row->nid;
-      $context['results']['added'] = $context['sandbox']['progress'];
+  else {
+    foreach ($nodes as $nid) {
+      _xmlsitemap_node_set_priority($nid, $priority);
     }
-    if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
-      $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
-    }
+    drupal_set_message(t(('The update has been performed.')));
   }
 }
 
+/*****************************************************************************
+ * Private functions - batch operation callbacks.
+ ****************************************************************************/
+
 /**
- * Batch function used to update the module database tables.
- * @param $context
- *  The context parameter passed from batch_process().
+ * Node operations batch process callback.
  */
-function _xmlsitemap_node_module_table_delete_rows(&$context) {
+function _xmlsitemap_node_batch_process($nodes, $priority, &$context) {
   if (!isset($context['sandbox']['progress'])) {
-    $context['sandbox']['current_node'] = 0;
-    $context['sandbox']['max'] = (integer) db_result(db_query('SELECT COUNT(xn.nid)
-      FROM {xmlsitemap_node} xn
-      LEFT JOIN {node} n ON n.nid = xn.nid
-      WHERE n.nid IS NULL')
-    );
     $context['sandbox']['progress'] = 0;
+    $context['sandbox']['max'] = count($nodes);
+    $context['sandbox']['nodes'] = $nodes;
   }
-  if ($context['sandbox']['max']) {
-    $nid = db_result(
-      db_query("SELECT xn.nid
-        FROM {xmlsitemap_node} xn
-        LEFT JOIN {node} n ON n.nid = xn.nid
-        WHERE n.nid IS NULL
-          AND xn.nid > %d",
-        $context['sandbox']['current_node']
-      )
-    );
-    if ($nid === FALSE) {
-      $context['finished'] = 1;
+  $nid = array_shift($context['sandbox']['nodes']);
+  if ($node = _xmlsitemap_node_set_priority($nid, $priority)) {
+    $context['results'][] = l($node->title, 'node/'. $node->nid);
+  }
+  $context['sandbox']['progress']++;
+  if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
+    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+  }
+}
+
+/*****************************************************************************
+ * Private functions - node, and batch operations support functions.
+ ****************************************************************************/
+
+/**
+ * Add node data to the the xmlsitemap_node table, and set the
+ * priority_override field to the passed value.
+ * @param $nid
+ *   The node ID.
+ * @param $priority
+ *   The priority to set.
+ * @return
+ *   The node object.
+ */
+function _xmlsitemap_node_set_priority($nid, $priority) {
+  if ($node = node_load($nid)) {
+    $result = db_fetch_object(db_query("SELECT * FROM {xmlsitemap_node} WHERE nid = %d", $nid));
+    if ($result === FALSE) {
+      $row = new stdClass();
+      $row->nid = $node->nid;
+      $row->changed = $node->changed;
+      $row->previously_changed = $node->created;
     }
     else {
-      db_query('DELETE FROM {xmlsitemap_node} WHERE nid = %d', $nid);
-      $context['sandbox']['progress']++;
-      $context['sandbox']['current_node'] = $nid;
-      $context['results']['deleted'] = $context['sandbox']['progress'];
-      if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
-        $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+      $row = $result;
+      if ($node->changed > $row->changed) {
+        $row->previously_changed = $row->changed;
+        $row->changed = $node->changed;
       }
     }
+    $row->priority_override = $priority;
+    drupal_write_record('xmlsitemap_node', $row, $result === FALSE ? NULL : 'nid');
   }
-}
-
-/**
- * Batch function used to update the module database tables.
- * @param $context
- *  The context parameter passed from batch_process().
- */
-function _xmlsitemap_node_module_table_update_rows(&$context) {
-  if (!isset($context['sandbox']['progress'])) {
-    $context['sandbox']['current_node'] = 0;
-    $context['sandbox']['max'] = (integer) db_result(db_query('SELECT COUNT(n.nid)
-      FROM {node} n
-      INNER JOIN {xmlsitemap_node} xn ON xn.nid = n.nid
-      WHERE n.changed > xn.changed')
-    );
-    $context['sandbox']['progress'] = 0;
-  }
-  if ($context['sandbox']['max']) {
-    $result = db_query_range('SELECT n.nid, xn.changed AS previously_changed, n.changed
-      FROM {node} n
-      INNER JOIN {xmlsitemap_node} xn ON xn.nid = n.nid
-      WHERE n.nid > %d
-        AND n.changed > xn.changed
-      ORDER BY n.nid ASC',
-      $context['sandbox']['current_node'], 0, 1
-    );
-    if ($row = db_fetch_object($result)) {
-      drupal_write_record('xmlsitemap_node', $row, 'nid');
-      $context['sandbox']['progress']++;
-      $context['sandbox']['current_node'] = $row->nid;
-      $context['results']['updated'] = $context['sandbox']['progress'];
-    }
-    if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
-      $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
-    }
-  }
+  return $node;
 }
 
 /**

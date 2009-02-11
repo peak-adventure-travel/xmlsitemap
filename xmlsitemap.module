@@ -142,22 +142,6 @@ function xmlsitemap_menu() {
     'access arguments' => $access_config,
     'type' => MENU_LOCAL_TASK,
   );
-  $items['admin/settings/xmlsitemap/tools'] = array(
-    'title' => 'Tools',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('xmlsitemap_tools_update_database'),
-    'access arguments' => $access_config,
-    'type' => MENU_LOCAL_TASK,
-  );
-  $items['admin/settings/xmlsitemap/tools/update'] = array(
-    'title' => 'Database update',
-    'description' => 'Update the XML Sitemap database tables.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('xmlsitemap_tools_update_database'),
-    'access arguments' => $access_config,
-    'weight' => -1,
-    'type' => MENU_DEFAULT_LOCAL_TASK,
-  );
   $items['sitemap.xml'] = array(
     'title' => 'Site map index',
     'page callback' => 'xmlsitemap_output',
@@ -319,94 +303,6 @@ function xmlsitemap_settings_sitemap_validate($form, &$form_state) {
   }
 }
 
-/**
- * Form builder; return the database update form.
- */
-function xmlsitemap_tools_update_database($form_state = NULL) {
-  xmlsitemap_show_admin_messages();
-  $form = array();
-  $step = isset($form_state['storage']['step']) ? $form_state['storage']['step'] : 1;
-  switch ($step) {
-    case 1:
-      $title = t('First step');
-      $hook = 'xmlsitemap_update_module_tables_batch_operations';
-      break;
-    case 2:
-      $title = t('Second step');
-      $hook = 'xmlsitemap_update_main_table_batch_operations';
-      break;
-  }
-  if (isset($hook)) {
-    foreach (module_implements($hook) as $module) {
-      $modules[] = $module;
-      $modules_list[] = $module .'.module';
-    }
-    if (!empty($modules)) {
-      $form['#modules'] = $modules;
-      asort($modules_list);
-    }
-    $form['title'] = array(
-      '#prefix' => '<h3>',
-      '#suffix' => '</h3>',
-      '#value' => $title,
-    );
-    if (empty($modules)) {
-      $modules_list[] = t('No modules implement the required code for this database update step');
-    }
-    $form['list'] = array(
-      '#prefix' => '<div>',
-      '#suffix' => '</div>',
-      '#value' => theme('item_list', $modules_list),
-    );
-  }
-  if ($step < 3) {
-    $form['submit'] = array(
-      '#type' => 'submit',
-      '#value' => t('Continue'),
-    );
-  }
-  return $form;
-}
-
-/**
- * Submission function for the database update form.
- */
-function xmlsitemap_tools_update_database_submit($form, &$form_state) {
-  $step = isset($form_state['storage']['step']) ? $form_state['storage']['step'] : 1;
-  switch ($step) {
-    case 1:
-      $hook = '_xmlsitemap_update_module_tables_batch_operations';
-      break;
-    case 2:
-      $hook = '_xmlsitemap_update_main_table_batch_operations';
-      break;
-  }
-  if (isset($form['#modules']) && isset($hook)) {
-    foreach ($form['#modules'] as $module) {
-      $function = $module . $hook;
-      if (function_exists($function)) {
-        $result = $function();
-        if (isset($result)) {
-          if (is_array($result)) {
-            foreach ($result as $operation) {
-              $batch['operations'][] = array($operation, array());
-            }
-          }
-          elseif (is_string($result)) {
-            $batch['operations'][] = array($result, array());
-          }
-        }
-      }
-    }
-  }
-  if (isset($batch)) {
-    $batch['title'] = t('Updating database');
-    $batch['finished'] = 'xmlsitemap_database_update_finished';
-    batch_set($batch);
-  }
-  $form_state['storage']['step'] = $step + 1;
-}
-
 /*****************************************************************************
  * Public functions - messages shown in the administration page.
  ****************************************************************************/
@@ -468,34 +364,17 @@ function xmlsitemap_show_admin_messages() {
  ****************************************************************************/
 
 /**
- * Function called when the database batch is finished.
- * @param $success
- *  TRUE if the batch operation has been concluded sucessfully, FALSE otherwise.
- * @param $results
- *  The values returned from the batch function(s).
- * @param $operations
- *  The array of operations that remained unprocessed.
+ * Batch callback called when the batch operations are completed.
  */
-function xmlsitemap_database_update_finished($success, $results, $operations) {
+function xmlsitemap_batch_operations_finished($success, $results, $operations) {
   if ($success) {
-    if (!empty($results['added'])) {
-      drupal_set_message(
-        format_plural($results['added'], 'Added 1 row.', 'Added @count rows.')
-      );
-    }
-    if (!empty($results['deleted'])) {
-      drupal_set_message(
-        format_plural($results['deleted'], 'Deleted 1 row.', 'Deleted @count rows.')
-      );
-    }
-    if (!empty($results['updated'])) {
-      drupal_set_message(
-        format_plural($results['updated'], 'Updated 1 row.', 'Updated @count rows.')
-      );
-    }
+    drupal_set_message(t('The update has been performed.'));
   }
   else {
-    drupal_set_message(t("An error occured, and the database update processing didn't complete."));
+    drupal_set_message(t('An error occurred and processing did not complete.'), 'error');
+    $message = format_plural(count($results), '1 item successfully processed:', '@count items successfully processed:');
+    $message .= theme('item_list', $results);
+    drupal_set_message($message);
   }
 }
 

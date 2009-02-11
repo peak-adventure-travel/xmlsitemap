@@ -39,7 +39,6 @@ function xmlsitemap_term_schema() {
     ),
     'primary key' => array('tid'),
   );
-
   return $schema;
 }
 
