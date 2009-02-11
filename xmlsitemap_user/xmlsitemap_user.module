@@ -203,9 +203,11 @@ function xmlsitemap_user_xmlsitemap_links() {
       case 'mysql':
       case 'mysqli':
         $coalesce = 'COALESCE';
+        $concat = "CONCAT('user/', u.uid)";
         break;
       case 'pgsql':
         $coalesce = 'FIRST';
+        $concat = "('user/' || u.uid)";
         break;
     }
     $uid = 0;
@@ -218,7 +220,7 @@ function xmlsitemap_user_xmlsitemap_links() {
       INNER JOIN {users} u ON xu.uid = u.uid
       LEFT JOIN {users_roles} ur ON xu.uid = ur.uid
       LEFT JOIN {xmlsitemap_user_role} xur ON ur.rid = xur.rid
-      LEFT JOIN {url_alias} ua ON ua.src = CONCAT('user/', u.uid)
+      LEFT JOIN {url_alias} ua ON ua.src = $concat
       WHERE u.status <> 0
         AND u.uid <> %d
       GROUP BY u.uid, xu.changed, xu.previously_changed, xu.priority_override
