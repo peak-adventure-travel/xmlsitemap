@@ -251,9 +251,14 @@ function xmlsitemap_node_xmlsitemap_links() {
   }
   $query_args = array_merge($excludes, array($nid));
   $result = db_query(db_rewrite_sql($query), $query_args);
+  $row = new stdClass();
+  $row->module = 'xmlsitemap_node';
+  $row->type = 'node';
   while ($node = db_fetch_object($result)) {
-    $age = time() - $node->changed;
-    $interval = empty($node->previously_changed) ? 0 : $node->changed - $node->previously_changed;
+    $row->loc = xmlsitemap_url('node/'. $node->nid, $node->alias, NULL, NULL, TRUE);
+    $row->id = $node->nid;
+    $row->lastmod = $node->changed;
+    $row->changefreq = max(time() - $node->changed, empty($node->previously_changed) ? 0 : $node->changed - $node->previously_changed);
     if ($node->priority_override != -2.0) {
       $priority = $node->priority_override;
     }
@@ -264,14 +269,10 @@ function xmlsitemap_node_xmlsitemap_links() {
       $priority += variable_get('xmlsitemap_node_promote_priority', 0.3);
     }
     $priority += $node->comment_ratio * variable_get('xmlsitemap_node_comment_priority', 0.2);
-    $priority = min(round($priority, 1), 1);
-    db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)",
-      array(
-        xmlsitemap_url('node/'. $node->nid, $node->alias, NULL, NULL, TRUE),
-        $node->changed,
-        max($age, $interval), xmlsitemap_node_priority($node),
-      )
-    );
+    $row->priority = min(round($priority, 1), 1);
+    if (db_result(db_query("SELECT loc FROM {xmlsitemap} WHERE loc = '%s'", $row->loc)) != $row->loc) {
+      drupal_write_record('xmlsitemap', $row);
+    }
   }
 }
 
