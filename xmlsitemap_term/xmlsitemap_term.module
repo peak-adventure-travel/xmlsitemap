@@ -328,6 +328,10 @@ function _xmlsitemap_term_batch_process($nodes, $priority, &$context) {
   }
   if (empty($context['sandbox']['terms'])) {
     $context['sandbox']['progress']++;
+    if (!empty($context['sandbox']['node'])) {
+      $node = $context['sandbox']['node'];
+      $context['results'][] = l($node->title, 'node/'. $node->nid);
+    }
   }
   if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
     $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
