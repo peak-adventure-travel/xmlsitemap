@@ -34,10 +34,16 @@ function xmlsitemap_file_schema() {
       'changed' => array(
         'description' => 'The change time of the file.',
         'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
       ),
       'previously_changed' => array(
         'description' => 'The previous change time of the file.',
         'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
       ),
     ),
     'unique keys' => array('fid_nid' => array('fid', 'nid')),
@@ -109,16 +115,35 @@ function xmlsitemap_file_update_6000() {
         array(
           'description' => 'The Unix timestamp of the last change.',
           'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0,
         )
       );
     }
-    if (!db_column_exists('xmlsitemap_file', 'changed')) {
-      db_add_field($ret, 'xmlsitemap_file', 'changed',
-        array(
-          'description' => 'The Unix timestamp of the last change.',
-          'type' => 'int',
-        )
-      );
+    else {
+      if (db_column_exists('xmlsitemap_file', 'changed')) {
+        db_change_field($ret, 'xmlsitemap_file', 'changed', 'changed',
+          array(
+            'description' => 'The Unix timestamp of the last change.',
+            'type' => 'int',
+            'unsigned' => TRUE,
+            'not null' => TRUE,
+            'default' => 0,
+          )
+        );
+      }
+      else {
+        db_add_field($ret, 'xmlsitemap_file', 'changed',
+          array(
+            'description' => 'The Unix timestamp of the last change.',
+            'type' => 'int',
+            'unsigned' => TRUE,
+            'not null' => TRUE,
+            'default' => 0,
+          )
+        );
+      }
     }
     $result = update_sql("DELETE FROM {xmlsitemap_file} WHERE nid = 0");
     if ($result['success']) {
@@ -147,10 +172,16 @@ function xmlsitemap_file_update_6000() {
           'changed' => array(
             'description' => 'The change time of the file.',
             'type' => 'int',
+            'unsigned' => TRUE,
+            'not null' => TRUE,
+            'default' => 0,
           ),
           'previously_changed' => array(
             'description' => 'The previous change time of the file.',
             'type' => 'int',
+            'unsigned' => TRUE,
+            'not null' => TRUE,
+            'default' => 0,
           ),
         ),
         'unique keys' => array('fid_nid' => array('fid', 'nid')),
@@ -229,9 +260,15 @@ function xmlsitemap_file_update_6108() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_file_update_6109() {
-  $ret = xmlsitemap_file_update_6000();
   $ret[] = update_sql("UPDATE {system} SET weight = 10 WHERE name = 'xmlsitemap_file'");
   return $ret;
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_file_update_6110() {
+  return xmlsitemap_file_update_6000();
 }
 
 /**
