@@ -99,6 +99,7 @@ function xmlsitemap_install() {
     );");
   }
   variable_set('xmlsitemap_chunk_size', 200);
+  db_query("UPDATE {system} SET weight = 2 WHERE name = 'xmlsitemap'");
 }
 
 /**
@@ -449,9 +450,16 @@ function xmlsitemap_update_6116() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_update_6117() {
+  return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_6118() {
   $ret = xmlsitemap_update_6000();
   if (variable_get('xmlsitemap_cron_submit', FALSE)) {
-    $frequency = 0;
+    $frequency = 1;
   }
   else {
     $frequency = -1;
@@ -461,6 +469,7 @@ function xmlsitemap_update_6117() {
     'success' => TRUE,
     'query' => 'UPDATE MODULE SETTINGS'
   );
+  $ret[] = update_sql("UPDATE {system} SET weight = 2 WHERE name = 'xmlsitemap'");
   return $ret;
 }
 

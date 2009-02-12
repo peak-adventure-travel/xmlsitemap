@@ -58,6 +58,7 @@ function xmlsitemap_node_schema() {
  */
 function xmlsitemap_node_install() {
   drupal_install_schema('xmlsitemap_node');
+  db_query("UPDATE {system} SET weight = 5 WHERE name = 'xmlsitemap_node'");
 }
 
 /**
@@ -214,7 +215,17 @@ function xmlsitemap_node_update_6104() {
  *
  */
 function xmlsitemap_node_update_6105() {
-  return xmlsitemap_node_update_6000();
+  return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ *
+ */
+function xmlsitemap_node_update_6106() {
+  $ret = xmlsitemap_node_update_6000();
+  $ret[] = update_sql("UPDATE {system} SET weight = 5 WHERE name = 'xmlsitemap_node'");
+  return $ret;
 }
 
 /**

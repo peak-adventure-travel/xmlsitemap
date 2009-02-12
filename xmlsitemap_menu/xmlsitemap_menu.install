@@ -22,6 +22,7 @@ function xmlsitemap_menu_install() {
       )
     );
     menu_rebuild();
+    db_query("UPDATE {system} SET weight = 5 WHERE name = 'xmlsitemap_menu'");
   }
 }
 
@@ -68,12 +69,20 @@ function xmlsitemap_menu_update_6102() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_menu_update_6103() {
+  return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_menu_update_6104() {
   $ret = xmlsitemap_menu_update_6000();
   menu_rebuild();
   $ret[] = array(
     'success' => TRUE,
     'query' => 'UPDATE DRUPAL MENUS'
   );
+  $ret[] = update_sql("UPDATE {system} SET weight = 5 WHERE name = 'xmlsitemap_menu'");
   return $ret;
 }
 /**
