@@ -243,11 +243,13 @@ function xmlsitemap_node_xmlsitemap_links() {
   $query_args = array_merge($excludes, array($nid));
   $result = db_query(db_rewrite_sql($query), $query_args);
   while ($node = db_fetch_object($result)) {
+    $age = time() - $node->changed;
+    $interval = empty($node->previously_changed) ? 0 : $node->changed - $node->previously_changed;
     db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)",
       array(
         xmlsitemap_url('node/'. $node->nid, $node->alias, NULL, NULL, TRUE),
-        variable_get('xmlsitemap_node_count_comments', TRUE) ? max($node->changed, $node->last_comment_timestamp) : $node->changed,
-        xmlsitemap_node_frequency($node), xmlsitemap_node_priority($node),
+        $node->changed,
+        max($age, $interval), xmlsitemap_node_priority($node),
       )
     );
   }
@@ -271,18 +273,6 @@ function xmlsitemap_node_xmlsitemap_sitemap_settings_alter(&$form) {
     '#description' => t("This number will be added to the priority of the post with the highest number of comments. This doesn't apply if the maximum number of comments is one."),
     '#default_value' => variable_get('xmlsitemap_node_comment_priority', 0.2),
     '#options' => $options,
-  );
-  $form['xmlsitemap_node'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Content settings'),
-    '#description' => t('The settings for the content to include in the site map.'),
-    '#collapsible' => TRUE,
-  );
-  $form['xmlsitemap_node']['xmlsitemap_node_count_comments'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Count comments in change date and frequency'),
-    '#description' => t('If enabled, the frequency of comments on a post will affect its change frequency and last modification date.'),
-    '#default_value' => variable_get('xmlsitemap_node_count_comments', TRUE),
   );
 }
 
@@ -326,34 +316,6 @@ function xmlsitemap_node_excludes() {
     }
   }
   return $excludes;
-}
-
-/**
- * Calculate the change frequency of a node.
- * @param $node
- *  Data for a node retrieved by _xmlsitemap_node_links().
- * @return
- *  The number of seconds between updates.
- */
-function xmlsitemap_node_frequency($node) {
-  $age = time() - $node->changed;
-  if (variable_get('xmlsitemap_node_count_comments', TRUE)) {
-    $age = time() - max($node->changed, $node->last_comment_timestamp);
-    $interval = 0;
-    if (!empty($node->previously_changed) && isset($node->previous_comment)) {
-      $interval = min($node->changed, $node->last_comment_timestamp) - max($node->previously_changed, $node->previous_comment);
-    }
-    elseif (!empty($node->previously_changed)) {
-      $interval = min($node->changed, $node->last_comment_timestamp) - $node->previously_changed;
-    }
-    elseif (isset($node->previous_comment)) {
-      $interval = min($node->changed, $node->last_comment_timestamp) - $node->previous_comment;
-    }
-  }
-  else {
-    $interval = empty($node->previously_changed) ? 0 : $node->changed - $node->previously_changed;
-  }
-  return max($age, $interval);
 }
 
 /**
