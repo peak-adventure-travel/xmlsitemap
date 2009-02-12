@@ -38,19 +38,12 @@ function xmlsitemap_node_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
-      'last_comment' => array(
+      'comment_ratio' => array(
         'description' => 'The Unix timestamp of the last added comment.',
-        'type' => 'int',
+        'type' => 'float',
         'unsigned' => TRUE,
         'not null' => TRUE,
-        'default' => 0,
-      ),
-      'previous_comment' => array(
-        'description' => 'The Unix timestamp of the previously added comment.',
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'default' => 0,
+        'default' => 0.0,
       ),
       'priority_override' => array(
         'description' => 'The priority of the node in the site map.',
@@ -152,6 +145,12 @@ function xmlsitemap_node_update_6000() {
         );
       }
     }
+    if (db_column_exists('xmlsitemap_node', 'last_comment')) {
+      db_drop_field($ret, 'xmlsitemap_node', 'last_comment');
+    }
+    if (db_column_exists('xmlsitemap_node', 'previous_comment')) {
+      db_drop_field($ret, 'xmlsitemap_node', 'previous_comment');
+    }
     $ret[] = update_sql("UPDATE {xmlsitemap_node}
       SET priority_override = -2
       WHERE priority_override IS NULL"
@@ -166,11 +165,6 @@ function xmlsitemap_node_update_6000() {
     );
   }
   else {
-
-
-
-
-
     db_create_table($ret, 'xmlsitemap_node',
       array(
         'description' => 'The base table for xmlsitemap_node.',
@@ -196,19 +190,12 @@ function xmlsitemap_node_update_6000() {
             'not null' => TRUE,
             'default' => 0,
           ),
-          'last_comment' => array(
+          'comment_ratio' => array(
             'description' => 'The Unix timestamp of the last added comment.',
-            'type' => 'int',
+            'type' => 'float',
             'unsigned' => TRUE,
             'not null' => TRUE,
-            'default' => 0,
-          ),
-          'previous_comment' => array(
-            'description' => 'The Unix timestamp of the previously added comment.',
-            'type' => 'int',
-            'unsigned' => TRUE,
-            'not null' => TRUE,
-            'default' => 0,
+            'default' => 0.0,
           ),
           'priority_override' => array(
             'description' => 'The priority of the node in the site map.',
