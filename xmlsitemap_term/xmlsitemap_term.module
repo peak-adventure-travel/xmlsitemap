@@ -26,7 +26,7 @@ function xmlsitemap_term_form_alter(&$form, $form_state, $form_id) {
         WHERE tid = %d", $form['tid']['#value'])
       );
       if ($priority === FALSE) {
-        $priority = -2;
+        $priority = -2.0;
       }
       $options = xmlsitemap_priority_options('both');
       $default = variable_get('xmlsitemap_term_vocabulary_priority_'. $form['vid']['#value'], '0.5');
@@ -64,22 +64,22 @@ function xmlsitemap_term_form_alter(&$form, $form_state, $form_id) {
       $form['delete']['#weight'] = isset($form['delete']['#weight']) ? $form['delete']['#weight'] + 1 : 1;
       break;
     default:
-    if (isset($form['type']['#value']) && $form_id == $form['type']['#value'] .'_node_form') {
-      $node = $form['#node'];
-      if (isset($form['type']) && isset($node->nid)) {
-        if (isset($node->taxonomy)) {
-          $terms = $node->taxonomy;
+      if (isset($form['type']['#value']) && $form_id == $form['type']['#value'] .'_node_form') {
+        $node = $form['#node'];
+        if (isset($form['type']) && isset($node->nid)) {
+          if (isset($node->taxonomy)) {
+            $terms = $node->taxonomy;
+          }
+          else {
+            $terms = taxonomy_node_get_terms($node->nid);
+          }
+          $form['xmlsitemap_term_taxonomy'] = array(
+            '#type' => 'value',
+            '#value' => $terms,
+          );
         }
-        else {
-          $terms = taxonomy_node_get_terms($node->nid);
-        }
-        $form['xmlsitemap_term_taxonomy'] = array(
-          '#type' => 'value',
-          '#value' => $terms,
-        );
       }
-    }
-    break;
+      break;
   }
 }
 

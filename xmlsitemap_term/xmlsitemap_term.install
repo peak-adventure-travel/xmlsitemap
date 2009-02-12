@@ -21,14 +21,22 @@ function xmlsitemap_term_schema() {
         'description' => 'The ID of the path.',
         'type' => 'int',
         'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
       ),
       'changed' => array(
         'description' => 'The Unix timestamp of the last change.',
         'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
       ),
       'previously_changed' => array(
         'description' => 'The Unix timestamp of the previous change.',
         'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
       ),
       'priority_override' => array(
         'description' => 'The priority of the term in the site map.',
@@ -65,19 +73,91 @@ function xmlsitemap_term_update_6000() {
       }
       db_drop_field($ret, 'xmlsitemap_term', 'pid');
     }
+    $result = array();
+    @drop_primary_key($result, 'xmlsitemap_term');
+    if ($result[0]['success']) {
+      $ret[] = $result[0];
+    }
+    if (db_column_exists('xmlsitemap_term', 'tid')) {
+      db_change_field($ret, 'xmlsitemap_term', 'tid', 'tid',
+        array(
+          'description' => 'The ID of the path.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0,
+        ),
+        array('primary key' => array('tid'))
+      );
+    }
+    else {
+      db_add_field($ret, 'xmlsitemap_term', 'tid',
+        array(
+          'description' => 'The ID of the path.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0,
+        ),
+        array('primary key' => array('tid'))
+      );
+    }
+    
+    
     if (db_column_exists('xmlsitemap_term', 'last_changed')) {
       db_change_field($ret, 'xmlsitemap_term', 'last_changed', 'changed',
         array(
           'description' => 'The Unix timestamp of the last change.',
           'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0,
         )
       );
     }
-    if (!db_column_exists('xmlsitemap_term', 'changed')) {
-      db_add_field($ret, 'xmlsitemap_term', 'changed',
+    else {
+      if (!db_column_exists('xmlsitemap_term', 'changed')) {
+        db_add_field($ret, 'xmlsitemap_term', 'changed',
+          array(
+            'description' => 'The Unix timestamp of the last change.',
+            'type' => 'int',
+            'unsigned' => TRUE,
+            'not null' => TRUE,
+            'default' => 0,
+          )
+        );
+      }
+      else {
+        db_change_field($ret, 'xmlsitemap_term', 'changed', 'changed',
+          array(
+            'description' => 'The Unix timestamp of the last change.',
+            'type' => 'int',
+            'unsigned' => TRUE,
+            'not null' => TRUE,
+            'default' => 0,
+          )
+        );
+      }
+    }
+    if (!db_column_exists('xmlsitemap_term', 'previously_changed')) {
+      db_add_field($ret, 'xmlsitemap_term', 'previously_changed',
         array(
-          'description' => 'The Unix timestamp of the last change.',
+          'description' => 'The Unix timestamp of the previous change.',
           'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0,
+        )
+      );
+    }
+    else {
+      db_change_field($ret, 'xmlsitemap_term', 'previously_changed', 'previously_changed',
+        array(
+          'description' => 'The Unix timestamp of the previous change.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0,
         )
       );
     }
@@ -94,6 +174,11 @@ function xmlsitemap_term_update_6000() {
       )
     );
   }
+  
+  
+  
+  
+  
   else {
     db_create_table($ret, 'xmlsitemap_term',
       array(
@@ -103,14 +188,22 @@ function xmlsitemap_term_update_6000() {
             'description' => 'The ID of the path.',
             'type' => 'int',
             'unsigned' => TRUE,
+            'not null' => TRUE,
+            'default' => 0,
            ),
            'changed' => array(
              'description' => 'The Unix timestamp of the last change.',
              'type' => 'int',
+             'unsigned' => TRUE,
+             'not null' => TRUE,
+             'default' => 0,
            ),
            'previously_changed' => array(
              'description' => 'The Unix timestamp of the previous change.',
              'type' => 'int',
+             'unsigned' => TRUE,
+             'not null' => TRUE,
+             'default' => 0,
            ),
            'priority_override' => array(
              'description' => 'The priority of the term in the site map.',
@@ -159,9 +252,15 @@ function xmlsitemap_term_update_6103() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_term_update_6104() {
-  $ret = xmlsitemap_term_update_6000();
   $ret[] = update_sql("UPDATE {system} SET weight = 10 WHERE name = 'xmlsitemap_term'");
   return $ret;
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_term_update_6105() {
+  return xmlsitemap_term_update_6000();
 }
 
 /**
