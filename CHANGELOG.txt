@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 6.x-1.x-dev, 2009-02-13
+-----------------------------------
+#373832: Database update error.
+
 XML Sitemap 6.x-1.x-dev, 2009-02-12
 -----------------------------------
 #346093: Change the database fields default value, changed the settings page.

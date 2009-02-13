@@ -126,27 +126,27 @@ function xmlsitemap_update_6000() {
     $result = array();
     @db_drop_primary_key($result, 'xmlsitemap');
     if ($result[0]['success']) {
-      $ret[] = $result;
+      $ret[] = $result[0];
     }
     $result = array();
     @db_drop_index($result, 'xmlsitemap', 'link_module');
     if ($result[0]['success']) {
-      $ret[] = $result;
+      $ret[] = $result[0];
     }
     $result = array();
     @db_drop_index($result, 'xmlsitemap', 'link_type');
     if ($result[0]['success']) {
-      $ret[] = $result;
+      $ret[] = $result[0];
     }
     $result = array();
     @db_drop_index($result, 'xmlsitemap', 'link_changed');
     if ($result[0]['success']) {
-      $ret[] = $result;
+      $ret[] = $result[0];
     }
     $result = array();
     @db_drop_index($result, 'xmlsitemap', 'link_priority');
     if ($result[0]['success']) {
-      $ret[] = $result;
+      $ret[] = $result[0];
     }
     db_change_field($ret, 'xmlsitemap', 'loc', 'loc',
       array(
@@ -458,13 +458,7 @@ function xmlsitemap_update_6117() {
  */
 function xmlsitemap_update_6118() {
   $ret = xmlsitemap_update_6000();
-  if (variable_get('xmlsitemap_cron_submit', FALSE)) {
-    $frequency = 1;
-  }
-  else {
-    $frequency = -1;
-  }
-  variable_set('xmlsitemap_cron_submit_frequency', $frequency);
+  variable_set('xmlsitemap_cron_submit_frequency', variable_get('xmlsitemap_cron_submit', FALSE) ? 1 : -1);
   $ret[] = array(
     'success' => TRUE,
     'query' => 'UPDATE MODULE SETTINGS'
