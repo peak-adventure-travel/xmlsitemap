@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1.x-dev, 2009-02-13
 -----------------------------------
+#373919: Unknown column 'xn.comment_ratio'.
 #373832: Database update error.
 
 XML Sitemap 6.x-1.x-dev, 2009-02-12

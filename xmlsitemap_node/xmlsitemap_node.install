@@ -39,7 +39,7 @@ function xmlsitemap_node_schema() {
         'default' => 0,
       ),
       'comment_ratio' => array(
-        'description' => 'The Unix timestamp of the last added comment.',
+        'description' => 'The ratio between the node comments and the maximum number of comments added to a node.',
         'type' => 'float',
         'unsigned' => TRUE,
         'not null' => TRUE,
@@ -151,6 +151,17 @@ function xmlsitemap_node_update_6000() {
     if (db_column_exists('xmlsitemap_node', 'previous_comment')) {
       db_drop_field($ret, 'xmlsitemap_node', 'previous_comment');
     }
+    if (!db_column_exists('xmlsitemap_node', 'comment_ratio')) {
+      db_add_field($ret, 'xmlsitemap_node', 'comment_ratio',
+        array(
+          'description' => 'The ratio between the node comments and the maximum number of comments added to a node.',
+          'type' => 'float',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0.0,
+        )
+      );
+    }
     $ret[] = update_sql("UPDATE {xmlsitemap_node}
       SET priority_override = -2
       WHERE priority_override IS NULL"
@@ -191,7 +202,7 @@ function xmlsitemap_node_update_6000() {
             'default' => 0,
           ),
           'comment_ratio' => array(
-            'description' => 'The Unix timestamp of the last added comment.',
+            'description' => 'The ratio between the node comments and the maximum number of comments added to a node.',
             'type' => 'float',
             'unsigned' => TRUE,
             'not null' => TRUE,
@@ -281,6 +292,14 @@ function xmlsitemap_node_update_6106() {
  *
  */
 function xmlsitemap_node_update_6107() {
+  return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ *
+ */
+function xmlsitemap_node_update_6108() {
   return xmlsitemap_node_update_6000();
 }
 
