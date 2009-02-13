@@ -1,0 +1,41 @@
+# $Id$
+#
+# LANGUAGE translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  xmlsitemap_file.module,v 1.1.2.19 2009/01/10 09:54:13 kiam
+#  xmlsitemap_file.info,v 1.1.2.3 2008/06/18 15:14:55 darrenoh
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2009-02-13 14:32+0100\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: xmlsitemap_file.module:92 xmlsitemap_file.info:0
+msgid "XML Sitemap: File"
+msgstr ""
+
+#: xmlsitemap_file.module:93
+msgid "It adds the node attachments to the site map."
+msgstr ""
+
+#: xmlsitemap_file.module:0
+msgid "xmlsitemap_file"
+msgstr ""
+
+#: xmlsitemap_file.info:0
+msgid "Adds node file attachments to the site map."
+msgstr ""
+
+#: xmlsitemap_file.info:0
+msgid "XML Sitemap"
+msgstr ""
+

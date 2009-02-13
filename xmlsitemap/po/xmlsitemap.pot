@@ -1,0 +1,193 @@
+# $Id$
+#
+# LANGUAGE translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  xmlsitemap.module,v 1.1.2.20.2.53 2009/02/10 15:47:06 kiam
+#  xmlsitemap.info,v 1.1.4.4 2009/01/03 14:54:10 kiam
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2009-02-13 14:26+0100\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: xmlsitemap.module:83;129
+msgid "Configure the site map."
+msgstr ""
+
+#: xmlsitemap.module:86
+msgid "Configure the behavior for search engines."
+msgstr ""
+
+#: xmlsitemap.module:89
+msgid "XML Sitemap automatically creates a site map that conforms to the <a href=\"@sitemaps.org\">sitemaps.org specification</a>. This helps search engines keep their search results up to date."
+msgstr ""
+
+#: xmlsitemap.module:90
+msgid "Supporting modules"
+msgstr ""
+
+#: xmlsitemap.module:91
+msgid "By itself, the XML Sitemap module adds only the front page of your site to the site map. Other types of links are handled by supporting modules."
+msgstr ""
+
+#: xmlsitemap.module:100
+msgid "Links may be assigned a priority between 0.0 and 1.0. The default priority is 0.5. A priority of <em>Not in site map</em> excludes a link from the site map."
+msgstr ""
+
+#: xmlsitemap.module:101
+msgid "More information is available in the <a href=\"@module_docs\">XML Sitemap documentation</a>."
+msgstr ""
+
+#: xmlsitemap.module:120 xmlsitemap.info:0;0
+msgid "XML Sitemap"
+msgstr ""
+
+#: xmlsitemap.module:121
+msgid "Configure the XML site map."
+msgstr ""
+
+#: xmlsitemap.module:128
+msgid "Site map"
+msgstr ""
+
+#: xmlsitemap.module:135
+msgid "Search engines"
+msgstr ""
+
+#: xmlsitemap.module:136
+msgid "Configure the submission settings for the XML site map to the search engines."
+msgstr ""
+
+#: xmlsitemap.module:143
+msgid "Site map index"
+msgstr ""
+
+#: xmlsitemap.module:156
+msgid "Site map !number"
+msgstr ""
+
+#: xmlsitemap.module:212
+msgid "General settings"
+msgstr ""
+
+#: xmlsitemap.module:217
+msgid "Chunk size"
+msgstr ""
+
+#: xmlsitemap.module:221
+msgid "This is the number of links to include in one site map. Values can range between 1 and 50,000. If the total number of links exceeds the chunk size, multiple site maps will be generated."
+msgstr ""
+
+#: xmlsitemap.module:225
+msgid "Priority"
+msgstr ""
+
+#: xmlsitemap.module:230
+msgid "Front page priority"
+msgstr ""
+
+#: xmlsitemap.module:231
+msgid "This is the absolute priority for the front page."
+msgstr ""
+
+#: xmlsitemap.module:243
+msgid "The number of links in a site map chunk must be a number between 1, and 50,000."
+msgstr ""
+
+#: xmlsitemap.module:261
+msgid "Submission settings"
+msgstr ""
+
+#: xmlsitemap.module:265
+msgid "Submit the site map when updated"
+msgstr ""
+
+#: xmlsitemap.module:267
+msgid "If enabled, the search engines will be notified of changes to the site map each time it is updated."
+msgstr ""
+
+#: xmlsitemap.module:271
+msgid "Submit the site map on cron run"
+msgstr ""
+
+#: xmlsitemap.module:273
+msgid "If enabled, the search engines will be notified of changes to the site map each time cron is run."
+msgstr ""
+
+#: xmlsitemap.module:277
+msgid "Log access"
+msgstr ""
+
+#: xmlsitemap.module:279
+msgid "If enabled, a watchdog entry will be made each time the site map is accessed, containing information about the requestor."
+msgstr ""
+
+#: xmlsitemap.module:409
+msgid "1.0"
+msgstr ""
+
+#: xmlsitemap.module:410
+msgid "0.9"
+msgstr ""
+
+#: xmlsitemap.module:411
+msgid "0.8"
+msgstr ""
+
+#: xmlsitemap.module:412
+msgid "0.7"
+msgstr ""
+
+#: xmlsitemap.module:413
+msgid "0.6"
+msgstr ""
+
+#: xmlsitemap.module:414
+msgid "0.5"
+msgstr ""
+
+#: xmlsitemap.module:415
+msgid "0.4"
+msgstr ""
+
+#: xmlsitemap.module:416
+msgid "0.3"
+msgstr ""
+
+#: xmlsitemap.module:417
+msgid "0.2"
+msgstr ""
+
+#: xmlsitemap.module:418
+msgid "0.1"
+msgstr ""
+
+#: xmlsitemap.module:419
+msgid "0.0"
+msgstr ""
+
+#: xmlsitemap.module:422
+msgid "Not in site map"
+msgstr ""
+
+#: xmlsitemap.module:425
+msgid "Default"
+msgstr ""
+
+#: xmlsitemap.module:59;0
+msgid "xmlsitemap"
+msgstr ""
+
+#: xmlsitemap.info:0
+msgid "Creates an XML site map in accordance with the sitemaps.org specification."
+msgstr ""
+
