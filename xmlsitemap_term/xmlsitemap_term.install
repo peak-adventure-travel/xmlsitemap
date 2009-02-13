@@ -74,7 +74,7 @@ function xmlsitemap_term_update_6000() {
       db_drop_field($ret, 'xmlsitemap_term', 'pid');
     }
     $result = array();
-    @drop_primary_key($result, 'xmlsitemap_term');
+    @db_drop_primary_key($result, 'xmlsitemap_term');
     if ($result[0]['success']) {
       $ret[] = $result[0];
     }
@@ -102,8 +102,6 @@ function xmlsitemap_term_update_6000() {
         array('primary key' => array('tid'))
       );
     }
-    
-    
     if (db_column_exists('xmlsitemap_term', 'last_changed')) {
       db_change_field($ret, 'xmlsitemap_term', 'last_changed', 'changed',
         array(
@@ -174,11 +172,6 @@ function xmlsitemap_term_update_6000() {
       )
     );
   }
-  
-  
-  
-  
-  
   else {
     db_create_table($ret, 'xmlsitemap_term',
       array(
