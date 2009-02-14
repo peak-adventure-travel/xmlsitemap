@@ -48,7 +48,6 @@ function xmlsitemap_node_schema() {
       'comment_ratio' => array(
         'description' => 'The ratio between the node comments and the maximum number of comments added to a node.',
         'type' => 'float',
-        'unsigned' => TRUE,
         'not null' => TRUE,
         'default' => 0.0,
       ),
@@ -175,7 +174,16 @@ function xmlsitemap_node_update_6000() {
         array(
           'description' => 'The ratio between the node comments and the maximum number of comments added to a node.',
           'type' => 'float',
-          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0.0,
+        )
+      );
+    }
+    else {
+      db_change_field($ret, 'xmlsitemap_node', 'comment_ratio', 'comment_ratio',
+        array(
+          'description' => 'The ratio between the node comments and the maximum number of comments added to a node.',
+          'type' => 'float',
           'not null' => TRUE,
           'default' => 0.0,
         )
@@ -230,7 +238,6 @@ function xmlsitemap_node_update_6000() {
           'comment_ratio' => array(
             'description' => 'The ratio between the node comments and the maximum number of comments added to a node.',
             'type' => 'float',
-            'unsigned' => TRUE,
             'not null' => TRUE,
             'default' => 0.0,
           ),
@@ -334,6 +341,14 @@ function xmlsitemap_node_update_6108() {
  *
  */
 function xmlsitemap_node_update_6109() {
+  return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ *
+ */
+function xmlsitemap_node_update_6110() {
   return xmlsitemap_node_update_6000();
 }
 
