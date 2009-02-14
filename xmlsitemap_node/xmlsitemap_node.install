@@ -24,6 +24,13 @@ function xmlsitemap_node_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
+      'vid' => array(
+        'description' => 'The current node revision ID.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
       'changed' => array(
         'description' => 'The Unix timestamp of the last change.',
         'type' => 'int',
@@ -52,6 +59,7 @@ function xmlsitemap_node_schema() {
         'default' => -2.0,
       ),
     ),
+    'unique keys' => array('vid' => array('vid')),
     'primary key' => array('nid'),
   );
 
@@ -108,6 +116,17 @@ function xmlsitemap_node_update_6000() {
           'default' => 0,
         ),
         array('primary key' => array('nid'))
+      );
+    }
+    if (!db_column_exists('xmlsitemap_node', 'vid')) {
+      db_add_field($ret, 'xmlsitemap_node', 'vid',
+        array(
+          'description' => 'The current node revision ID.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0,
+        )
       );
     }
     if (db_column_exists('xmlsitemap_node', 'last_changed')) {
@@ -182,6 +201,13 @@ function xmlsitemap_node_update_6000() {
         'fields' => array(
           'nid' => array(
             'description' => 'The node ID.',
+            'type' => 'int',
+            'unsigned' => TRUE,
+            'not null' => TRUE,
+            'default' => 0,
+          ),
+          'vid' => array(
+            'description' => 'The current node revision ID.',
             'type' => 'int',
             'unsigned' => TRUE,
             'not null' => TRUE,
@@ -300,6 +326,14 @@ function xmlsitemap_node_update_6107() {
  *
  */
 function xmlsitemap_node_update_6108() {
+  return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ *
+ */
+function xmlsitemap_node_update_6109() {
   return xmlsitemap_node_update_6000();
 }
 
