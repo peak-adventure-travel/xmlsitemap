@@ -11,6 +11,23 @@
  ****************************************************************************/
 
 /**
+ * Implementation of hook_requirements().
+ */
+function xmlsitemap_requirements($phase) {
+  $requirements = array();
+  if ($phase == 'runtime') {
+    if (count(variable_get('xmlsitemap_database_update_tasks', array()))) {
+      $requirements['xmlsitemap'] = array(
+        'description' => t('The database must be updated; go to the <a href="@database-update">database update</a> page.', array('@database-update' => url('admin/settings/tools/update'))),
+        'severity' => REQUIREMENT_ERROR,
+        'value' => t('Database must be updated'),
+      );      
+    }
+    $requirements['xmlsitemap']['value'] = t("XML Sitemap revision !revision", array('!revision' => '$Revision$'));
+  }
+}
+
+/**
  * Implementation of hook_schema().
  */
 function xmlsitemap_schema() {
