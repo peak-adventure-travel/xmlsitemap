@@ -89,8 +89,8 @@ function xmlsitemap_help($path, $arg) {
     case 'admin/settings/xmlsitemap/engines':
       $output = t('Configure the behavior for search engines.');
       break;
-    case 'admin/settings/xmlsitemap/tools':
-      $output = t('Update the XML Sitemap database tables.');
+    case 'admin/settings/xmlsitemap/tools/update':
+      $output = t('Update the XML Sitemap database tables. Use this page only if <em>XML Sitemap</em> instructs you to do so.');
       break;
     case 'admin/help#xmlsitemap':
       $output = '<p>'. t('XML Sitemap automatically creates a site map that conforms to the <a href="@sitemaps.org">sitemaps.org specification</a>. This helps search engines keep their search results up to date.', array('@sitemaps.org' => 'http://www.sitemaps.org')) .'</p>';
@@ -141,6 +141,13 @@ function xmlsitemap_menu() {
     'page arguments' => array('xmlsitemap_settings_engines'),
     'access arguments' => $access_config,
     'type' => MENU_LOCAL_TASK,
+  );
+  $items['admin/settings/xmlsitemap/tools/update'] = array(
+    'title' => 'Update database',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('xmlsitemap_tools_update'),
+    'access arguments' => $access_config,
+    'type' => MENU_CALLBACK,
   );
   $items['sitemap.xml'] = array(
     'title' => 'Site map index',
@@ -203,10 +210,9 @@ function xmlsitemap_output($chunk = NULL) {
 }
 
 /**
- * Menu callback; return the search engine settings form.
+ * Form builder; return the search engine settings form.
  */
 function xmlsitemap_settings_engines() {
-  xmlsitemap_show_admin_messages();
   $form['submission'] = array(
     '#type' => 'fieldset',
     '#title' => t('Submission settings'),
@@ -257,10 +263,9 @@ function xmlsitemap_settings_engines_submit($form, &$form_state) {
 }
 
 /**
- * Menu callback; return the site map settings form.
+ * Form builder; return the site map settings form.
  */
 function xmlsitemap_settings_sitemap() {
-  xmlsitemap_show_admin_messages();
   $form['general'] = array(
     '#type' => 'fieldset',
     '#title' => t('General settings'),
@@ -303,60 +308,53 @@ function xmlsitemap_settings_sitemap_validate($form, &$form_state) {
   }
 }
 
-/*****************************************************************************
- * Public functions - messages shown in the administration page.
- ****************************************************************************/
-
 /**
- * Add a message to the list of the messages shown in the module administration
- * pages.
- * @param $message
- *  The text of the message to be shown.
- * @param $type
- *  The type of the message, chosen between 'status', 'warning', and 'error';
- *  the default type is 'status'.
+ * Form builder; return the multi-step database update form.
  */
-function xmlsitemap_add_admin_message($message, $type = 'status') {
-  if ($message) {
-    switch ($type) {
-      case 'error':
-        $var = 'xmlsitemap_admin_error_messages';
-        break;
-      case 'warning':
-        $var = 'xmlsitemap_admin_warning_messages';
-        break;
-      case 'status':
-        $var = 'xmlsitemap_admin_status_messages';
-        break;
-    }
-    if (isset($var)) {
-      $messages = variable_get($var, array());
-      array_unshift($messages, $message);
-      variable_set($var, $messages);
-    }
+function xmlsitemap_tools_update($form_state = NULL) {
+  $form = array();
+  $step = isset($form_state['storage']['step']) ? $form_state['storage']['step'] : 1;
+  if (count(variable_get('xmlsitemap_database_update_tasks', array()))) {
+    $form['step_display'] = array(
+      '#type' => 'item',
+      '#value' => t('Step !step', array('!step' => $step)),
+    );
+    $form['submit'] = array(
+      '#type' => 'submit',
+      '#value' => 'Next',
+    );
   }
+  else {
+    $form['step_display'] = array(
+      '#type' => 'item',
+      '#value' => t('No further steps require to be executed'),
+    );
+  }
+  return $form;
 }
 
 /**
- * Show all the messages set with xmlsitemap_add_admin_message().
- * The function must be called at the beginning of every menu callback function
- * that creates an XML Sitemap administration page.
+ * Submit function for the multi-step database update form.
  */
-function xmlsitemap_show_admin_messages() {
-  $types = array(
-    'error' => 'xmlsitemap_admin_error_messages',
-    'warning' => 'xmlsitemap_admin_warning_messages',
-    'status' => 'xmlsitemap_admin_status_messages',
-  );
-  foreach ($types as $type => $var) {
-    $messages = variable_get($var, array());
-    if (count($messages)) {
-      foreach ($messages as $message) {
-        drupal_set_message($message, $type);
-      }
-      variable_set($var, array());
-    }
+function xmlsitemap_tools_update_submit($form, &$form_state) {
+  $step = isset($form_state['storage']['step']) ? $form_state['storage']['step'] : 1;
+  $tasks = variable_get('xmlsitemap_database_update_tasks', array());
+  if (count($tasks)) {
+    $task = array_shift($tasks);
+    variable_set('xmlsitemap_database_update_tasks', $tasks);
+    $batch = array(
+      'operations' => array(
+        $task['operation']
+      ),
+      'finished' => $task['finished'],
+      'title' => t('Updating the database'),
+      'progress_message' => '',
+      'error_message' => t('The update has encountered an error.'),
+      'file' => $task['file'],
+    );
+    batch_set($batch);
   }
+  $form_state['storage']['step'] = $step + 1;
 }
 
 /*****************************************************************************
