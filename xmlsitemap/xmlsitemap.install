@@ -23,7 +23,7 @@ function xmlsitemap_requirements($phase) {
         'value' => t('Database must be updated'),
       );      
     }
-    $requirements['xmlsitemap']['value'] = t("XML Sitemap revision !revision", array('!revision' => '$Revision$'));
+    $requirements['xmlsitemap']['value'] = t("XML Sitemap revision !revision", array('!revision' => preg_replace('/\$Revision$/iU', '$1', '$Revision$')));
   }
 }
 
