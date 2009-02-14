@@ -611,11 +611,13 @@ function _xmlsitemap_output_index() {
     if ($chunk < $link_count / $chunk_size) {
       $from = $chunk * $chunk_size;
       if (!empty($chunk_size)) {
-        $lastmod = db_result(db_query_range("SELECT MAX(lastmod) FROM {xmlsitemap}
-          WHERE changefreq <> 0
-            AND lastmod <> 0
-            AND (priority >= 0 AND priority <= 1)
-          ORDER BY lastmod DESC, loc",$from, $chunk_size)
+        $lastmod = db_result(
+          db_query_range("SELECT MAX(lastmod) FROM {xmlsitemap}
+            WHERE changefreq <> 0
+              AND lastmod <> 0
+              AND (priority >= 0 AND priority <= 1)",
+            $from, $chunk_size
+          )
         );
         if ($lastmod != 0) {
           print '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $lastmod) .'</lastmod>'."\n";
