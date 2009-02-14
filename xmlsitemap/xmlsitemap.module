@@ -544,7 +544,14 @@ function _xmlsitemap_get_path_alias($path, $alias = NULL) {
 function _xmlsitemap_link_count() {
   static $link_count;
   if (!isset($link_count)) {
-    $link_count = db_result(db_query("SELECT COUNT(*) FROM {xmlsitemap}"));
+    $link_count = db_result(
+      db_query(
+        "SELECT COUNT(*) FROM {xmlsitemap}
+          WHERE changefreq <> 0
+            AND lastmod <> 0
+            AND (priority >= 0 AND priority <= 1)"
+      )
+    );
   }
   return $link_count;
 }
@@ -562,7 +569,13 @@ function _xmlsitemap_output_chunk($chunk = 0) {
   print '  http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">'."\n";
   $chunk_size = variable_get('xmlsitemap_chunk_size', 200);
   $start = $chunk * $chunk_size;
-  $links = db_query_range("SELECT * FROM {xmlsitemap} ORDER BY lastmod DESC, changefreq, priority DESC, loc", $start , $chunk_size);
+  $links = db_query_range("SELECT * FROM {xmlsitemap}
+    WHERE changefreq <> 0
+      AND lastmod <> 0
+      AND (priority >= 0 AND priority <= 1)
+    ORDER BY lastmod DESC, changefreq, priority DESC, loc",
+    $start, $chunk_size
+  );
   while ($link = db_fetch_object($links)) {
     if ($link->module && function_exists($link->module .'_url')) {
       $function = $link->module .'_url';
@@ -573,15 +586,9 @@ function _xmlsitemap_output_chunk($chunk = 0) {
     }
     print '  <url>'."\n";
     print '    <loc>'. check_url($url) .'</loc>'."\n";
-    if ($link->lastmod != 0) {
-      print '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $link->lastmod) .'</lastmod>'."\n";
-    }
-    if ($link->changefreq != 0) {
-      print '    <changefreq>'. xmlsitemap_frequency($link->changefreq) .'</changefreq>'."\n";
-    }
-    if ($link->priority >= 0 && $link->priority <= 1) {
-      print '    <priority>'. number_format($link->priority, 1) .'</priority>'."\n";
-    }
+    print '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $link->lastmod) .'</lastmod>'."\n";
+    print '    <changefreq>'. xmlsitemap_frequency($link->changefreq) .'</changefreq>'."\n";
+    print '    <priority>'. number_format($link->priority, 1) .'</priority>'."\n";
     print '  </url>'."\n";
   }
   print '</urlset>';
@@ -604,10 +611,13 @@ function _xmlsitemap_output_index() {
     if ($chunk < $link_count / $chunk_size) {
       $from = $chunk * $chunk_size;
       if (!empty($chunk_size)) {
-        $lastmod = db_result(db_query_range("SELECT lastmod FROM {xmlsitemap}
+        $lastmod = db_result(db_query_range("SELECT MAX(lastmod) FROM {xmlsitemap}
+          WHERE changefreq <> 0
+            AND lastmod <> 0
+            AND (priority >= 0 AND priority <= 1)
           ORDER BY lastmod DESC, loc",$from, $chunk_size)
         );
-        if ($lastmod !== FALSE) {
+        if ($lastmod != 0) {
           print '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $lastmod) .'</lastmod>'."\n";
         }
       }

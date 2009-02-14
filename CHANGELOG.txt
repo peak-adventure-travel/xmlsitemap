@@ -2,7 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1.x-dev, 2009-02-14
 -----------------------------------
-#374387: db update incompatibilty.
+#374387: Database update incompatibilty.
 #374389: Unknown column 'r.list' in 'where clause'.
 #374395: Remove xmlsitemap_show_admin_messages(), and xmlsitemap_add_admin_messages().
 #374317: Table '{file}' doesn't exist.
