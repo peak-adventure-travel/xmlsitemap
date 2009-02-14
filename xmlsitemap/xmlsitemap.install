@@ -16,15 +16,19 @@
 function xmlsitemap_requirements($phase) {
   $requirements = array();
   if ($phase == 'runtime') {
+    $requirements['xmlsitemap'] = array(
+      'title' => t('XML Sitemap')
+    );
     if (count(variable_get('xmlsitemap_database_update_tasks', array()))) {
-      $requirements['xmlsitemap'] = array(
-        'description' => t('The database must be updated; go to the <a href="@database-update">database update</a> page.', array('@database-update' => url('admin/settings/tools/update'))),
-        'severity' => REQUIREMENT_ERROR,
-        'value' => t('Database must be updated'),
-      );      
+      $requirements['xmlsitemap']['description'] = t('The database must be updated; go to the <a href="@database-update">database update</a> page.', array('@database-update' => url('admin/settings/tools/update')));
+      $requirements['xmlsitemap']['severity'] = REQUIREMENT_ERROR;
+      $requirements['xmlsitemap']['value'] = t('Database must be updated');
     }
-    $requirements['xmlsitemap']['value'] = t("XML Sitemap revision !revision", array('!revision' => preg_replace('/\$Revision$/iU', '$1', '$Revision$')));
+    else {
+      $requirements['xmlsitemap']['value'] = t("XML Sitemap revision !revision", array('!revision' => preg_replace('/\$Rev[iI]sion:\s+(.*)\s+\$/iU', '$1', '$Revision$')));
+    }
   }
+  return $requirements;
 }
 
 /**
