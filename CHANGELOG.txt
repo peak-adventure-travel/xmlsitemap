@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1.x-dev, 2009-02-15
 -----------------------------------
+#374598: Wrong parameters for hook_form_alter().
 #372703: Change the implementation of hook_xmlsitemap_engines('access').
 #374403: hook_xmlsitemap_links() must check if the database row is not already present.
 

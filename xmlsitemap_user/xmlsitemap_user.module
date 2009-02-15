@@ -18,7 +18,7 @@
 /**
  * Implementation of hook_form_alter().
  */
-function xmlsitemap_user_form_alter($form_id, &$form) {
+function xmlsitemap_user_form_alter(&$form, &$form_state, $form_id) {
   switch ($form_id) {
     case 'user_admin_settings':
       if (!isset($form['xmlsitemap'])) {
@@ -204,15 +204,11 @@ function xmlsitemap_user_xmlsitemap_links() {
     if (count($frontpage) == 2 && $frontpage[0] == 'user' && is_numeric($frontpage[1])) {
       $uid = $frontpage[1];
     }
-    $result = db_query("SELECT u.uid, xu.changed, xu.previously_changed, xu.priority_override, SUM(xur.priority) as priority
+    $result = db_query("SELECT u.uid, xu.changed, xu.previously_changed, xu.priority_override
       FROM {xmlsitemap_user} xu
       INNER JOIN {users} u ON xu.uid = u.uid
-      LEFT JOIN {users_roles} ur ON xu.uid = ur.uid
-      LEFT JOIN {xmlsitemap_user_role} xur ON ur.rid = xur.rid
       WHERE u.status <> 0
-        AND u.uid <> %d
-      GROUP BY u.uid, xu.changed, xu.previously_changed, xu.priority_override
-      HAVING MIN(xur.priority) <> -1 OR SUM(xur.priority) IS NULL",
+        AND u.uid <> %d",
       $uid
     );
     $row = new stdClass();
@@ -227,6 +223,7 @@ function xmlsitemap_user_xmlsitemap_links() {
         $row->priority = $user->priority_override;
       }
       else {
+        db_query("");
         $row->priority = min(isset($user->priority) ? $user->priority : variable_get('xmlsitemap_user_default_priority', 0.5), 1);
       }
       if (db_result(db_query("SELECT loc FROM {xmlsitemap} WHERE loc = '%s'", $row->loc)) != $row->loc) {
