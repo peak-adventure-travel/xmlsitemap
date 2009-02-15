@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 6.x-1.x-dev, 2009-02-15
+-----------------------------------
+#374403: hook_xmlsitemap_links() must check if the database row is not already present.
+
 XML Sitemap 6.x-1.x-dev, 2009-02-14
 -----------------------------------
 #374387: Database update incompatibilty.

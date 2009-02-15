@@ -227,21 +227,23 @@ function xmlsitemap_user_xmlsitemap_links() {
       HAVING MIN(xur.priority) <> -1 OR SUM(xur.priority) IS NULL",
       $uid
     );
+    $row = new stdClass();
+    $row->module = 'xmlsitemap_user';
+    $row->type = 'user';
     while ($user = db_fetch_object($result)) {
-      $age = time() - $user->changed;
-      $interval = empty($user->previously_changed) ? 0 : $user->changed - $user->previously_changed;
+      $row->loc = 'user/'. $user->uid;
+      $row->id = $user->uid;
+      $row->lastmod = $user->changed;
+      $row->change_freq = max(time() - $user->changed, empty($user->previously_changed) ? 0 : $user->changed - $user->previously_changed);
       if ($user->priority_override != -2.0) {
-        $priority = $user->priority_override;
+        $row->priority = $user->priority_override;
       }
       else {
-        $priority = min(isset($user->priority) ? $user->priority : variable_get('xmlsitemap_user_default_priority', 0.5), 1);
+        $row->priority = min(isset($user->priority) ? $user->priority : variable_get('xmlsitemap_user_default_priority', 0.5), 1);
       }
-      db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)",
-        array(
-          xmlsitemap_url('user/'. $user->uid, $user->alias, NULL, NULL, TRUE),
-          $user->changed, max($age, $interval), $priority,
-        )
-      );
+      if (db_result(db_query("SELECT loc FROM {xmlsitemap} WHERE loc = '%s'", $row->loc)) != $row->loc) {
+        drupal_write_record('xmlsitemap', $row);
+      }
     }
   }
 }

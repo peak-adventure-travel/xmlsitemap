@@ -255,7 +255,7 @@ function xmlsitemap_node_xmlsitemap_links() {
   $row->module = 'xmlsitemap_node';
   $row->type = 'node';
   while ($node = db_fetch_object($result)) {
-    $row->loc = xmlsitemap_url('node/'. $node->nid, $node->alias, NULL, NULL, TRUE);
+    $row->loc = 'node/'. $node->nid;
     $row->id = $node->nid;
     $row->lastmod = $node->changed;
     $row->changefreq = max(time() - $node->changed, empty($node->previously_changed) ? 0 : $node->changed - $node->previously_changed);

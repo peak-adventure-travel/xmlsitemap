@@ -607,7 +607,7 @@ function _xmlsitemap_output_index() {
   $link_count = _xmlsitemap_link_count();
   for ($chunk = 0; $chunk < $link_count / $chunk_size; ++$chunk) {
     print '  <sitemap>'."\n";
-    print '    <loc>'. xmlsitemap_url("sitemap$chunk.xml", NULL, NULL, NULL, TRUE) .'</loc>'."\n";
+    print '    <loc>'. url("sitemap$chunk.xml", array('absolute' => TRUE)) .'</loc>'."\n";
     if ($chunk < $link_count / $chunk_size) {
       $from = $chunk * $chunk_size;
       if (!empty($chunk_size)) {
@@ -642,14 +642,14 @@ function _xmlsitemap_ping() {
  */
 function _xmlsitemap_update() {
   db_query("DELETE FROM {xmlsitemap}");
-  db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)",
-    array(
-      xmlsitemap_url(NULL, NULL, NULL, NULL, TRUE),
-      time() - 1,
-      1,
-      variable_get('xmlsitemap_front_page_priority', 1)
-    )
-  );
+  $row = new stdClass();
+  $row->loc = drupal_get_normal_path(variable_get('site_frontpage', 'node'));
+  $row->module = 'xmlsitemap';
+  $row->type = 'frontpage';
+  $row->lastmod = time() -1;
+  $row->changefreq = 1;
+  $row->priority = variable_get('xmlsitemap_front_page_priority', 1);
+  drupal_write_record('xmlsitemap', $row);
   module_invoke_all('xmlsitemap_links');
   menu_rebuild();
   db_query("DELETE FROM {cache_page} WHERE cid LIKE '%%sitemap%%.xml'");
