@@ -57,16 +57,16 @@ function xmlsitemap_exit() {
     }
     if (isset($write_log)) {
       drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
-      $result = module_invoke_all('xmlsitemap_engines', 'access');
-      if (!empty($result)) {
-        $message = $result[0];
+      foreach (module_implements('xmlsitemap_engines') as $module) {
+        $function = $module .'_xmlsitemap_engines';
+        $result = $function('access');
+        if (!empty($result)) {
+          break;
+        }
       }
-      else {
-        $message = 'Sitemap downloaded by @user-agent at @address.';
-      }
-      watchdog('xmlsitemap', $message,
+      watchdog('xmlsitemap', 'Sitemap downloaded by @user-agent at @address.',
         array(
-          '@user-agent' => $_SERVER['HTTP_USER_AGENT'],
+          '@user-agent' => !empty($result) ? $result : $_SERVER['HTTP_USER_AGENT'],
           '@address' => $_SERVER['REMOTE_ADDR'],
         )
       );
