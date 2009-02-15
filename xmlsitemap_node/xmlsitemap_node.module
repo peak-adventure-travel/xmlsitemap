@@ -225,7 +225,7 @@ function xmlsitemap_node_xmlsitemap_description() {
 function xmlsitemap_node_xmlsitemap_links() {
   $query = "SELECT n.nid, n.type, n.promote, xn.changed, xn.previously_changed, xn.priority_override, xn.comment_ratio
     FROM {node} n
-    LEFT JOIN {xmlsitemap_node} xn ON n.nid = xn.nid
+    INNER JOIN {xmlsitemap_node} xn ON n.nid = xn.nid
     WHERE n.status > 0
       AND (xn.priority_override = -2.0 OR xn.priority_override >= 0.0)
       AND n.nid <> %d";

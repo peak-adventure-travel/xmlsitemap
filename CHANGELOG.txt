@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1.x-dev, 2009-02-15
 -----------------------------------
+#347381: Check if anonymous user can view the links added to the site map.
 #371141: priority_override should allow an item to appear in the site map even if its normal priority would exclude it.
 #374598: Wrong parameters for hook_form_alter().
 #372703: Change the implementation of hook_xmlsitemap_engines('access').

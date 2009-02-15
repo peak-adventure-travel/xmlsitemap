@@ -120,7 +120,6 @@ function xmlsitemap_help($path, $arg) {
 function xmlsitemap_menu() {
   $items = array();
   $access_config = array('administer site configuration');
-  $access_content = array('access content');
   $items['admin/settings/xmlsitemap'] = array(
     'title' => 'XML Sitemap',
     'description' => 'Configure the XML site map.',
@@ -152,7 +151,7 @@ function xmlsitemap_menu() {
   $items['sitemap.xml'] = array(
     'title' => 'Site map index',
     'page callback' => 'xmlsitemap_output',
-    'access arguments' => $access_content,
+    'access callback' => 'xmlsitemap_anonymous_access',
     'type' => MENU_CALLBACK,
   );
   $chunk_size = variable_get('xmlsitemap_chunk_size', 200);
@@ -164,7 +163,7 @@ function xmlsitemap_menu() {
         'title arguments' => array('!number' => $chunk),
         'page callback' => 'xmlsitemap_output',
         'page arguments' => array((string) $chunk),
-        'access arguments' => $access_content,
+        'access callback' => 'xmlsitemap_anonymous_access',
         'type' => MENU_CALLBACK,
       );
     }
@@ -360,6 +359,11 @@ function xmlsitemap_tools_update_submit($form, &$form_state) {
 /*****************************************************************************
  * Public functions.
  ****************************************************************************/
+
+function xmlsitemap_anonymous_access() {
+  global $user;
+  return $user->uid == 0;
+}
 
 /**
  * Batch callback called when the batch operations are completed.
