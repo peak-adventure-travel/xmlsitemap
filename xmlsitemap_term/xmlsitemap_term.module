@@ -173,13 +173,13 @@ function xmlsitemap_term_taxonomy($op, $type, $array = NULL) {
         db_query("DELETE FROM {xmlsitemap_term} WHERE tid = %d", $array['tid']);
         break;
       case 'insert':
-        db_query("INSERT INTO {xmlsitemap_term} (tid, changed, priority_override) VALUES (%d, %d, %s)",
+        db_query("INSERT INTO {xmlsitemap_term} (tid, changed, priority_override) VALUES (%d, %d, %f)",
           $array['tid'], time(), $array['xmlsitemap_term_priority']
         );
         break;
       case 'update':
         if (isset($array['xmlsitemap_term_priority'])) {
-          db_query("UPDATE {xmlsitemap_term} SET priority_override = %s WHERE tid = %d",
+          db_query("UPDATE {xmlsitemap_term} SET priority_override = %f WHERE tid = %d",
             $array['xmlsitemap_term_priority'], $array['tid']
           );
         }
