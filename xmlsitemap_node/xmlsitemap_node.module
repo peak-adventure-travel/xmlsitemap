@@ -224,26 +224,13 @@ function xmlsitemap_node_xmlsitemap_description() {
  */
 function xmlsitemap_node_xmlsitemap_links() {
   $excludes = xmlsitemap_node_excludes();
-  switch ($GLOBALS['db_type']) {
-    case 'mysql':
-    case 'mysqli':
-      $coalesce = 'COALESCE';
-      $concat = "CONCAT('node/', n.nid)";
-      break;
-    case 'pgsql':
-      $coalesce = 'FIRST';
-      $concat = "('node/' || n.nid)";
-      break;
-  }
-  $columns = 'n.nid, n.type, n.promote, xn.changed, xn.previously_changed, xn.priority_override, xn.comment_ratio';
-  $query = "SELECT $columns, $coalesce(ua.dst) AS alias FROM {node} n
+  $query = "SELECT n.nid, n.type, n.promote, xn.changed, xn.previously_changed, xn.priority_override, xn.comment_ratio
+    FROM {node} n
     LEFT JOIN {xmlsitemap_node} xn ON n.nid = xn.nid
-    LEFT JOIN {url_alias} ua ON ua.src = $concat
     WHERE n.status > 0
       AND n.type NOT IN (". db_placeholders($excludes, 'varchar') .")
       AND (xn.priority_override = -2.0 OR xn.priority_override >= 0.0)
-      AND n.nid <> %d
-    GROUP BY $columns";
+      AND n.nid <> %d";
   $nid = 0;
   $frontpage = explode('/', drupal_get_normal_path(variable_get('site_frontpage', 'node')));
   if (count($frontpage) == 2 && $frontpage[0] == 'node' && is_numeric($frontpage[1])) {
