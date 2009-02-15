@@ -48,7 +48,7 @@ function xmlsitemap_menu_xmlsitemap_links() {
         // both have $link['external'] set to 1.
         if (!$link['external'] && !$link['hidden'] && $link['access'] == 1) {
           $row->loc = $link['href'];
-          $row->id = $link['mlid'];
+          $row->id = $mlid;
           $row->priority = min(max(round($link['weight'] / 20 + 0.5, 1), 0), 1);
           if (db_result(db_query("SELECT loc FROM {xmlsitemap} WHERE loc = '%s'", $row->loc)) != $row->loc) {
             drupal_write_record('xmlsitemap', $row);

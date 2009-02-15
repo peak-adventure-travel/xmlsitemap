@@ -208,27 +208,15 @@ function xmlsitemap_term_xmlsitemap_description() {
  * Implementation of hook_xmlsitemap_links().
  */
 function xmlsitemap_term_xmlsitemap_links() {
-  $tid = 0;
-  $frontpage = explode('/', drupal_get_normal_path(variable_get('site_frontpage', 'node')));
-  if (count($frontpage) == 3 && $frontpage[0] == 'taxonomy' && $frontpage[1] == 'term' && is_numeric($frontpage[2])) {
-    $tid = $frontpage[2];
-  }
-  elseif (count($frontpage) == 2 && $frontpage[0] == 'forum' && is_numeric($frontpage[1])) {
-    $tid = $frontpage[1];
-  }
-  $query_args = array($tid);
   $result = db_query(
     db_rewrite_sql(
       "SELECT t.tid, t.vid, v.module, xt.changed, xt.previously_changed, xt.priority_override
         FROM {term_data} t
         LEFT JOIN {vocabulary} v ON t.vid = v.vid
         LEFT JOIN {xmlsitemap_term} xt ON t.tid = xt.tid
-        WHERE t.vid NOT IN (". db_placeholders($excludes, 'int') .")
-          AND xt.priority_override <> -1
-          AND t.tid <> %d",
+        WHERE xt.priority_override <> -1",
       't', 'tid'
-    ),
-    $query_args
+    )
   );
   $row = new stdClass();
   $row->module = 'xmlsitemap_term';

@@ -567,7 +567,7 @@ function _xmlsitemap_update() {
   $row->loc = drupal_get_normal_path(variable_get('site_frontpage', 'node'));
   $row->module = 'xmlsitemap';
   $row->type = 'frontpage';
-  $row->lastmod = time() -1;
+  $row->lastmod = time() - 1;
   $row->changefreq = 1;
   $row->priority = variable_get('xmlsitemap_front_page_priority', 1);
   drupal_write_record('xmlsitemap', $row);
