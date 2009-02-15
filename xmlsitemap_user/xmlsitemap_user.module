@@ -223,8 +223,19 @@ function xmlsitemap_user_xmlsitemap_links() {
         $row->priority = $user->priority_override;
       }
       else {
-        db_query("");
-        $row->priority = min(isset($user->priority) ? $user->priority : variable_get('xmlsitemap_user_default_priority', 0.5), 1);
+        $priority = db_fetch_object(
+          db_query("SELECT MIN(xur.priority) AS min, SUM(xur.priority) AS sum
+            FROM {users_roles} ur
+            INNER JOIN {xmlsitemap_user_role} xur ON xur.rid = ur.rid
+            WHERE ur.uid = %d", $user->uid
+          )
+        );
+        if (isset($priority->min) && isset($priority->sum)) {
+          $row->priority = $default->min < 0 ? -1.0 : round(min($default->sum, 1), 1);
+        }
+        else {
+          $row->priority = variable_get('xmlsitemap_user_default_priority', 0.5);
+        }
       }
       if (db_result(db_query("SELECT loc FROM {xmlsitemap} WHERE loc = '%s'", $row->loc)) != $row->loc) {
         drupal_write_record('xmlsitemap', $row);
