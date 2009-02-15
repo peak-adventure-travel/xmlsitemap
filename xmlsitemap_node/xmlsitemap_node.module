@@ -258,7 +258,7 @@ function xmlsitemap_node_xmlsitemap_links() {
  */
 function xmlsitemap_node_xmlsitemap_sitemap_settings_alter(&$form) {
   $options = xmlsitemap_priority_options();
-  $warning = t("This setting doesn't apply for the nodes for which has been set a priority value that override the content type priority.");
+  $warning = t("This setting doesn't apply for the nodes for which has been set a priority value that overrides the content type priority.");
   $form['general']['priority']['xmlsitemap_node_promote_priority'] = array(
     '#type' => 'select',
     '#title' => t('Promotion adjustment'),
