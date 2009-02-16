@@ -103,7 +103,7 @@ function xmlsitemap_file_xmlsitemap_links() {
       $row->loc = $file->filepath;
       $row->id = $file->nid;
       $row->sid = $file->fid;
-      $row->lastmod = filemtime($file->filepath);
+      $row->changed = filemtime($file->filepath);
       $row->changefreq = max(time() - $file->changed, empty($file->previously_changed) ? 0 : $file->changed - $file->previously_changed);
       $row->priority = 0.5;
       if (db_result(db_query("SELECT loc FROM {xmlsitemap} WHERE loc = '%s'", $row->loc)) != $row->loc) {

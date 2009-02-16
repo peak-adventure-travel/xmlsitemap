@@ -229,7 +229,7 @@ function xmlsitemap_term_xmlsitemap_links() {
       $row->loc = taxonomy_term_path($term);
     }
     $row->id = $term->tid;
-    $row->lastmod = $term->changed;
+    $row->changed = $term->changed;
     $row->changefreq = max(time() - $term->changed, empty($term->previously_changed) ? 0 : $term->changed - $term->previously_changed);
     if ($term->priority_override != -2.0) {
       $row->priority = $term->priority_override;

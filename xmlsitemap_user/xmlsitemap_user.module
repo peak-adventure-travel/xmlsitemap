@@ -210,8 +210,8 @@ function xmlsitemap_user_xmlsitemap_links() {
     while ($user = db_fetch_object($result)) {
       $row->loc = 'user/'. $user->uid;
       $row->id = $user->uid;
-      $row->lastmod = $user->changed;
-      $row->change_freq = max(time() - $user->changed, empty($user->previously_changed) ? 0 : $user->changed - $user->previously_changed);
+      $row->changed = $user->changed;
+      $row->changefreq = max(time() - $user->changed, empty($user->previously_changed) ? 0 : $user->changed - $user->previously_changed);
       if ($user->priority_override != -2.0) {
         $row->priority = $user->priority_override;
       }

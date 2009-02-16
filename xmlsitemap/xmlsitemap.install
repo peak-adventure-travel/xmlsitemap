@@ -73,7 +73,14 @@ function xmlsitemap_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
-      'lastmod' => array(
+      'language' => array(
+        'description' => 'The language associated with the link.',
+        'type' => 'varchar',
+        'length' => 12,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'changed' => array(
         'description' => 'The Unix timestamp of the last change.',
         'type' => 'int',
         'unsigned' => TRUE,
@@ -97,7 +104,8 @@ function xmlsitemap_schema() {
     'indexes' => array(
       'link_module' => array('module'),
       'link_type' => array('type'),
-      'link_changed' => array('lastmod'),
+      'link_language' => array('language'),
+      'link_changed' => array('changed'),
       'link_priority' => array('priority'),
     ),
     'primary key' => array('loc'),
@@ -225,7 +233,19 @@ function xmlsitemap_update_6000() {
         )
       );
     }
-    db_change_field($ret, 'xmlsitemap', 'lastmod', 'lastmod',
+    if (!db_column_exists('xmlsitemap', 'language')) {
+      db_add_field($ret, 'xmlsitemap', 'language',
+        array(
+          'description' => 'The language associated with the link.',
+          'type' => 'varchar',
+          'length' => 12,
+          'not null' => TRUE,
+          'default' => '',
+        ),
+        array('indexes' => array('link_language' => array('language')))
+      );
+    }
+    db_change_field($ret, 'xmlsitemap', 'lastmod', 'changed',
       array(
         'description' => 'The Unix timestamp of the last change.',
         'type' => 'int',
@@ -233,7 +253,7 @@ function xmlsitemap_update_6000() {
         'not null' => TRUE,
         'default' => 0,
       ),
-      array('indexes' => array('link_changed' => array('lastmod')))
+      array('indexes' => array('link_changed' => array('changed')))
     );
     db_change_field($ret, 'xmlsitemap', 'changefreq', 'changefreq',
       array(
@@ -294,7 +314,14 @@ function xmlsitemap_update_6000() {
             'not null' => TRUE,
             'default' => 0,
           ),
-          'lastmod' => array(
+          'language' => array(
+            'description' => 'The language associated with the link.',
+            'type' => 'varchar',
+            'length' => 12,
+            'not null' => TRUE,
+            'default' => '',
+          ),
+          'changed' => array(
             'description' => 'The Unix timestamp of the last change.',
             'type' => 'int',
             'unsigned' => TRUE,
@@ -318,7 +345,8 @@ function xmlsitemap_update_6000() {
         'indexes' => array(
           'link_module' => array('module'),
           'link_type' => array('type'),
-          'link_changed' => array('lastmod'),
+          'link_language' => array('language'),
+          'link_changed' => array('changed'),
           'link_priority' => array('priority'),
         ),
         'primary key' => array('loc'),
@@ -478,7 +506,6 @@ function xmlsitemap_update_6117() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_update_6118() {
-  $ret = xmlsitemap_update_6000();
   variable_set('xmlsitemap_cron_submit_frequency', variable_get('xmlsitemap_cron_submit', FALSE) ? 1 : -1);
   $ret[] = array(
     'success' => TRUE,
@@ -486,6 +513,13 @@ function xmlsitemap_update_6118() {
   );
   $ret[] = update_sql("UPDATE {system} SET weight = 2 WHERE name = 'xmlsitemap'");
   return $ret;
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_6119() {
+  return xmlsitemap_update_6000();
 }
 
 /**

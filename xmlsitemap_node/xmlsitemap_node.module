@@ -235,7 +235,7 @@ function xmlsitemap_node_xmlsitemap_links() {
   while ($node = db_fetch_object($result)) {
     $row->loc = 'node/'. $node->nid;
     $row->id = $node->nid;
-    $row->lastmod = $node->changed;
+    $row->changed = $node->changed;
     $row->changefreq = max(time() - $node->changed, empty($node->previously_changed) ? 0 : $node->changed - $node->previously_changed);
     if ($node->priority_override != -2.0) {
       $priority = $node->priority_override;
