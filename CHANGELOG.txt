@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 6.x-1.x-dev, 2009-02-16
+-----------------------------------
+#374674: Change the way the front page URL is generated.
+
 XML Sitemap 6.x-1.x-dev, 2009-02-15
 -----------------------------------
 #199710: Change the query placeholders.
