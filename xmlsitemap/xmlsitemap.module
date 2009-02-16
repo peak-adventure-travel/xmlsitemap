@@ -564,7 +564,7 @@ function _xmlsitemap_ping() {
 function _xmlsitemap_update() {
   db_query("DELETE FROM {xmlsitemap}");
   $row = new stdClass();
-  $row->loc = '';
+  $row->loc = url('', array('absolute' => TRUE));
   $row->module = 'xmlsitemap';
   $row->type = 'frontpage';
   $row->changed = time() - 1;
