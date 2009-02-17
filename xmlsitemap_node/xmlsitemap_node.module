@@ -44,9 +44,12 @@ function xmlsitemap_node_comment($a1, $op) {
             return;
           }
           $row = new stdClass();
-          $row->nid = $node->nid;
+          $row->nid = $nid;
           $row->changed = $node->changed;
           $row->previously_changed = $node->created;
+        }
+        if ($node) {
+          $row->vid = $node->vid;
         }
         $row->comment_ratio = $comments / $maxcomments;
         drupal_write_record('xmlsitemap_node', $row, isset($update) ? 'nid' : NULL);
@@ -168,7 +171,9 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
     case 'insert':
       $row = new stdClass();
       $row->nid = $node->nid;
-      $row->changed = $row->previously_changed = $node->changed;
+      $row->vid = $node->vid;
+      $row->changed = $node->changed;
+      $row->previously_changed = $node->created;
       $row->priority_override = isset($node->priority_override) ? $node->priority_override : -2.0;
       drupal_write_record('xmlsitemap_node', $row);
       if ($node->status) {
@@ -179,7 +184,8 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
       if (($result = db_fetch_object(db_query("SELECT * FROM {xmlsitemap_node} WHERE nid = %d", $node->nid))) === FALSE) {
         $row = new stdClass();
         $row->nid = $node->nid;
-        $row->changed = $row->previously_changed = $node->changed;
+        $row->changed = $node->changed;
+        $row->previously_changed =  $node->created;
         $row->priority_override = isset($node->priority_override) ? $node->priority_override : -2.0;
       }
       else {
@@ -190,6 +196,7 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
           $row->priority_override =  $node->priority_override;
         }
       }
+      $row->vid = $node->vid;
       drupal_write_record('xmlsitemap_node', $row, $result === FALSE ? NULL : 'nid');
       if ($node->status || $node->xmlsitemap_node_status) {
         xmlsitemap_update_sitemap();
@@ -364,7 +371,7 @@ function _xmlsitemap_node_set_priority($nid, $priority) {
     $result = db_fetch_object(db_query("SELECT * FROM {xmlsitemap_node} WHERE nid = %d", $nid));
     if ($result === FALSE) {
       $row = new stdClass();
-      $row->nid = $node->nid;
+      $row->nid = $nid;
       $row->changed = $node->changed;
       $row->previously_changed = $node->created;
     }
@@ -375,6 +382,7 @@ function _xmlsitemap_node_set_priority($nid, $priority) {
         $row->changed = $node->changed;
       }
     }
+    $row->vid = $node->vid;
     $row->priority_override = $priority;
     drupal_write_record('xmlsitemap_node', $row, $result === FALSE ? NULL : 'nid');
   }

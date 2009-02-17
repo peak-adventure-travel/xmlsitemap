@@ -359,3 +359,67 @@ function xmlsitemap_node_uninstall() {
   drupal_uninstall_schema('xmlsitemap_node');
   db_query("DELETE FROM {variable} WHERE name LIKE 'xmlsitemap\_node\_%'");
 }
+
+/*****************************************************************************
+ * Private functions.
+ ****************************************************************************/
+
+/**
+ * Batch function to update the vid field of the xmlsitemap_node database table.
+ */
+function _xmlsitemap_node_update_vid_field_batch(&$context) {
+  if (!isset($context['sandbox']['progress'])) {
+    $context['sandbox']['progress'] = 0;
+    $context['sandbox']['max'] = db_result(db_query('SELECT COUNT(*) FROM {node}'));
+    $context['sandbox']['nid'] = 0;
+  }
+  $node = db_fetch_object(
+    db_query('SELECT * FROM {node}
+      WHERE nid > %d', $context['sandbox']['nid']
+    )
+  );
+  if ($node) {
+    $result = db_fetch_object(
+      db_query('SELECT * FROM {xmlsitemap_node}
+        WHERE nid = %d', $node->nid
+      )
+    );
+    if ($result === FALSE) {
+      $row = new stdClass();
+      $row->nid = $node->nid;
+      $row->vid = $node->vid;
+      $row->changed = $node->changed;
+      $row->previously_changed = $node->created;
+    }
+    else {
+      $row = $result;
+      if ($node->changed > $row->changed) {
+        $row->previously_changed = $row->changed;
+        $row->changed = $node->changed;
+      }
+    }
+    $row->vid = $node->vid;
+    drupal_write_record('xmlsitemap_node', $row, $result === FALSE ? NULL : 'nid');
+    $context['sandbox']['nid'] = $node->nid;
+    $context['results'][] = l($node->title, 'node/'. $node->nid);
+  }
+  $context['sandbox']['progress']++;
+  if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
+    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+  }
+}
+
+/**
+ * Function called when the batch operation is completed.
+ */
+function _xmlsitemap_node_batch_finished($success, $results, $operations) {
+  if ($success) {
+    drupal_set_message(t('The update has been performed.'));
+  }
+  else {
+    drupal_set_message(t('An error occurred and processing did not complete.'), 'error');
+    $message = format_plural(count($results), '1 item successfully processed:', '@count items successfully processed:');
+    $message .= theme('item_list', $results);
+    drupal_set_message($message);
+  }
+}

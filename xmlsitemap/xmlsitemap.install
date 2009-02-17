@@ -19,10 +19,11 @@ function xmlsitemap_requirements($phase) {
     $requirements['xmlsitemap'] = array(
       'title' => t('XML Sitemap')
     );
-    if (count(variable_get('xmlsitemap_database_update_tasks', array()))) {
-      $requirements['xmlsitemap']['description'] = t('The database must be updated; go to the <a href="@database-update">database update</a> page.', array('@database-update' => url('admin/settings/tools/update')));
-      $requirements['xmlsitemap']['severity'] = REQUIREMENT_ERROR;
-      $requirements['xmlsitemap']['value'] = t('Database must be updated');
+    $severity = drupal_requirements_severity(variable_get('xmlsitemap_database_update_tasks', array()));
+    if ($severity > REQUIREMENT_OK) {
+      $requirements['xmlsitemap']['description'] = t('The database needs to be updated; go to the <a href="@database-update">database update</a> page.', array('@database-update' => url('admin/settings/tools/update')));
+      $requirements['xmlsitemap']['severity'] = $severity;
+      $requirements['xmlsitemap']['value'] = t('Database needs to be updated');
     }
     else {
       $requirements['xmlsitemap']['value'] = t("XML Sitemap revision !revision", array('!revision' => preg_replace('/\$Rev[iI]sion:\s+(.*)\s+\$/iU', '$1', '$Revision$')));
