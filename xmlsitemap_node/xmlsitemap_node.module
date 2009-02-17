@@ -19,19 +19,18 @@
  * Implementation of hook_comment().
  */
 function xmlsitemap_node_comment($a1, $op) {
-  $maxcomments = (integer) db_result(db_query('SELECT MAX(comment_count) FROM {node_comment_statistics}'));
   switch ($op) {
     case 'insert':
     case 'update':
     case 'delete':
     case 'publish':
     case 'unpublish':
+      $maxcomments = (integer) db_result(db_query('SELECT MAX(comment_count) FROM {node_comment_statistics}'));
       $nid = is_array($a1) ? $a1['nid'] : $a1->nid;
       if ($nid && $maxcomments > 1) {
         $comments = (integer) db_result(db_query('SELECT comment_count
           FROM {node_comment_statistics}
-          WHERE nid = %d',
-          $nid)
+          WHERE nid = %d', $nid)
         );
         $query = "SELECT * FROM {xmlsitemap_node} WHERE nid = %d";
         $link = db_fetch_object(db_query($query, $nid));
@@ -309,7 +308,7 @@ function xmlsitemap_node_type_submit($form, &$form_state) {
  * Node operations callback.
  */
 function _xmlsitemap_node_priority_operations($nodes, $priority) {
-  if (count($nodes) > 10) {
+  if (count($nodes)) {
     $batch = array(
       'operations' => array(
         array('_xmlsitemap_node_batch_process', array($nodes, $priority))
@@ -320,12 +319,6 @@ function _xmlsitemap_node_priority_operations($nodes, $priority) {
       'error_message' => t('The update has encountered an error.'),
     );
     batch_set($batch);
-  }
-  else {
-    foreach ($nodes as $nid) {
-      _xmlsitemap_node_set_priority($nid, $priority);
-    }
-    drupal_set_message(t(('The update has been performed.')));
   }
 }
 
@@ -341,32 +334,11 @@ function _xmlsitemap_node_batch_process($nodes, $priority, &$context) {
     $context['sandbox']['progress'] = 0;
     $context['sandbox']['max'] = count($nodes);
     $context['sandbox']['nodes'] = $nodes;
+    if (module_exists('comment')) {
+      $context['sandbox']['maxcomments'] = (integer) db_result(db_query('SELECT MAX(comment_count) FROM {node_comment_statistics}'));
+    }
   }
   $nid = array_shift($context['sandbox']['nodes']);
-  if ($node = _xmlsitemap_node_set_priority($nid, $priority)) {
-    $context['results'][] = l($node->title, 'node/'. $node->nid);
-  }
-  $context['sandbox']['progress']++;
-  if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
-    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
-  }
-}
-
-/*****************************************************************************
- * Private functions - node, and batch operations support functions.
- ****************************************************************************/
-
-/**
- * Add node data to the the xmlsitemap_node table, and set the
- * priority_override field to the passed value.
- * @param $nid
- *   The node ID.
- * @param $priority
- *   The priority to set.
- * @return
- *   The node object.
- */
-function _xmlsitemap_node_set_priority($nid, $priority) {
   if ($node = node_load($nid)) {
     $result = db_fetch_object(db_query("SELECT * FROM {xmlsitemap_node} WHERE nid = %d", $nid));
     if ($result === FALSE) {
@@ -385,8 +357,15 @@ function _xmlsitemap_node_set_priority($nid, $priority) {
     $row->vid = $node->vid;
     $row->priority_override = $priority;
     drupal_write_record('xmlsitemap_node', $row, $result === FALSE ? NULL : 'nid');
+    $context['results'][] = l($node->title, 'node/'. $node->nid);
+    if (count($context['results']) > 6) {
+      array_shift($context['results']);
+    }
   }
-  return $node;
+  $context['sandbox']['progress']++;
+  if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
+    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+  }
 }
 
 /**

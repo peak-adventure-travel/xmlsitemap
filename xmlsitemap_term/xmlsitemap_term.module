@@ -311,6 +311,9 @@ function _xmlsitemap_term_batch_process($nodes, $priority, &$context) {
     if (!empty($context['sandbox']['node'])) {
       $node = $context['sandbox']['node'];
       $context['results'][] = l($node->title, 'node/'. $node->nid);
+      if (count($context['results']) > 6) {
+        array_shift($context['results']);
+      }
     }
   }
   if ($context['sandbox']['progress'] != $context['sandbox']['max']) {

@@ -276,7 +276,7 @@ function xmlsitemap_user_form_submit($form, &$form_state) {
  * Node operations callback.
  */
 function _xmlsitemap_user_priority_operations($accounts, $priority) {
-  if (count($accounts) > 10) {
+  if (count($accounts)) {
     $batch = array(
       'operations' => array(
         array('_xmlsitemap_user_batch_process', array($accounts, $priority))
@@ -287,12 +287,6 @@ function _xmlsitemap_user_priority_operations($accounts, $priority) {
       'error_message' => t('The update has encountered an error.'),
     );
     batch_set($batch);
-  }
-  else {
-    foreach ($accounts as $uid) {
-      _xmlsitemap_user_set_priority($uid, $priority);
-    }
-    drupal_set_message(t(('The update has been performed.')));
   }
 }
 
@@ -310,30 +304,6 @@ function _xmlsitemap_user_batch_process($accounts, $op, &$context) {
     $context['sandbox']['accounts'] = $accounts;
   }
   $uid = array_shift($context['sandbox']['accounts']);
-  if ($user = _xmlsitemap_user_set_priority($uid, $priority)) {
-    $context['results'][] = l($user->name, 'user/'. $user->uid);
-  }
-  $context['sandbox']['progress']++;
-  if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
-    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
-  }
-}
-
-/*****************************************************************************
- * Private functions - user, and batch operations support functions.
- ****************************************************************************/
-
-/**
- * Add user data to the the xmlsitemap_user table, and set the
- * priority_override field to the passed value.
- * @param $uid
- *   The user ID.
- * @param $priority
- *   The priority to set.
- * @return
- *   The user object.
- */
-function _xmlsitemap_user_set_priority($uid, $priority) {
   if ($user = user_load(array('uid' => $uid))) {
     $result = db_fetch_object(db_query("SELECT * FROM {xmlsitemap_user} WHERE uid = %d", $uid));
     if ($result === FALSE) {
@@ -349,8 +319,15 @@ function _xmlsitemap_user_set_priority($uid, $priority) {
     }
     $row->priority_override = $priority;
     drupal_write_record('xmlsitemap_user', $row, $result === FALSE ? NULL : 'uid');
+    $context['results'][] = l($user->name, 'user/'. $user->uid);
+    if (count($context['results']) > 6) {
+      array_shift($context['results']);
+    }
   }
-  return $user;
+  $context['sandbox']['progress']++;
+  if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
+    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+  }
 }
 
 /**
