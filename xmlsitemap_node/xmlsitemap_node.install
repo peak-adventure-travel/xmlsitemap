@@ -353,6 +353,27 @@ function xmlsitemap_node_update_6110() {
 }
 
 /**
+ * Implementation of hook_update_N().
+ *
+ */
+function xmlsitemap_node_update_6111() {
+  $tasks = variable_get('xmlsitemap_database_update_tasks', array());
+  $tasks[] = array(
+    'operation' => '_xmlsitemap_node_update_vid_field_batch',
+    'finished' => '_xmlsitemap_node_batch_finished',
+    'file' => drupal_get_path('module', 'xmlsitemap_node') .'/xmlsitemap_node.install',
+    'severity' => REQUIREMENT_ERROR,
+  );
+  variable_set('xmlsitemap_database_update_tasks', $tasks);
+  return array(
+    0 => array(
+      'success' => TRUE,
+      'query' => 'FORCE DATABASE UPDATE',
+    )
+  );
+}
+
+/**
  * Implementation of hook_uninstall().
  */
 function xmlsitemap_node_uninstall() {

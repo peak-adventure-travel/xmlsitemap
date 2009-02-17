@@ -337,13 +337,12 @@ function xmlsitemap_tools_update($form_state = NULL) {
  */
 function xmlsitemap_tools_update_submit($form, &$form_state) {
   $step = isset($form_state['storage']['step']) ? $form_state['storage']['step'] : 1;
-  $tasks = variable_get('xmlsitemap_database_update_tasks', array());
-  if (count($tasks)) {
+  if (count($tasks = variable_get('xmlsitemap_database_update_tasks', array()))) {
     $task = array_shift($tasks);
     variable_set('xmlsitemap_database_update_tasks', $tasks);
     $batch = array(
       'operations' => array(
-        $task['operation']
+        array($task['operation'], array()),
       ),
       'finished' => $task['finished'],
       'title' => t('Updating the database'),
