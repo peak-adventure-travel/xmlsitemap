@@ -25,72 +25,16 @@ function xmlsitemap_file_form_alter(&$form, $form_state, $form_id) {
 }
 
 /**
- * Implementation of hook_nodeapi().
- */
-function xmlsitemap_file_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
-  if (is_array($node->files)) {
-    switch ($op) {
-      case 'update':
-        foreach ($node->files as $fid => $file) {
-          if (!$file['remove'] && $file['list']) {
-            $result = db_fetch_object(db_query("SELECT * FROM {xmlsitemap_file} WHERE fid = %d AND nid = %d",
-              array($fid, $node->nid)
-            ));
-            if ($result !== FALSE) {
-              $row = $result;
-              if (($changed = filemtime($file['filepath'])) > $row->changed) {
-                $row->previously_changed = $row->changed;
-                $row->changed = $changed;
-              }
-            }
-            else {
-              $row = new stdClass();
-              $row->fid = $fid;
-              $row->nid = $node->nid;
-              $row->changed = filemtime($file['filepath']);
-            }
-            drupal_write_record('xmlsitemap_file', $row, $result !== FALSE ? 'fid' : NULL);
-          }
-        }
-      case 'insert':
-        $row = new stdClass();
-        foreach ($node->files as $fid => $file) {
-          if (!$file['remove'] && $file['list']) {
-            $row->fid = $fid;
-            $row->nid = $node->nid;
-            $row->changed = filemtime($file['filepath']);
-            drupal_write_record('xmlsitemap_file', $row);
-          }
-        }
-        break;
-      case 'delete':
-        db_query("DELETE FROM {xmlsitemap_file} WHERE nid = %d", $node->nid);
-        foreach ($node->files as $file) {
-          if ($file['list']) {
-            xmlsitemap_update_sitemap();
-            break;
-          }
-        }
-        break;
-    }
-  }
-}
-
-/**
  * Implementation of hook_xmlsitemap_links().
  */
 function xmlsitemap_file_xmlsitemap_links() {
-  $result = db_query(db_rewrite_sql("SELECT n.nid, n.type, n.promote, f.fid, f.filepath, s.comment_count, xn.priority_override, xf.changed, xf.previously_changed
-    FROM {node} n
-    INNER JOIN {xmlsitemap_file} xf ON n.nid = xf.nid
-    LEFT JOIN {node_comment_statistics} s ON n.nid = s.nid
-    LEFT JOIN {xmlsitemap_node} xn ON n.nid = xn.nid
-    LEFT JOIN {files} f ON f.fid = xf.fid
-    LEFT JOIN {upload} u ON u.vid = n.vid
-    WHERE n.status > 0
-    AND xn.priority_override <> -1.0
-    AND u.list = 1")
+  $result = db_query("SELECT xsm.id, xsm.priority, f.fid, f.filename, f.timestamp, u.list, u.weight
+    FROM {xmlsitemap} xsm
+    INNER JOIN {upload} u ON u.vid = xsm.sid
+    INNER JOIN {files} f ON f.fid = u.fid
+    WHERE xsm.type = 'node'"
   );
+  $weight = db_fetch_object(db_query('SELECT MAX(weight) AS max, MIN(weight) AS min FROM {upload}'));
   $row = new stdClass();
   $row->module = 'xmlsitemap_file';
   $row->type = 'attachment';
@@ -100,12 +44,24 @@ function xmlsitemap_file_xmlsitemap_links() {
       $access = module_invoke_all('file_download', $file->filepath);
     }
     if (!in_array(-1, $access)) {
-      $row->loc = $file->filepath;
-      $row->id = $file->nid;
+      $row->id = $file->id;
       $row->sid = $file->fid;
-      $row->changed = filemtime($file->filepath);
-      $row->changefreq = max(time() - $file->changed, empty($file->previously_changed) ? 0 : $file->changed - $file->previously_changed);
-      $row->priority = 0.5;
+      $row->changed = $file->timestamp;
+      $row->changefreq = time() - $file->timestamp;
+      if ($file->priority == -1.0) {
+        $row->priority = -1.0;
+      }
+      else {
+        switch (variable_get('xmlsitemap_file_priority', -2.0)) {
+          case -2.0:
+            $row->priority = $file->priority;
+            break;
+          case -1.0:
+            break;
+          default:
+            break;
+        }
+      }
       if (db_result(db_query("SELECT loc FROM {xmlsitemap} WHERE loc = '%s'", $row->loc)) != $row->loc) {
         drupal_write_record('xmlsitemap', $row);
       }
