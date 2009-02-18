@@ -39,6 +39,9 @@ function xmlsitemap_file_xmlsitemap_links() {
   $row->module = 'xmlsitemap_file';
   $row->type = 'attachment';
   while ($file = db_fetch_object($result)) {
+    if (variable_get('xmlsitemap_file_only_listed_attachments', FALSE) && $file->list) {
+      continue;
+    }
     $access = array();
     if (variable_get('file_downloads', FILE_DOWNLOADS_PUBLIC) == FILE_DOWNLOADS_PRIVATE) {
       $access = module_invoke_all('file_download', $file->filepath);
@@ -52,13 +55,18 @@ function xmlsitemap_file_xmlsitemap_links() {
         $row->priority = -1.0;
       }
       else {
-        switch (variable_get('xmlsitemap_file_priority', -2.0)) {
+        $priority = variable_get('xmlsitemap_file_priority', -2.0);
+        switch ($priority) {
           case -2.0:
             $row->priority = $file->priority;
             break;
           case -1.0:
+            $max = isset($weight->max) ? $weight->max : max($file->weight, 1.0);
+            $min = isset($weight->min) ? $weight->min : min($file->weight, 0.0);
+            $row->priority = ($file->weight - $min) / ($max - $min);
             break;
           default:
+            $row->priority = $priority;
             break;
         }
       }
