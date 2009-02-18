@@ -82,7 +82,6 @@ function xmlsitemap_menu_xmlsitemap_sitemap_settings_alter(&$form) {
       '#description' => t('The settings for the menus to include in the site map.'),
       '#collapsible' => TRUE,
     );
-
     $form['xmlsitemap_menu']['xmlsitemap_menu_menus'] = array(
       '#type' => 'checkboxes',
       '#title' => t('Menus to include in the site map'),
