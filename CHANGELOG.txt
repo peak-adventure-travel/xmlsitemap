@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 6.x-1.x-dev, 2009-02-18
+-----------------------------------
+#373274: Rewrite the implementation of hook_xmlsitemap_links().
+
 XML Sitemap 6.x-1.x-dev, 2009-02-16
 -----------------------------------
 #374674: Change the way the front page URL is generated.
