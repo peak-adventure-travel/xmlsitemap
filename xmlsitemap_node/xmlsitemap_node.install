@@ -24,13 +24,6 @@ function xmlsitemap_node_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
-      'vid' => array(
-        'description' => 'The current node revision ID.',
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'default' => 0,
-      ),
       'changed' => array(
         'description' => 'The Unix timestamp of the last change.',
         'type' => 'int',
@@ -58,7 +51,6 @@ function xmlsitemap_node_schema() {
         'default' => -2.0,
       ),
     ),
-    'unique keys' => array('vid' => array('vid')),
     'primary key' => array('nid'),
   );
 
@@ -117,16 +109,8 @@ function xmlsitemap_node_update_6000() {
         array('primary key' => array('nid'))
       );
     }
-    if (!db_column_exists('xmlsitemap_node', 'vid')) {
-      db_add_field($ret, 'xmlsitemap_node', 'vid',
-        array(
-          'description' => 'The current node revision ID.',
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-          'default' => 0,
-        )
-      );
+    if (db_column_exists('xmlsitemap_node', 'vid')) {
+      db_drop_field($ret, 'xmlsitemap_node', 'vid');
     }
     if (db_column_exists('xmlsitemap_node', 'last_changed')) {
       db_change_field($ret, 'xmlsitemap_node', 'last_changed', 'changed',
@@ -209,13 +193,6 @@ function xmlsitemap_node_update_6000() {
         'fields' => array(
           'nid' => array(
             'description' => 'The node ID.',
-            'type' => 'int',
-            'unsigned' => TRUE,
-            'not null' => TRUE,
-            'default' => 0,
-          ),
-          'vid' => array(
-            'description' => 'The current node revision ID.',
             'type' => 'int',
             'unsigned' => TRUE,
             'not null' => TRUE,
@@ -349,7 +326,7 @@ function xmlsitemap_node_update_6109() {
  *
  */
 function xmlsitemap_node_update_6110() {
-  return xmlsitemap_node_update_6000();
+  return array();
 }
 
 /**
@@ -357,20 +334,28 @@ function xmlsitemap_node_update_6110() {
  *
  */
 function xmlsitemap_node_update_6111() {
+  return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ *
+ */
+function xmlsitemap_node_update_6112() {
+  $ret = xmlsitemap_node_update_6000();
   $tasks = variable_get('xmlsitemap_database_update_tasks', array());
   $tasks[] = array(
-    'operation' => '_xmlsitemap_node_update_vid_field_batch',
+    'operation' => '_xmlsitemap_node_update_database_batch',
     'finished' => 'xmlsitemap_batch_operations_finished',
     'file' => drupal_get_path('module', 'xmlsitemap_node') .'/xmlsitemap_node.install',
-    'severity' => REQUIREMENT_ERROR,
+    'severity' => REQUIREMENT_WARNING,
   );
   variable_set('xmlsitemap_database_update_tasks', $tasks);
-  return array(
-    0 => array(
-      'success' => TRUE,
-      'query' => 'FORCE DATABASE UPDATE',
-    )
+  $ret[] = array(
+    'success' => TRUE,
+    'query' => 'FORCE DATABASE UPDATE',
   );
+  return $ret;
 }
 
 /**
@@ -386,9 +371,9 @@ function xmlsitemap_node_uninstall() {
  ****************************************************************************/
 
 /**
- * Batch function to update the vid field of the xmlsitemap_node database table.
+ * Batch function to update the xmlsitemap_node table.
  */
-function _xmlsitemap_node_update_vid_field_batch(&$context) {
+function _xmlsitemap_node_update_database_batch(&$context) {
   if (!isset($context['sandbox']['progress'])) {
     $context['sandbox']['progress'] = 0;
     $context['sandbox']['max'] = db_result(db_query('SELECT COUNT(*) FROM {node}'));
@@ -411,7 +396,6 @@ function _xmlsitemap_node_update_vid_field_batch(&$context) {
     if ($result === FALSE) {
       $row = new stdClass();
       $row->nid = $node->nid;
-      $row->vid = $node->vid;
       $row->changed = $node->changed;
       $row->previously_changed = $node->created;
     }
@@ -422,7 +406,6 @@ function _xmlsitemap_node_update_vid_field_batch(&$context) {
         $row->changed = $node->changed;
       }
     }
-    $row->vid = $node->vid;
     if (isset($context['sandbox']['maxcomments']) && $context['sandbox']['maxcomments'] > 1) {
       $comments = (integer) db_result(db_query('SELECT comment_count
         FROM {node_comment_statistics}
@@ -442,20 +425,3 @@ function _xmlsitemap_node_update_vid_field_batch(&$context) {
     $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
   }
 }
-
-/**
- * Function called when the batch operation is completed.
- */
-/*
-function _xmlsitemap_node_batch_finished($success, $results, $operations) {
-  if ($success) {
-    drupal_set_message(t('The update has been performed.'));
-  }
-  else {
-    drupal_set_message(t('An error occurred and processing did not complete.'), 'error');
-    $message = format_plural(count($results), '1 item successfully processed:', '@count items successfully processed:');
-    $message .= theme('item_list', $results);
-    drupal_set_message($message);
-  }
-}
-*/
