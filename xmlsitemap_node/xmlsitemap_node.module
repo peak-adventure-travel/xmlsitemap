@@ -47,9 +47,6 @@ function xmlsitemap_node_comment($a1, $op) {
           $row->changed = $node->changed;
           $row->previously_changed = $node->created;
         }
-        if ($node) {
-          $row->vid = $node->vid;
-        }
         $row->comment_ratio = $comments / $maxcomments;
         drupal_write_record('xmlsitemap_node', $row, isset($update) ? 'nid' : NULL);
       }
@@ -170,7 +167,6 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
     case 'insert':
       $row = new stdClass();
       $row->nid = $node->nid;
-      $row->vid = $node->vid;
       $row->changed = $node->changed;
       $row->previously_changed = $node->created;
       $row->priority_override = isset($node->priority_override) ? $node->priority_override : -2.0;
@@ -195,7 +191,6 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
           $row->priority_override =  $node->priority_override;
         }
       }
-      $row->vid = $node->vid;
       drupal_write_record('xmlsitemap_node', $row, $result === FALSE ? NULL : 'nid');
       if ($node->status || $node->xmlsitemap_node_status) {
         xmlsitemap_update_sitemap();
@@ -355,7 +350,6 @@ function _xmlsitemap_node_batch_process($nodes, $priority, &$context) {
         $row->changed = $node->changed;
       }
     }
-    $row->vid = $node->vid;
     $row->priority_override = $priority;
     drupal_write_record('xmlsitemap_node', $row, $result === FALSE ? NULL : 'nid');
     $context['results'][] = l($node->title, 'node/'. $node->nid);
