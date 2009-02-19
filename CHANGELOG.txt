@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1.x-dev, 2009-02-18
 -----------------------------------
+#374421: Add a setting for the attachment priority.
 #373274: Rewrite the implementation of hook_xmlsitemap_links().
 
 XML Sitemap 6.x-1.x-dev, 2009-02-16
