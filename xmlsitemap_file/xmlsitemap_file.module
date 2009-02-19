@@ -39,7 +39,7 @@ function xmlsitemap_file_xmlsitemap_links() {
   $row->module = 'xmlsitemap_file';
   $row->type = 'attachment';
   while ($file = db_fetch_object($result)) {
-    if (variable_get('xmlsitemap_file_only_listed_attachments', FALSE) && $file->list) {
+    if (!variable_get('xmlsitemap_file_only_listed_attachments', FALSE) && !$file->list) {
       continue;
     }
     $access = array();
