@@ -269,6 +269,7 @@ function xmlsitemap_settings_sitemap() {
     '#type' => 'fieldset',
     '#title' => t('General settings'),
     '#collapsible' => TRUE,
+    '#weight' => -1,
   );
   $form['general']['xmlsitemap_chunk_size'] = array(
     '#type' => 'textfield',

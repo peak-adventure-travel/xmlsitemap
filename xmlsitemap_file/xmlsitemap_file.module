@@ -96,6 +96,7 @@ function xmlsitemap_file_xmlsitemap_sitemap_settings_alter(&$form) {
     '#title' => t('Attachment settings'),
     '#description' => t('The settings for the node attachments to include in the site map.'),
     '#collapsible' => TRUE,
+    '#weight' => 0,
   );
   $form['xmlsitemap_file']['xmlsitemap_file_only_listed_attachments'] = array(
     '#type' => 'checkbox',
