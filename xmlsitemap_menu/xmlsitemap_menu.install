@@ -76,15 +76,22 @@ function xmlsitemap_menu_update_6103() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_menu_update_6104() {
-  $ret = xmlsitemap_menu_update_6000();
+  return xmlsitemap_menu_update_6000();
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_menu_update_6105() {
   menu_rebuild();
   $ret[] = array(
     'success' => TRUE,
     'query' => 'UPDATE DRUPAL MENUS'
   );
-  $ret[] = update_sql("UPDATE {system} SET weight = 5 WHERE name = 'xmlsitemap_menu'");
+  $ret[] = update_sql("UPDATE {system} SET weight = 10 WHERE name = 'xmlsitemap_menu'");
   return $ret;
 }
+
 /**
  * Implementation of hook_uninstall().
  */
