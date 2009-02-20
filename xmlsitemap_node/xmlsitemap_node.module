@@ -228,7 +228,7 @@ function xmlsitemap_node_xmlsitemap_links() {
     FROM {node} n
     INNER JOIN {xmlsitemap_node} xn ON n.nid = xn.nid
     WHERE n.status > 0
-      AND (xn.priority_override = -2.0 OR xn.priority_override >= 0.0)";
+      AND xn.priority_override <> -1.0";
   $result = db_query(db_rewrite_sql($query));
   $row = new stdClass();
   $row->module = 'xmlsitemap_node';
