@@ -2,6 +2,8 @@ $Id$
 
 XML Sitemap 6.x-1.x-dev, 2009-02-21
 -----------------------------------
+#379450: Implement hook_enable(), and hook_disable().
+#379422: drupal _set_header() is called prematurely.
 #378986: xmlsitemap_settings_sitemap_submit() is missing.
 
 XML Sitemap 6.x-1.x-dev, 2009-02-18
@@ -36,7 +38,7 @@ XML Sitemap 6.x-1.x-dev, 2009-02-13
 
 XML Sitemap 6.x-1.x-dev, 2009-02-12
 -----------------------------------
-#346093: Change the database fields default value, changed the settings page.
+#346093: Change the database fields default value.
 
 XML Sitemap 6.x-1.x-dev, 2009-02-11
 -----------------------------------
@@ -208,5 +210,5 @@ XML Sitemap 6.x-1.x-dev, 2008-11-17
 #292103: Use of an not existing array index.
 #284903: Wrong code.
 #299023: xmlsitemap_node_priority() uses a variable without to check if it is set.
-#299010.
+#299010: _xmlsitemap_node_submit() uses a not declared variable.
 #279954: Use of an undefined constant.
