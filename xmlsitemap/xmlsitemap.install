@@ -258,6 +258,20 @@ function xmlsitemap_update_6000() {
         array('indexes' => array('link_changed' => array('changed')))
       );
     }
+    else {
+      if (!db_column_exists('xmlsitemap', 'changed')) {
+        db_add_field($ret, 'xmlsitemap', 'changed',
+          array(
+            'description' => 'The Unix timestamp of the last change.',
+            'type' => 'int',
+            'unsigned' => TRUE,
+            'not null' => TRUE,
+            'default' => 0,
+          ),
+          array('indexes' => array('link_changed' => array('changed')))
+        );
+      }
+    }
     db_change_field($ret, 'xmlsitemap', 'changefreq', 'changefreq',
       array(
         'description' => 'The frequency of the changes.',
