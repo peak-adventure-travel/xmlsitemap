@@ -11,6 +11,20 @@
  ****************************************************************************/
 
 /**
+ * Implementation of hook_enable().
+ */
+function xmlsitemap_term_enable() {
+  xmlsitemap_update_sitemap();
+}
+
+/**
+ * Implementation of hook_disable().
+ */
+function xmlsitemap_term_disable() {
+  xmlsitemap_update_sitemap();
+}
+
+/**
  * Implementation of hook_schema().
  */
 function xmlsitemap_term_schema() {
