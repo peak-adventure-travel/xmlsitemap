@@ -246,16 +246,18 @@ function xmlsitemap_update_6000() {
         array('indexes' => array('link_language' => array('language')))
       );
     }
-    db_change_field($ret, 'xmlsitemap', 'lastmod', 'changed',
-      array(
-        'description' => 'The Unix timestamp of the last change.',
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'default' => 0,
-      ),
-      array('indexes' => array('link_changed' => array('changed')))
-    );
+    if (db_column_exists('xmlsitemap', 'lastmod')) {
+      db_change_field($ret, 'xmlsitemap', 'lastmod', 'changed',
+        array(
+          'description' => 'The Unix timestamp of the last change.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0,
+        ),
+        array('indexes' => array('link_changed' => array('changed')))
+      );
+    }
     db_change_field($ret, 'xmlsitemap', 'changefreq', 'changefreq',
       array(
         'description' => 'The frequency of the changes.',
@@ -520,6 +522,13 @@ function xmlsitemap_update_6118() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_update_6119() {
+  return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_6120() {
   return xmlsitemap_update_6000();
 }
 
