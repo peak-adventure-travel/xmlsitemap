@@ -199,7 +199,6 @@ function xmlsitemap_output($chunk = NULL) {
     db_query("DELETE FROM {cache_page} WHERE cid LIKE '%%sitemap%%.xml'");
     variable_set('xmlsitemap_sitemap_needs_update', FALSE);
   }
-  drupal_set_header('Content-type: text/xml; charset=utf-8');
   $chunk_size = variable_get('xmlsitemap_chunk_size', 200);
   $link_count = _xmlsitemap_link_count();
   if (isset($chunk)) {
@@ -212,6 +211,7 @@ function xmlsitemap_output($chunk = NULL) {
   }
   else {
     if ($link_count > $chunk_size) {
+      _xmlsitemap_xml_header();
       print '<?xml version="1.0" encoding="UTF-8"?>'."\n";
       print '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'."\n";
       print '  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'."\n";
@@ -400,6 +400,10 @@ function xmlsitemap_settings_submit($form, &$form_state) {
  * Public functions.
  ****************************************************************************/
 
+/**
+ * Function used to determinate if the user is an anonymous user, and then he
+ * can access the site map content.
+ */
 function xmlsitemap_anonymous_access() {
   global $user;
   return $user->uid == 0;
@@ -521,10 +525,13 @@ function _xmlsitemap_link_count() {
 
 /**
  * Display a chunk of the site map.
+ * @param $chunk_size
+ *  The size of the chunk.
  * @param $chunk
  *  An integer specifying which chunk of the site map to display.
  */
 function _xmlsitemap_output_chunk($chunk_size, $chunk = 0) {
+  _xmlsitemap_xml_header();
   print '<?xml version="1.0" encoding="UTF-8"?>'."\n";
   print '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'."\n";
   print '  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'."\n";
@@ -554,6 +561,17 @@ function _xmlsitemap_output_chunk($chunk_size, $chunk = 0) {
     print '  </url>'."\n";
   }
   print '</urlset>';
+}
+
+/**
+ * Output the header required for XML content.
+ */
+function _xmlsitemap_xml_header() {
+  static $done = FALSE;
+  if (!$done) {
+    drupal_set_header('Content-type: text/xml; charset=utf-8');
+    $done = TRUE;
+  }
 }
 
 /**
