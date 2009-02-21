@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 6.x-1.x-dev, 2009-02-21
+-----------------------------------
+#378986: xmlsitemap_settings_sitemap_submit() is missing.
+
 XML Sitemap 6.x-1.x-dev, 2009-02-18
 -----------------------------------
 #374421: Add a setting for the attachment priority.

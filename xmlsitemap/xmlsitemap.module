@@ -290,15 +290,8 @@ function xmlsitemap_settings_engines() {
   );
   drupal_alter('xmlsitemap_engine_settings', $form);
   $form = system_settings_form($form);
-  array_unshift($form['#submit'], 'xmlsitemap_settings_engines_submit');
+  array_unshift($form['#submit'], 'xmlsitemap_settings_submit');
   return $form;
-}
-
-/**
- * Submit the search engine settings form.
- */
-function xmlsitemap_settings_engines_submit($form, &$form_state) {
-  menu_rebuild();
 }
 
 /**
@@ -333,7 +326,7 @@ function xmlsitemap_settings_sitemap() {
   );
   drupal_alter('xmlsitemap_sitemap_settings', $form);
   $form = system_settings_form($form);
-  $form['#submit'][] = 'xmlsitemap_settings_sitemap_submit';
+  $form['#submit'][] = 'xmlsitemap_settings_submit';
   $form['#validate'][] = 'xmlsitemap_settings_sitemap_validate';
   return $form;
 }
@@ -394,6 +387,13 @@ function xmlsitemap_tools_update_submit($form, &$form_state) {
     batch_set($batch);
   }
   $form_state['storage']['step'] = $step + 1;
+}
+
+/**
+ * Submit the settings form.
+ */
+function xmlsitemap_settings_submit($form, &$form_state) {
+  menu_rebuild();
 }
 
 /*****************************************************************************
