@@ -490,9 +490,11 @@ function xmlsitemap_priority_options($option = '') {
 }
 
 /**
- * Mark the site map as changed and the cache as needing update.
+ * Mark the site map as changed, and the cache as needing update; it also
+ * clean the cached output.
  */
 function xmlsitemap_update_sitemap() {
+  db_query("DELETE FROM {cache_page} WHERE cid LIKE cid LIKE '%%sitemap%%.xml'");
   if (!variable_get('xmlsitemap_sitemap_is_changed', FALSE)) {
     variable_set('xmlsitemap_sitemap_is_changed', TRUE);
   }
