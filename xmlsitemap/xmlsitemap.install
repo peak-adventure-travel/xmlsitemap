@@ -535,9 +535,14 @@ function xmlsitemap_update_6120() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_update_6121() {
-  $ret[] = update_sql("DELETE FROM {cache_page}
-    WHERE cid LIKE '%%gss.xsl' OR cid LIKE '%%sitemap%%.xml'"
-  );
+  return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_6122() {
+  $ret[] = update_sql("DELETE FROM {cache_page} WHERE cid LIKE '%%sitemap%%.xml'");
   menu_rebuild();
   $ret[] = array(
     'success' => TRUE,
