@@ -86,7 +86,9 @@ function xmlsitemap_exit() {
 function xmlsitemap_node_form_alter(&$form, &$form_state, $form_id) {
   switch ($form_id) {
     case 'path_admin_form':
+    case 'pathauto_admin_settings':
       $form['#submit'][] = 'xmlsitemap_update_sitemap';
+      break;
   }
 }
 
