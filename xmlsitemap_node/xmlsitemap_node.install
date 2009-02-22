@@ -188,7 +188,7 @@ function xmlsitemap_node_update_6000() {
       );
     }
     $ret[] = update_sql("UPDATE {xmlsitemap_node}
-      SET priority_override = -2
+      SET priority_override = -2.0
       WHERE priority_override IS NULL"
     );
     db_change_field($ret, 'xmlsitemap_node', 'priority_override', 'priority_override',
@@ -243,7 +243,6 @@ function xmlsitemap_node_update_6000() {
       )
     );
   }
-  $ret[] = update_sql("UPDATE {system} SET weight = 7 WHERE name = 'xmlsitemap_node'");
   if (variable_get('xmlsitemap_node_comment_priority', 0.5) == 0.5) {
     variable_set('xmlsitemap_node_comment_priority', 0.2);
     $ret[] = array(
