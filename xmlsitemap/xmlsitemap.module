@@ -81,6 +81,16 @@ function xmlsitemap_exit() {
 }
 
 /**
+ * Implementation of hook_form_alter().
+ */
+function xmlsitemap_node_form_alter(&$form, &$form_state, $form_id) {
+  switch ($form_id) {
+    case 'path_admin_form':
+      $form['#submit'][] = 'xmlsitemap_update_sitemap';
+  }
+}
+
+/**
  * Implementation of hook_help().
  */
 function xmlsitemap_help($path, $arg) {
