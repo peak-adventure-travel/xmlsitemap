@@ -196,7 +196,6 @@ function xmlsitemap_output($chunk = NULL) {
     drupal_write_record('xmlsitemap', $row);
     module_invoke_all('xmlsitemap_links');
     menu_rebuild();
-    db_query("DELETE FROM {cache_page} WHERE cid LIKE '%%sitemap%%.xml'");
     variable_set('xmlsitemap_sitemap_needs_update', FALSE);
   }
   $chunk_size = variable_get('xmlsitemap_chunk_size', 200);
