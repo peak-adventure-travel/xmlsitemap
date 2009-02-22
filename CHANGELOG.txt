@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1.x-dev, 2009-02-22
 -----------------------------------
+#380048: Function is declared twice.
 #379932: Force an update for the site map when path aliases are changed.
 
 XML Sitemap 6.x-1.x-dev, 2009-02-21
