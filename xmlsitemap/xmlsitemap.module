@@ -494,7 +494,7 @@ function xmlsitemap_priority_options($option = '') {
  * clean the cached output.
  */
 function xmlsitemap_update_sitemap() {
-  db_query("DELETE FROM {cache_page} WHERE cid LIKE cid LIKE '%%sitemap%%.xml'");
+  db_query("DELETE FROM {cache_page} WHERE cid LIKE '%%sitemap%%.xml'");
   if (!variable_get('xmlsitemap_sitemap_is_changed', FALSE)) {
     variable_set('xmlsitemap_sitemap_is_changed', TRUE);
   }
