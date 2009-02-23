@@ -226,19 +226,16 @@ function xmlsitemap_output($chunk = NULL) {
         print '    <loc>'. url("sitemap$chunk.xml", array('absolute' => TRUE)) .'</loc>'."\n";
         if ($chunk < $link_count / $chunk_size) {
           $from = $chunk * $chunk_size;
-          if (!empty($chunk_size)) {
-            $changed = db_result(
-              db_query_range("SELECT MAX(changed) FROM {xmlsitemap}
-                WHERE changefreq <> 0
-                  AND changed <> 0
-                  AND (priority >= 0 AND priority <= 1)",
-                $from, $chunk_size
-              )
-            );
-            if ($changed != 0) {
-              print '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $changed) .'</lastmod>'."\n";
-            }
-          }
+          $changed = db_result(
+            db_query_range("SELECT changed FROM {xmlsitemap}
+              WHERE changefreq <> 0
+                AND changed <> 0
+                AND (priority >= 0 AND priority <= 1)
+              ORDER BY changed DESC",
+              $from, $chunk_size
+            )
+          );
+          print '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $changed) .'</lastmod>'."\n";
         }
         print '  </sitemap>'."\n";
       }
