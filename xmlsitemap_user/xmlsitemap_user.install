@@ -352,8 +352,72 @@ function xmlsitemap_user_update_6109() {
 }
 
 /**
+ * Implementation of hook_update_N().
+ *
+ */
+function xmlsitemap_user_update_6110() {
+  $batch = array(
+    'operations' => array(
+      array('_xmlsitemap_user_update_database_batch', array())
+    ),
+    'title' => t('Processing'),
+    'progress_message' => '',
+    'error_message' => t('The update has encountered an error.'),
+  );
+  batch_set($batch);
+  return array(
+    0 => array(
+      'success' => TRUE,
+      'query' => 'UPDATE XMLSITEMAP_USER TABLE',
+    )
+  );
+}
+
+/**
  * Implementation of hook_uninstall().
  */
 function xmlsitemap_user_uninstall() {
   drupal_uninstall_schema('xmlsitemap_user');
+}
+
+/*****************************************************************************
+ * Private functions.
+ ****************************************************************************/
+
+/**
+ * Batch function to update the xmlsitemap_node table.
+ */
+function _xmlsitemap_user_update_database_batch(&$context) {
+  if (!isset($context['sandbox']['progress'])) {
+    $context['sandbox']['progress'] = 0;
+    $context['sandbox']['max'] = db_result(db_query('SELECT COUNT(*) FROM {users} WHERE uid <> 0'));
+    $context['sandbox']['uid'] = 0;
+  }
+  $user = db_fetch_object(
+    db_query('SELECT * FROM {users}
+      WHERE uid > %d', $context['sandbox']['uid']
+    )
+  );
+  if ($user) {
+    $result = db_fetch_object(
+      db_query('SELECT * FROM {xmlsitemap_user}
+        WHERE uid = %d', $user->uid
+      )
+    );
+    if ($result === FALSE) {
+      $row = new stdClass();
+      $row->uid = $user->uid;
+      $row->previously_changed = $row->changed = $user->created;
+    }
+    drupal_write_record('xmlsitemap_user', $row, $result === FALSE ? NULL : 'uid');
+    $context['sandbox']['uid'] = $user->uid;
+    $context['message'] = t('Updating %name', array('%name' => $user->name));
+  }
+  $context['sandbox']['progress']++;
+  if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
+    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+  }
+  else {
+    xmlsitemap_update_sitemap();
+  }
 }
