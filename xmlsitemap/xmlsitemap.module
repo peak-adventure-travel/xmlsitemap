@@ -227,11 +227,14 @@ function xmlsitemap_output($chunk = NULL) {
         if ($chunk < $link_count / $chunk_size) {
           $from = $chunk * $chunk_size;
           $changed = db_result(
-            db_query_range("SELECT changed FROM {xmlsitemap}
-              WHERE changefreq <> 0
-                AND changed <> 0
-                AND (priority >= 0 AND priority <= 1)
-              ORDER BY changed DESC",
+            db_query_range("SELECT changed FROM {xmlsitemap} xsm
+              INNER JOIN {system} s ON s.name = xsm.module
+              WHERE s.type = 'module'
+                AND s.status = 1
+                AND xsm.changefreq <> 0
+                AND xsm.changed <> 0
+                AND (xsm.priority >= 0 AND xsm.priority <= 1)
+              ORDER BY xsm.changed DESC",
               $from, $chunk_size
             )
           );
@@ -468,10 +471,13 @@ function _xmlsitemap_link_count() {
   if (!isset($link_count)) {
     $link_count = db_result(
       db_query(
-        "SELECT COUNT(*) FROM {xmlsitemap}
-          WHERE changefreq <> 0
-            AND changed <> 0
-            AND (priority >= 0 AND priority <= 1)"
+        "SELECT COUNT(*) FROM {xmlsitemap} xsm
+          INNER JOIN {system} s ON s.name = xsm.module
+          WHERE s.type = 'module'
+            AND s.status = 1
+            AND xsm.changefreq <> 0
+            AND xsm.changed <> 0
+            AND (xsm.priority >= 0 AND xsm.priority <= 1)"
       )
     );
   }
@@ -493,11 +499,14 @@ function _xmlsitemap_output_chunk($chunk_size, $chunk = 0) {
   print '  xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9'."\n";
   print '  http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">'."\n";
   $start = $chunk * $chunk_size;
-  $links = db_query_range("SELECT * FROM {xmlsitemap}
-    WHERE changefreq <> 0
-      AND changed <> 0
-      AND (priority >= 0 AND priority <= 1)
-    ORDER BY changed DESC, changefreq, priority DESC, loc",
+  $links = db_query_range("SELECT * FROM {xmlsitemap} xsm
+    INNER JOIN {system} s ON s.name = xsm.module
+    WHERE s.type = 'module'
+      AND s.status = 1
+      AND xsm.changefreq <> 0
+      AND xsm.changed <> 0
+      AND (xsm.priority >= 0 AND xsm.priority <= 1)
+    ORDER BY xsm.changed DESC, xsm.changefreq, xsm.priority DESC, xsm.loc",
     $start, $chunk_size
   );
   while ($link = db_fetch_object($links)) {
