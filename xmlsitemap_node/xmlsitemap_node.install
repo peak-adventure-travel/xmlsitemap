@@ -367,7 +367,6 @@ function xmlsitemap_node_update_6113() {
     'operations' => array(
       array('_xmlsitemap_node_update_database_batch', array())
     ),
-    'finished' => 'xmlsitemap_batch_operations_finished',
     'title' => t('Processing'),
     'progress_message' => '',
     'error_message' => t('The update has encountered an error.'),
@@ -438,10 +437,7 @@ function _xmlsitemap_node_update_database_batch(&$context) {
     }
     drupal_write_record('xmlsitemap_node', $row, $result === FALSE ? NULL : 'nid');
     $context['sandbox']['nid'] = $node->nid;
-    $context['results'][] = l($node->title, 'node/'. $node->nid);
-    if (count($context['results']) > 6) {
-      array_shift($context['results']);
-    }
+    $context['message'] = t('Updating %title', array('%title' => $node->title));
   }
   $context['sandbox']['progress']++;
   if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
