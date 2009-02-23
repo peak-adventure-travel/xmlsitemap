@@ -234,6 +234,12 @@ function xmlsitemap_user_xmlsitemap_links() {
         else {
           $row->priority = variable_get('xmlsitemap_user_default_priority', 0.5);
         }
+        if (module_exists('comment')) {
+          $maxcomments = (integer) db_result(db_query("SELECT MAX(comments) FROM {xmlsitemap_user}"));
+          if ($maxcomments > 1) {
+            $row->priority += variable_get('xmlsitemap_user_comment_priority', 0.2) * $user->comments / $maxcomments;
+          }
+        }
       }
       if (db_result(db_query("SELECT loc FROM {xmlsitemap} WHERE loc = '%s'", $row->loc)) != $row->loc) {
         drupal_write_record('xmlsitemap', $row);
