@@ -428,7 +428,15 @@ function _xmlsitemap_user_update_database_batch(&$context) {
     if ($result === FALSE) {
       $row = new stdClass();
       $row->uid = $user->uid;
-      $row->previously_changed = $row->changed = $user->created;
+      $row->changed = $user->access;
+      $row->previously_changed = $user->created;
+    }
+    else {
+      $row = $result;
+      if ($row->changed < $user->access) {
+        $row->previously_changed = $row->changed;
+        $row->changed = $user->access;
+      }
     }
     drupal_write_record('xmlsitemap_user', $row, $result === FALSE ? NULL : 'uid');
     $context['sandbox']['uid'] = $user->uid;

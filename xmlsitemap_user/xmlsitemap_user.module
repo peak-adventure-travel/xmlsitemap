@@ -133,6 +133,7 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
       $row = new stdClass();
       $row->uid = $account->uid;
       $row->changed = time();
+      $row->previously_changed = $account->created;
       $row->priority_override = isset($edit['xmlsitemap_user_priority']) ? $edit['xmlsitemap_user_priority'] : -2.0;
       drupal_write_record('xmlsitemap_user', $row);
       $edit['xmlsitemap_user_priority'] = NULL;
@@ -142,6 +143,7 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
       if (($result = db_fetch_object(db_query("SELECT * FROM {xmlsitemap_user} WHERE uid = %d", $account->uid))) === FALSE) {
         $row = new stdClass();
         $row->uid = $account->uid;
+        $row->previously_changed = $account->created;
         $row->changed = time();
       }
       else {
@@ -309,13 +311,15 @@ function _xmlsitemap_user_batch_process($accounts, $op, &$context) {
     if ($result === FALSE) {
       $row = new stdClass();
       $row->uid = $user->uid;
-      $row->changed = time();
+      $row->changed = $user->access;
       $row->previously_changed = $user->created;
     }
     else {
       $row = $result;
-      $row->changed = time();
-      $row->previously_changed = $row->changed;
+      if ($row->changed < $user->access) {
+        $row->previously_changed = $row->changed;
+        $row->changed = $user->access;
+      }
     }
     $row->priority_override = $priority;
     drupal_write_record('xmlsitemap_user', $row, $result === FALSE ? NULL : 'uid');
