@@ -155,13 +155,6 @@ function xmlsitemap_menu() {
     'access arguments' => $access_config,
     'type' => MENU_LOCAL_TASK,
   );
-  $items['admin/settings/xmlsitemap/tools/update'] = array(
-    'title' => 'Update database',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('xmlsitemap_tools_update'),
-    'access arguments' => $access_config,
-    'type' => MENU_CALLBACK,
-  );
   $items['sitemap.xml'] = array(
     'title' => 'Site map index',
     'page callback' => 'xmlsitemap_output',
@@ -350,54 +343,6 @@ function xmlsitemap_settings_sitemap_validate($form, &$form_state) {
   if (!is_numeric($chunk_size) || $chunk_size <= 0 || $chunk_size > 50000) {
     form_set_error('xmlsitemap_chunk_size', t('The number of links in a site map chunk must be a number between 1, and 50,000 (1 and 50,000 included).'));
   }
-}
-
-/**
- * Form builder; return the multi-step database update form.
- */
-function xmlsitemap_tools_update($form_state = NULL) {
-  $form = array();
-  $step = isset($form_state['storage']['step']) ? $form_state['storage']['step'] : 1;
-  if (count(variable_get('xmlsitemap_database_update_tasks', array()))) {
-    $form['step_display'] = array(
-      '#type' => 'item',
-      '#value' => t('Step !step', array('!step' => $step)),
-    );
-    $form['submit'] = array(
-      '#type' => 'submit',
-      '#value' => 'Next',
-    );
-  }
-  else {
-    $form['step_display'] = array(
-      '#type' => 'item',
-      '#value' => t('No further steps require to be executed'),
-    );
-  }
-  return $form;
-}
-
-/**
- * Submit function for the multi-step database update form.
- */
-function xmlsitemap_tools_update_submit($form, &$form_state) {
-  $step = isset($form_state['storage']['step']) ? $form_state['storage']['step'] : 1;
-  if (count($tasks = variable_get('xmlsitemap_database_update_tasks', array()))) {
-    $task = array_shift($tasks);
-    variable_set('xmlsitemap_database_update_tasks', $tasks);
-    $batch = array(
-      'operations' => array(
-        array($task['operation'], array()),
-      ),
-      'finished' => $task['finished'],
-      'title' => t('Updating the database'),
-      'progress_message' => '',
-      'error_message' => t('The update has encountered an error.'),
-      'file' => $task['file'],
-    );
-    batch_set($batch);
-  }
-  $form_state['storage']['step'] = $step + 1;
 }
 
 /**

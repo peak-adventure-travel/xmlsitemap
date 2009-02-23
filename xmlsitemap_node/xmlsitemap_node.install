@@ -355,20 +355,30 @@ function xmlsitemap_node_update_6111() {
  *
  */
 function xmlsitemap_node_update_6112() {
-  $ret = xmlsitemap_node_update_6000();
-  $tasks = variable_get('xmlsitemap_database_update_tasks', array());
-  $tasks[] = array(
-    'operation' => '_xmlsitemap_node_update_database_batch',
+  return xmlsitemap_node_update_6000();
+}
+
+/**
+ * Implementation of hook_update_N().
+ *
+ */
+function xmlsitemap_node_update_6113() {
+  $batch = array(
+    'operations' => array(
+      array('_xmlsitemap_node_update_database_batch', array())
+    ),
     'finished' => 'xmlsitemap_batch_operations_finished',
-    'file' => drupal_get_path('module', 'xmlsitemap_node') .'/xmlsitemap_node.install',
-    'severity' => REQUIREMENT_WARNING,
+    'title' => t('Processing'),
+    'progress_message' => '',
+    'error_message' => t('The update has encountered an error.'),
   );
-  variable_set('xmlsitemap_database_update_tasks', $tasks);
-  $ret[] = array(
-    'success' => TRUE,
-    'query' => 'FORCE DATABASE UPDATE',
+  batch_set($batch);
+  return array(
+    0 => array(
+      'success' => TRUE,
+      'query' => 'UPDATE XMLSITEMAP_NODE TABLE',
+    )
   );
-  return $ret;
 }
 
 /**

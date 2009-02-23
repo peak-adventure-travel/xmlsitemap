@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 6.x-1.x-dev, 2009-02-23
+-----------------------------------
+#380636: The update of the database should start in automatic.
+
 XML Sitemap 6.x-1.x-dev, 2009-02-22
 -----------------------------------
 #380048: Function is declared twice.
