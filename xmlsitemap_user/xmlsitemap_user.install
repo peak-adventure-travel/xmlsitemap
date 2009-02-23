@@ -52,8 +52,8 @@ function xmlsitemap_user_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
-      'commented_nodes' => array(
-        'description' => 'The number of nodes commented from a user.',
+      'comments' => array(
+        'description' => 'The number of comments authored from the user.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
@@ -164,10 +164,10 @@ function xmlsitemap_user_update_6000() {
         );
       }
     }
-    if (!db_column_exists('xmlsitemap_user', 'commented_nodes')) {
-      db_add_field($ret, 'xmlsitemap_user', 'commented_nodes',
+    if (!db_column_exists('xmlsitemap_user', 'comments')) {
+      db_add_field($ret, 'xmlsitemap_user', 'comments',
         array(
-          'description' => 'The number of nodes commented from a user.',
+          'description' => 'The number of comments authored from the user.',
           'type' => 'int',
           'unsigned' => TRUE,
           'not null' => TRUE,
@@ -214,8 +214,8 @@ function xmlsitemap_user_update_6000() {
             'not null' => TRUE,
             'default' => 0,
           ),
-          'commented_nodes' => array(
-            'description' => 'The number of nodes commented from a user.',
+          'comments' => array(
+            'description' => 'The number of comments authored from the user.',
             'type' => 'int',
             'unsigned' => TRUE,
             'not null' => TRUE,
