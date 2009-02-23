@@ -299,7 +299,7 @@ function _xmlsitemap_user_priority_operations($accounts, $priority) {
 /**
  * User operations batch process callback.
  */
-function _xmlsitemap_user_batch_process($accounts, $op, &$context) {
+function _xmlsitemap_user_batch_process($accounts, $priority, &$context) {
   if (!isset($context['sandbox']['progress'])) {
     $context['sandbox']['progress'] = 0;
     $context['sandbox']['max'] = count($accounts);
