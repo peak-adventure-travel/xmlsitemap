@@ -151,6 +151,9 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
         $row->previously_changed = $row->changed;
         $row->changed = time();
       }
+      if (module_exists('comment')) {
+        $row->comments = (integer) db_result(db_query("SELECT COUNT(cid) FROM {comments} WHERE uid = %d", $user->uid));
+      }
       if (isset($edit['xmlsitemap_user_priority'])) {
         $row->priority_override = $edit['xmlsitemap_user_priority'];
       }
@@ -320,6 +323,9 @@ function _xmlsitemap_user_batch_process($accounts, $priority, &$context) {
         $row->previously_changed = $row->changed;
         $row->changed = $user->access;
       }
+    }
+    if (module_exists('comment')) {
+      $row->comments = (integer) db_result(db_query("SELECT COUNT(cid) FROM {comments} WHERE uid = %d", $user->uid));
     }
     $row->priority_override = $priority;
     drupal_write_record('xmlsitemap_user', $row, $result === FALSE ? NULL : 'uid');

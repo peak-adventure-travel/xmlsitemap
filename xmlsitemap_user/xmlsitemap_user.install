@@ -441,6 +441,9 @@ function _xmlsitemap_user_update_database_batch(&$context) {
         $row->changed = $user->access;
       }
     }
+    if (module_exists('comment')) {
+      $row->comments = (integer) db_result(db_query("SELECT COUNT(cid) FROM {comments} WHERE uid = %d", $user->uid));
+    }
     drupal_write_record('xmlsitemap_user', $row, $result === FALSE ? NULL : 'uid');
     $context['sandbox']['uid'] = $user->uid;
     $context['message'] = t('Updating %name', array('%name' => $user->name));
