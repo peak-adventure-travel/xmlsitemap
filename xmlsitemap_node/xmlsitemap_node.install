@@ -447,4 +447,7 @@ function _xmlsitemap_node_update_database_batch(&$context) {
   if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
     $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
   }
+  else {
+    xmlsitemap_update_sitemap();
+  }
 }
