@@ -203,6 +203,7 @@ function xmlsitemap_user_xmlsitemap_description() {
  * Implementation of hook_xmlsitemap_links().
  */
 function xmlsitemap_user_xmlsitemap_links() {
+  db_query("DELETE FROM {xmlsitemap} WHERE type ='user'");
   if (user_access('access user profiles')) {
     $result = db_query("SELECT u.uid, xu.changed, xu.previously_changed, xu.priority_override
       FROM {xmlsitemap_user} xu

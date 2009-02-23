@@ -190,7 +190,7 @@ function xmlsitemap_menu() {
  */
 function xmlsitemap_output($chunk = NULL) {
   if (variable_get('xmlsitemap_sitemap_needs_update', FALSE)) {
-    db_query("DELETE FROM {xmlsitemap}");
+    db_query("DELETE FROM {xmlsitemap} WHERE type ='frontpage'");
     $row = new stdClass();
     $row->loc = url(NULL, array('absolute' => TRUE));
     $row->module = 'xmlsitemap';

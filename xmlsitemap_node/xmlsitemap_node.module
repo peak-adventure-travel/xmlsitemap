@@ -224,6 +224,7 @@ function xmlsitemap_node_xmlsitemap_description() {
  * Implementation of hook_xmlsitemap_links().
  */
 function xmlsitemap_node_xmlsitemap_links() {
+  db_query("DELETE FROM {xmlsitemap} WHERE type ='node'");
   $query = "SELECT n.nid, n.vid, n.type, n.promote, xn.changed, xn.previously_changed, xn.priority_override, xn.comment_ratio
     FROM {node} n
     INNER JOIN {xmlsitemap_node} xn ON n.nid = xn.nid

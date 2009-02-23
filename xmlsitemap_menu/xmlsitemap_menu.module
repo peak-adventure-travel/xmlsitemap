@@ -27,6 +27,7 @@ function xmlsitemap_menu_xmlsitemap_description() {
  * Implementation of hook_xmlsitmap_links().
  */
 function xmlsitemap_menu_xmlsitemap_links() {
+  db_query("DELETE FROM {xmlsitemap} WHERE type ='menu'");
   $menus = variable_get('xmlsitemap_menu_menus', array());
   $mlid = 0;
   foreach ($menus as $menu) {
