@@ -52,11 +52,12 @@ function xmlsitemap_user_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
-      'comment_ratio' => array(
-        'description' => 'The ratio between the user comments and the maximum number of comments posted from a user.',
-        'type' => 'float',
+      'commented_nodes' => array(
+        'description' => 'The number of nodes commented from a user.',
+        'type' => 'int',
+        'unsigned' => TRUE,
         'not null' => TRUE,
-        'default' => 0.0,
+        'default' => 0,
       ),
       'priority_override' => array(
         'description' => 'The priority of the term in the site map.',
@@ -163,13 +164,14 @@ function xmlsitemap_user_update_6000() {
         );
       }
     }
-    if (!db_column_exists('xmlsitemap_user', 'comment_ratio')) {
-      db_add_field($ret, 'xmlsitemap_user', 'comment_ratio',
+    if (!db_column_exists('xmlsitemap_user', 'commented_nodes')) {
+      db_add_field($ret, 'xmlsitemap_user', 'commented_nodes',
         array(
-          'description' => 'The ratio between the user comments and the maximum number of comments posted from a user.',
-          'type' => 'float',
+          'description' => 'The number of nodes commented from a user.',
+          'type' => 'int',
+          'unsigned' => TRUE,
           'not null' => TRUE,
-          'default' => 0.0,
+          'default' => 0,
         )
       );
     }
@@ -212,11 +214,12 @@ function xmlsitemap_user_update_6000() {
             'not null' => TRUE,
             'default' => 0,
           ),
-          'comment_ratio' => array(
-            'description' => 'The ratio between the user comments and the maximum number of comments posted from a user.',
-            'type' => 'float',
+          'commented_nodes' => array(
+            'description' => 'The number of nodes commented from a user.',
+            'type' => 'int',
+            'unsigned' => TRUE,
             'not null' => TRUE,
-            'default' => 0.0,
+            'default' => 0,
           ),
           'priority_override' => array(
             'description' => 'The priority of the term in the site map.',
