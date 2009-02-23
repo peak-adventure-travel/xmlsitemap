@@ -19,8 +19,13 @@
  * Implementation of hook_form_alter().
  */
 function xmlsitemap_file_form_alter(&$form, $form_state, $form_id) {
-  if ($form_id == 'system_file_system_settings') {
-    $form['#submit'][] = 'xmlsitemap_update_sitemap';
+  switch ($form_id) {
+    case 'menu_edit_item':
+    case 'menu_edit_menu':
+    case 'menu_overview_form':
+    case 'system_file_system_settings':
+      $form['#submit'][] = 'xmlsitemap_update_sitemap';
+      break;
   }
 }
 

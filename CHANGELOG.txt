@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1.x-dev, 2009-02-23
 -----------------------------------
+#367251: xmlsitemap_update_sitemap() is not called.
 #380636: The update of the database should start in automatic.
 
 XML Sitemap 6.x-1.x-dev, 2009-02-22
