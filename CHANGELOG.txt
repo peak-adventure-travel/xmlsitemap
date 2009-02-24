@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 6.x-1.x-dev, 2009-02-24
+-----------------------------------
+#376868: Change implementation of hook_nodeapi().
+
 XML Sitemap 6.x-1.x-dev, 2009-02-23
 -----------------------------------
 #381046: Add a setting to increment the priority of the user with the most number of comments.
