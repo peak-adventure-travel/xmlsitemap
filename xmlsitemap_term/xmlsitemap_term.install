@@ -265,15 +265,15 @@ function xmlsitemap_term_update_6104() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_term_update_6105() {
-  $ret[] = update_sql("UPDATE {system} SET weight = 10 WHERE name = 'xmlsitemap_term'");
-  return $ret;
+  return xmlsitemap_term_update_6000();
 }
 
 /**
  * Implementation of hook_update_N().
  */
-function xmlsitemap_term_update_6105() {
-  return xmlsitemap_term_update_6000();
+function xmlsitemap_term_update_6106() {
+  $ret[] = update_sql("UPDATE {system} SET weight = 10 WHERE name = 'xmlsitemap_term'");
+  return $ret;
 }
 
 /**
