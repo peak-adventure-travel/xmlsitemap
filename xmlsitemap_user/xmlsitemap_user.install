@@ -393,7 +393,7 @@ function xmlsitemap_user_update_6111() {
     ),
     'title' => t('Processing'),
     'progress_message' => '',
-    'error_message' => t('The update has encountered an error.'),
+    'error_message' => '',
   );
   batch_set($batch);
   $ret[] = array(

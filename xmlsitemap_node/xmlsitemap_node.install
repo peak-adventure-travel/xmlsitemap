@@ -369,7 +369,7 @@ function xmlsitemap_node_update_6113() {
     ),
     'title' => t('Processing'),
     'progress_message' => '',
-    'error_message' => t('The update has encountered an error.'),
+    'error_message' => '',
   );
   batch_set($batch);
   return array(
