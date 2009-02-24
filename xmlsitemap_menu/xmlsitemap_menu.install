@@ -36,7 +36,7 @@ function xmlsitemap_menu_install() {
       )
     );
     menu_rebuild();
-    db_query("UPDATE {system} SET weight = 5 WHERE name = 'xmlsitemap_menu'");
+    db_query("UPDATE {system} SET weight = 10 WHERE name = 'xmlsitemap_menu'");
   }
 }
 
@@ -53,7 +53,6 @@ function xmlsitemap_menu_update_6000() {
     $ret[] = update_sql("INSERT INTO {menu_custom} (menu_name, title, description) VALUES ('menu-xmlsitemap', '". t('XML Sitemap') ."', '". t('The menu from where <em>XML Sitemap: Menu</em> looks for the menus to add to the sitemap.') ."')");
     menu_rebuild();
   }
-  $ret[] = update_sql("UPDATE {system} SET weight = 10 WHERE name = 'xmlsitemap_menu'");
   return $ret;
 }
 
@@ -97,6 +96,13 @@ function xmlsitemap_menu_update_6104() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_menu_update_6105() {
+  return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_menu_update_6106() {
   menu_rebuild();
   $ret[] = array(
     'success' => TRUE,

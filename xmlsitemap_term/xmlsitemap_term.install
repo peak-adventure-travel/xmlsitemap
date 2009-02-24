@@ -223,7 +223,6 @@ function xmlsitemap_term_update_6000() {
       )
     );
   }
-  $ret[] = update_sql("UPDATE {system} SET weight = 7 WHERE name = 'xmlsitemap_term'");
   return $ret;
 }
 
@@ -259,6 +258,13 @@ function xmlsitemap_term_update_6103() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_term_update_6104() {
+  return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_term_update_6105() {
   $ret[] = update_sql("UPDATE {system} SET weight = 10 WHERE name = 'xmlsitemap_term'");
   return $ret;
 }
