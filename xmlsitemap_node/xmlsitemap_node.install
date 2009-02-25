@@ -375,7 +375,7 @@ function xmlsitemap_node_update_6113() {
   return array(
     0 => array(
       'success' => TRUE,
-      'query' => 'UPDATE XMLSITEMAP_NODE TABLE',
+      'query' => 'UPDATE {xmlsitemap_node} TABLE',
     )
   );
 }
