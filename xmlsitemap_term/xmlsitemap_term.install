@@ -32,7 +32,14 @@ function xmlsitemap_term_schema() {
     'description' => 'The base table for xmlsitemap_term.',
     'fields' => array(
       'tid' => array(
-        'description' => 'The ID of the path.',
+        'description' => 'The vocabulary term ID.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'vid' => array(
+        'description' => 'The vocabulary ID.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
@@ -95,7 +102,7 @@ function xmlsitemap_term_update_6000() {
     if (db_column_exists('xmlsitemap_term', 'tid')) {
       db_change_field($ret, 'xmlsitemap_term', 'tid', 'tid',
         array(
-          'description' => 'The ID of the path.',
+          'description' => 'The vocabulary term ID.',
           'type' => 'int',
           'unsigned' => TRUE,
           'not null' => TRUE,
@@ -107,7 +114,19 @@ function xmlsitemap_term_update_6000() {
     else {
       db_add_field($ret, 'xmlsitemap_term', 'tid',
         array(
-          'description' => 'The ID of the path.',
+          'description' => 'The vocabulary term ID.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0,
+        ),
+        array('primary key' => array('tid'))
+      );
+    }
+    if (!db_column_exists('xmlsitemap_term', 'vid')) {
+      db_add_field($ret, 'xmlsitemap_term', 'vid',
+        array(
+          'description' => 'The vocabulary ID.',
           'type' => 'int',
           'unsigned' => TRUE,
           'not null' => TRUE,
@@ -192,7 +211,14 @@ function xmlsitemap_term_update_6000() {
         'description' => 'The base table for xmlsitemap_term.',
         'fields' => array(
           'tid' => array(
-            'description' => 'The ID of the path.',
+            'description' => 'The vocabulary term ID.',
+            'type' => 'int',
+            'unsigned' => TRUE,
+            'not null' => TRUE,
+            'default' => 0,
+           ),
+           'vid' => array(
+            'description' => 'The vocabulary ID.',
             'type' => 'int',
             'unsigned' => TRUE,
             'not null' => TRUE,
@@ -265,7 +291,7 @@ function xmlsitemap_term_update_6104() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_term_update_6105() {
-  return xmlsitemap_term_update_6000();
+  return array();
 }
 
 /**
@@ -274,6 +300,13 @@ function xmlsitemap_term_update_6105() {
 function xmlsitemap_term_update_6106() {
   $ret[] = update_sql("UPDATE {system} SET weight = 10 WHERE name = 'xmlsitemap_term'");
   return $ret;
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_term_update_6107() {
+  return xmlsitemap_term_update_6000();
 }
 
 /**
