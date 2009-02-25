@@ -309,9 +309,106 @@ function xmlsitemap_term_update_6107() {
 }
 
 /**
+ * Implementation of hook_update_N().
+ *
+ */
+function xmlsitemap_term_update_6108() {
+  $batch = array(
+    'operations' => array(
+      array('_xmlsitemap_term_update_database_batch', array())
+    ),
+    'title' => t('Processing'),
+    'progress_message' => '',
+    'error_message' => '',
+  );
+  batch_set($batch);
+  return array(
+    0 => array(
+      'success' => TRUE,
+      'query' => 'UPDATE XMLSITEMAP_TERM TABLE',
+    )
+  );
+}
+
+/**
  * Implementation of hook_uninstall().
  */
 function xmlsitemap_term_uninstall() {
   drupal_uninstall_schema('xmlsitemap_term');
   db_query("DELETE FROM {variable} WHERE name LIKE 'xmlsitemap\_term\_%'");
+}
+
+/*****************************************************************************
+ * Private functions.
+ ****************************************************************************/
+
+/**
+ * Batch function to update the xmlsitemap_term table.
+ */
+function _xmlsitemap_term_update_database_batch(&$context) {
+  if (!isset($context['sandbox']['progress'])) {
+    $context['sandbox']['progress'] = 0;
+    $context['sandbox']['max'] = db_result(db_query('SELECT COUNT(tid) FROM {term_data} WHERE vid <> 0'));
+    $context['sandbox']['tid'] = 0;
+    $context['sandbox']['vid'] = 0;
+  }
+  if (!$context['sandbox']['vid']) {
+    $context['sandbox']['tid'] = (integer) db_result(db_query('SELECT tid 
+      FROM {term_data}
+      WHERE vid <> 0
+        AND tid > %d', $context['sandbox']['tid'])
+    );
+  }
+  if ($tid = $context['sandbox']['tid']) {
+    $data = db_fetch_object(db_query('SELECT n.vid, n.created, n.changed
+      FROM {node} n
+      INNER JOIN {term_node} tn ON tn.vid = n.vid
+      WHERE tn.tid = %d
+        AND n.vid > %d
+      ORDER BY n.changed, n.created',
+      $tid, $context['sandbox']['vid'])
+    );
+    $vocabulary = (integer) db_result(db_query('SELECT vid 
+      FROM {term_data}
+      WHERE vid <> 0
+        AND tid = %d', $tid)
+    );
+    if ($data !== FALSE && $vocabulary) {
+      $context['sandbox']['vid'] = $data->vid;
+      $result = db_fetch_object(db_query("SELECT tid, vid, changed, previously_changed, priority_override
+        FROM {xmlsitemap_term}
+        WHERE tid = %d", $tid)
+      );
+      if ($result === FALSE) {
+        $row = new stdClass();
+        $row->tid = $tid;
+        $row->vid = $vocabulary;
+        $row->changed = $data->changed;
+        $row->previously_changed = $data->created;
+      }
+      else {
+        $row = $result;
+        if (empty($row->vid)) {
+          $row->vid = $vocabulary;
+        }
+        if ($data->changed > $row->changed) {
+          $row->previously_changed = $row->changed;
+          $row->changed = $data->changed;
+        }
+      }
+      drupal_write_record('xmlsitemap_term', $row, $result === FALSE ? NULL : 'tid');
+    }
+    else {
+      $context['sandbox']['vid'] = 0;
+    }
+  }
+  if (!$context['sandbox']['vid']) {
+    $context['sandbox']['progress']++;
+  }
+  if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
+    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+  }
+  else {
+    xmlsitemap_update_sitemap();
+  }
 }
