@@ -415,7 +415,7 @@ function xmlsitemap_user_uninstall() {
  ****************************************************************************/
 
 /**
- * Batch function to update the xmlsitemap_node table.
+ * Batch function to update the xmlsitemap_user table.
  */
 function _xmlsitemap_user_update_database_batch(&$context) {
   if (!isset($context['sandbox']['progress'])) {
