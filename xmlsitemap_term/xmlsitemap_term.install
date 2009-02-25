@@ -132,7 +132,6 @@ function xmlsitemap_term_update_6000() {
           'not null' => TRUE,
           'default' => 0,
         ),
-        array('primary key' => array('tid'))
       );
     }
     if (db_column_exists('xmlsitemap_term', 'last_changed')) {
