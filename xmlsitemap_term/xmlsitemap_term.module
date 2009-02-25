@@ -271,7 +271,7 @@ function _xmlsitemap_term_batch_process($nodes, $priority, &$context) {
   }
   if (empty($context['sandbox']['terms'])) {
     $nid = array_shift($context['sandbox']['nodes']);
-    if ($node = node_load($nid)) {
+    if ($node = node_load($nid, NULL, TRUE)) {
       $context['sandbox']['terms'] = taxonomy_node_get_terms($node);
       $context['sandbox']['node'] = $node;
     }
