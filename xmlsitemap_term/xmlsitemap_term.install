@@ -131,7 +131,7 @@ function xmlsitemap_term_update_6000() {
           'unsigned' => TRUE,
           'not null' => TRUE,
           'default' => 0,
-        ),
+        )
       );
     }
     if (db_column_exists('xmlsitemap_term', 'last_changed')) {
