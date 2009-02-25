@@ -231,6 +231,7 @@ function xmlsitemap_output($chunk = NULL) {
               INNER JOIN {system} s ON s.name = xsm.module
               WHERE s.type = 'module'
                 AND s.status = 1
+                AND xsm.loc <> ''
                 AND xsm.changefreq <> 0
                 AND xsm.changed <> 0
                 AND (xsm.priority >= 0 AND xsm.priority <= 1)
@@ -471,10 +472,11 @@ function _xmlsitemap_link_count() {
   if (!isset($link_count)) {
     $link_count = db_result(
       db_query(
-        "SELECT COUNT(*) FROM {xmlsitemap} xsm
+        "SELECT COUNT(xsm.loc) FROM {xmlsitemap} xsm
           INNER JOIN {system} s ON s.name = xsm.module
           WHERE s.type = 'module'
             AND s.status = 1
+            AND xsm.loc <> ''
             AND xsm.changefreq <> 0
             AND xsm.changed <> 0
             AND (xsm.priority >= 0 AND xsm.priority <= 1)"
@@ -499,10 +501,12 @@ function _xmlsitemap_output_chunk($chunk_size, $chunk = 0) {
   print '  xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9'."\n";
   print '  http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">'."\n";
   $start = $chunk * $chunk_size;
-  $links = db_query_range("SELECT * FROM {xmlsitemap} xsm
+  $links = db_query_range("SELECT xsm.loc, xsm.module, xsm.type, xsm.changed, xsm.changefreq, xsm.priority
+    FROM {xmlsitemap} xsm
     INNER JOIN {system} s ON s.name = xsm.module
     WHERE s.type = 'module'
       AND s.status = 1
+      AND xsm.loc <> ''
       AND xsm.changefreq <> 0
       AND xsm.changed <> 0
       AND (xsm.priority >= 0 AND xsm.priority <= 1)

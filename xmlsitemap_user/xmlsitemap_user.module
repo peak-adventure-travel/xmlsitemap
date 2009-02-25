@@ -140,7 +140,7 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
       xmlsitemap_update_sitemap();
       break;
     case 'update':
-      if (($result = db_fetch_object(db_query("SELECT * FROM {xmlsitemap_user} WHERE uid = %d", $account->uid))) === FALSE) {
+      if (($result = db_fetch_object(db_query("SELECT uid, changed, previously_changed, comments, priority_override FROM {xmlsitemap_user} WHERE uid = %d", $account->uid))) === FALSE) {
         $row = new stdClass();
         $row->uid = $account->uid;
         $row->previously_changed = $account->created;
@@ -330,7 +330,10 @@ function _xmlsitemap_user_batch_process($accounts, $priority, &$context) {
   }
   $uid = array_shift($context['sandbox']['accounts']);
   if ($user = user_load(array('uid' => $uid))) {
-    $result = db_fetch_object(db_query("SELECT * FROM {xmlsitemap_user} WHERE uid = %d", $uid));
+    $result = db_fetch_object(db_query("SELECT uid, changed, previously_changed, comments, priority_override
+      FROM {xmlsitemap_user}
+      WHERE uid = %d", $uid)
+    );
     if ($result === FALSE) {
       $row = new stdClass();
       $row->uid = $user->uid;

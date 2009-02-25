@@ -32,7 +32,9 @@ function xmlsitemap_node_comment($a1, $op) {
           FROM {node_comment_statistics}
           WHERE nid = %d', $nid)
         );
-        $query = "SELECT * FROM {xmlsitemap_node} WHERE nid = %d";
+        $query = "SELECT nid, changed, previously_changed, comment_ratio, priority_override
+          FROM {xmlsitemap_node}
+          WHERE nid = %d";
         $link = db_fetch_object(db_query($query, $nid));
         $node = node_load($nid);
         if ($link) {
@@ -176,7 +178,7 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
       }
       break;
     case 'update':
-      if (($result = db_fetch_object(db_query("SELECT * FROM {xmlsitemap_node} WHERE nid = %d", $node->nid))) === FALSE) {
+      if (($result = db_fetch_object(db_query("SELECT nid, changed, previously_changed, comment_ratio, priority_override FROM {xmlsitemap_node} WHERE nid = %d", $node->nid))) === FALSE) {
         $row = new stdClass();
         $row->nid = $node->nid;
         $row->changed = $node->changed;
@@ -337,7 +339,10 @@ function _xmlsitemap_node_batch_process($nodes, $priority, &$context) {
   }
   $nid = array_shift($context['sandbox']['nodes']);
   if ($node = node_load($nid)) {
-    $result = db_fetch_object(db_query("SELECT * FROM {xmlsitemap_node} WHERE nid = %d", $nid));
+    $result = db_fetch_object(db_query("SELECT nid, changed, previously_changed, comment_ratio, priority_override
+      FROM {xmlsitemap_node}
+      WHERE nid = %d", $nid)
+    );
     if ($result === FALSE) {
       $row = new stdClass();
       $row->nid = $nid;

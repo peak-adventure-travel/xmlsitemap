@@ -279,7 +279,10 @@ function _xmlsitemap_term_batch_process($nodes, $priority, &$context) {
   $term = array_shift($context['sandbox']['terms']);
   if (isset($term)) {
     $node = $context['sandbox']['node'];
-    $result = db_fetch_object(db_query("SELECT * FROM {xmlsitemap_term} WHERE tid = %d", $term->tid));
+    $result = db_fetch_object(db_query("SELECT tid, vid, changed, previously_changed, priority_override
+      FROM {xmlsitemap_term}
+      WHERE tid = %d", $term->tid)
+    );
     if ($result === FALSE) {
       $row = new stdClass();
       $row->tid = $term->tid;
