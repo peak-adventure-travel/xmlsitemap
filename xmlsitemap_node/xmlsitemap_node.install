@@ -404,20 +404,20 @@ function _xmlsitemap_node_update_database_batch(&$context) {
       $context['sandbox']['maxcomments'] = (integer) db_result(db_query('SELECT MAX(comment_count) FROM {node_comment_statistics}'));
     }
   }
-  $node = db_fetch_object(
-    db_query('SELECT * FROM {node}
+  $nid = db_result(
+    db_query('SELECT nid FROM {node}
       WHERE nid > %d', $context['sandbox']['nid']
     )
   );
-  if ($node) {
+  if ($nid !== FALSE && ($node = node_load($nid))) {
     $result = db_fetch_object(
       db_query('SELECT * FROM {xmlsitemap_node}
-        WHERE nid = %d', $node->nid
+        WHERE nid = %d', $nid
       )
     );
     if ($result === FALSE) {
       $row = new stdClass();
-      $row->nid = $node->nid;
+      $row->nid = $nid;
       $row->changed = $node->changed;
       $row->previously_changed = $node->created;
     }
@@ -431,7 +431,7 @@ function _xmlsitemap_node_update_database_batch(&$context) {
     if (isset($context['sandbox']['maxcomments']) && $context['sandbox']['maxcomments'] > 1) {
       $comments = (integer) db_result(db_query('SELECT comment_count
         FROM {node_comment_statistics}
-        WHERE nid = %d', $node->nid)
+        WHERE nid = %d', $nid)
       );
       $row->comment_ratio = $comments / $context['sandbox']['maxcomments'];
     }
