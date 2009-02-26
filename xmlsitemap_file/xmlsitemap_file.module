@@ -54,8 +54,8 @@ function xmlsitemap_file_xmlsitemap_links($modules) {
         $access = module_invoke_all('file_download', $file->filepath);
       }
       if (!in_array(-1, $access)) {
-        $row->id = $file->id;
-        $row->sid = $file->fid;
+        $row->id = $file->fid;
+        $row->sid = $file->id;
         $row->changed = $file->timestamp;
         $row->changefreq = time() - $file->timestamp;
         if ($file->priority == -1.0) {
