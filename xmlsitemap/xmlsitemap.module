@@ -192,7 +192,7 @@ function xmlsitemap_output($chunk = NULL) {
   if (variable_get('xmlsitemap_sitemap_needs_update', FALSE)) {
     db_query("DELETE FROM {xmlsitemap} WHERE type ='frontpage'");
     $row = new stdClass();
-    $row->loc = url(NULL, array('absolute' => TRUE));
+    $row->loc = '';
     $row->module = 'xmlsitemap';
     $row->type = 'frontpage';
     $row->changed = time() - 1;
