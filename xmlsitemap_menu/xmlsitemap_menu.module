@@ -26,33 +26,35 @@ function xmlsitemap_menu_xmlsitemap_description() {
 /**
  * Implementation of hook_xmlsitmap_links().
  */
-function xmlsitemap_menu_xmlsitemap_links() {
-  db_query("DELETE FROM {xmlsitemap} WHERE type ='menu'");
-  $menus = variable_get('xmlsitemap_menu_menus', array());
-  $mlid = 0;
-  foreach ($menus as $menu) {
-    if (is_string($menu)) {
-      $result = db_query("SELECT ml.mlid
-        FROM {menu_links} ml
-        LEFT JOIN {menu_router} m ON m.path = ml.router_path
-        WHERE  ml.menu_name = '%s'
-          AND ml.mlid > %d
-        ORDER BY ml.mlid ASC",
-        $menu, $mlid
-      );
-      $row = new stdClass();
-      $row->module = 'xmlsitemap_menu';
-      $row->type = 'menu';
-      while ($mlid = db_result($result)) {
-        $link = menu_link_load($mlid);
-        // Avoid external links, or links to the front page;
-        // both have $link['external'] set to 1.
-        if (!$link['external'] && !$link['hidden'] && $link['access'] == 1) {
-          $row->loc = $link['href'];
-          $row->id = $mlid;
-          $row->priority = min(max(round($link['weight'] / 20 + 0.5, 1), 0), 1);
-          if (db_result(db_query("SELECT loc FROM {xmlsitemap} WHERE loc = '%s'", $row->loc)) != $row->loc) {
-            drupal_write_record('xmlsitemap', $row);
+function xmlsitemap_menu_xmlsitemap_links($modules) {
+  if (in_array(array('xmlsitemap', 'xmlsitemap_menu'), $modules)) {
+    db_query("DELETE FROM {xmlsitemap} WHERE type ='menu'");
+    $menus = variable_get('xmlsitemap_menu_menus', array());
+    $mlid = 0;
+    foreach ($menus as $menu) {
+      if (is_string($menu)) {
+        $result = db_query("SELECT ml.mlid
+          FROM {menu_links} ml
+          LEFT JOIN {menu_router} m ON m.path = ml.router_path
+          WHERE  ml.menu_name = '%s'
+            AND ml.mlid > %d
+          ORDER BY ml.mlid ASC",
+          $menu, $mlid
+        );
+        $row = new stdClass();
+        $row->module = 'xmlsitemap_menu';
+        $row->type = 'menu';
+        while ($mlid = db_result($result)) {
+          $link = menu_link_load($mlid);
+          // Avoid external links, or links to the front page;
+          // both have $link['external'] set to 1.
+          if (!$link['external'] && !$link['hidden'] && $link['access'] == 1) {
+            $row->loc = $link['href'];
+            $row->id = $mlid;
+            $row->priority = min(max(round($link['weight'] / 20 + 0.5, 1), 0), 1);
+            if (db_result(db_query("SELECT loc FROM {xmlsitemap} WHERE loc = '%s'", $row->loc)) != $row->loc) {
+              drupal_write_record('xmlsitemap', $row);
+            }
           }
         }
       }

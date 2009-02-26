@@ -137,7 +137,7 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
       $row->priority_override = isset($edit['xmlsitemap_user_priority']) ? $edit['xmlsitemap_user_priority'] : -2.0;
       drupal_write_record('xmlsitemap_user', $row);
       $edit['xmlsitemap_user_priority'] = NULL;
-      xmlsitemap_update_sitemap();
+      xmlsitemap_update_sitemap('xmlsitemap_user');
       break;
     case 'update':
       if (($result = db_fetch_object(db_query("SELECT uid, changed, previously_changed, comments, priority_override FROM {xmlsitemap_user} WHERE uid = %d", $account->uid))) === FALSE) {
@@ -158,11 +158,11 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
         $row->priority_override = $edit['xmlsitemap_user_priority'];
       }
       drupal_write_record('xmlsitemap_user', $row, $result !== FALSE ? 'uid' : NULL);
-      xmlsitemap_update_sitemap();
+      xmlsitemap_update_sitemap('xmlsitemap_user');
       break;
     case 'delete':
       db_query("DELETE FROM {xmlsitemap_user} WHERE uid = %d", $account->uid);
-      xmlsitemap_update_sitemap();
+      xmlsitemap_update_sitemap('xmlsitemap_user');
       break;
   }
 }
@@ -202,48 +202,50 @@ function xmlsitemap_user_xmlsitemap_description() {
 /**
  * Implementation of hook_xmlsitemap_links().
  */
-function xmlsitemap_user_xmlsitemap_links() {
-  db_query("DELETE FROM {xmlsitemap} WHERE type ='user'");
-  if (user_access('access user profiles')) {
-    $result = db_query("SELECT u.uid, xu.changed, xu.previously_changed, xu.priority_override
-      FROM {xmlsitemap_user} xu
-      INNER JOIN {users} u ON xu.uid = u.uid
-      WHERE u.status <> 0"
-    );
-    $row = new stdClass();
-    $row->module = 'xmlsitemap_user';
-    $row->type = 'user';
-    while ($user = db_fetch_object($result)) {
-      $row->loc = 'user/'. $user->uid;
-      $row->id = $user->uid;
-      $row->changed = $user->changed;
-      $row->changefreq = max(time() - $user->changed, empty($user->previously_changed) ? 0 : $user->changed - $user->previously_changed);
-      if ($user->priority_override != -2.0) {
-        $row->priority = $user->priority_override;
-      }
-      else {
-        $priority = db_fetch_object(
-          db_query("SELECT MIN(xur.priority) AS min, SUM(xur.priority) AS sum
-            FROM {users_roles} ur
-            INNER JOIN {xmlsitemap_user_role} xur ON xur.rid = ur.rid
-            WHERE ur.uid = %d", $user->uid
-          )
-        );
-        if (isset($priority->min) && isset($priority->sum)) {
-          $row->priority = $default->min < 0 ? -1.0 : round(min($default->sum, 1), 1);
+function xmlsitemap_user_xmlsitemap_links($modules) {
+  if (in_array(array('xmlsitemap', 'xmlsitemap_user'), $modules)) {
+    db_query("DELETE FROM {xmlsitemap} WHERE type ='user'");
+    if (user_access('access user profiles')) {
+      $result = db_query("SELECT u.uid, xu.changed, xu.previously_changed, xu.priority_override
+        FROM {xmlsitemap_user} xu
+        INNER JOIN {users} u ON xu.uid = u.uid
+        WHERE u.status <> 0"
+      );
+      $row = new stdClass();
+      $row->module = 'xmlsitemap_user';
+      $row->type = 'user';
+      while ($user = db_fetch_object($result)) {
+        $row->loc = 'user/'. $user->uid;
+        $row->id = $user->uid;
+        $row->changed = $user->changed;
+        $row->changefreq = max(time() - $user->changed, empty($user->previously_changed) ? 0 : $user->changed - $user->previously_changed);
+        if ($user->priority_override != -2.0) {
+          $row->priority = $user->priority_override;
         }
         else {
-          $row->priority = variable_get('xmlsitemap_user_default_priority', 0.5);
-        }
-        if (module_exists('comment')) {
-          $maxcomments = (integer) db_result(db_query("SELECT MAX(comments) FROM {xmlsitemap_user}"));
-          if ($maxcomments > 1) {
-            $row->priority += variable_get('xmlsitemap_user_comment_priority', 0.2) * $user->comments / $maxcomments;
+          $priority = db_fetch_object(
+            db_query("SELECT MIN(xur.priority) AS min, SUM(xur.priority) AS sum
+              FROM {users_roles} ur
+              INNER JOIN {xmlsitemap_user_role} xur ON xur.rid = ur.rid
+              WHERE ur.uid = %d", $user->uid
+            )
+          );
+          if (isset($priority->min) && isset($priority->sum)) {
+            $row->priority = $default->min < 0 ? -1.0 : round(min($default->sum, 1), 1);
+          }
+          else {
+            $row->priority = variable_get('xmlsitemap_user_default_priority', 0.5);
+          }
+          if (module_exists('comment')) {
+            $maxcomments = (integer) db_result(db_query("SELECT MAX(comments) FROM {xmlsitemap_user}"));
+            if ($maxcomments > 1) {
+              $row->priority += variable_get('xmlsitemap_user_comment_priority', 0.2) * $user->comments / $maxcomments;
+            }
           }
         }
-      }
-      if (db_result(db_query("SELECT loc FROM {xmlsitemap} WHERE loc = '%s'", $row->loc)) != $row->loc) {
-        drupal_write_record('xmlsitemap', $row);
+        if (db_result(db_query("SELECT loc FROM {xmlsitemap} WHERE loc = '%s'", $row->loc)) != $row->loc) {
+          drupal_write_record('xmlsitemap', $row);
+        }
       }
     }
   }
@@ -273,14 +275,14 @@ function xmlsitemap_user_form_submit($form, &$form_state) {
   $form_values = $form_state['values'];
   $form_id = $form_values['form_id'];
   if ($form_values['form_id'] == 'user_admin_settings' && $form_values['xmlsitemap_user_default_priority'] != $form_values['xmlsitemap_user_old_default_priority']) {
-    xmlsitemap_update_sitemap();
+    xmlsitemap_update_sitemap('xmlsitemap_user');
   }
   elseif ($form_id == 'user_admin_role') {
     $priority = db_result(db_query("SELECT priority FROM {xmlsitemap_user_role} WHERE rid = %d", $form_values['rid']));
     if ($form_values['op'] == t('Delete role')) {
       db_query("DELETE FROM {xmlsitemap_user_role} WHERE rid = %d", $form_values['rid']);
       if ($priority !== FALSE) {
-        xmlsitemap_update_sitemap();
+        xmlsitemap_update_sitemap('xmlsitemap_user');
       }
     }
     elseif ($form_values['op'] == t('Save role')) {
@@ -288,7 +290,7 @@ function xmlsitemap_user_form_submit($form, &$form_state) {
       $row->rid = $form_values['rid'];
       $row->priority = $form_values['xmlsitemap_user_role_priority'];
       drupal_write_record('xmlsitemap_user_role', $row, $priority !== FALSE ? 'rid' : NULL);
-      xmlsitemap_update_sitemap();
+      xmlsitemap_update_sitemap('xmlsitemap_user');
     }
   }
 }

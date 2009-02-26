@@ -14,14 +14,14 @@
  * Implementation of hook_enable().
  */
 function xmlsitemap_user_enable() {
-  xmlsitemap_update_sitemap();
+  xmlsitemap_update_sitemap('xmlsitemap_user');
 }
 
 /**
  * Implementation of hook_disable().
  */
 function xmlsitemap_user_disable() {
-  xmlsitemap_update_sitemap();
+  xmlsitemap_update_sitemap('xmlsitemap_user');
 }
 
 /**
@@ -459,6 +459,6 @@ function _xmlsitemap_user_update_database_batch(&$context) {
     $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
   }
   else {
-    xmlsitemap_update_sitemap();
+    xmlsitemap_update_sitemap('xmlsitemap_user');
   }
 }

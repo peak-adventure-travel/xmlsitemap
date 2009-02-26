@@ -151,7 +151,7 @@ function xmlsitemap_node_node_type($op, $info) {
     variable_set('xmlsitemap_node_type_priority_'. $info->type, variable_get('xmlsitemap_node_type_priority_'. $info->old_type, 0.5));
     variable_del('xmlsitemap_node_type_priority_'. $info->old_type);
   }
-  xmlsitemap_update_sitemap();
+  xmlsitemap_update_sitemap('xmlsitemap_node');
 }
 
 /**
@@ -174,7 +174,7 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
       $row->priority_override = isset($node->priority_override) ? $node->priority_override : -2.0;
       drupal_write_record('xmlsitemap_node', $row);
       if ($node->status) {
-        xmlsitemap_update_sitemap();
+        xmlsitemap_update_sitemap('xmlsitemap_node');
       }
       break;
     case 'update':
@@ -195,13 +195,13 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
       }
       drupal_write_record('xmlsitemap_node', $row, $result === FALSE ? NULL : 'nid');
       if ($node->status || $node->xmlsitemap_node_status) {
-        xmlsitemap_update_sitemap();
+        xmlsitemap_update_sitemap('xmlsitemap_node');
       }
       break;
     case 'delete':
       db_query("DELETE FROM {xmlsitemap_node} WHERE nid = %d", $node->nid);
       if ($node->status) {
-        xmlsitemap_update_sitemap();
+        xmlsitemap_update_sitemap('xmlsitemap_node');
       }
       break;
   }
@@ -225,35 +225,37 @@ function xmlsitemap_node_xmlsitemap_description() {
 /**
  * Implementation of hook_xmlsitemap_links().
  */
-function xmlsitemap_node_xmlsitemap_links() {
-  db_query("DELETE FROM {xmlsitemap} WHERE type ='node'");
-  $query = "SELECT n.nid, n.vid, n.type, n.promote, xn.changed, xn.previously_changed, xn.priority_override, xn.comment_ratio
-    FROM {node} n
-    INNER JOIN {xmlsitemap_node} xn ON n.nid = xn.nid
-    WHERE n.status > 0
-      AND xn.priority_override <> -1.0";
-  $result = db_query(db_rewrite_sql($query));
-  $row = new stdClass();
-  $row->module = 'xmlsitemap_node';
-  $row->type = 'node';
-  while ($node = db_fetch_object($result)) {
-    $row->loc = 'node/'. $node->nid;
-    $row->id = $node->nid;
-    $row->sid = $node->vid;
-    $row->changed = $node->changed;
-    $row->changefreq = max(time() - $node->changed, empty($node->previously_changed) ? 0 : $node->changed - $node->previously_changed);
-    if ($node->priority_override != -2.0) {
-      $priority = $node->priority_override;
-    }
-    elseif (($priority = variable_get('xmlsitemap_node_type_priority_'. $node->type, 0.5)) != -1.0) {
-      if ($node->promote) {
-        $priority += variable_get('xmlsitemap_node_promote_priority', 0.3);
+function xmlsitemap_node_xmlsitemap_links($modules) {
+  if (in_array(array('xmlsitemap', 'xmlsitemap_node'), $modules)) {
+    db_query("DELETE FROM {xmlsitemap} WHERE type ='node'");
+    $query = "SELECT n.nid, n.vid, n.type, n.promote, xn.changed, xn.previously_changed, xn.priority_override, xn.comment_ratio
+      FROM {node} n
+      INNER JOIN {xmlsitemap_node} xn ON n.nid = xn.nid
+      WHERE n.status > 0
+        AND xn.priority_override <> -1.0";
+    $result = db_query(db_rewrite_sql($query));
+    $row = new stdClass();
+    $row->module = 'xmlsitemap_node';
+    $row->type = 'node';
+    while ($node = db_fetch_object($result)) {
+      $row->loc = 'node/'. $node->nid;
+      $row->id = $node->nid;
+      $row->sid = $node->vid;
+      $row->changed = $node->changed;
+      $row->changefreq = max(time() - $node->changed, empty($node->previously_changed) ? 0 : $node->changed - $node->previously_changed);
+      if ($node->priority_override != -2.0) {
+        $priority = $node->priority_override;
       }
-      $priority += $node->comment_ratio * variable_get('xmlsitemap_node_comment_priority', 0.2);
-    }
-    $row->priority = min(round($priority, 1), 1);
-    if (db_result(db_query("SELECT loc FROM {xmlsitemap} WHERE loc = '%s'", $row->loc)) != $row->loc) {
-      drupal_write_record('xmlsitemap', $row);
+      elseif (($priority = variable_get('xmlsitemap_node_type_priority_'. $node->type, 0.5)) != -1.0) {
+        if ($node->promote) {
+          $priority += variable_get('xmlsitemap_node_promote_priority', 0.3);
+        }
+        $priority += $node->comment_ratio * variable_get('xmlsitemap_node_comment_priority', 0.2);
+      }
+      $row->priority = min(round($priority, 1), 1);
+      if (db_result(db_query("SELECT loc FROM {xmlsitemap} WHERE loc = '%s'", $row->loc)) != $row->loc) {
+        drupal_write_record('xmlsitemap', $row);
+      }
     }
   }
 }
@@ -295,7 +297,7 @@ function xmlsitemap_node_type_submit($form, &$form_state) {
   $priority = $values['xmlsitemap_node_type_priority'];
   $old_priority = $values['xmlsitemap_old_priority'];
   if ($op == t('Save content type') && $priority != $old_priority || $op == t('Reset to defaults') && $old_priority != 0.1) {
-    xmlsitemap_update_sitemap();
+    xmlsitemap_update_sitemap('xmlsitemap_node');
   }
 }
 

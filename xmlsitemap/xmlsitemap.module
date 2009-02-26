@@ -199,7 +199,7 @@ function xmlsitemap_output($chunk = NULL) {
     $row->changefreq = 1;
     $row->priority = variable_get('xmlsitemap_front_page_priority', 1);
     drupal_write_record('xmlsitemap', $row);
-    module_invoke_all('xmlsitemap_links');
+    module_invoke_all('xmlsitemap_links', variable_get('xmlsitemap_update_sitemap_request', array()));
     menu_rebuild();
     variable_set('xmlsitemap_sitemap_needs_update', FALSE);
   }
@@ -351,6 +351,7 @@ function xmlsitemap_settings_sitemap_validate($form, &$form_state) {
  */
 function xmlsitemap_settings_submit($form, &$form_state) {
   menu_rebuild();
+  xmlsitemap_update_sitemap();
 }
 
 /*****************************************************************************
@@ -450,13 +451,18 @@ function xmlsitemap_priority_options($option = '') {
  * Mark the site map as changed, and the cache as needing update; it also
  * clean the cached output.
  */
-function xmlsitemap_update_sitemap() {
+function xmlsitemap_update_sitemap($module = 'xmlsitemap') {
   db_query("DELETE FROM {cache_page} WHERE cid LIKE '%%sitemap%%.xml'");
   if (!variable_get('xmlsitemap_sitemap_is_changed', FALSE)) {
     variable_set('xmlsitemap_sitemap_is_changed', TRUE);
   }
   if (!variable_get('xmlsitemap_sitemap_needs_update', FALSE)) {
     variable_set('xmlsitemap_sitemap_needs_update', TRUE);
+  }
+  $modules = variable_get('xmlsitemap_update_sitemap_request', array());
+  if (!in_array($module, $modules)) {
+    array_unshift($modules, $module);
+    variable_set('xmlsitemap_update_sitemap_request', $modules);
   }
 }
 

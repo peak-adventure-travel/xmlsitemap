@@ -14,14 +14,14 @@
  * Implementation of hook_enable().
  */
 function xmlsitemap_node_enable() {
-  xmlsitemap_update_sitemap();
+  xmlsitemap_update_sitemap('xmlsitemap_node');
 }
 
 /**
  * Implementation of hook_disable().
  */
 function xmlsitemap_node_disable() {
-  xmlsitemap_update_sitemap();
+  xmlsitemap_update_sitemap('xmlsitemap_node');
 }
 
 /**
@@ -445,6 +445,6 @@ function _xmlsitemap_node_update_database_batch(&$context) {
     $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
   }
   else {
-    xmlsitemap_update_sitemap();
+    xmlsitemap_update_sitemap('xmlsitemap_node');
   }
 }
