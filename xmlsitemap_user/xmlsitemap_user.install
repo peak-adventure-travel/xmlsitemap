@@ -387,15 +387,11 @@ function xmlsitemap_user_update_6110() {
 function xmlsitemap_user_update_6111() {
   $ret = xmlsitemap_user_update_6000();
   $ret[] = update_sql("UPDATE {system} SET weight = 10 WHERE name = 'xmlsitemap_user'");
-  $batch = array(
-    'operations' => array(
-      array('_xmlsitemap_user_update_database_batch', array())
-    ),
-    'title' => t('Processing'),
-    'progress_message' => '',
-    'error_message' => '',
+  module_load_include('inc', 'xmlsitemap', 'includes/xmlsitemap.install');
+  xmlsitemap_add_database_batch_operation(
+    drupal_get_path('module', 'xmlsitemap_user') .'/xmlsitemap_user.install',
+    '_xmlsitemap_user_update_database_batch'
   );
-  batch_set($batch);
   $ret[] = array(
     'success' => TRUE,
     'query' => 'UPDATE {xmlsitemap_user} TABLE',

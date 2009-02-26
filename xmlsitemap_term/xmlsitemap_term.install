@@ -313,15 +313,11 @@ function xmlsitemap_term_update_6107() {
  *
  */
 function xmlsitemap_term_update_6108() {
-  $batch = array(
-    'operations' => array(
-      array('_xmlsitemap_term_update_database_batch', array())
-    ),
-    'title' => t('Processing'),
-    'progress_message' => '',
-    'error_message' => '',
+  module_load_include('inc', 'xmlsitemap', 'includes/xmlsitemap.install');
+  xmlsitemap_add_database_batch_operation(
+    drupal_get_path('module', 'xmlsitemap_term') .'/xmlsitemap_term.install',
+    '_xmlsitemap_term_update_database_batch'
   );
-  batch_set($batch);
   return array(
     0 => array(
       'success' => TRUE,

@@ -363,20 +363,10 @@ function xmlsitemap_node_update_6112() {
  *
  */
 function xmlsitemap_node_update_6113() {
-  $batch = array(
-    'operations' => array(
-      array('_xmlsitemap_node_update_database_batch', array())
-    ),
-    'title' => t('Processing'),
-    'progress_message' => '',
-    'error_message' => '',
-  );
-  batch_set($batch);
-  return array(
-    0 => array(
-      'success' => TRUE,
-      'query' => 'UPDATE {xmlsitemap_node} TABLE',
-    )
+  module_load_include('inc', 'xmlsitemap', 'includes/xmlsitemap.install');
+  xmlsitemap_add_database_batch_operation(
+    drupal_get_path('module', 'xmlsitemap_node') .'/xmlsitemap_node.install',
+    '_xmlsitemap_node_update_database_batch'
   );
 }
 
