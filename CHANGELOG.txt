@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 6.x-1.x-dev, 2009-02-25
+-----------------------------------
+#380646: Implement a batch operation to update the database tables.
+
 XML Sitemap 6.x-1.x-dev, 2009-02-24
 -----------------------------------
 #376868: Change implementation of hook_nodeapi().
@@ -8,7 +12,6 @@ XML Sitemap 6.x-1.x-dev, 2009-02-23
 -----------------------------------
 #381046: Add a setting to increment the priority of the user with the most number of comments.
 #381104: Use of a not initialized variable.
-#380646: Implement a batch operation to update the database tables.
 #371756: <lastmod> tag doesn't get generate for all the site map chunks.
 #367251: xmlsitemap_update_sitemap() is not called.
 #380636: The update of the database should start in automatic.
