@@ -416,7 +416,9 @@ function xmlsitemap_user_uninstall() {
 function _xmlsitemap_user_update_database_batch(&$context) {
   if (!isset($context['sandbox']['progress'])) {
     $context['sandbox']['progress'] = 0;
-    $context['sandbox']['max'] = db_result(db_query('SELECT COUNT(uid) FROM {users} WHERE uid <> 0'));
+    if (!($context['sandbox']['max'] = (integer) db_result(db_query('SELECT COUNT(uid) FROM {users} WHERE uid <> 0')))) {
+      return;
+    }
     $context['sandbox']['uid'] = 0;
   }
   $uid = db_result(

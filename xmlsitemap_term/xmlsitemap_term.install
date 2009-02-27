@@ -344,7 +344,9 @@ function xmlsitemap_term_uninstall() {
 function _xmlsitemap_term_update_database_batch(&$context) {
   if (!isset($context['sandbox']['progress'])) {
     $context['sandbox']['progress'] = 0;
-    $context['sandbox']['max'] = db_result(db_query('SELECT COUNT(tid) FROM {term_data} WHERE vid <> 0'));
+    if (!($context['sandbox']['max'] = (integer) db_result(db_query('SELECT COUNT(tid) FROM {term_data} WHERE vid <> 0')))) {
+      return;
+    }
     $context['sandbox']['tid'] = 0;
     $context['sandbox']['vid'] = 0;
   }

@@ -388,7 +388,9 @@ function xmlsitemap_node_uninstall() {
 function _xmlsitemap_node_update_database_batch(&$context) {
   if (!isset($context['sandbox']['progress'])) {
     $context['sandbox']['progress'] = 0;
-    $context['sandbox']['max'] = db_result(db_query('SELECT COUNT(nid) FROM {node}'));
+    if (!($context['sandbox']['max'] = (integer) db_result(db_query('SELECT COUNT(nid) FROM {node}')))) {
+      return;
+    }
     $context['sandbox']['nid'] = 0;
     if (module_exists('comment')) {
       $context['sandbox']['maxcomments'] = (integer) db_result(db_query('SELECT MAX(comment_count) FROM {node_comment_statistics}'));

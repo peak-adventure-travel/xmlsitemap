@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 6.x-1.x-dev, 2009-02-27
+-----------------------------------
+#385104: Division by zero when the database table is empty.
+
 XML Sitemap 6.x-1.x-dev, 2009-02-26
 -----------------------------------
 #374580: xmlsitemap table should not be emptied all times.

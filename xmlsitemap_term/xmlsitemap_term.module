@@ -244,7 +244,7 @@ function xmlsitemap_term_xmlsitemap_links($modules) {
  * Node operations callback.
  */
 function _xmlsitemap_term_priority_operations($nodes, $priority) {
-  if (count($nodes) > 0) {
+  if (count($nodes)) {
     $batch = array(
       'operations' => array(
         array('_xmlsitemap_term_batch_process', array($nodes, $priority))
