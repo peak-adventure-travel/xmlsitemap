@@ -257,7 +257,7 @@ function xmlsitemap_user_xmlsitemap_links($modules) {
 function xmlsitemap_user_xmlsitemap_sitemap_settings_alter(&$form) {
   $form['general']['priority']['xmlsitemap_user_comment_priority'] = array(
     '#type' => 'select',
-    '#title' => t('User comment ratio weight'),
+    '#title' => t('Comment ratio weight - users'),
     '#description' => t("This number will be added to the priority of the user who authored the highest number of comments; for the other users, the number is calculated proportionally to the number of authored comments. This doesn't apply if the maximum number of comments is one, nor for the users for which the priority is overriden."),
     '#default_value' => variable_get('xmlsitemap_user_comment_priority', 0.2),
     '#options' => xmlsitemap_priority_options(),
