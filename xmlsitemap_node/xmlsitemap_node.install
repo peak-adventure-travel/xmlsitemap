@@ -368,6 +368,12 @@ function xmlsitemap_node_update_6113() {
     drupal_get_path('module', 'xmlsitemap_node') .'/xmlsitemap_node.install',
     '_xmlsitemap_node_update_database_batch'
   );
+  return array(
+    0 => array(
+      'success' => TRUE,
+      'query' => 'UPDATE {xmlsitemap_node} TABLE',
+    )
+  );
 }
 
 /**
