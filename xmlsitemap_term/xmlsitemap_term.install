@@ -310,9 +310,16 @@ function xmlsitemap_term_update_6107() {
 
 /**
  * Implementation of hook_update_N().
- *
  */
 function xmlsitemap_term_update_6108() {
+  return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ *
+ */
+function xmlsitemap_term_update_6109() {
   module_load_include('inc', 'xmlsitemap', 'includes/xmlsitemap.install');
   xmlsitemap_add_database_batch_operation(
     drupal_get_path('module', 'xmlsitemap_term') .'/xmlsitemap_term.install',

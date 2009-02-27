@@ -121,6 +121,7 @@ function xmlsitemap_term_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
         if ($result === FALSE) {
           $row = new stdClass();
           $row->tid = $term->tid;
+          $row->vid = $term->vid;
           $row->changed = $node->changed;
           $row->previously_changed = $node->created;
         }
@@ -145,14 +146,17 @@ function xmlsitemap_term_taxonomy($op, $type, $array = NULL) {
   if ($type == 'vocabulary') {
     switch ($op) {
       case 'delete':
+        db_query("DELETE FROM {xmlsitemap_term} WHERE vid = %d", $array['vid']);
         variable_del('xmlsitemap_term_vocabulary_priority_'. $array['vid']);
         xmlsitemap_update_sitemap('xmlsitemap_term');
         break;
       case 'insert':
       case 'update':
-        if (variable_get('xmlsitemap_term_vocabulary_priority_'. $array['vid'], 0.5) != $array['xmlsitemap_term_vocabulary_priority']) {
-          variable_set('xmlsitemap_term_vocabulary_priority_'. $array['vid'], $array['xmlsitemap_term_vocabulary_priority']);
-          xmlsitemap_update_sitemap('xmlsitemap_term');
+        if (isset($array['vid'])) {
+          if (variable_get('xmlsitemap_term_vocabulary_priority_'. $array['vid'], 0.5) != $array['xmlsitemap_term_vocabulary_priority']) {
+            variable_set('xmlsitemap_term_vocabulary_priority_'. $array['vid'], $array['xmlsitemap_term_vocabulary_priority']);
+            xmlsitemap_update_sitemap('xmlsitemap_term');
+          }
         }
         break;
     }
@@ -163,23 +167,34 @@ function xmlsitemap_term_taxonomy($op, $type, $array = NULL) {
         db_query("DELETE FROM {xmlsitemap_term} WHERE tid = %d", $array['tid']);
         break;
       case 'insert':
-        db_query("INSERT INTO {xmlsitemap_term} (tid, changed, priority_override) VALUES (%d, %d, %f)",
-          $array['tid'], time(), $array['xmlsitemap_term_priority']
-        );
+        if (isset($array['tid']) && isset($array['vid'])) {
+          $row = new stdClass();
+          $row->tid = $array['tid'];
+          $row->vid = $array['vid'];
+          $row->changed = time();
+          $row->priority_override = isset($array['xmlsitemap_term_priority']) ? $array['xmlsitemap_term_priority'] : -2.0;
+          drupal_write_record('xmlsitemap_term', $row);
+        }
         break;
       case 'update':
-        if (isset($array['xmlsitemap_term_priority'])) {
-          db_query("UPDATE {xmlsitemap_term} SET priority_override = %f WHERE tid = %d",
-            $array['xmlsitemap_term_priority'], $array['tid']
-          );
+        $result = db_fetch_object(db_query("SELECT tid, vid, changed, previously_changed, priority_override
+          FROM {xmlsitemap_term}
+          WHERE tid = %d", $term->tid)
+        );
+        if ($result === FALSE) {
+          $row = new stdClass();
+          $row->tid = $array['tid'];
+          $row->vid = $array['vid'];
+          $row->changed = time();
+          $row->priority_override = isset($array['xmlsitemap_term_priority']) ? $array['xmlsitemap_term_priority'] : -2.0;
         }
         else {
-          $priority = db_result(db_query("SELECT priority_override
-            FROM {xmlsitemap_term}
-            WHERE tid = %d", $array['tid'])
-          );
-          $array['xmlsitemap_term_priority'] = $priority !== FALSE ? $priority : -2.0;
+          $row = $result;
+          if (isset($array['xmlsitemap_term_priority'])) {
+            $row->priority_override = $array['xmlsitemap_term_priority'];
+          }
         }
+        drupal_write_record('xmlsitemap_term', $row, $result === FALSE ? NULL : 'tid');
         break;
     }
     xmlsitemap_update_sitemap('xmlsitemap_term');
@@ -308,6 +323,7 @@ function _xmlsitemap_term_batch_process($nodes, $priority, &$context) {
     if ($result === FALSE) {
       $row = new stdClass();
       $row->tid = $term->tid;
+      $row->vid = $term->vid;
       $row->changed = $node->changed;
       $row->previously_changed = $node->created;
     }

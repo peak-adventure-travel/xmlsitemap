@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1.x-dev, 2009-02-27
 -----------------------------------
+#379292: Add a setting to increment the priority of the mostly used term.
 #385104: Division by zero when the database table is empty.
 
 XML Sitemap 6.x-1.x-dev, 2009-02-26
