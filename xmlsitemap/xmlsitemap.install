@@ -31,6 +31,11 @@ function xmlsitemap_schema() {
   $schema['xmlsitemap'] = array(
     'description' => 'The base table for xmlsitemap.',
     'fields' => array(
+      'lid' => array(
+        'description' => 'The primary key.',
+        'type' => 'serial',
+        'not null' => TRUE,
+      ),
       'loc' => array(
         'description' => 'The relative URL.',
         'type' => 'varchar',
@@ -101,7 +106,7 @@ function xmlsitemap_schema() {
       'link_changed' => array('changed'),
       'link_priority' => array('priority'),
     ),
-    'primary key' => array('loc'),
+    'primary key' => array('lid'),
   );
   return $schema;
 }
@@ -170,6 +175,16 @@ function xmlsitemap_update_6000() {
     if ($result[0]['success']) {
       $ret[] = $result[0];
     }
+    if (!db_column_exists('xmlsitemap', 'lid')) {
+      db_add_field($ret, 'xmlsitemap', 'lid',
+        array(
+          'description' => 'The primary key.',
+          'type' => 'serial',
+          'not null' => TRUE,
+        ),
+        array('primary key' => array('lid'))
+      );
+    }
     db_change_field($ret, 'xmlsitemap', 'loc', 'loc',
       array(
         'description' => 'The relative URL.',
@@ -177,8 +192,7 @@ function xmlsitemap_update_6000() {
         'length' => 255,
         'not null' => TRUE,
         'default' => '',
-      ),
-      array('primary key' => array('loc'))
+      )
     );
     if (db_column_exists('xmlsitemap', 'module')) {
       db_change_field($ret, 'xmlsitemap', 'module', 'module', 
@@ -312,6 +326,11 @@ function xmlsitemap_update_6000() {
       array(
         'description' => 'The base table for xmlsitemap.',
         'fields' => array(
+          'lid' => array(
+            'description' => 'The primary key.',
+            'type' => 'serial',
+            'not null' => TRUE,
+          ),
           'loc' => array(
             'description' => 'The relative URL.',
             'type' => 'varchar',
@@ -382,7 +401,7 @@ function xmlsitemap_update_6000() {
           'link_changed' => array('changed'),
           'link_priority' => array('priority'),
         ),
-        'primary key' => array('loc'),
+        'primary key' => array('lid'),
       )
     );
   }
@@ -570,12 +589,56 @@ function xmlsitemap_update_6122() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_update_6123() {
-  return xmlsitemap_update_6000();
+  return array();
 }
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_6124() {
+  $ret = xmlsitemap_update_6000();
+  module_load_include('inc', 'xmlsitemap', 'includes/xmlsitemap.install');
+  xmlsitemap_add_database_batch_operation(
+    drupal_get_path('module', 'xmlsitemap') .'/xmlsitemap.install',
+    '_xmlsitemap_update_database_batch'
+  );
+  $ret[] = array(
+    'success' => TRUE,
+    'query' => 'UPDATE {xmlsitemap} TABLE',
+  );
+  return $ret;
+}
+
 /**
  * Implementation of hook_uninstall().
  */
 function xmlsitemap_uninstall() {
   drupal_uninstall_schema('xmlsitemap');
   db_query("DELETE FROM {variable} WHERE name LIKE 'xmlsitemap\_%'");
+}
+
+/*****************************************************************************
+ * Private functions.
+ ****************************************************************************/
+
+/**
+ * Batch function to update the xmlsitemap table.
+ */
+function _xmlsitemap_update_database_batch(&$context) {
+  if (!isset($context['sandbox']['progress'])) {
+    $context['sandbox']['progress'] = 0;
+    if (!($context['sandbox']['max'] = (integer) db_result(db_query('SELECT COUNT(loc) FROM {xmlsitemap}')))) {
+      return;
+    }
+  }
+  $row = db_fetch_object(
+    db_query_range('SELECT lid, loc, module, type, id, sid, language, changed, changefreq, priority
+      FROM {xmlsitemap}', $context['sandbox']['progress'], 1
+    )
+  );
+  drupal_write_record('xmlsitemap', $row, 'lid');
+  $context['sandbox']['progress']++;
+  if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
+    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+  }
 }
