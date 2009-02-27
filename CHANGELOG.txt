@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1.x-dev, 2009-02-26
 -----------------------------------
+#374580: xmlsitemap table should not be emptied all times.
 #383890: Change the arguments for hook_xmlsitemap_links() and xmlsitemap_update_sitemap().
 
 XML Sitemap 6.x-1.x-dev, 2009-02-25
