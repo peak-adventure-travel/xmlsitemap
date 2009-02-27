@@ -70,7 +70,7 @@ function xmlsitemap_file_xmlsitemap_links($modules) {
             case -1.0:
               $max = isset($weight->max) ? $weight->max : max($file->weight, 1.0);
               $min = isset($weight->min) ? $weight->min : min($file->weight, 0.0);
-              $row->priority = ($file->weight - $min) / ($max - $min);
+              $row->priority = round(($file->weight - $min) / ($max - $min), 1);
               break;
             default:
               $row->priority = $priority;

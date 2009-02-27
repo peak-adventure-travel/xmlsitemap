@@ -223,25 +223,26 @@ function xmlsitemap_user_xmlsitemap_links($modules) {
           $row->priority = $user->priority_override;
         }
         else {
-          $priority = db_fetch_object(
+          $default = db_fetch_object(
             db_query("SELECT MIN(xur.priority) AS min, SUM(xur.priority) AS sum
               FROM {users_roles} ur
               INNER JOIN {xmlsitemap_user_role} xur ON xur.rid = ur.rid
               WHERE ur.uid = %d", $user->uid
             )
           );
-          if (isset($priority->min) && isset($priority->sum)) {
-            $row->priority = $default->min < 0 ? -1.0 : round(min($default->sum, 1), 1);
+          if (isset($default->min) && isset($default->sum)) {
+            $priority = $default->min < 0 ? -1.0 : round(min($default->sum, 1), 1);
           }
           else {
-            $row->priority = variable_get('xmlsitemap_user_default_priority', 0.5);
+            $priority = variable_get('xmlsitemap_user_default_priority', 0.5);
           }
           if (module_exists('comment')) {
             $maxcomments = (integer) db_result(db_query("SELECT MAX(comments) FROM {xmlsitemap_user}"));
             if ($maxcomments > 1) {
-              $row->priority += variable_get('xmlsitemap_user_comment_priority', 0.2) * $user->comments / $maxcomments;
+              $priority += variable_get('xmlsitemap_user_comment_priority', 0.2) * $user->comments / $maxcomments;
             }
           }
+          $row->priority = $priority;
         }
         if (db_result(db_query("SELECT loc FROM {xmlsitemap} WHERE loc = '%s'", $row->loc)) != $row->loc) {
           drupal_write_record('xmlsitemap', $row);

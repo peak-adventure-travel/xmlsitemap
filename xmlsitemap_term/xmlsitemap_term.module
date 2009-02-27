@@ -224,17 +224,36 @@ function xmlsitemap_term_xmlsitemap_links($modules) {
       $row->changed = $term->changed;
       $row->changefreq = max(time() - $term->changed, empty($term->previously_changed) ? 0 : $term->changed - $term->previously_changed);
       if ($term->priority_override != -2.0) {
-        $row->priority = $term->priority_override;
+        $priority = $term->priority_override;
       }
-      else {
-        $row->priority = variable_get('xmlsitemap_term_vocabulary_priority_'. $term->vid, 0.5);
+      elseif (($priority = variable_get('xmlsitemap_term_vocabulary_priority_'. $term->vid, 0.5)) != -1.0) {
+        $count = (integer) db_result(db_query("SELECT COUNT(vid) FROM {term_node} WHERE tid = %d", $term->tid));
+        if ($count > 1) {
+          $priority += variable_get('xmlsitemap_term_node_priority', 0.2) * $count / 100;
+        }
       }
+      $row->priority = min(max(round($priority, 1), 0.0), 1.0);
       if (db_result(db_query("SELECT loc FROM {xmlsitemap} WHERE loc = '%s'", $row->loc)) != $row->loc) {
         drupal_write_record('xmlsitemap', $row);
       }
     }
   }
 }
+
+/**
+ * Implementation of hook_xmlsitemap_sitemap_settings_alter().
+ */
+function xmlsitemap_term_xmlsitemap_sitemap_settings_alter(&$form) {
+  $options = xmlsitemap_priority_options();
+  $form['general']['priority']['xmlsitemap_term_node_priority'] = array(
+    '#type' => 'select',
+    '#title' => t('Term ratio weight - nodes'),
+    '#description' => t("This number will be added to the priority of vocabulary term which is used by 100 nodes; for the other terms, the number is calculated proportionally to the number of nodes. This doesn't apply for terms that are used for just one node, nor for the vocabulary terms  for which the priority is overriden."),
+    '#default_value' => variable_get('xmlsitemap_term_node_priority', 0.2),
+    '#options' => $options,
+  );
+}
+
 
 /*****************************************************************************
  * Private functions - node operation callbacks.
