@@ -78,10 +78,6 @@ function xmlsitemap_node_form_alter(&$form, &$form_state, $form_id) {
           '#default_value' => variable_get('xmlsitemap_node_type_priority_'. $form['#node_type']->type, 0.5),
           '#options' => xmlsitemap_priority_options('exclude'),
         );
-        $form['xmlsitemap']['xmlsitemap_old_priority'] = array(
-          '#type' => 'value',
-          '#value' => variable_get('xmlsitemap_node_type_priority_'. $form['#node_type']->type, 0.5)
-        );
         $form['#submit'][] = 'xmlsitemap_node_type_submit';
       }
       break;
@@ -282,13 +278,7 @@ function xmlsitemap_node_xmlsitemap_sitemap_settings_alter(&$form) {
  * Add submit actions to forms.
  */
 function xmlsitemap_node_type_submit($form, &$form_state) {
-  $values = $form_state['values'];
-  $op = isset($values['op']) ? $values['op'] : '';
-  $priority = $values['xmlsitemap_node_type_priority'];
-  $old_priority = $values['xmlsitemap_old_priority'];
-  if ($op == t('Save content type') && $priority != $old_priority || $op == t('Reset to defaults') && $old_priority != 0.1) {
-    xmlsitemap_update_sitemap('xmlsitemap_node');
-  }
+  xmlsitemap_update_sitemap('xmlsitemap_node');
 }
 
 /*****************************************************************************

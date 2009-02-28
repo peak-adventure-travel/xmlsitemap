@@ -29,10 +29,6 @@ function xmlsitemap_user_form_alter(&$form, &$form_state, $form_id) {
         );
       }
       $default = variable_get('xmlsitemap_user_default_priority', 0.5);
-      $form['xmlsitemap_user_old_default_priority'] = array(
-        '#type' => 'value',
-        '#value' => $default
-      );
       $form['xmlsitemap']['xmlsitemap_user_default_priority'] = array(
         '#type' => 'select',
         '#title' => t('Default user priority'),
@@ -266,27 +262,15 @@ function xmlsitemap_user_xmlsitemap_sitemap_settings_alter(&$form) {
  * Form submit function.
  */
 function xmlsitemap_user_form_submit($form, &$form_state) {
-  $form_values = $form_state['values'];
-  $form_id = $form_values['form_id'];
-  if ($form_values['form_id'] == 'user_admin_settings' && $form_values['xmlsitemap_user_default_priority'] != $form_values['xmlsitemap_user_old_default_priority']) {
-    xmlsitemap_update_sitemap('xmlsitemap_user');
-  }
-  elseif ($form_id == 'user_admin_role') {
+  if ($form_id == 'user_admin_role') {
+    $form_values = $form_state['values'];
     $priority = db_result(db_query("SELECT priority FROM {xmlsitemap_user_role} WHERE rid = %d", $form_values['rid']));
-    if ($form_values['op'] == t('Delete role')) {
-      db_query("DELETE FROM {xmlsitemap_user_role} WHERE rid = %d", $form_values['rid']);
-      if ($priority !== FALSE) {
-        xmlsitemap_update_sitemap('xmlsitemap_user');
-      }
-    }
-    elseif ($form_values['op'] == t('Save role')) {
-      $row = new stdClass();
-      $row->rid = $form_values['rid'];
-      $row->priority = $form_values['xmlsitemap_user_role_priority'];
-      drupal_write_record('xmlsitemap_user_role', $row, $priority !== FALSE ? 'rid' : NULL);
-      xmlsitemap_update_sitemap('xmlsitemap_user');
-    }
+    $row = new stdClass();
+    $row->rid = $form_values['rid'];
+    $row->priority = $form_values['xmlsitemap_user_role_priority'];
+    drupal_write_record('xmlsitemap_user_role', $row, $priority !== FALSE ? 'rid' : NULL);
   }
+  xmlsitemap_update_sitemap('xmlsitemap_user');
 }
 
 /*****************************************************************************
