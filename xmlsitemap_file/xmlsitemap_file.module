@@ -33,7 +33,7 @@ function xmlsitemap_file_form_alter(&$form, $form_state, $form_id) {
  * Implementation of hook_xmlsitemap_links().
  */
 function xmlsitemap_file_xmlsitemap_links($modules) {
-  if (in_array(array('xmlsitemap', 'xmlsitemap_node', 'xmlsitemap_file'), $modules)) {
+  if (isset($modules['xmlsitemap']) || isset($modules['xmlsitemap_node']) || isset($modules['xmlsitemap_file'])) {
     db_query("DELETE FROM {xmlsitemap} WHERE type ='attachment'");
     $result = db_query("SELECT xsm.id, xsm.priority, f.fid, f.filename, f.timestamp, u.list, u.weight
       FROM {xmlsitemap} xsm

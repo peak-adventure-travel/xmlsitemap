@@ -213,7 +213,7 @@ function xmlsitemap_term_xmlsitemap_description() {
  * Implementation of hook_xmlsitemap_links().
  */
 function xmlsitemap_term_xmlsitemap_links($modules) {
-  if (in_array(array('xmlsitemap', 'xmlsitemap_node', 'xmlsitemap_term'), $modules)) {
+  if (isset($modules['xmlsitemap']) || isset($modules['xmlsitemap_node']) || isset($modules['xmlsitemap_term'])) {
     db_query("DELETE FROM {xmlsitemap} WHERE type ='taxonomy'");
     $result = db_query(
       db_rewrite_sql(
