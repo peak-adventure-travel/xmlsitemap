@@ -103,13 +103,15 @@ function xmlsitemap_menu_update_6105() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_menu_update_6106() {
-  menu_rebuild();
-  $ret[] = array(
-    'success' => TRUE,
-    'query' => 'UPDATE DRUPAL MENUS'
-  );
   $ret[] = update_sql("UPDATE {system} SET weight = 10 WHERE name = 'xmlsitemap_menu'");
   return $ret;
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_menu_update_6107() {
+  xmlsitemap_update_sitemap('xmlsitemap_menu');
 }
 
 /**
