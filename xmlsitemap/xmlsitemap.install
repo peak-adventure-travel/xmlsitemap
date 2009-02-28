@@ -302,24 +302,28 @@ function xmlsitemap_update_6000() {
         );
       }
     }
-    db_change_field($ret, 'xmlsitemap', 'changefreq', 'changefreq',
-      array(
-        'description' => 'The frequency of the changes.',
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'default' => 0,
-      )
-    );
-    db_change_field($ret, 'xmlsitemap', 'priority', 'priority',
-      array(
-        'description' => 'The priority of this node in the site map.',
-        'type' => 'float',
-        'not null' => TRUE,
-        'default' => 0.5,
-      ),
-      array('indexes' => array('link_priority' => array('priority')))
-    );
+    if (db_column_exists('xmlsitemap', 'changefreq')) {
+      db_change_field($ret, 'xmlsitemap', 'changefreq', 'changefreq',
+        array(
+          'description' => 'The frequency of the changes.',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0,
+        )
+      );
+    }
+    if (db_column_exists('xmlsitemap', 'priority')) {
+      db_change_field($ret, 'xmlsitemap', 'priority', 'priority',
+        array(
+          'description' => 'The priority of this node in the site map.',
+          'type' => 'float',
+          'not null' => TRUE,
+          'default' => 0.5,
+        ),
+        array('indexes' => array('link_priority' => array('priority')))
+      );
+    }
   }
   else {
     db_create_table($ret, 'xmlsitemap',
@@ -598,16 +602,14 @@ function xmlsitemap_update_6124() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_update_6125() {
-  $ret = xmlsitemap_update_6000();
-  module_load_include('inc', 'xmlsitemap', 'includes/xmlsitemap.install');
-  xmlsitemap_add_database_batch_operation(
-    drupal_get_path('module', 'xmlsitemap') .'/xmlsitemap.install',
-    '_xmlsitemap_update_database_batch'
-  );
-  $ret[] = array(
-    'success' => TRUE,
-    'query' => 'UPDATE {xmlsitemap} TABLE',
-  );
+  return xmlsitemap_update_6000();
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_6126() {
+  $ret[] = update_sql("DELETE FROM {xmlsitemap}");
   xmlsitemap_update_sitemap();
   $ret[] = array(
     'success' => TRUE,
@@ -639,7 +641,7 @@ function _xmlsitemap_update_database_batch(&$context) {
     }
   }
   $row = db_fetch_object(
-    db_query_range('SELECT lid, loc, module, type, id, sid, language, changed, changefreq, priority
+    db_query_range('SELECT loc, module, type, id, sid, language, changed, changefreq, priority
       FROM {xmlsitemap}', $context['sandbox']['progress'], 1
     )
   );
