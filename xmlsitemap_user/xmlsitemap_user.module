@@ -74,13 +74,6 @@ function xmlsitemap_user_form_alter(&$form, &$form_state, $form_id) {
 }
 
 /**
- * Implementation of hook_perm().
- */
-function xmlsitemap_user_perm() {
-  return array('override profile priority');
-}
-
-/**
  * Implementation of hook_user().
  */
 function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {

@@ -208,13 +208,6 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
 }
 
 /**
- * Implementation of hook_perm().
- */
-function xmlsitemap_node_perm() {
-  return array('override node priority');
-}
-
-/**
  * Implementation of hook_xmlsitemap_description().
  */
 function xmlsitemap_node_xmlsitemap_description() {
