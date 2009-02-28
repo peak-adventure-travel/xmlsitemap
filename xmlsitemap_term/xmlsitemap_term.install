@@ -325,12 +325,11 @@ function xmlsitemap_term_update_6109() {
     drupal_get_path('module', 'xmlsitemap_term') .'/xmlsitemap_term.install',
     '_xmlsitemap_term_update_database_batch'
   );
-  return array(
-    0 => array(
-      'success' => TRUE,
-      'query' => 'UPDATE {xmlsitemap_term} TABLE',
-    )
+  $ret[] = array(
+    'success' => TRUE,
+    'query' => 'UPDATE {xmlsitemap_term} TABLE',
   );
+  return $ret;
 }
 
 /**

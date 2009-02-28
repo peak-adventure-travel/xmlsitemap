@@ -19,12 +19,11 @@ function xmlsitemap_engines_update_6000() {
   variable_set('xmlsitemap_engines_morover_url', 'http://api.moreover.com/ping?u=[sitemap]');
   variable_set('xmlsitemap_engines_live_url', 'http://webmaster.live.com/ping.aspx?siteMap=[sitemap]');
   variable_set('xmlsitemap_engines_yahoo_url', 'http://search.yahooapis.com/SiteExplorerService/V1/ping?sitemap=[sitemap]');
-  return array(
-    0 => array(
-      'success' => TRUE,
-      'query' => 'UPDATE MODULE SETTINGS',
-    )
+  $ret[] = array(
+    'success' => TRUE,
+    'query' => 'UPDATE MODULE SETTINGS',
   );
+  return $ret;
 }
 
 /**

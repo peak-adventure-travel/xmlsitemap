@@ -54,7 +54,6 @@ function xmlsitemap_file_update_6111() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_file_update_6112() {
-  $ret = array();
   $ret[] = update_sql("DELETE FROM {xmlsitemap} WHERE module = 'xmlsitemap_file'");
   xmlsitemap_update_sitemap('xmlsitemap_file');
   return $ret;

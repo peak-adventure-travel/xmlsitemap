@@ -112,6 +112,11 @@ function xmlsitemap_menu_update_6106() {
  */
 function xmlsitemap_menu_update_6107() {
   xmlsitemap_update_sitemap('xmlsitemap_menu');
+  $ret[] = array(
+    'success' => TRUE,
+    'query' => 'FORCE SITEMAP UPDATE',
+  );
+  return $ret;
 }
 
 /**
