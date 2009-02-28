@@ -1,5 +1,10 @@
 $Id$
 
+XML Sitemap 6.x-1.x-dev, 2009-02-28
+-----------------------------------
+#374674: Change the way the front page URL is generated.
+#372067: Rewrite the code that checks $op for forms.
+
 XML Sitemap 6.x-1.x-dev, 2009-02-27
 -----------------------------------
 #379292: Add a setting to increment the priority of the mostly used term.
@@ -42,10 +47,6 @@ XML Sitemap 6.x-1.x-dev, 2009-02-18
 #374421: Add a setting for the attachment priority.
 #373274: Rewrite the implementation of hook_xmlsitemap_links().
 
-XML Sitemap 6.x-1.x-dev, 2009-02-16
------------------------------------
-#374674: Change the way the front page URL is generated.
-
 XML Sitemap 6.x-1.x-dev, 2009-02-15
 -----------------------------------
 #199710: Change the query placeholders.
@@ -79,7 +80,7 @@ XML Sitemap 6.x-1.x-dev, 2009-02-08
 -----------------------------------
 #371025: Undefined index.
 #371023: Use '#access' for the form field set fields.
-#371002: priority_override is set to 'default' for users without 'override node priority' permission.
+#371002: priority_override is set to 'default' for users without 'override node settings' permission.
 
 XML Sitemap 6.x-1.x-dev, 2009-02-07
 -----------------------------------
