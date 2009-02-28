@@ -2,6 +2,9 @@ $Id$
 
 XML Sitemap 6.x-1.x-dev, 2009-02-28
 -----------------------------------
+#386972: Wrong code to verify the content of an array.
+#386662: SQL errors in update.php.
+#382306: Add a setting to decide when the posts of a user should be added to the site map.
 #374674: Change the way the front page URL is generated.
 #372067: Rewrite the code that checks $op for forms.
 
