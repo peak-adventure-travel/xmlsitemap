@@ -92,7 +92,7 @@ function xmlsitemap_file_xmlsitemap_sitemap_settings_alter(&$form) {
   $options = xmlsitemap_priority_options('both');
   $options['-1'] = t('Calculate it from the attachment weight');
   $options['-2'] = t('The same priority given to the node');
-  $form['general']['priority']['xmlsitemap_file_priority'] = array(
+  $form['general']['priority']['a']['xmlsitemap_file_priority'] = array(
     '#type' => 'select',
     '#title' => t('Attachment priority'),
     '#description' => t("The priority assigned to the files attached to nodes."),

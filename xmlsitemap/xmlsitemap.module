@@ -329,7 +329,10 @@ function xmlsitemap_settings_sitemap() {
     '#title' => t('Priority'),
     '#collapsible' => TRUE,
   );
-  $form['general']['priority']['xmlsitemap_front_page_priority'] = array(
+  $form['general']['priority']['a'] = array();
+  $form['general']['priority']['b'] = array();
+  $form['general']['priority']['c'] = array();
+  $form['general']['priority']['a']['xmlsitemap_front_page_priority'] = array(
     '#type' => 'select',
     '#title' => t('Front page priority'),
     '#description' => t('This is the absolute priority for the front page.'),
