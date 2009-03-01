@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 6.x-1.x-dev, 2009-02-29
+-----------------------------------
+#387100: Problems with the user interface.
+
 XML Sitemap 6.x-1.x-dev, 2009-02-28
 -----------------------------------
 #386972: Wrong code to verify the content of an array.
