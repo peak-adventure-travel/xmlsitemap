@@ -213,18 +213,9 @@ function xmlsitemap_node_user($op, &$edit, &$account, $category = NULL) {
         return array();
       }
     case 'register':
-      if (!isset($form['xmlsitemap'])) {
-        $form['xmlsitemap'] = array(
-          '#type' => 'fieldset',
-          '#title' => t('XML site map'),
-          '#collapsible' => TRUE,
-          '#access' => user_access('override profile settings') || user_access('administer users'),
-          '#weight' => 7,
-        );
-      }
       $form['xmlsitemap']['xmlsitemap_node_posts_count'] = array(
         '#type' => 'select',
-        '#title' => t('Posts threshold'),
+        '#title' => t('XML site map - posts threshold'),
         '#description' => t('The number of posts a user must author before his posts are added to the site map.'),
         '#default_value' => variable_get('xmlsitemap_node_posts_count_'. $account->uid, variable_get('xmlsitemap_node_posts_count', 100)),
         '#options' => array(
@@ -236,7 +227,7 @@ function xmlsitemap_node_user($op, &$edit, &$account, $category = NULL) {
           '100' => t('100'),
           '200' => t('200'),
           '500' => t('500'),
-          '0' => t('The posts of the user will never be added to the site map'),
+          '0' => t('Never add the posts'),
         ),
         '#access' => user_access('override profile settings') || user_access('administer users'),
       );

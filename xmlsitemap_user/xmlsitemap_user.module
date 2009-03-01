@@ -83,15 +83,6 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
         FROM {xmlsitemap_user}
         WHERE uid = %d", $account->uid)
       );
-      if (!isset($form['xmlsitemap'])) {
-        $form['xmlsitemap'] = array(
-          '#type' => 'fieldset',
-          '#title' => t('XML site map'),
-          '#collapsible' => TRUE,
-          '#access' => user_access('override profile settings') || user_access('administer users'),
-          '#weight' => 7,
-        );
-      }
       $options = xmlsitemap_priority_options('both');
       if (isset($account->roles)) {
         $roles = array_keys($account->roles);
@@ -111,7 +102,7 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
       }
       $form['xmlsitemap']['xmlsitemap_user_priority'] = array(
         '#type' => 'select',
-        '#title' => t('Priority'),
+        '#title' => t('XML site map - user priority'),
         '#description' => t('The default priority is %priority.', array('%priority' => $options[(string)$default_priority])),
         '#default_value' => $priority !== FALSE ? $priority : -2.0,
         '#options' => $options,
