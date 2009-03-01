@@ -16,6 +16,13 @@
  ****************************************************************************/
 
 /**
+ * Implementation of hook_boot().
+ */
+function xmlsitemap_boot() {
+  define('XMLSITEMAP_TIME', time());
+}
+
+/**
  * Implementation of hook_cron().
  */
 function xmlsitemap_cron() {
@@ -202,7 +209,7 @@ function xmlsitemap_output($chunk = NULL) {
     $row = new stdClass();
     $row->module = 'xmlsitemap';
     $row->type = 'frontpage';
-    $row->changed = time() - 1;
+    $row->changed = XMLSITEMAP_TIME - 1;
     $row->changefreq = 1;
     $row->priority = variable_get('xmlsitemap_front_page_priority', 1);
     drupal_write_record('xmlsitemap', $row);

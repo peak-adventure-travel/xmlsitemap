@@ -57,7 +57,7 @@ function xmlsitemap_file_xmlsitemap_links($modules) {
         $row->id = $file->fid;
         $row->sid = $file->id;
         $row->changed = $file->timestamp;
-        $row->changefreq = time() - $file->timestamp;
+        $row->changefreq = XMLSITEMAP_TIME - $file->timestamp;
         if ($file->priority == -1.0) {
           $row->priority = -1.0;
         }

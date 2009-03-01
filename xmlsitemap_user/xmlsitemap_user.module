@@ -112,7 +112,7 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
     case 'insert':
       $row = new stdClass();
       $row->uid = $account->uid;
-      $row->changed = time();
+      $row->changed = XMLSITEMAP_TIME;
       $row->previously_changed = $account->created;
       $row->priority_override = isset($edit['xmlsitemap_user_priority']) ? $edit['xmlsitemap_user_priority'] : -2.0;
       drupal_write_record('xmlsitemap_user', $row);
@@ -124,12 +124,12 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
         $row = new stdClass();
         $row->uid = $account->uid;
         $row->previously_changed = $account->created;
-        $row->changed = time();
+        $row->changed = XMLSITEMAP_TIME;
       }
       else {
         $row = $result;
         $row->previously_changed = $row->changed;
-        $row->changed = time();
+        $row->changed = XMLSITEMAP_TIME;
       }
       if (module_exists('comment')) {
         $row->comments = (integer) db_result(db_query("SELECT COUNT(cid) FROM {comments} WHERE uid = %d", $user->uid));
@@ -198,7 +198,7 @@ function xmlsitemap_user_xmlsitemap_links($modules) {
         $row->loc = 'user/'. $user->uid;
         $row->id = $user->uid;
         $row->changed = $user->changed;
-        $row->changefreq = max(time() - $user->changed, empty($user->previously_changed) ? 0 : $user->changed - $user->previously_changed);
+        $row->changefreq = max(XMLSITEMAP_TIME - $user->changed, empty($user->previously_changed) ? 0 : $user->changed - $user->previously_changed);
         if ($user->priority_override != -2.0) {
           $row->priority = $user->priority_override;
         }
