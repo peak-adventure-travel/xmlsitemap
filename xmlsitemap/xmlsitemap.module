@@ -110,9 +110,6 @@ function xmlsitemap_help($path, $arg) {
     case 'admin/settings/xmlsitemap/engines':
       $output = t('Configure the behavior for search engines.');
       break;
-    case 'admin/settings/xmlsitemap/tools/update':
-      $output = t('Update the XML Sitemap database tables. Use this page only if <em>XML Sitemap</em> instructs you to do so.');
-      break;
     case 'admin/help#xmlsitemap':
       $output = '<p>'. t('XML Sitemap automatically creates a site map that conforms to the <a href="@sitemaps.org">sitemaps.org specification</a>. This helps search engines keep their search results up to date.', array('@sitemaps.org' => 'http://www.sitemaps.org')) .'</p>';
       $output .= '<h3>'. t('Supporting modules') .'</h3>';
