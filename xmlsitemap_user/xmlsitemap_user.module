@@ -32,7 +32,7 @@ function xmlsitemap_user_form_alter(&$form, &$form_state, $form_id) {
       $form['xmlsitemap']['xmlsitemap_user_default_priority'] = array(
         '#type' => 'select',
         '#title' => t('Default user priority'),
-        '#description' => t('Choose the default priority for users who have only the authenticated user role.'),
+        '#description' => t('The default priority for users who have only the authenticated user role.'),
         '#default_value' => $default,
         '#options' => xmlsitemap_priority_options('exclude'),
       );
