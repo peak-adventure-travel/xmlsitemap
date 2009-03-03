@@ -1,6 +1,10 @@
 $Id$
 
-XML Sitemap 6.x-1.x-dev, 2009-02-29
+XML Sitemap 6.x-1.x-dev, 2009-03-03
+-----------------------------------
+#388016: Undefined variable $uuid.
+
+XML Sitemap 6.x-1.x-dev, 2009-03-01
 -----------------------------------
 #387100: Problems with the user interface.
 
