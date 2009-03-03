@@ -434,7 +434,7 @@ function _xmlsitemap_user_update_database_batch(&$context) {
       );
     if ($result === FALSE) {
       $row = new stdClass();
-      $row->uid = $uuid;
+      $row->uid = $uid;
       $row->changed = $user->access;
       $row->previously_changed = $user->created;
     }
