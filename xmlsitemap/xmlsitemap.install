@@ -610,6 +610,13 @@ function xmlsitemap_update_6125() {
  */
 function xmlsitemap_update_6126() {
   $ret[] = update_sql("DELETE FROM {xmlsitemap}");
+  return $ret;
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_6127() {
   xmlsitemap_update_sitemap();
   $ret[] = array(
     'success' => TRUE,
