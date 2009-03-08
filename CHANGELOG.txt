@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 6.x-1.x-dev, 2009-03-08
+-----------------------------------
+#387558: Change the way the site map is cached.
+
 XML Sitemap 6.x-1.x-dev, 2009-03-03
 -----------------------------------
 #388016: Undefined variable $uuid.
