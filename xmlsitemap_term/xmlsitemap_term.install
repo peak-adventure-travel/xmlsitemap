@@ -14,14 +14,14 @@
  * Implementation of hook_enable().
  */
 function xmlsitemap_term_enable() {
-  xmlsitemap_update_sitemap('xmlsitemap_term');
+  xmlsitemap_helper_update_sitemap('xmlsitemap_term');
 }
 
 /**
  * Implementation of hook_disable().
  */
 function xmlsitemap_term_disable() {
-  xmlsitemap_update_sitemap('xmlsitemap_term');
+  xmlsitemap_helper_update_sitemap('xmlsitemap_term');
 }
 
 /**
@@ -320,8 +320,8 @@ function xmlsitemap_term_update_6108() {
  *
  */
 function xmlsitemap_term_update_6109() {
-  module_load_include('inc', 'xmlsitemap', 'includes/xmlsitemap.install');
-  xmlsitemap_add_database_batch_operation(
+  module_load_include('inc', 'xmlsitemap_helper', 'includes/xmlsitemap_helper.install');
+  xmlsitemap_helper_add_database_batch_operation(
     drupal_get_path('module', 'xmlsitemap_term') .'/xmlsitemap_term.install',
     '_xmlsitemap_term_update_database_batch'
   );
@@ -413,6 +413,6 @@ function _xmlsitemap_term_update_database_batch(&$context) {
     $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
   }
   else {
-    xmlsitemap_update_sitemap('xmlsitemap_term');
+    xmlsitemap_helper_update_sitemap('xmlsitemap_term');
   }
 }

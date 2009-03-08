@@ -1,0 +1,5 @@
+; $Id$
+name = XML Sitemap: Helper
+description = Contains the code shared with the modules adding links into the XML site map.
+package = XML Sitemap
+core = 6.x

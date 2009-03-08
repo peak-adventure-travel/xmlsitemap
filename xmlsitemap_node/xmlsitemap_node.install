@@ -14,14 +14,14 @@
  * Implementation of hook_enable().
  */
 function xmlsitemap_node_enable() {
-  xmlsitemap_update_sitemap('xmlsitemap_node');
+  xmlsitemap_helper_update_sitemap('xmlsitemap_node');
 }
 
 /**
  * Implementation of hook_disable().
  */
 function xmlsitemap_node_disable() {
-  xmlsitemap_update_sitemap('xmlsitemap_node');
+  xmlsitemap_helper_update_sitemap('xmlsitemap_node');
 }
 
 /**
@@ -379,8 +379,8 @@ function xmlsitemap_node_update_6114() {
  *
  */
 function xmlsitemap_node_update_6115() {
-  module_load_include('inc', 'xmlsitemap', 'includes/xmlsitemap.install');
-  xmlsitemap_add_database_batch_operation(
+  module_load_include('inc', 'xmlsitemap_helper', 'includes/xmlsitemap_helper.install');
+  xmlsitemap_helper_add_database_batch_operation(
     drupal_get_path('module', 'xmlsitemap_node') .'/xmlsitemap_node.install',
     '_xmlsitemap_node_update_database_batch'
   );
@@ -458,6 +458,6 @@ function _xmlsitemap_node_update_database_batch(&$context) {
     $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
   }
   else {
-    xmlsitemap_update_sitemap('xmlsitemap_node');
+    xmlsitemap_helper_update_sitemap('xmlsitemap_node');
   }
 }

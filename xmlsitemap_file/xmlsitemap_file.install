@@ -14,14 +14,14 @@
  * Implementation of hook_enable().
  */
 function xmlsitemap_file_enable() {
-  xmlsitemap_update_sitemap('xmlsitemap_file');
+  xmlsitemap_helper_update_sitemap('xmlsitemap_file');
 }
 
 /**
  * Implementation of hook_disable().
  */
 function xmlsitemap_file_disable() {
-  xmlsitemap_update_sitemap('xmlsitemap_file');
+  xmlsitemap_helper_update_sitemap('xmlsitemap_file');
 }
 
 /**
@@ -55,6 +55,6 @@ function xmlsitemap_file_update_6111() {
  */
 function xmlsitemap_file_update_6112() {
   $ret[] = update_sql("DELETE FROM {xmlsitemap} WHERE module = 'xmlsitemap_file'");
-  xmlsitemap_update_sitemap('xmlsitemap_file');
+  xmlsitemap_helper_update_sitemap('xmlsitemap_file');
   return $ret;
 }

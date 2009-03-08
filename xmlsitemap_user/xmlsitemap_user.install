@@ -14,14 +14,14 @@
  * Implementation of hook_enable().
  */
 function xmlsitemap_user_enable() {
-  xmlsitemap_update_sitemap('xmlsitemap_user');
+  xmlsitemap_helper_update_sitemap('xmlsitemap_user');
 }
 
 /**
  * Implementation of hook_disable().
  */
 function xmlsitemap_user_disable() {
-  xmlsitemap_update_sitemap('xmlsitemap_user');
+  xmlsitemap_helper_update_sitemap('xmlsitemap_user');
 }
 
 /**
@@ -387,8 +387,8 @@ function xmlsitemap_user_update_6110() {
 function xmlsitemap_user_update_6111() {
   $ret = xmlsitemap_user_update_6000();
   $ret[] = update_sql("UPDATE {system} SET weight = 10 WHERE name = 'xmlsitemap_user'");
-  module_load_include('inc', 'xmlsitemap', 'includes/xmlsitemap.install');
-  xmlsitemap_add_database_batch_operation(
+  module_load_include('inc', 'xmlsitemap_helper', 'includes/xmlsitemap_helper.install');
+  xmlsitemap_helper_add_database_batch_operation(
     drupal_get_path('module', 'xmlsitemap_user') .'/xmlsitemap_user.install',
     '_xmlsitemap_user_update_database_batch'
   );
@@ -457,6 +457,6 @@ function _xmlsitemap_user_update_database_batch(&$context) {
     $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
   }
   else {
-    xmlsitemap_update_sitemap('xmlsitemap_user');
+    xmlsitemap_helper_update_sitemap('xmlsitemap_user');
   }
 }

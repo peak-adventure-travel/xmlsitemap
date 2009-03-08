@@ -15,7 +15,7 @@
  * Public functions.
  ****************************************************************************/
 
-function xmlsitemap_add_database_batch_operation($file, $function) {
+function xmlsitemap_helper_add_database_batch_operation($file, $function) {
   $batch = array(
     'operations' => array(
       array($function, array())

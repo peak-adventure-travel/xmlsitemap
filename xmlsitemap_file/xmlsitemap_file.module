@@ -89,7 +89,7 @@ function xmlsitemap_file_xmlsitemap_links($modules) {
  * Implementation of hook_xmlsitemap_sitemap_settings_alter().
  */
 function xmlsitemap_file_xmlsitemap_sitemap_settings_alter(&$form) {
-  $options = xmlsitemap_priority_options('both');
+  $options = xmlsitemap_helper_priority_options('both');
   $options['-1'] = t('Calculated from the attachment weight');
   $options['-2'] = t('Same value of the node priority');
   $form['general']['priority']['a']['xmlsitemap_file_priority'] = array(
@@ -121,7 +121,7 @@ function xmlsitemap_file_xmlsitemap_sitemap_settings_alter(&$form) {
  * Add submit actions to forms.
  */
 function xmlsitemap_file_update_sitemap_submit($form, &$form_state) {
-  xmlsitemap_update_sitemap('xmlsitemap_file');
+  xmlsitemap_helper_update_sitemap('xmlsitemap_file');
 }
 
 /*****************************************************************************

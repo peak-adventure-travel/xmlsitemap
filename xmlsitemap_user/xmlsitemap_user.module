@@ -34,13 +34,13 @@ function xmlsitemap_user_form_alter(&$form, &$form_state, $form_id) {
         '#title' => t('Default user priority'),
         '#description' => t('The default priority for users who have only the authenticated user role.'),
         '#default_value' => $default,
-        '#options' => xmlsitemap_priority_options('exclude'),
+        '#options' => xmlsitemap_helper_priority_options('exclude'),
       );
       $form['buttons']['#weight'] = isset($form['buttons']['#weight']) ? $form['buttons']['#weight'] + 1 : 1;
       $form['#submit'][] = 'xmlsitemap_user_form_submit';
       break;
     case 'user_admin_role':
-      $options = xmlsitemap_priority_options('exclude');
+      $options = xmlsitemap_helper_priority_options('exclude');
       $priority = db_result(db_query("SELECT priority
         FROM {xmlsitemap_user_role}
         WHERE rid = %d", $form['rid']['#value'])
@@ -83,7 +83,7 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
         FROM {xmlsitemap_user}
         WHERE uid = %d", $account->uid)
       );
-      $options = xmlsitemap_priority_options('both');
+      $options = xmlsitemap_helper_priority_options('both');
       if (isset($account->roles)) {
         $roles = array_keys($account->roles);
         $default = db_fetch_object(
@@ -117,7 +117,7 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
       $row->priority_override = isset($edit['xmlsitemap_user_priority']) ? $edit['xmlsitemap_user_priority'] : -2.0;
       drupal_write_record('xmlsitemap_user', $row);
       $edit['xmlsitemap_user_priority'] = NULL;
-      xmlsitemap_update_sitemap('xmlsitemap_user');
+      xmlsitemap_helper_update_sitemap('xmlsitemap_user');
       break;
     case 'update':
       if (($result = db_fetch_object(db_query("SELECT uid, changed, previously_changed, comments, priority_override FROM {xmlsitemap_user} WHERE uid = %d", $account->uid))) === FALSE) {
@@ -138,11 +138,11 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
         $row->priority_override = $edit['xmlsitemap_user_priority'];
       }
       drupal_write_record('xmlsitemap_user', $row, $result !== FALSE ? 'uid' : NULL);
-      xmlsitemap_update_sitemap('xmlsitemap_user');
+      xmlsitemap_helper_update_sitemap('xmlsitemap_user');
       break;
     case 'delete':
       db_query("DELETE FROM {xmlsitemap_user} WHERE uid = %d", $account->uid);
-      xmlsitemap_update_sitemap('xmlsitemap_user');
+      xmlsitemap_helper_update_sitemap('xmlsitemap_user');
       break;
   }
 }
@@ -241,7 +241,7 @@ function xmlsitemap_user_xmlsitemap_sitemap_settings_alter(&$form) {
     '#title' => t('Comment ratio weight - users'),
     '#description' => t("This number will be added to the priority of the user who authored the highest number of comments; for the other users, the number is calculated proportionally to the number of authored comments. This doesn't apply if the maximum number of comments is one, nor for the users for which the priority is overriden."),
     '#default_value' => variable_get('xmlsitemap_user_comment_priority', 0.2),
-    '#options' => xmlsitemap_priority_options(),
+    '#options' => xmlsitemap_helper_priority_options(),
   );
 }
 
@@ -261,7 +261,7 @@ function xmlsitemap_user_form_submit($form, &$form_state) {
     $row->priority = $form_values['xmlsitemap_user_role_priority'];
     drupal_write_record('xmlsitemap_user_role', $row, $priority !== FALSE ? 'rid' : NULL);
   }
-  xmlsitemap_update_sitemap('xmlsitemap_user');
+  xmlsitemap_helper_update_sitemap('xmlsitemap_user');
 }
 
 /*****************************************************************************
@@ -277,7 +277,7 @@ function _xmlsitemap_user_priority_operations($accounts, $priority) {
       'operations' => array(
         array('_xmlsitemap_user_batch_process', array($accounts, $priority))
       ),
-      'finished' => 'xmlsitemap_batch_operations_finished',
+      'finished' => 'xmlsitemap_helper_batch_operations_finished',
       'title' => t('Processing'),
       'progress_message' => '',
       'error_message' => t('The update has encountered an error.'),

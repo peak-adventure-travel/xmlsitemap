@@ -94,7 +94,7 @@ function xmlsitemap_form_alter(&$form, &$form_state, $form_id) {
   switch ($form_id) {
     case 'path_admin_form':
     case 'pathauto_admin_settings':
-      $form['#submit'][] = 'xmlsitemap_update_sitemap';
+      $form['#submit'][] = 'xmlsitemap_helper_update_sitemap';
       break;
   }
 }
@@ -334,7 +334,7 @@ function xmlsitemap_settings_sitemap() {
     '#title' => t('Front page priority'),
     '#description' => t('This is the absolute priority for the front page.'),
     '#default_value' => variable_get('xmlsitemap_front_page_priority', 1),
-    '#options' => xmlsitemap_priority_options(),
+    '#options' => xmlsitemap_helper_priority_options(),
   );
   drupal_alter('xmlsitemap_sitemap_settings', $form);
   $form = system_settings_form($form);
@@ -361,7 +361,7 @@ function xmlsitemap_settings_sitemap_validate($form, &$form_state) {
  */
 function xmlsitemap_settings_submit($form, &$form_state) {
   menu_rebuild();
-  xmlsitemap_update_sitemap();
+  xmlsitemap_helper_update_sitemap();
 }
 
 /*****************************************************************************
@@ -375,106 +375,6 @@ function xmlsitemap_settings_submit($form, &$form_state) {
 function xmlsitemap_anonymous_access() {
   global $user;
   return $user->uid == 0;
-}
-
-/**
- * Batch callback called when the batch operations are completed.
- */
-function xmlsitemap_batch_operations_finished($success, $results, $operations) {
-  if ($success) {
-    drupal_set_message(t('The update has been performed.'));
-  }
-  else {
-    drupal_set_message(t('An error occurred and processing did not complete.'), 'error');
-    $message = format_plural($count = count($results), '1 item successfully processed.', '@count items successfully processed.');
-    if ($count) {
-      $message .= theme('item_list', $results, t('Last items successfully processed:'));
-    }
-    drupal_set_message($message);
-  }
-}
-
-/**
- * Determine the frequency of updates to a link.
- * @param $interval
- *  The number of seconds since the last change, or the number of seconds
- *  between the last change, and the previous change.
- * @return
- *  A string representing the update frequency according to the sitemaps.org
- *  protocol.
- */
-function xmlsitemap_frequency($interval) {
-  $frequencies = array(
-    'always' => 3600,
-    'hourly' => 86400,
-    'daily' => 604800,
-    'weekly' => 2419200,
-    'monthly' => 29030400,
-    'yearly' => 100000000,
-  );
-  if ($interval < 0 || !is_numeric($interval)) {
-    return 'never';
-  }
-  foreach ($frequencies as $frequency => $value) {
-    if ($interval < $value) {
-      break;
-    }
-  }
-  return $frequency;
-}
-
-/**
- * Get an array of site map priority options.
- * @param $option
- *  If not given, the array will include priority values from 0.0 to 1.0.
- * - exclude: Add option to exclude item from site map.
- * - default: Add option to use default priority. Only for cases where a
- *   default priority exists.
- * - both: Add both the default and exclude options.
- * @return
- *  An array of priority options.
- */
-function xmlsitemap_priority_options($option = '') {
-  $options = array(
-    '1' => t('1.0'),
-    '0.9' => t('0.9'),
-    '0.8' => t('0.8'),
-    '0.7' => t('0.7'),
-    '0.6' => t('0.6'),
-    '0.5' => t('0.5'),
-    '0.4' => t('0.4'),
-    '0.3' => t('0.3'),
-    '0.2' => t('0.2'),
-    '0.1' => t('0.1'),
-    '0' => t('0.0')
-  );
-  if ($option == 'exclude' || $option == 'both') {
-    $options['-1'] = t('Not in site map');
-  }
-  if ($option == 'default' || $option == 'both') {
-    $options['-2'] = t('Default');
-  }
-  return $options;
-}
-
-/**
- * Mark the site map as changed, and the cache as needing update; it also
- * clean the cached output.
- */
-function xmlsitemap_update_sitemap($module = 'xmlsitemap') {
-  menu_rebuild();
-  db_query("DELETE FROM {cache_page} WHERE cid LIKE '%%sitemap%%.xml'");
-  if (!variable_get('xmlsitemap_sitemap_is_changed', FALSE)) {
-    variable_set('xmlsitemap_sitemap_is_changed', TRUE);
-  }
-  if (!variable_get('xmlsitemap_sitemap_needs_update', FALSE)) {
-    variable_set('xmlsitemap_sitemap_needs_update', TRUE);
-  }
-  $modules = variable_get('xmlsitemap_update_sitemap_request', array());
-  if (!isset($modules[$module])) {
-    $modules[$module] = TRUE;
-    variable_set('xmlsitemap_update_sitemap_request', $modules);
-  }
 }
 
 /*****************************************************************************
@@ -573,7 +473,7 @@ function _xmlsitemap_create_cache_chunk($fp, $chunk_size, $chunk = 0) {
     fwrite($fp, '  <url>'."\n");
     fwrite($fp, '    <loc>'. check_url($url) .'</loc>'."\n");
     fwrite($fp, '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $link->changed) .'</lastmod>'."\n");
-    fwrite($fp, '    <changefreq>'. xmlsitemap_frequency($link->changefreq) .'</changefreq>'."\n");
+    fwrite($fp, '    <changefreq>'. xmlsitemap_helper_frequency($link->changefreq) .'</changefreq>'."\n");
     fwrite($fp, '    <priority>'. number_format($link->priority, 1) .'</priority>'."\n");
     fwrite($fp, '  </url>'."\n");
   }
@@ -702,7 +602,7 @@ function _xmlsitemap_output_chunk($chunk_size, $chunk = 0) {
     print '  <url>'."\n";
     print '    <loc>'. check_url($url) .'</loc>'."\n";
     print '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $link->changed) .'</lastmod>'."\n";
-    print '    <changefreq>'. xmlsitemap_frequency($link->changefreq) .'</changefreq>'."\n";
+    print '    <changefreq>'. xmlsitemap_helper_frequency($link->changefreq) .'</changefreq>'."\n";
     print '    <priority>'. number_format($link->priority, 1) .'</priority>'."\n";
     print '  </url>'."\n";
   }
