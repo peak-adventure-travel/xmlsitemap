@@ -602,7 +602,7 @@ function xmlsitemap_update_6124() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_update_6125() {
-  return xmlsitemap_update_6000();
+  return array();
 }
 
 /**
@@ -643,6 +643,13 @@ function xmlsitemap_update_6129() {
     'query' => 'FORCE SITEMAP UPDATE',
   );
   return $ret;
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_6130() {
+  return xmlsitemap_update_6000();
 }
 
 /**

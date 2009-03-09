@@ -379,6 +379,14 @@ function xmlsitemap_node_update_6114() {
  *
  */
 function xmlsitemap_node_update_6115() {
+  return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ *
+ */
+function xmlsitemap_node_update_6116() {
   module_load_include('inc', 'xmlsitemap_helper', 'includes/xmlsitemap_helper.install');
   xmlsitemap_helper_add_database_batch_operation(
     drupal_get_path('module', 'xmlsitemap_node') .'/xmlsitemap_node.install',
@@ -387,6 +395,11 @@ function xmlsitemap_node_update_6115() {
   $ret[] = array(
     'success' => TRUE,
     'query' => 'UPDATE {xmlsitemap_node} TABLE',
+  );
+  xmlsitemap_helper_update_sitemap('xmlsitemap_node');
+  $ret[] = array(
+    'success' => TRUE,
+    'query' => 'FORCE SITEMAP UPDATE',
   );
   return $ret;
 }
