@@ -208,9 +208,6 @@ function xmlsitemap_output($chunk = NULL) {
   $id = _xmlsitemap_cache_id();
   if (variable_get('xmlsitemap_sitemap_needs_update', FALSE)) {
     variable_set('xmlsitemap_update_timestamp', XMLSITEMAP_TIME);
-    if (!variable_get('xmlsitemap_sitemap_is_changed', FALSE)) {
-      variable_set('xmlsitemap_sitemap_is_changed', TRUE);
-    }
     db_query("DELETE FROM {xmlsitemap} WHERE type ='frontpage'");
     $row = new stdClass();
     $row->module = 'xmlsitemap';
