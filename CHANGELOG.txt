@@ -2,6 +2,10 @@ $Id$
 
 XML Sitemap 6.x-1.x-dev, 2009-03-08
 -----------------------------------
+#394034: XML Sitemap lists all pages - except the main page.
+
+XML Sitemap 6.x-1.x-dev, 2009-03-08
+-----------------------------------
 #387558: Change the way the site map is cached.
 
 XML Sitemap 6.x-1.x-dev, 2009-03-03
