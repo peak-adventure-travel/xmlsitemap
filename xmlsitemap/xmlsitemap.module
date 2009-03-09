@@ -49,7 +49,7 @@ function xmlsitemap_exit() {
     $items = array();
     $chunk_size = variable_get('xmlsitemap_chunk_size', 200);
     $link_count = _xmlsitemap_link_count();
-    if ($link_count / $chunk_size > 1) {
+    if ($link_count > $chunk_size) {
       for ($chunk = 0; $chunk < $link_count / $chunk_size; ++$chunk) {
         $items["sitemap$chunk.xml"] = $chunk;
       }
@@ -167,7 +167,7 @@ function xmlsitemap_menu() {
   );
   $chunk_size = variable_get('xmlsitemap_chunk_size', 200);
   $link_count = _xmlsitemap_link_count();
-  if ($link_count / $chunk_size > 1) {
+  if ($link_count > $chunk_size) {
     for ($chunk = 0; $chunk < $link_count / $chunk_size; ++$chunk) {
       $items["sitemap$chunk.xml"] = array(
         'title' => 'Site map !number',
