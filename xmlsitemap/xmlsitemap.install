@@ -630,12 +630,7 @@ function xmlsitemap_update_6128() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_update_6129() {
-  xmlsitemap_helper_update_sitemap();
-  $ret[] = array(
-    'success' => TRUE,
-    'query' => 'FORCE SITEMAP UPDATE',
-  );
-  return $ret;
+  return array();
 }
 
 /**
@@ -654,6 +649,11 @@ function xmlsitemap_update_6131() {
   $ret[] = array(
     'success' => TRUE,
     'query' => "ENABLE MODULE 'xmlsitemap_helper'"
+  );
+  xmlsitemap_helper_update_sitemap();
+  $ret[] = array(
+    'success' => TRUE,
+    'query' => 'FORCE SITEMAP UPDATE',
   );
 }
 
