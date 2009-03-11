@@ -212,8 +212,9 @@ function xmlsitemap_output($chunk = NULL) {
     $row = new stdClass();
     $row->module = 'xmlsitemap';
     $row->type = 'frontpage';
-    $row->changed = XMLSITEMAP_TIME - 20;
-    $row->changefreq = 20;
+    $changefreq = variable_get('xmlsitemap_front_page_changefreq', 3600);
+    $row->changed = XMLSITEMAP_TIME - $changefreq;
+    $row->changefreq = $changefreq;
     $row->priority = variable_get('xmlsitemap_front_page_priority', 1);
     drupal_write_record('xmlsitemap', $row);
     module_invoke_all('xmlsitemap_links', variable_get('xmlsitemap_update_sitemap_request', array()));
@@ -313,6 +314,19 @@ function xmlsitemap_settings_sitemap() {
     '#maxlength' => 5,
     '#description' => t('This is the number of links to include in one site map. Values can range between 1 and 50,000. If the total number of links exceeds the chunk size, multiple site maps will be generated.'),
   );
+  $form['general']['xmlsitemap_front_page_changefreq'] = array(
+    '#type' => 'select',
+    '#title' => t('Front page change frequency'),
+    '#description' => t('The change frequency associated with the front page.'),
+    '#default_value' => variable_get('xmlsitemap_front_page_changefreq', 3600),
+    '#options' => array(
+      '3600' => 'Hourly',
+      '86400' => 'Daily',
+      '604800' => 'Weekly',
+      '2419200' => 'Monthly',
+      '29030400' => 'Yearly',
+    ),
+  );
   $form['general']['xmlsitemap_cache_directory'] = array(
     '#type' => 'textfield',
     '#title' => t('Cache directory'),
@@ -332,7 +346,7 @@ function xmlsitemap_settings_sitemap() {
   $form['general']['priority']['a']['xmlsitemap_front_page_priority'] = array(
     '#type' => 'select',
     '#title' => t('Front page priority'),
-    '#description' => t('This is the absolute priority for the front page.'),
+    '#description' => t('The absolute priority for the front page.'),
     '#default_value' => variable_get('xmlsitemap_front_page_priority', 1),
     '#options' => xmlsitemap_helper_priority_options(),
   );
