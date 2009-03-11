@@ -14,6 +14,7 @@
  * Implementation of hook_enable().
  */
 function xmlsitemap_node_enable() {
+  drupal_load('module', 'xmlsitemap_helper');
   xmlsitemap_helper_update_sitemap('xmlsitemap_node');
 }
 
@@ -21,6 +22,7 @@ function xmlsitemap_node_enable() {
  * Implementation of hook_disable().
  */
 function xmlsitemap_node_disable() {
+  drupal_load('module', 'xmlsitemap_helper');
   xmlsitemap_helper_update_sitemap('xmlsitemap_node');
 }
 
@@ -396,6 +398,7 @@ function xmlsitemap_node_update_6116() {
     'success' => TRUE,
     'query' => 'UPDATE {xmlsitemap_node} TABLE',
   );
+  drupal_load('module', 'xmlsitemap_helper');
   xmlsitemap_helper_update_sitemap('xmlsitemap_node');
   $ret[] = array(
     'success' => TRUE,
@@ -471,6 +474,7 @@ function _xmlsitemap_node_update_database_batch(&$context) {
     $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
   }
   else {
+    drupal_load('module', 'xmlsitemap_helper');
     xmlsitemap_helper_update_sitemap('xmlsitemap_node');
   }
 }
