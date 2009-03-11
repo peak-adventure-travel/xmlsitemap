@@ -438,7 +438,7 @@ function _xmlsitemap_user_update_database_batch(&$context) {
       WHERE uid > %d', $context['sandbox']['uid']
     )
   );
-  if ($uid !== FALSE && ($user = user_load(array('uid' => $uid)))) {
+  if ($uid !== FALSE && ($user = user_load($uid))) {
     $result = db_fetch_object(
       db_query('SELECT uid, changed, previously_changed, comments, priority_override
         FROM {xmlsitemap_user}

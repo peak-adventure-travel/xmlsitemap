@@ -300,7 +300,7 @@ function _xmlsitemap_user_batch_process($accounts, $priority, &$context) {
     $context['sandbox']['accounts'] = $accounts;
   }
   $uid = array_shift($context['sandbox']['accounts']);
-  if ($user = user_load(array('uid' => $uid))) {
+  if ($user = user_load($uid)) {
     $result = db_fetch_object(db_query("SELECT uid, changed, previously_changed, comments, priority_override
       FROM {xmlsitemap_user}
       WHERE uid = %d", $uid)
