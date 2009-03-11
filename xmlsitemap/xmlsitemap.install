@@ -648,7 +648,7 @@ function xmlsitemap_update_6131() {
   module_enable(array('xmlsitemap_helper'));
   $ret[] = array(
     'success' => TRUE,
-    'query' => "ENABLE MODULE 'xmlsitemap_helper'"
+    'query' => "ENABLE 'xmlsitemap_helper' MODULE"
   );
   xmlsitemap_helper_update_sitemap();
   $ret[] = array(
