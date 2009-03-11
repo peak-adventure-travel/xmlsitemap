@@ -1,5 +1,11 @@
 $Id$
 
+XML Sitemap 6.x-1.x-dev, 2009-03-11
+-----------------------------------
+#398452: Add a new permission to allow to by-pass the checking on the number of nodes authored.
+#398072: Errors in the code.
+#398018: Cannot create the cache file.
+
 XML Sitemap 6.x-1.x-dev, 2009-03-08
 -----------------------------------
 #394034: XML Sitemap lists all pages - except the main page.
