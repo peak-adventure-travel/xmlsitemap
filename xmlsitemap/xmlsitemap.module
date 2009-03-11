@@ -186,7 +186,7 @@ function xmlsitemap_menu() {
  * Implementation of hook_perm().
  */
 function xmlsitemap_perm() {
-  return array('override node settings', 'override profile settings');
+  return array('by-pass the authored nodes check', 'override node settings', 'override profile settings');
 }
 
 
