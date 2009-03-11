@@ -624,13 +624,6 @@ function xmlsitemap_update_6127() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_update_6128() {
-  module_enable(array('xmlsitemap_helper'));
-  return array(
-    array(
-      'success' => TRUE,
-      'query' => "ENABLE MODULE 'xmlsitemap_helper'"
-    )
-  );
 }
 
 /**
@@ -649,7 +642,19 @@ function xmlsitemap_update_6129() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_update_6130() {
-  return xmlsitemap_update_6000();
+  return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_6131() {
+  $ret = xmlsitemap_update_6000();
+  module_enable(array('xmlsitemap_helper'));
+  $ret[] = array(
+    'success' => TRUE,
+    'query' => "ENABLE MODULE 'xmlsitemap_helper'"
+  );
 }
 
 /**
