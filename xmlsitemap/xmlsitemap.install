@@ -14,7 +14,7 @@
  * Implementation of hook_enable().
  */
 function xmlsitemap_enable() {
-  xmlsitemap_update_sitemap();
+  xmlsitemap_helper_update_sitemap();
 }
 
 /**
@@ -144,6 +144,19 @@ function xmlsitemap_update_7() {
     WHERE cid LIKE '%%gss.xsl' OR cid LIKE '%%sitemap%%.xml'"
   );
   return $ret;
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_8() {
+  module_enable(array('xmlsitemap_helper'));
+  return array(
+    array(
+      'success' => TRUE,
+      'query' => "ENABLE MODULE 'xmlsitemap_helper'"
+    )
+  );
 }
 
 /**

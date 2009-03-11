@@ -28,14 +28,14 @@ function xmlsitemap_user_enable() {
     LEFT JOIN {xmlsitemap_user_role} xur ON xur.rid = r.rid
     WHERE r.rid > 2 AND xur.rid IS NULL"
   );
-  xmlsitemap_update_sitemap();
+  xmlsitemap_helper_update_sitemap();
 }
 
 /**
  * Implementation of hook_disable().
  */
 function xmlsitemap_user_disable() {
-  xmlsitemap_update_sitemap();
+  xmlsitemap_helper_update_sitemap();
 }
 
 /**
