@@ -96,7 +96,7 @@ function xmlsitemap_term_node_operations() {
     'xmlsitemap_change_terms_priority' => array(
       'label' => t('Change the XML site map priority of the selected posts vocabulary terms to default'),
       'callback' => '_xmlsitemap_term_priority_operations',
-      'callback arguments' => array('piority' => -2.0),
+      'callback arguments' => array('priority' => -2.0),
     ),
     'xmlsitemap_remove_terms' => array(
       'label' => t('Remove the vocabulary terms of the selected posts from the XML site map'),

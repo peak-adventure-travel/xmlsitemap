@@ -160,7 +160,7 @@ function xmlsitemap_user_user_operations() {
     'xmlsitemap_change_users_priority' => array(
       'label' => t('Change the XML site map priority of the selected users to default'),
       'callback' => '_xmlsitemap_user_priority_operations',
-      'callback arguments' => array('piority' => -2.0),
+      'callback arguments' => array('priority' => -2.0),
     ),
     'xmlsitemap_remove_users' => array(
       'label' => t('Remove the selected users from the XML site map'),

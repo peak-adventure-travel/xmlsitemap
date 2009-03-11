@@ -154,7 +154,7 @@ function xmlsitemap_node_node_operations() {
     'xmlsitemap_change_nodes_priority' => array(
       'label' => t('Change the XML site map priority of the selected posts to default'),
       'callback' => '_xmlsitemap_node_priority_operations',
-      'callback arguments' => array('piority' => -2.0),
+      'callback arguments' => array('priority' => -2.0),
     ),
     'xmlsitemap_remove_nodes' => array(
       'label' => t('Remove the selected posts from the XML site map'),
@@ -310,7 +310,7 @@ function xmlsitemap_node_xmlsitemap_links($modules) {
       if (!($posts_threshold = variable_get('xmlsitemap_node_posts_count_'. $node->uid, variable_get('xmlsitemap_node_posts_count', 100)))) {
         continue;
       }
-      $posts = (integer) db_result(db_query("SELECT COUNT(nid) FROM {node} WHERE uid = %d"));
+      $posts = (integer) db_result(db_query("SELECT COUNT(nid) FROM {node} WHERE uid = %d", $node->uid));
       if ($posts_threshold > $posts) {
         continue;
       }
