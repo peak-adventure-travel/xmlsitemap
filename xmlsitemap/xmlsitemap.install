@@ -655,6 +655,7 @@ function xmlsitemap_update_6131() {
     'success' => TRUE,
     'query' => 'FORCE SITEMAP UPDATE',
   );
+  return $ret;
 }
 
 /**
