@@ -644,6 +644,13 @@ function xmlsitemap_update_6130() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_update_6131() {
+  return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_6132() {
   $ret = xmlsitemap_update_6000();
   module_enable(array('xmlsitemap_helper'));
   $ret[] = array(
