@@ -16,13 +16,6 @@
  ****************************************************************************/
 
 /**
- * Implementation of hook_boot().
- */
-function xmlsitemap_boot() {
-  define('XMLSITEMAP_TIME', time());
-}
-
-/**
  * Implementation of hook_cron().
  */
 function xmlsitemap_cron() {
