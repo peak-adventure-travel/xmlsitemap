@@ -87,7 +87,7 @@ function xmlsitemap_form_alter(&$form, &$form_state, $form_id) {
   switch ($form_id) {
     case 'path_admin_form':
     case 'pathauto_admin_settings':
-      $form['#submit'][] = 'xmlsitemap_helper_update_sitemap';
+      $form['#submit'][] = 'xmlsitemap_settings_submit';
       break;
   }
 }
@@ -152,6 +152,19 @@ function xmlsitemap_menu() {
     'access arguments' => $access_config,
     'type' => MENU_LOCAL_TASK,
   );
+  $items['admin/settings/xmlsitemap/tools/disable/modules'] = array(
+    'title' => 'Disable modules',
+    'page callback' => 'xmlsitemap_disable_modules',
+    'access arguments' => $access_config,
+    'type' => MENU_CALLBACK,
+  );
+  $items['admin/settings/xmlsitemap/tools/enable/helper'] = array(
+    'title' => 'Enable !module',
+    'title arguments' => array('!module' => 'xmlsitemap_helper.module'),
+    'page callback' => 'xmlsitemap_enable_helper',
+    'access arguments' => $access_config,
+    'type' => MENU_CALLBACK,
+  );
   $items['sitemap.xml'] = array(
     'title' => 'Site map index',
     'page callback' => 'xmlsitemap_output',
@@ -186,6 +199,23 @@ function xmlsitemap_perm() {
 /*****************************************************************************
  * Menu callbacks / form builders, submit/validate functions.
  ****************************************************************************/
+
+/**
+ * Disable the XML Sitemap modules.
+ */
+function xmlsitemap_disable_modules() {
+  module_disable(module_implements('xmlsitemap_links'));
+  drupal_goto('admin/reports/status');
+}
+
+/**
+ * Enable xmlsitemap_helper.module if it has not been enabled.
+ */
+function xmlsitemap_enable_helper() {
+  module_enable(array('xmlsitemap_helper'));
+  variable_set('xmlsitemap_enable_helper_count', variable_get('xmlsitemap_enable_helper_count', 0) + 1);
+  drupal_goto('admin/reports/status');
+}
 
 /**
  * Menu callback; display the site map.

@@ -16,10 +16,26 @@
 function xmlsitemap_requirements($phase) {
   $requirements = array();
   if ($phase == 'runtime') {
-    $requirements['xmlsitemap'] = array(
-      'title' => t('XML Sitemap'),
-      'value' => t("XML Sitemap revision !revision", array('!revision' => preg_replace('/\$Rev[iI]sion:\s+(.*)\s+\$/iU', '$1', '$Revision$'))),
-    );
+    if (module_exists('xmlsitemap_helper')) {
+      $requirements['xmlsitemap'] = array(
+        'title' => t('XML Sitemap'),
+        'value' => t("XML Sitemap revision !revision", array('!revision' => preg_replace('/\$Rev[iI]sion:\s+(.*)\s+\$/iU', '$1', '$Revision$'))),
+        'severity' => REQUIREMENT_INFO,
+      );
+    }
+    else {
+      $requirements['xmlsitemap'] = array(
+        'title' => t('XML Sitemap'),
+        'value' => t("%module has not been enabled", array('%module' => 'xmlsitemap_helper.module')),
+        'severity' => REQUIREMENT_ERROR,
+      );
+      if (variable_get('xmlsitemap_enable_helper_count', 0)) {
+        $requirements['xmlsitemap']['description'] = t('%module cannot be enabled. Verify that you correctly copied all the files; until Drupal cannot find %module, <em>XML Sitemap</em> will not work correctly. You can <a href="@url">disable</a> the <em>XML Sitemap</em> modules until you do not resolve the problem.', array('%module' => 'xmlsitemap_helper.module', '@url' => url('admin/settings/xmlsitemap/tools/disable/modules')));
+      }
+      else {
+        $requirements['xmlsitemap']['description'] = t('The module must be <a href="@url">enabled</a>.', array('@url' => url('admin/settings/xmlsitemap/tools/enable/helper')));
+      }
+    }
   }
   return $requirements;
 }
