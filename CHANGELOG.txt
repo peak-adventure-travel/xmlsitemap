@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 6.x-1.x-dev, 2009-03-12
+-----------------------------------
+#385452: Error on update.
+
 XML Sitemap 6.x-1.x-dev, 2009-03-11
 -----------------------------------
 #398122: Add a setting for the front page change frequency.
