@@ -336,7 +336,6 @@ function theme_xmlsitemap_node_view_news($view, $nodes, $type) {
     print '    <loc>'. xmlsitemap_helper_url('node/'. $node->nid, $node->alias, NULL, NULL, TRUE) .'</loc>'."\n";
     print '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $lastmod) .'</lastmod>'."\n";
     print '    <changefreq>'. xmlsitemap_helper_frequency(xmlsitemap_node_frequency($node)) .'</changefreq>'."\n";
-    print '    <priority>'. number_format(xmlsitemap_node_priority($node), 1) .'</priority>'."\n";
     print '    <news:news>'."\n";
     print '      <news:publication_date>'. gmdate('Y-m-d\TH:i:s+00:00', $node->created) .'</news:publication_date>'."\n";
     print '    </news:news>'."\n";
