@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 5.x-2.x-dev, 2009-03-18
 -----------------------------------
+#395488: Views sitemap uses -2.0 instead of default priority value.
 #395482: Node priority drop-down always displays 1.0.
 
 XML Sitemap 5.x-2.x-dev, 2009-02-07
