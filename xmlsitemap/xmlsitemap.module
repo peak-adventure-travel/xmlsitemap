@@ -338,6 +338,12 @@ function xmlsitemap_settings_sitemap() {
     '#maxlength' => 5,
     '#description' => t('This is the number of links to include in one site map. Values can range between 1 and 50,000. If the total number of links exceeds the chunk size, multiple site maps will be generated.'),
   );
+  $form['general']['xmlsitemap_all_links_to_default_language'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Add all the links to the default language site map'),
+    '#default_value' => variable_get('xmlsitemap_all_links_to_default_language', 0),
+    '#description' => t('This option will be used only when the language negotiation uses a path prefix mechanism.'),
+  );
   $form['general']['xmlsitemap_front_page_changefreq'] = array(
     '#type' => 'select',
     '#title' => t('Front page change frequency'),

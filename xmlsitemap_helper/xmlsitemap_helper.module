@@ -110,6 +110,24 @@ function xmlsitemap_helper_priority_options($option = '') {
  * Complete the query used to select rows from the xmlsitemap table.
  */
 function xmlsitemap_helper_sitemap_query() {
+  global $language;
+  $default = language_default();
+  switch(variable_get('language_negotiation', LANGUAGE_NEGOTIATION_NONE)) {
+    case LANGUAGE_NEGOTIATION_NONE:
+      $language_query = '';
+      break;
+    case LANGUAGE_NEGOTIATION_PATH_DEFAULT:
+    case LANGUAGE_NEGOTIATION_PATH:
+      if (variable_get('xmlsitemap_all_links_to_default_language', 0) && $language->language == $default->language) {
+        $language_query = '';
+      }
+      else {
+        $language_query = "AND (xsm.language = '". $language->language ."' OR xsm.language = '')";
+      }
+      break;
+    case LANGUAGE_NEGOTIATION_DOMAIN:
+      $language_query = "AND (xsm.language = '". $language->language ."' OR xsm.language = '')";
+  }
   return "
     FROM {xmlsitemap} xsm
     INNER JOIN {system} s ON s.name = xsm.module
@@ -117,6 +135,7 @@ function xmlsitemap_helper_sitemap_query() {
       AND s.status = 1
       AND xsm.changefreq <> 0
       AND xsm.changed <> 0
+      $language_query
       AND (xsm.priority >= 0 AND xsm.priority <= 1)
     ";
 }
