@@ -555,7 +555,7 @@ function _xmlsitemap_create_cache_files() {
       fwrite($fp, '  <sitemap>'."\n");
       fwrite($fp, '    <loc>'. url("sitemap$chunk.xml", array('absolute' => TRUE)) .'</loc>'."\n");
       $from = $chunk * $chunk_size;
-      $changed = db_result(db_query_range("SELECT changed FROM {xmlsitemap} xsm". xmlsitemap_helper_sitemap_query() ."ORDER BY xsm.changed DESC", $from, $chunk_size));
+      $changed = db_result(db_query_range("SELECT changed". xmlsitemap_helper_sitemap_query() ."ORDER BY xsm.changed DESC", $from, $chunk_size));
       fwrite($fp, '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $changed) .'</lastmod>'."\n");
       fwrite($fp, '  </sitemap>'."\n");
     }
@@ -593,7 +593,7 @@ function _xmlsitemap_create_cache_files() {
 function _xmlsitemap_link_count() {
   static $link_count;
   if (!isset($link_count)) {
-    $link_count = db_result(db_query("SELECT COUNT(xsm.loc) FROM {xmlsitemap} xsm". xmlsitemap_helper_sitemap_query()));
+    $link_count = db_result(db_query("SELECT COUNT(xsm.loc)". xmlsitemap_helper_sitemap_query()));
   }
   return $link_count;
 }
