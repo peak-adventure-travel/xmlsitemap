@@ -224,9 +224,7 @@ function xmlsitemap_user_xmlsitemap_links($modules) {
           }
           $row->priority = $priority;
         }
-        if (db_result(db_query("SELECT loc FROM {xmlsitemap} WHERE loc = '%s'", $row->loc)) != $row->loc) {
-          drupal_write_record('xmlsitemap', $row);
-        }
+        drupal_write_record('xmlsitemap', $row);
       }
     }
   }

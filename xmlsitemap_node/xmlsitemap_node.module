@@ -333,9 +333,7 @@ function xmlsitemap_node_xmlsitemap_links($modules) {
         $priority += $node->comment_ratio * variable_get('xmlsitemap_node_comment_priority', 0.2);
       }
       $row->priority = min(max(round($priority, 1), 0.0), 1.0);
-      if (db_result(db_query("SELECT loc FROM {xmlsitemap} WHERE loc = '%s'", $row->loc)) != $row->loc) {
-        drupal_write_record('xmlsitemap', $row);
-      }
+      drupal_write_record('xmlsitemap', $row);
     }
   }
 }

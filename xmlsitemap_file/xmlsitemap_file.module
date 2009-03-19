@@ -77,7 +77,7 @@ function xmlsitemap_file_xmlsitemap_links($modules) {
               break;
           }
         }
-        if (db_result(db_query("SELECT loc FROM {xmlsitemap} WHERE loc = '%s'", $row->loc)) != $row->loc) {
+        if (!db_result(db_query("SELECT COUNT(loc) FROM {xmlsitemap} WHERE loc = '%s'", $row->loc))) {
           drupal_write_record('xmlsitemap', $row);
         }
       }

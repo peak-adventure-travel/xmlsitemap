@@ -52,7 +52,7 @@ function xmlsitemap_menu_xmlsitemap_links($modules) {
             $row->loc = $link['href'];
             $row->id = $mlid;
             $row->priority = 1.0 - min(max(round(($link['weight'] + 10) / 20, 1), 0.0), 1.0);
-            if (db_result(db_query("SELECT loc FROM {xmlsitemap} WHERE loc = '%s'", $row->loc)) != $row->loc) {
+            if (!db_result(db_query("SELECT COUNT(loc) FROM {xmlsitemap} WHERE loc = '%s'", $row->loc))) {
               drupal_write_record('xmlsitemap', $row);
             }
           }
