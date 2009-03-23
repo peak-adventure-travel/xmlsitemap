@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1.x-dev, 2009-03-23
 -----------------------------------
+#407748: Error on node add page.
 #408066: Wrong SQL query for retrieving the menu item links.
 
 XML Sitemap 6.x-1.x-dev, 2009-03-12
