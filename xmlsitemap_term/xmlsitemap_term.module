@@ -179,7 +179,7 @@ function xmlsitemap_term_taxonomy($op, $type, $array = NULL) {
       case 'update':
         $result = db_fetch_object(db_query("SELECT tid, vid, changed, previously_changed, priority_override
           FROM {xmlsitemap_term}
-          WHERE tid = %d", $term->tid)
+          WHERE tid = %d", $array['tid'])
         );
         if ($result === FALSE) {
           $row = new stdClass();
