@@ -440,6 +440,9 @@ function _xmlsitemap_node_batch_process($nodes, $priority, &$context) {
   if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
     $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
   }
+  else {
+    xmlsitemap_helper_update_sitemap('xmlsitemap_node');
+  }
 }
 
 /**

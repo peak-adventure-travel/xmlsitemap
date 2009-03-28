@@ -225,6 +225,7 @@ function xmlsitemap_user_xmlsitemap_links($modules) {
           $row->priority = $priority;
         }
         drupal_write_record('xmlsitemap', $row);
+        xmlsitemap_helper_update_sitemap('xmlsitemap_user');
       }
     }
   }
@@ -329,6 +330,9 @@ function _xmlsitemap_user_batch_process($accounts, $priority, &$context) {
   $context['sandbox']['progress']++;
   if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
     $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+  }
+  else {
+    xmlsitemap_helper_update_sitemap('xmlsitemap_user');
   }
 }
 
