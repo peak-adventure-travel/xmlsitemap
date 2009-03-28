@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 6.x-1.x-dev, 2009-03-28
+-----------------------------------
+#416026: Duplicate entry for term edit.
+
 XML Sitemap 6.x-1.x-dev, 2009-03-23
 -----------------------------------
 #407748: Error on node add page.
