@@ -1,0 +1,805 @@
+# $Id$
+#
+# French translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  xmlsitemap.module,v 1.1.2.56 2009/03/18 21:22:29 kiam
+#  xmlsitemap_node.module,v 1.19.2.81 2009/03/23 14:00:46 kiam
+#  xmlsitemap_term.module,v 1.11.2.43 2009/03/19 13:19:50 kiam
+#  xmlsitemap_engines.module,v 1.5.2.19 2009/02/15 00:36:18 kiam
+#  xmlsitemap.install,v 1.1.2.30 2009/03/14 18:52:18 kiam
+#  xmlsitemap.info,v 1.1.2.2 2009/03/08 23:47:46 kiam
+#  xmlsitemap_engines.info,v 1.2.2.1 2009/03/08 23:47:46 kiam
+#  xmlsitemap_file.info,v 1.1.4.3 2008/11/28 19:11:58 kiam
+#  xmlsitemap_helper.info,v 1.1.2.1 2009/03/08 23:47:46 kiam
+#  xmlsitemap_menu.install,v 1.1.4.26 2009/03/11 16:01:08 kiam
+#  xmlsitemap_menu.info,v 1.1.4.3 2009/03/08 23:47:47 kiam
+#  xmlsitemap_node.info,v 1.2.2.1 2009/03/08 23:47:48 kiam
+#  xmlsitemap_term.info,v 1.2.2.1 2009/02/19 16:15:46 kiam
+#  xmlsitemap_user.info,v 1.2.2.1 2009/03/08 23:47:48 kiam
+#  xmlsitemap_file.module,v 1.1.4.35 2009/03/19 13:19:56 kiam
+#  xmlsitemap_helper.module,v 1.1.2.4 2009/03/18 21:04:15 kiam
+#  xmlsitemap_helper.install.inc,v 1.1.2.1 2009/03/08 23:47:47 kiam
+#  xmlsitemap_user.module,v 1.12.2.58 2009/03/19 13:19:42 kiam
+#  xmlsitemap_menu.module,v 1.1.4.29 2009/03/23 13:51:26 kiam
+#  xmlsitemap_node.install,v 1.9.2.46 2009/03/11 16:01:03 kiam
+#  xmlsitemap_user.install,v 1.6.2.43 2009/03/11 16:00:59 kiam
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: French Translation for xmlsitemap drupal6 module\n"
+"POT-Creation-Date: 2009-03-30 10:56+0200\n"
+"PO-Revision-Date: 2009-03-30 12:00+0100\n"
+"Last-Translator: Sylvain Moreau <sylvain.moreau@ows.fr>\n"
+"Language-Team: Sylvain Moreau, OWS <sylvain.moreau@ows.fr>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n>1);\n"
+"X-Poedit-Language: French\n"
+"X-Poedit-Country: FRANCE\n"
+
+#: xmlsitemap/xmlsitemap.module:102
+msgid "Configure the site map."
+msgstr "Configurer le plan du site."
+
+#: xmlsitemap/xmlsitemap.module:105
+msgid "Configure the behavior for search engines."
+msgstr "Configurer le comportement pour les moteurs de recherche."
+
+#: xmlsitemap/xmlsitemap.module:108
+msgid "XML Sitemap automatically creates a site map that conforms to the <a href=\"@sitemaps.org\">sitemaps.org specification</a>. This helps search engines keep their search results up to date."
+msgstr "XML Sitemap créée automatiquement un plan du site conforme aux <a href=\"@sitemaps.org\">spécifications sitemaps.org</a>. Ceci aide les moteurs de recherche à garder leurs résultats de recherche à jour."
+
+#: xmlsitemap/xmlsitemap.module:109
+msgid "Supporting modules"
+msgstr "Supporte les modules"
+
+#: xmlsitemap/xmlsitemap.module:110
+msgid "By itself, the XML Sitemap module adds only the front page of your site to the site map. Other types of links are handled by supporting modules."
+msgstr "En soi, le module XML Sitemap n'ajoute que la page d'accueil de votre site au plan du site. Les autres types de liens sont gérés par les modules de support."
+
+#: xmlsitemap/xmlsitemap.module:119
+msgid "Links may be assigned a priority between 0.0 and 1.0. The default priority is 0.5. A priority of <em>Not in site map</em> excludes a link from the site map."
+msgstr "On peut assigner une priorité comprise entre 0.0 et 1.0 aux liens. La priorité par défaut est 0.5. Une priorité de <em>Pas dans le plan du site</em> exclue un lien du plan du site."
+
+#: xmlsitemap/xmlsitemap.module:120
+msgid "More information is available in the <a href=\"@module_docs\">XML Sitemap documentation</a>."
+msgstr "Plus d'information disponible sur la <a href=\"@module_docs\">documentation XML Sitemap</a>."
+
+#: xmlsitemap/xmlsitemap.module:283
+msgid "Submission settings"
+msgstr "Paramètres de soumission"
+
+#: xmlsitemap/xmlsitemap.module:288
+msgid "Submit the site map when updated"
+msgstr "Soumettre le plan du site lors de sa modification"
+
+#: xmlsitemap/xmlsitemap.module:289
+msgid "If enabled, the search engines will be notified of changes to the site map each time it is updated."
+msgstr "Si activé, les moteurs de recherche seront prévenus des changements du plan du site à chacune de ses mises à jour."
+
+#: xmlsitemap/xmlsitemap.module:294
+msgid "Log access"
+msgstr "Loguer les accès"
+
+#: xmlsitemap/xmlsitemap.module:295
+msgid "If enabled, a watchdog entry will be made each time the site map is accessed, containing information about the requestor."
+msgstr "Si activé, des informations sur l'émeteur de la requête seront ajoutées au journal chaque fois que le plan du site est consulté."
+
+#: xmlsitemap/xmlsitemap.module:300
+msgid "Frequency of cron site map submission"
+msgstr "Fréquence de la soumission du plan du site lors du cron"
+
+#: xmlsitemap/xmlsitemap.module:301
+msgid "The rate at which the site map is submitted to the search engines over the times the cron maintenance tasks are executed."
+msgstr "La fréquence à laquelle le plan du site est soumis aux moteurs de recherche, lors des fois où la tâche cron de maintenance est exécutée."
+
+#: xmlsitemap/xmlsitemap.module:304
+msgid "Once every ten times"
+msgstr "Une fois sur dix"
+
+#: xmlsitemap/xmlsitemap.module:305
+msgid "Once every nine times"
+msgstr "Une fois sur neuf"
+
+#: xmlsitemap/xmlsitemap.module:306
+msgid "Once every eight times"
+msgstr "Une fois sur huit"
+
+#: xmlsitemap/xmlsitemap.module:307
+msgid "Once every seven times"
+msgstr "Une fois sur sept"
+
+#: xmlsitemap/xmlsitemap.module:308
+msgid "Once every six times"
+msgstr "Une fois sur six"
+
+#: xmlsitemap/xmlsitemap.module:309
+msgid "Once every five times"
+msgstr "Une fois sur cinq"
+
+#: xmlsitemap/xmlsitemap.module:310
+msgid "Once every four times"
+msgstr "Une fois sur quatre"
+
+#: xmlsitemap/xmlsitemap.module:311
+msgid "Once every three times"
+msgstr "Une fois sur trois"
+
+#: xmlsitemap/xmlsitemap.module:312
+msgid "Once every two times"
+msgstr "Une fois sur deux"
+
+#: xmlsitemap/xmlsitemap.module:313
+msgid "Always"
+msgstr "Toujours"
+
+#: xmlsitemap/xmlsitemap.module:314
+msgid "Never"
+msgstr "Jamais"
+
+#: xmlsitemap/xmlsitemap.module:329
+msgid "General settings"
+msgstr "Paramètres généraux"
+
+#: xmlsitemap/xmlsitemap.module:335
+msgid "Chunk size"
+msgstr "Taille du morceau"
+
+#: xmlsitemap/xmlsitemap.module:339
+msgid "This is the number of links to include in one site map. Values can range between 1 and 50,000. If the total number of links exceeds the chunk size, multiple site maps will be generated."
+msgstr "C'est le nombre de liens à inclure dans un plan de site. La valeur doit être comprise entre 1 et 50 000. Si le nombre total de liens dépasse la taille du morceau, plusieurs plans de site seront générés."
+
+#: xmlsitemap/xmlsitemap.module:343
+msgid "Add all the links to the default language site map"
+msgstr "Ajouter tous les liens au plan du site de la langue par défaut"
+
+#: xmlsitemap/xmlsitemap.module:345
+msgid "This option will be used only when the language negotiation uses a path prefix mechanism."
+msgstr "Cette option sera utilisée seulement lorsque la gestion de la langue utilise un mécanisme de préfiwage du chemin."
+
+#: xmlsitemap/xmlsitemap.module:349
+msgid "Front page change frequency"
+msgstr "Fréquence de modification de la page d'accueil"
+
+#: xmlsitemap/xmlsitemap.module:350
+msgid "The change frequency associated with the front page."
+msgstr "La fréquence de modification associée à la page d'accueil."
+
+#: xmlsitemap/xmlsitemap.module:362
+msgid "Cache directory"
+msgstr "Répertoire du cache"
+
+#: xmlsitemap/xmlsitemap.module:366
+msgid "The directory where the cache files are created; change it only if you are having problems with the default setting."
+msgstr "Le répertoire dans lequel les fichiers de cache sont créés; modifiez-le seulement si vous rencontrez des problèmes avec le paramètre par défaut."
+
+#: xmlsitemap/xmlsitemap.module:370
+#: xmlsitemap_node/xmlsitemap_node.module:129
+#: xmlsitemap_term/xmlsitemap_term.module:42;58
+msgid "Priority"
+msgstr "Priorité"
+
+#: xmlsitemap/xmlsitemap.module:378
+msgid "Front page priority"
+msgstr "Priorité de la page d'acceuil"
+
+#: xmlsitemap/xmlsitemap.module:379
+msgid "The absolute priority for the front page."
+msgstr "La priorité absolue pour la page d'accueil."
+
+#: xmlsitemap/xmlsitemap.module:396
+msgid "The number of links in a site map chunk must be a number between 1, and 50,000 (1 and 50,000 included)."
+msgstr "Le nombre de liens d'un morceau de plan du site doit être un nombre compris entre 1 et 50 000 (1 et 50 000 inclus)."
+
+#: xmlsitemap/xmlsitemap.module:68;540;546;568;579;0
+#: xmlsitemap_engines/xmlsitemap_engines.module:270;275
+msgid "xmlsitemap"
+msgstr "xmlsitemap"
+
+#: xmlsitemap/xmlsitemap.module:68
+msgid "Sitemap downloaded by @user-agent at @address."
+msgstr "Plan du site télécharge par @user-agent depuis @address."
+
+#: xmlsitemap/xmlsitemap.module:540
+msgid "Could not create the cache files directory (@directory)"
+msgstr "Le serveur n'a pas pu créer le répertoire des fichiers de cache (@directory)"
+
+#: xmlsitemap/xmlsitemap.module:546;568;579
+msgid "Cannot create the cache file (@file)"
+msgstr "Le serveur n'a pas pu créer le fichier de cache (@file)"
+
+#: xmlsitemap/xmlsitemap.module:196
+msgid "by-pass the authored nodes check"
+msgstr "outrepasser la vérification des noeuds par auteur"
+
+#: xmlsitemap/xmlsitemap.module:196
+msgid "override node settings"
+msgstr "remplacer les paramètres de noeud"
+
+#: xmlsitemap/xmlsitemap.module:196
+msgid "override profile settings"
+msgstr "remplacer les paramètres de profil"
+
+#: xmlsitemap/xmlsitemap.module:136
+#: xmlsitemap/xmlsitemap.install:21;28
+#: xmlsitemap/xmlsitemap.info:0;0
+#: xmlsitemap_engines/xmlsitemap_engines.info:0
+#: xmlsitemap_file/xmlsitemap_file.info:0
+#: xmlsitemap_helper/xmlsitemap_helper.info:0
+#: xmlsitemap_menu/xmlsitemap_menu.install:36;55
+#: xmlsitemap_menu/xmlsitemap_menu.info:0
+#: xmlsitemap_node/xmlsitemap_node.info:0
+#: xmlsitemap_term/xmlsitemap_term.info:0
+#: xmlsitemap_user/xmlsitemap_user.info:0
+msgid "XML Sitemap"
+msgstr "XML Sitemap"
+
+#: xmlsitemap/xmlsitemap.module:137;144
+msgid "Configure the XML site map."
+msgstr "Configurer le plan du site XML."
+
+#: xmlsitemap/xmlsitemap.module:143
+msgid "Site map"
+msgstr "Plan du site"
+
+#: xmlsitemap/xmlsitemap.module:149
+msgid "Search engines"
+msgstr "Moteurs de recherche"
+
+#: xmlsitemap/xmlsitemap.module:150
+msgid "Configure the submission settings of the XML site map to the search engines."
+msgstr "Configurer les paramètres de soumission d'un plan du site XML aux moteurs de recherche."
+
+#: xmlsitemap/xmlsitemap.module:157
+msgid "Disable modules"
+msgstr "Désactiver les modules"
+
+#: xmlsitemap/xmlsitemap.module:163
+msgid "Enable !module"
+msgstr "Activer !module"
+
+#: xmlsitemap/xmlsitemap.module:170
+msgid "Site map index"
+msgstr "Index du plan du site"
+
+#: xmlsitemap/xmlsitemap.module:180
+msgid "Site map !number"
+msgstr "Plan du site !number"
+
+#: xmlsitemap/xmlsitemap.install:22
+msgid "XML Sitemap revision !revision"
+msgstr "Revision !revision du Sitemap XML"
+
+#: xmlsitemap/xmlsitemap.install:29
+msgid "%module has not been enabled"
+msgstr "%module n'a pas été activé"
+
+#: xmlsitemap/xmlsitemap.install:33
+msgid "%module cannot be enabled. Verify that you correctly copied all the files; until Drupal cannot find %module, <em>XML Sitemap</em> will not work correctly. You can <a href=\"@url\">disable</a> the <em>XML Sitemap</em> modules until you do not resolve the problem."
+msgstr "%module ne peut pas être activé. Vérifiez que vous avez correctement copié tous les fichiers; tant que Drupal ne peut pas trouver %module, <em>XML Sitemap</em> ne fonctionnera pas correctement. Vous pouvez <a href=\"@url\">désactiver</a> les modules <em>XML Sitemap</em> jusqu'à la résolution du problème."
+
+#: xmlsitemap/xmlsitemap.install:36
+msgid "The module must be <a href=\"@url\">enabled</a>."
+msgstr "Le module doit être <a href=\"@url\">activé</a>."
+
+#: xmlsitemap/xmlsitemap.info:0
+msgid "Creates an XML site map in accordance with sitemaps.org specifications."
+msgstr "Crée un plan du site XML en accord avec les spécifications sitemaps.org."
+
+#: xmlsitemap_engines/xmlsitemap_engines.module:61
+msgid "Ask.com"
+msgstr "Ask.com"
+
+#: xmlsitemap_engines/xmlsitemap_engines.module:67
+msgid "Submit the site map to Ask.com"
+msgstr "Soumettre le plan du site à Ask.com"
+
+#: xmlsitemap_engines/xmlsitemap_engines.module:72;90;114;132;162
+msgid "Submission URL"
+msgstr "URL de soumission"
+
+#: xmlsitemap_engines/xmlsitemap_engines.module:73;91;115;133;163
+msgid "The URL to submit the site map to. Use %placeholder like placeholder for the site map URL."
+msgstr "L'URL à laquelle soumettre le plan du site. Utilisez %placeholder en tant que valeur de substitution pour l'URL du plan du site."
+
+#: xmlsitemap_engines/xmlsitemap_engines.module:79
+msgid "Google"
+msgstr "Google"
+
+#: xmlsitemap_engines/xmlsitemap_engines.module:85
+msgid "Submit the site map to Google"
+msgstr "Soumettre le plan du site à Google"
+
+#: xmlsitemap_engines/xmlsitemap_engines.module:96;168
+msgid "Verification link"
+msgstr "Lien de vérification"
+
+#: xmlsitemap_engines/xmlsitemap_engines.module:97
+msgid "In order to show statistics, Google will ask you to verify that you control this site by creating a file with a certain name. Enter that name here and the XML Sitemap module will create a path to that file name. This will only work if you have clean URLs enabled."
+msgstr "Pour pouvoir afficher des statistiques, Google vous demandera de vérifier que vous controllez ce site en créant un fichier avec un nom particulier. Entrez ici ce nom et le module XML Sitemap créera un chemin vers ce nom de fichier. Cela ne fonctionnera que si vous avez activé les URL simplifiées."
+
+#: xmlsitemap_engines/xmlsitemap_engines.module:103
+msgid "Moreover.com"
+msgstr "Moreover.com"
+
+#: xmlsitemap_engines/xmlsitemap_engines.module:109
+msgid "Submit the site map to Moreover.com"
+msgstr "Soumettre le plan du site à Moreover.com"
+
+#: xmlsitemap_engines/xmlsitemap_engines.module:121
+msgid "Windows Live"
+msgstr "Windows Live"
+
+#: xmlsitemap_engines/xmlsitemap_engines.module:127
+msgid "Submit the site map to Windows Live"
+msgstr "Soumettre le plan du site à Windows live"
+
+#: xmlsitemap_engines/xmlsitemap_engines.module:138
+msgid "Authentication file"
+msgstr "Fichier d'authentification"
+
+#: xmlsitemap_engines/xmlsitemap_engines.module:139
+msgid "Before allowing you to view additional information, Windows Live will ask you to verify that you control this site by creating a file with a certain name. Enter that name here, and XML Sitemap will create a path to that file name. This will only work if you have clean URLs enabled."
+msgstr "Avant de vous autoriser à voir des informations supplémentaires, Windows Live vous demandera de vérifier que vous controllez ce site en créant un fichier avec un nom particulier. Entrer ce nom ici et XML Sitemap créera un chemin pour ce fichier. Cela ne fonctionnera que si vous avez activé les URL simplifiées."
+
+#: xmlsitemap_engines/xmlsitemap_engines.module:144
+msgid "Authentication tag"
+msgstr "Tag d'authentification"
+
+#: xmlsitemap_engines/xmlsitemap_engines.module:145
+msgid "Windows Live will give you an authentication tag."
+msgstr "Windows Live vous donnera une balise d'authentification."
+
+#: xmlsitemap_engines/xmlsitemap_engines.module:151
+msgid "Yahoo!"
+msgstr "Yahoo!"
+
+#: xmlsitemap_engines/xmlsitemap_engines.module:157
+msgid "Submit the site map to Yahoo!"
+msgstr "Soumettre le plan du site à Yahoo!"
+
+#: xmlsitemap_engines/xmlsitemap_engines.module:169
+msgid "Before allowing you to view additional information, Yahoo! will ask you to verify that you control this site by creating a file with a certain name. Enter that name here, and XML Sitemap will create a path to that file name. This will only work if you have clean URLs enabled."
+msgstr "Avant de vous autoriser à voir des informations supplémentaires, Yahoo! vous demandera de vérifier que vous controllez ce site en créant un fichier avec un nom particulier. Entrer ce nom ici et XML Sitemap créera un chemin pour ce fichier. Cela ne fonctionnera que si vous avez activé les URL simplifiées."
+
+#: xmlsitemap_engines/xmlsitemap_engines.module:174
+msgid "Authentication key"
+msgstr "Clé d'authentification"
+
+#: xmlsitemap_engines/xmlsitemap_engines.module:175
+msgid "Yahoo! will ask you to put an authentication key in the verification file."
+msgstr "Yahoo! vous demandera de mettre une clé d'authentification dans le fichier de vérification."
+
+#: xmlsitemap_engines/xmlsitemap_engines.module:270
+msgid "Sitemap successfully submitted to !engine."
+msgstr "Le Sitemap a été soumis avec succès au moteur !engine."
+
+#: xmlsitemap_engines/xmlsitemap_engines.module:275
+msgid "Error occurred submitting sitemap to !engine: !code"
+msgstr "Une erreur s'est produite lors de la soumission du sitemap au moteur !engine : !code."
+
+#: xmlsitemap_engines/xmlsitemap_engines.module:26
+msgid "Google verification page"
+msgstr "Page de vérification de Google"
+
+#: xmlsitemap_engines/xmlsitemap_engines.module:35
+msgid "Yahoo! verification page"
+msgstr "Page de vérification de Yahoo!"
+
+#: xmlsitemap_engines/xmlsitemap_engines.module:44
+msgid "Windows Live verification page"
+msgstr "Page de vérification de Windows Live"
+
+#: xmlsitemap_engines/xmlsitemap_engines.module:0
+msgid "xmlsitemap_engines"
+msgstr "xmlsitemap_engines"
+
+#: xmlsitemap_engines/xmlsitemap_engines.info:0
+msgid "XML Sitemap: Engines"
+msgstr "XML Sitemap : Engines"
+
+#: xmlsitemap_engines/xmlsitemap_engines.info:0
+msgid "Submits site map to search engines."
+msgstr "Soumet le plan du site aux moteurs de recherche."
+
+#: xmlsitemap_file/xmlsitemap_file.module:93
+msgid "Calculated from the attachment weight"
+msgstr "Calculée à partir du poids du fichier joint"
+
+#: xmlsitemap_file/xmlsitemap_file.module:94
+msgid "Same value of the node priority"
+msgstr "Valeur identique à la priorité du noeud"
+
+#: xmlsitemap_file/xmlsitemap_file.module:97
+msgid "Attachment priority"
+msgstr "Priorité du fichier joint"
+
+#: xmlsitemap_file/xmlsitemap_file.module:98
+msgid "The priority assigned to the files attached to nodes."
+msgstr "La priorité assignée aux fichiers joints aux noeuds."
+
+#: xmlsitemap_file/xmlsitemap_file.module:104
+msgid "Attachment settings"
+msgstr "Paramètres des fichiers joints"
+
+#: xmlsitemap_file/xmlsitemap_file.module:105
+msgid "The settings for the node attachments to include in the site map."
+msgstr "Les paramètres pour les fichiers joints aux noeuds à inclure sur le plan du site."
+
+#: xmlsitemap_file/xmlsitemap_file.module:111
+msgid "Include only the attachments that are shown when the node page is rendered"
+msgstr "Inclure seulement les fichiers joints qui sont affichés lors de l'affichage de la page du noeud"
+
+#: xmlsitemap_file/xmlsitemap_file.module:0
+msgid "xmlsitemap_file"
+msgstr "xmlsitemap_file"
+
+#: xmlsitemap_file/xmlsitemap_file.info:0
+msgid "XML Sitemap: File"
+msgstr "XML Sitemap : Fichier"
+
+#: xmlsitemap_file/xmlsitemap_file.info:0
+msgid "Adds node file attachments to the site map."
+msgstr "Ajoute les fichiers attachés des noeuds au plan du site."
+
+#: xmlsitemap_helper/xmlsitemap_helper.module:34
+msgid "The update has been performed."
+msgstr "La mise à jour a été effectuée."
+
+#: xmlsitemap_helper/xmlsitemap_helper.module:37
+msgid "An error occurred and processing did not complete."
+msgstr "Une erreur s'est produite et le traitement ne s'est pas terminé."
+
+#: xmlsitemap_helper/xmlsitemap_helper.module:40
+msgid "Last items successfully processed:"
+msgstr "Derniers éléments traités avec succès :"
+
+#: xmlsitemap_helper/xmlsitemap_helper.module:88
+msgid "1.0"
+msgstr "1.0"
+
+#: xmlsitemap_helper/xmlsitemap_helper.module:89
+msgid "0.9"
+msgstr "0.9"
+
+#: xmlsitemap_helper/xmlsitemap_helper.module:90
+msgid "0.8"
+msgstr "0.8"
+
+#: xmlsitemap_helper/xmlsitemap_helper.module:91
+msgid "0.7"
+msgstr "0.7"
+
+#: xmlsitemap_helper/xmlsitemap_helper.module:92
+msgid "0.6"
+msgstr "0.6"
+
+#: xmlsitemap_helper/xmlsitemap_helper.module:93
+msgid "0.5"
+msgstr "0.5"
+
+#: xmlsitemap_helper/xmlsitemap_helper.module:94
+msgid "0.4"
+msgstr "0.4"
+
+#: xmlsitemap_helper/xmlsitemap_helper.module:95
+msgid "0.3"
+msgstr "0.3"
+
+#: xmlsitemap_helper/xmlsitemap_helper.module:96
+msgid "0.2"
+msgstr "0.2"
+
+#: xmlsitemap_helper/xmlsitemap_helper.module:97
+msgid "0.1"
+msgstr "0.1"
+
+#: xmlsitemap_helper/xmlsitemap_helper.module:98
+msgid "0.0"
+msgstr "0.0"
+
+#: xmlsitemap_helper/xmlsitemap_helper.module:101
+msgid "Not in site map"
+msgstr "Pas dans le plan du site"
+
+#: xmlsitemap_helper/xmlsitemap_helper.module:104
+msgid "Default"
+msgstr "Par défaut"
+
+#: xmlsitemap_helper/xmlsitemap_helper.module:38
+msgid "1 item successfully processed."
+msgid_plural "@count items successfully processed."
+msgstr[0] "1 élément traité avec succès"
+msgstr[1] "@count éléments traités avec succès"
+
+#: xmlsitemap_helper/xmlsitemap_helper.module:0
+msgid "xmlsitemap_helper"
+msgstr "xmlsitemap_helper"
+
+#: xmlsitemap_helper/xmlsitemap_helper.info:0
+msgid "XML Sitemap: Helper"
+msgstr "XML Sitemap : Helper"
+
+#: xmlsitemap_helper/xmlsitemap_helper.info:0
+msgid "Contains the code shared with the modules adding links into the XML site map."
+msgstr "Contient le code partagé avec les modules ajoutant des liens dans le plan du site XML."
+
+#: xmlsitemap_helper/includes/xmlsitemap_helper.install.inc:23
+#: xmlsitemap_node/xmlsitemap_node.module:389
+#: xmlsitemap_term/xmlsitemap_term.module:287
+#: xmlsitemap_user/xmlsitemap_user.module:279
+msgid "Processing"
+msgstr "Exécution"
+
+#: xmlsitemap_menu/xmlsitemap_menu.module:22
+#: xmlsitemap_menu/xmlsitemap_menu.info:0
+msgid "XML Sitemap: Menu"
+msgstr "XML Sitemap : Menu"
+
+#: xmlsitemap_menu/xmlsitemap_menu.module:23
+msgid "The module allows menu items to be added to the site map. You can choose the menus to include on the XML Sitemap administration page and can add and remove menu items on the <a href=\"@menu\">menu administration</a> page. The priority of a menu item is determined by its weight."
+msgstr "Le module permet aux éléments de menu d'être ajoutés au plan du site. Vous pouvez sélectionner les menus à inclure sur la page d'administration de XML Sitemap, et pouvez ajouter ou supprimer des éléments de menu depuis la page d'<a href=\"@menu\">administration des menus</a>. La priorité d'un élement de menu est déterminée par son poids."
+
+#: xmlsitemap_menu/xmlsitemap_menu.module:84
+msgid "Menu settings"
+msgstr "Paramètres du menu"
+
+#: xmlsitemap_menu/xmlsitemap_menu.module:85
+msgid "The settings for the menus to include in the site map."
+msgstr "Les paramètres pour les menus à inclure dans le plan du site."
+
+#: xmlsitemap_menu/xmlsitemap_menu.module:91
+msgid "Menu links change frequency"
+msgstr "Fréquence de modification des liens de menus"
+
+#: xmlsitemap_menu/xmlsitemap_menu.module:92
+msgid "The change frequency associated with the menu links."
+msgstr "La fréquence de modification associée aux liens de menus."
+
+#: xmlsitemap_menu/xmlsitemap_menu.module:104
+msgid "Menus to include in the site map"
+msgstr "Menus à inclure dans le plan du site"
+
+#: xmlsitemap_menu/xmlsitemap_menu.module:0
+msgid "xmlsitemap_menu"
+msgstr "xmlsitemap_menu"
+
+#: xmlsitemap_menu/xmlsitemap_menu.install:37;55
+msgid "The menu from where <em>XML Sitemap: Menu</em> looks for the menus to add to the sitemap."
+msgstr "Le menu dans lequel <em>XML Sitemap : Menu</em> cherche des menus à ajouter au plan du site."
+
+#: xmlsitemap_menu/xmlsitemap_menu.info:0
+msgid "Adds menu items to the site map."
+msgstr "Ajoute des élements de menu au plan du site."
+
+#: xmlsitemap_node/xmlsitemap_node.module:68;98;119;249
+#: xmlsitemap_term/xmlsitemap_term.module:36;53
+#: xmlsitemap_user/xmlsitemap_user.module:27;54
+msgid "XML site map"
+msgstr "Plan du site XML"
+
+#: xmlsitemap_node/xmlsitemap_node.module:74;256
+msgid "User posts threshold"
+msgstr "Seuil de publications utilisateur"
+
+#: xmlsitemap_node/xmlsitemap_node.module:75;257
+msgid "The number of posts a user must author before his posts are added to the site map."
+msgstr "Le nombre de publications qu'un utilisateur doit créer avant que ses publications ne soient ajoutées au pln du site."
+
+#: xmlsitemap_node/xmlsitemap_node.module:75
+msgid "This is the default value used for the users for which the post threshold has not been set."
+msgstr "Ceci est la valeur par défaut pour les utilisateurs pour lesquels le seuil de publications n'a pas été défini."
+
+#: xmlsitemap_node/xmlsitemap_node.module:78;260
+msgid "1"
+msgstr "1"
+
+#: xmlsitemap_node/xmlsitemap_node.module:79;261
+msgid "5"
+msgstr "5"
+
+#: xmlsitemap_node/xmlsitemap_node.module:80;262
+msgid "10"
+msgstr "10"
+
+#: xmlsitemap_node/xmlsitemap_node.module:81;263
+msgid "20"
+msgstr "20"
+
+#: xmlsitemap_node/xmlsitemap_node.module:82;264
+msgid "50"
+msgstr "50"
+
+#: xmlsitemap_node/xmlsitemap_node.module:83;265
+msgid "100"
+msgstr "100"
+
+#: xmlsitemap_node/xmlsitemap_node.module:84;266
+msgid "200"
+msgstr "200"
+
+#: xmlsitemap_node/xmlsitemap_node.module:85;267
+msgid "500"
+msgstr "500"
+
+#: xmlsitemap_node/xmlsitemap_node.module:86;268
+msgid "Never add the posts"
+msgstr "Ne jamais ajouter les contenus"
+
+#: xmlsitemap_node/xmlsitemap_node.module:105
+msgid "Priority adjustment"
+msgstr "Ajustement de priorité"
+
+#: xmlsitemap_node/xmlsitemap_node.module:106
+msgid "This number will be added to the priority of this content type."
+msgstr "Ce nombre sera ajouté à la priorité de ce type de contenu."
+
+#: xmlsitemap_node/xmlsitemap_node.module:130
+#: xmlsitemap_term/xmlsitemap_term.module:43
+#: xmlsitemap_user/xmlsitemap_user.module:106
+msgid "The default priority is %priority."
+msgstr "La priorité par défaut est %priority."
+
+#: xmlsitemap_node/xmlsitemap_node.module:150
+msgid "Add the selected posts to the XML site map"
+msgstr "Ajoute les contenus sélectionnés au plan du site XML"
+
+#: xmlsitemap_node/xmlsitemap_node.module:155
+msgid "Change the XML site map priority of the selected posts to default"
+msgstr "Modifier à la valeur par défaut la priorité dans le plan du site XML des publications selectionnées"
+
+#: xmlsitemap_node/xmlsitemap_node.module:160
+msgid "Remove the selected posts from the XML site map"
+msgstr "Supprime les publications sélectionnées du plan du site XML"
+
+#: xmlsitemap_node/xmlsitemap_node.module:292
+#: xmlsitemap_node/xmlsitemap_node.info:0
+msgid "XML Sitemap: Node"
+msgstr "XML Sitemap : Node"
+
+#: xmlsitemap_node/xmlsitemap_node.module:293
+msgid "<em>XML Sitemap: Node</em> adds nodes (content) to the site map. The default priority of a node is determined by a combination of its <a href=\"@content\">content type</a> priority, whether it appears on the front page of your site, and the number of comments it has received. You can override the default priority for individual nodes when you add or edit a node."
+msgstr "<em>XML Sitemap : Node</em> ajoute des noeuds (contenu) au plan du site.  La priorité par défaut d'un noeud est déterminée en fonction d'une combinaison de la priorité de son <a href=\"@content\">type de contenu</a>, le fait qu'il apparaisse sur la page d'accueil de votre site, et du nombre de commentaires qu'il a reçu. Vous pouvez remplacer la priorité par défaut pour chaue noeud, lors de son ajout ou de son édition."
+
+#: xmlsitemap_node/xmlsitemap_node.module:350
+msgid "Promotion adjustment"
+msgstr "Ajustement de promotion"
+
+#: xmlsitemap_node/xmlsitemap_node.module:351
+msgid "This number will be added to the priority of each post that is promoted to the front page. This setting doesn't apply for the nodes for which the priority is overriden."
+msgstr "Ce nombre sera ajouté à la priorité de chaque contenu promu en page d'accueil. Ce paramètre ne s'applique pas aux noeuds dont la priorité est remplacée."
+
+#: xmlsitemap_node/xmlsitemap_node.module:357
+msgid "Comment ratio weight - nodes"
+msgstr "Poids de ratio des commentaires - noeuds"
+
+#: xmlsitemap_node/xmlsitemap_node.module:358
+msgid "This number will be added to the priority of the post with the highest number of comments; for the other posts, the number is calculated proportionally to the number of comments. This doesn't apply if the maximum number of comments is one, nor for the nodes for which the priority is overriden."
+msgstr "Ce nombre sera ajouté à la priorité du contenu avec le plus grand nombre de commentaires; pour les autres contenus, le nombre est calculé proportionnellement au nombre de commentaires. Ce paramètre ne s'applique pas si le nombre maximal de commentaites est un, ni aux noeuds dont la priorité est remplacée."
+
+#: xmlsitemap_node/xmlsitemap_node.module:391
+#: xmlsitemap_term/xmlsitemap_term.module:289
+#: xmlsitemap_user/xmlsitemap_user.module:281
+msgid "The update has encountered an error."
+msgstr "La mise à jour a échoué."
+
+#: xmlsitemap_node/xmlsitemap_node.module:0
+msgid "xmlsitemap_node"
+msgstr "xmlsitemap_node"
+
+#: xmlsitemap_node/xmlsitemap_node.install:470
+msgid "Updating %title"
+msgstr "Mise à jour de %title"
+
+#: xmlsitemap_node/xmlsitemap_node.info:0
+msgid "Adds nodes to the site map."
+msgstr "Ajoute les noeuds au plan du site."
+
+#: xmlsitemap_term/xmlsitemap_term.module:59
+msgid "This will be the default priority of terms in this vocabulary."
+msgstr "Ce sera la priorité par défaut des termes de ce vocabulaire."
+
+#: xmlsitemap_term/xmlsitemap_term.module:92
+msgid "Add the vocabulary terms of the selected posts to the XML site map"
+msgstr "Ajouter les termes de vocabulaire des publications sélectionnées au plan du site XML"
+
+#: xmlsitemap_term/xmlsitemap_term.module:97
+msgid "Change the XML site map priority of the selected posts vocabulary terms to default"
+msgstr "Modifier à la valeur par défaut la priorité dans le plan du site XML des termes de vocabulaire des publications sélectionnées"
+
+#: xmlsitemap_term/xmlsitemap_term.module:102
+msgid "Remove the vocabulary terms of the selected posts from the XML site map"
+msgstr "Supprimer les termes de vocabulaire des publications sélectionnées du plan de site XML"
+
+#: xmlsitemap_term/xmlsitemap_term.module:208
+#: xmlsitemap_term/xmlsitemap_term.info:0
+msgid "XML Sitemap: Term"
+msgstr "XML Sitemap : Terme"
+
+#: xmlsitemap_term/xmlsitemap_term.module:209
+msgid "The module adds <a href=\"@terms\">taxonomy terms</a> (categories) to the site map. You can change the default priority when you add or edit a vocabulary, and you can override the default priority when you add or edit individual terms."
+msgstr "Le module ajoute les <a href=\"@terms\">termes de taxonomie</a> (catégories) au plan du site. Vous pouvez modifier la priorité par défaut lors de l'ajout ou de l'édition d'un vocabulaire, ou vous pouvez remplacer la priorité par défaut lors de l'ajout ou de l'édition d'un terme."
+
+#: xmlsitemap_term/xmlsitemap_term.module:265
+msgid "Term ratio weight - nodes"
+msgstr "Poids du ratio par terme - noeuds"
+
+#: xmlsitemap_term/xmlsitemap_term.module:266
+msgid "This number will be added to the priority of vocabulary term which is used by 100 nodes; for the other terms, the number is calculated proportionally to the number of nodes. This doesn't apply for terms that are used for just one node, nor for the vocabulary terms  for which the priority is overriden."
+msgstr "Ce nombre sera ajouté à la priorité du terme de vocabulaire utilisé par 100 noeuds; pour les autres termes, le nombre est calculé proportionnellement aux nombres de noeuds. Ceci ne s'applique pas aux termes utilisés seulement par un noeud, ni pour les termes de vocabulaire pour lesquels la priorité est déjà remplacée."
+
+#: xmlsitemap_term/xmlsitemap_term.module:0
+msgid "xmlsitemap_term"
+msgstr "xmlsitemap_term"
+
+#: xmlsitemap_term/xmlsitemap_term.info:0
+msgid "Adds taxonomy terms to the site map."
+msgstr "Ajouter des termes de taxonomie au plan du site."
+
+#: xmlsitemap_user/xmlsitemap_user.module:34
+msgid "Default user priority"
+msgstr "Priorité utilisateur par défaut"
+
+#: xmlsitemap_user/xmlsitemap_user.module:35
+msgid "The default priority for users who have only the authenticated user role."
+msgstr "La priorité par défaut pour les utilisateurs qui possèdent le rôle utilisateur authentifié."
+
+#: xmlsitemap_user/xmlsitemap_user.module:60
+msgid "Default priority"
+msgstr "Priorité par défaut"
+
+#: xmlsitemap_user/xmlsitemap_user.module:61
+msgid "The priority of all a user's roles will be added together to set the user's default priority. If all role priorities are left at default, the user's default priority will be %priority."
+msgstr "Les priorités de tous les rôles de l'utilisateur seront additionnées pour définir la priorité par défaut de l'utilisateur. Si toutes les priorités des rôles sont laissées à la valeur par défaut, la priorité par défaut de l'utilisateur sera %priority."
+
+#: xmlsitemap_user/xmlsitemap_user.module:105
+msgid "User priority"
+msgstr "Priorité utilisateur"
+
+#: xmlsitemap_user/xmlsitemap_user.module:156
+msgid "Add the selected users to the XML site map"
+msgstr "Ajoute les utilisateurs sélectionnés au plan du site XML"
+
+#: xmlsitemap_user/xmlsitemap_user.module:161
+msgid "Change the XML site map priority of the selected users to default"
+msgstr "Modifier à la valeur par défaut la priorité dans le plan du site XML des utilisateurs sélectionnés"
+
+#: xmlsitemap_user/xmlsitemap_user.module:166
+msgid "Remove the selected users from the XML site map"
+msgstr "Supprimer les utilisateurs sélectionnés du plan du site XML"
+
+#: xmlsitemap_user/xmlsitemap_user.module:178
+#: xmlsitemap_user/xmlsitemap_user.info:0
+msgid "XML Sitemap: User"
+msgstr "XML Sitemap : User"
+
+#: xmlsitemap_user/xmlsitemap_user.module:179
+msgid "The module adds user profiles to the site map. The <em>anonymous user</em> role must have permission to access user profiles on the <a href=\"@access\">access control page</a>. You can change the default user priority on the <a href=\"@user_settings\">user settings</a> page. The <a href=\"@user\">user role priority</a> will override the default user priority. You can override both the default priority and the role priority when you add or edit a user."
+msgstr "Le module ajoute les profils utilisateur au plan du site. Le rôle <em>utilisateur anonyme</em> doit posséder la permission  d'accès aux profils utilisateurs sur la <a href=\"@access\">page de contrôle d'accès</a>. Vous pouvez modifier la priorité par défaut des utilisateurs sur la page des <a href=\"@user_settings\">paramètres utilisateurs</a>. La <a href=\"@user\">prirorité du rôle utilisateur</a> remplacera la valeur par défaut de la priorité utilisateur. Vous pouvez remplacer à la fois la priorité par défaut et la priorité du rôle lors de l'ajout ou de l'édition d'un utilisateur."
+
+#: xmlsitemap_user/xmlsitemap_user.module:239
+msgid "Comment ratio weight - users"
+msgstr "Poids du ratio commentaires - utilisateurs"
+
+#: xmlsitemap_user/xmlsitemap_user.module:240
+msgid "This number will be added to the priority of the user who authored the highest number of comments; for the other users, the number is calculated proportionally to the number of authored comments. This doesn't apply if the maximum number of comments is one, nor for the users for which the priority is overriden."
+msgstr "Ce nombre sera ajouté à la priorité de l'utilisateur ayant crée le plus grand nombre de commentaires; pour les autres utilisateurs, le nombre est calculé proportionnellement au nombre de commentaires publiés. Ceci ne s'applique pas dans le cas où le nombre maximum de commentaires est un, ni pour les utilisateurs dont la priorité est remplacée."
+
+#: xmlsitemap_user/xmlsitemap_user.module:0
+msgid "xmlsitemap_user"
+msgstr "xmlsitemap_user"
+
+#: xmlsitemap_user/xmlsitemap_user.install:84;267;275;295
+msgid "The priority assigned to the role."
+msgstr "La priorité assignée au rôle."
+
+#: xmlsitemap_user/xmlsitemap_user.install:468
+msgid "Updating %name"
+msgstr "Mise à jour de %name"
+
+#: xmlsitemap_user/xmlsitemap_user.info:0
+msgid "Adds user profiles to the site map."
+msgstr "Ajoute les profils utilisateurs au plan du site."
+
