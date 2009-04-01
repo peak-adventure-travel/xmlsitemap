@@ -1,17 +1,17 @@
 # $Id$
 #
-# LANGUAGE translation of Drupal (xmlsitemap_menu)
+# LANGUAGE translation of Drupal (general)
 # Copyright YEAR NAME <EMAIL@ADDRESS>
 # Generated from files:
-#  xmlsitemap_menu.module,v 1.1.4.7 2008/12/14 19:08:14 kiam
-#  xmlsitemap_menu.install,v 1.1.4.12 2008/12/18 10:59:13 kiam
-#  xmlsitemap_menu.info,v 1.1.4.2 2008/11/28 10:16:31 kiam
+#  xmlsitemap_menu.module,v 1.1.4.29 2009/03/23 13:51:26 kiam
+#  xmlsitemap_menu.info,v 1.1.4.3 2009/03/08 23:47:47 kiam
+#  xmlsitemap_menu.install,v 1.1.4.26 2009/03/11 16:01:08 kiam
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2008-12-20 14:12+0100\n"
+"POT-Creation-Date: 2009-04-01 11:17+0200\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -20,19 +20,47 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: xmlsitemap_menu/xmlsitemap_menu.module:39
-msgid "Menus to include in site map"
+#: xmlsitemap_menu.module:22 xmlsitemap_menu.info:0
+msgid "XML Sitemap: Menu"
 msgstr ""
 
-#: xmlsitemap_menu/xmlsitemap_menu.module:0
+#: xmlsitemap_menu.module:23
+msgid "The module allows menu items to be added to the site map. You can choose the menus to include on the XML Sitemap administration page and can add and remove menu items on the <a href=\"@menu\">menu administration</a> page. The priority of a menu item is determined by its weight."
+msgstr ""
+
+#: xmlsitemap_menu.module:84
+msgid "Menu settings"
+msgstr ""
+
+#: xmlsitemap_menu.module:85
+msgid "The settings for the menus to include in the site map."
+msgstr ""
+
+#: xmlsitemap_menu.module:91
+msgid "Menu links change frequency"
+msgstr ""
+
+#: xmlsitemap_menu.module:92
+msgid "The change frequency associated with the menu links."
+msgstr ""
+
+#: xmlsitemap_menu.module:104
+msgid "Menus to include in the site map"
+msgstr ""
+
+#: xmlsitemap_menu.module:0
 msgid "xmlsitemap_menu"
 msgstr ""
 
-#: xmlsitemap_menu/xmlsitemap_menu.install:33;49
+#: xmlsitemap_menu.install:36;55 xmlsitemap_menu.info:0
+msgid "XML Sitemap"
+msgstr ""
+
+#: xmlsitemap_menu.install:37;55
 msgid "The menu from where <em>XML Sitemap: Menu</em> looks for the menus to add to the sitemap."
 msgstr ""
 
-#: xmlsitemap_menu/xmlsitemap_menu.info:0
+#: xmlsitemap_menu.info:0
 msgid "Adds menu items to the site map."
 msgstr ""
 

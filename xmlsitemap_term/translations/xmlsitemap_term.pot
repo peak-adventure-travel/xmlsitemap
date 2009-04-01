@@ -1,17 +1,16 @@
 # $Id$
 #
-# LANGUAGE translation of Drupal (xmlsitemap_term)
+# LANGUAGE translation of Drupal (general)
 # Copyright YEAR NAME <EMAIL@ADDRESS>
 # Generated from files:
-#  xmlsitemap_term.module,v 1.11.2.11 2008/11/29 09:31:43 kiam
-#  xmlsitemap_term.install,v 1.5.2.8 2008/12/18 23:06:15 kiam
-#  xmlsitemap_term.info,v 1.2 2008/05/20 17:48:47 darrenoh
+#  xmlsitemap_term.module,v 1.11.2.43 2009/03/19 13:19:50 kiam
+#  xmlsitemap_term.info,v 1.2.2.1 2009/02/19 16:15:46 kiam
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2008-12-20 14:12+0100\n"
+"POT-Creation-Date: 2009-04-01 11:08+0200\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -20,27 +19,67 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: xmlsitemap_term/xmlsitemap_term.module:65
+#: xmlsitemap_term.module:36;53
+msgid "XML site map"
+msgstr ""
+
+#: xmlsitemap_term.module:42;58
+msgid "Priority"
+msgstr ""
+
+#: xmlsitemap_term.module:43
+msgid "The default priority is %priority."
+msgstr ""
+
+#: xmlsitemap_term.module:59
 msgid "This will be the default priority of terms in this vocabulary."
 msgstr ""
 
-#: xmlsitemap_term/xmlsitemap_term.module:118
-msgid "override term priority"
+#: xmlsitemap_term.module:92
+msgid "Add the vocabulary terms of the selected posts to the XML site map"
 msgstr ""
 
-#: xmlsitemap_term/xmlsitemap_term.module:0
+#: xmlsitemap_term.module:97
+msgid "Change the XML site map priority of the selected posts vocabulary terms to default"
+msgstr ""
+
+#: xmlsitemap_term.module:102
+msgid "Remove the vocabulary terms of the selected posts from the XML site map"
+msgstr ""
+
+#: xmlsitemap_term.module:208 xmlsitemap_term.info:0
+msgid "XML Sitemap: Term"
+msgstr ""
+
+#: xmlsitemap_term.module:209
+msgid "The module adds <a href=\"@terms\">taxonomy terms</a> (categories) to the site map. You can change the default priority when you add or edit a vocabulary, and you can override the default priority when you add or edit individual terms."
+msgstr ""
+
+#: xmlsitemap_term.module:265
+msgid "Term ratio weight - nodes"
+msgstr ""
+
+#: xmlsitemap_term.module:266
+msgid "This number will be added to the priority of vocabulary term which is used by 100 nodes; for the other terms, the number is calculated proportionally to the number of nodes. This doesn't apply for terms that are used for just one node, nor for the vocabulary terms  for which the priority is overriden."
+msgstr ""
+
+#: xmlsitemap_term.module:287
+msgid "Processing"
+msgstr ""
+
+#: xmlsitemap_term.module:289
+msgid "The update has encountered an error."
+msgstr ""
+
+#: xmlsitemap_term.module:0
 msgid "xmlsitemap_term"
 msgstr ""
 
-#: xmlsitemap_term/xmlsitemap_term.install:33
-msgid "The base table for xmlsitemap_term."
-msgstr ""
-
-#: xmlsitemap_term/xmlsitemap_term.install:36
-msgid "The id of the path."
-msgstr ""
-
-#: xmlsitemap_term/xmlsitemap_term.info:0
+#: xmlsitemap_term.info:0
 msgid "Adds taxonomy terms to the site map."
+msgstr ""
+
+#: xmlsitemap_term.info:0
+msgid "XML Sitemap"
 msgstr ""
 

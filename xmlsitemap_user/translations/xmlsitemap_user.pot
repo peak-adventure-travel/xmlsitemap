@@ -1,17 +1,17 @@
 # $Id$
 #
-# LANGUAGE translation of Drupal (xmlsitemap_user)
+# LANGUAGE translation of Drupal (general)
 # Copyright YEAR NAME <EMAIL@ADDRESS>
 # Generated from files:
-#  xmlsitemap_user.module,v 1.12.2.11 2008/12/17 15:33:33 kiam
-#  xmlsitemap_user.install,v 1.6.2.10 2008/12/18 10:59:13 kiam
-#  xmlsitemap_user.info,v 1.2 2008/05/20 17:48:47 darrenoh
+#  xmlsitemap_user.module,v 1.12.2.58 2009/03/19 13:19:42 kiam
+#  xmlsitemap_user.info,v 1.2.2.1 2009/03/08 23:47:48 kiam
+#  xmlsitemap_user.install,v 1.6.2.43 2009/03/11 16:00:59 kiam
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2008-12-20 14:12+0100\n"
+"POT-Creation-Date: 2009-04-01 11:08+0200\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -20,51 +20,87 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: xmlsitemap_user/xmlsitemap_user.module:32
+#: xmlsitemap_user.module:27;54
+msgid "XML site map"
+msgstr ""
+
+#: xmlsitemap_user.module:34
 msgid "Default user priority"
 msgstr ""
 
-#: xmlsitemap_user/xmlsitemap_user.module:35
-msgid "Choose the default priority for users who have only the authenticated user role."
+#: xmlsitemap_user.module:35
+msgid "The default priority for users who have only the authenticated user role."
 msgstr ""
 
-#: xmlsitemap_user/xmlsitemap_user.module:48
-msgid "Default site map priority"
+#: xmlsitemap_user.module:60
+msgid "Default priority"
 msgstr ""
 
-#: xmlsitemap_user/xmlsitemap_user.module:51
+#: xmlsitemap_user.module:61
 msgid "The priority of all a user's roles will be added together to set the user's default priority. If all role priorities are left at default, the user's default priority will be %priority."
 msgstr ""
 
-#: xmlsitemap_user/xmlsitemap_user.module:200
-msgid "Delete role"
+#: xmlsitemap_user.module:105
+msgid "User priority"
 msgstr ""
 
-#: xmlsitemap_user/xmlsitemap_user.module:206
-msgid "Save role"
+#: xmlsitemap_user.module:106
+msgid "The default priority is %priority."
 msgstr ""
 
-#: xmlsitemap_user/xmlsitemap_user.module:64
-msgid "override profile priority"
+#: xmlsitemap_user.module:156
+msgid "Add the selected users to the XML site map"
 msgstr ""
 
-#: xmlsitemap_user/xmlsitemap_user.module:0
+#: xmlsitemap_user.module:161
+msgid "Change the XML site map priority of the selected users to default"
+msgstr ""
+
+#: xmlsitemap_user.module:166
+msgid "Remove the selected users from the XML site map"
+msgstr ""
+
+#: xmlsitemap_user.module:178 xmlsitemap_user.info:0
+msgid "XML Sitemap: User"
+msgstr ""
+
+#: xmlsitemap_user.module:179
+msgid "The module adds user profiles to the site map. The <em>anonymous user</em> role must have permission to access user profiles on the <a href=\"@access\">access control page</a>. You can change the default user priority on the <a href=\"@user_settings\">user settings</a> page. The <a href=\"@user\">user role priority</a> will override the default user priority. You can override both the default priority and the role priority when you add or edit a user."
+msgstr ""
+
+#: xmlsitemap_user.module:239
+msgid "Comment ratio weight - users"
+msgstr ""
+
+#: xmlsitemap_user.module:240
+msgid "This number will be added to the priority of the user who authored the highest number of comments; for the other users, the number is calculated proportionally to the number of authored comments. This doesn't apply if the maximum number of comments is one, nor for the users for which the priority is overriden."
+msgstr ""
+
+#: xmlsitemap_user.module:279
+msgid "Processing"
+msgstr ""
+
+#: xmlsitemap_user.module:281
+msgid "The update has encountered an error."
+msgstr ""
+
+#: xmlsitemap_user.module:0
 msgid "xmlsitemap_user"
 msgstr ""
 
-#: xmlsitemap_user/xmlsitemap_user.install:37
-msgid "The base table for xmlsitemap_user."
+#: xmlsitemap_user.install:84;267;275;295
+msgid "The priority assigned to the role."
 msgstr ""
 
-#: xmlsitemap_user/xmlsitemap_user.install:40
-msgid "The user ID."
+#: xmlsitemap_user.install:468
+msgid "Updating %name"
 msgstr ""
 
-#: xmlsitemap_user/xmlsitemap_user.install:64
-msgid "The role ID."
-msgstr ""
-
-#: xmlsitemap_user/xmlsitemap_user.info:0
+#: xmlsitemap_user.info:0
 msgid "Adds user profiles to the site map."
+msgstr ""
+
+#: xmlsitemap_user.info:0
+msgid "XML Sitemap"
 msgstr ""
 

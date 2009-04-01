@@ -1,16 +1,17 @@
 # $Id$
 #
-# LANGUAGE translation of Drupal (xmlsitemap_node)
+# LANGUAGE translation of Drupal (general)
 # Copyright YEAR NAME <EMAIL@ADDRESS>
 # Generated from files:
-#  xmlsitemap_node.module,v 1.19.2.14 2008/12/19 11:16:15 kiam
-#  xmlsitemap_node.install,v 1.9.2.8 2008/12/18 10:59:13 kiam
+#  xmlsitemap_node.module,v 1.19.2.81 2009/03/23 14:00:46 kiam
+#  xmlsitemap_node.info,v 1.2.2.1 2009/03/08 23:47:48 kiam
+#  xmlsitemap_node.install,v 1.9.2.46 2009/03/11 16:01:03 kiam
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2008-12-20 14:12+0100\n"
+"POT-Creation-Date: 2009-04-01 11:08+0200\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -19,71 +20,131 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: xmlsitemap_node/xmlsitemap_node.module:77
+#: xmlsitemap_node.module:68;98;119;249
+msgid "XML site map"
+msgstr ""
+
+#: xmlsitemap_node.module:74;256
+msgid "User posts threshold"
+msgstr ""
+
+#: xmlsitemap_node.module:75;257
+msgid "The number of posts a user must author before his posts are added to the site map."
+msgstr ""
+
+#: xmlsitemap_node.module:75
+msgid "This is the default value used for the users for which the post threshold has not been set."
+msgstr ""
+
+#: xmlsitemap_node.module:78;260
+msgid "1"
+msgstr ""
+
+#: xmlsitemap_node.module:79;261
+msgid "5"
+msgstr ""
+
+#: xmlsitemap_node.module:80;262
+msgid "10"
+msgstr ""
+
+#: xmlsitemap_node.module:81;263
+msgid "20"
+msgstr ""
+
+#: xmlsitemap_node.module:82;264
+msgid "50"
+msgstr ""
+
+#: xmlsitemap_node.module:83;265
+msgid "100"
+msgstr ""
+
+#: xmlsitemap_node.module:84;266
+msgid "200"
+msgstr ""
+
+#: xmlsitemap_node.module:85;267
+msgid "500"
+msgstr ""
+
+#: xmlsitemap_node.module:86;268
+msgid "Never add the posts"
+msgstr ""
+
+#: xmlsitemap_node.module:105
 msgid "Priority adjustment"
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:80
+#: xmlsitemap_node.module:106
 msgid "This number will be added to the priority of this content type."
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:90
-msgid "Content priority"
+#: xmlsitemap_node.module:129
+msgid "Priority"
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:91
-msgid "The settings for the content to include in the site map."
+#: xmlsitemap_node.module:130
+msgid "The default priority is %priority."
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:96
+#: xmlsitemap_node.module:150
+msgid "Add the selected posts to the XML site map"
+msgstr ""
+
+#: xmlsitemap_node.module:155
+msgid "Change the XML site map priority of the selected posts to default"
+msgstr ""
+
+#: xmlsitemap_node.module:160
+msgid "Remove the selected posts from the XML site map"
+msgstr ""
+
+#: xmlsitemap_node.module:292 xmlsitemap_node.info:0
+msgid "XML Sitemap: Node"
+msgstr ""
+
+#: xmlsitemap_node.module:293
+msgid "<em>XML Sitemap: Node</em> adds nodes (content) to the site map. The default priority of a node is determined by a combination of its <a href=\"@content\">content type</a> priority, whether it appears on the front page of your site, and the number of comments it has received. You can override the default priority for individual nodes when you add or edit a node."
+msgstr ""
+
+#: xmlsitemap_node.module:350
 msgid "Promotion adjustment"
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:99
-msgid "This number will be added to the priority of each post that is promoted to the front page."
+#: xmlsitemap_node.module:351
+msgid "This number will be added to the priority of each post that is promoted to the front page. This setting doesn't apply for the nodes for which the priority is overriden."
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:103
-msgid "Comment ratio weight"
+#: xmlsitemap_node.module:357
+msgid "Comment ratio weight - nodes"
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:106
-msgid "This number will be multiplied by the ratio of the number of comments on a post to the highest number of comments on any post—that is, this number will be added to the priority of the post with the most comments."
+#: xmlsitemap_node.module:358
+msgid "This number will be added to the priority of the post with the highest number of comments; for the other posts, the number is calculated proportionally to the number of comments. This doesn't apply if the maximum number of comments is one, nor for the nodes for which the priority is overriden."
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:110
-msgid "Count comments in change date and frequency"
+#: xmlsitemap_node.module:389
+msgid "Processing"
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:112
-msgid "If enabled, the frequency of comments on a post will affect its change frequency and last modification date."
+#: xmlsitemap_node.module:391
+msgid "The update has encountered an error."
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.module:208
-msgid "Save content type"
-msgstr ""
-
-#: xmlsitemap_node/xmlsitemap_node.module:208
-msgid "Reset to defaults"
-msgstr ""
-
-#: xmlsitemap_node/xmlsitemap_node.module:183
-msgid "override node priority"
-msgstr ""
-
-#: xmlsitemap_node/xmlsitemap_node.module:0
+#: xmlsitemap_node.module:0
 msgid "xmlsitemap_node"
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.install:50
-msgid "The base table for xmlsitemap_node."
+#: xmlsitemap_node.install:470
+msgid "Updating %title"
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.install:66
-msgid "Link to last comment."
+#: xmlsitemap_node.info:0
+msgid "Adds nodes to the site map."
 msgstr ""
 
-#: xmlsitemap_node/xmlsitemap_node.install:70
-msgid "Link to previous comment."
+#: xmlsitemap_node.info:0
+msgid "XML Sitemap"
 msgstr ""
 

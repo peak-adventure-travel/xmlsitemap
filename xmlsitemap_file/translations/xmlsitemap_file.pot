@@ -1,17 +1,16 @@
 # $Id$
 #
-# LANGUAGE translation of Drupal (xmlsitemap_file)
+# LANGUAGE translation of Drupal (general)
 # Copyright YEAR NAME <EMAIL@ADDRESS>
 # Generated from files:
-#  xmlsitemap_file.module,v 1.1.4.9 2008/12/18 01:43:38 kiam
-#  xmlsitemap_file.install,v 1.1.4.14 2008/12/18 23:06:15 kiam
+#  xmlsitemap_file.module,v 1.1.4.35 2009/03/19 13:19:56 kiam
 #  xmlsitemap_file.info,v 1.1.4.3 2008/11/28 19:11:58 kiam
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2008-12-20 14:12+0100\n"
+"POT-Creation-Date: 2009-04-01 11:16+0200\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -20,35 +19,47 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: xmlsitemap_file/xmlsitemap_file.module:0
+#: xmlsitemap_file.module:93
+msgid "Calculated from the attachment weight"
+msgstr ""
+
+#: xmlsitemap_file.module:94
+msgid "Same value of the node priority"
+msgstr ""
+
+#: xmlsitemap_file.module:97
+msgid "Attachment priority"
+msgstr ""
+
+#: xmlsitemap_file.module:98
+msgid "The priority assigned to the files attached to nodes."
+msgstr ""
+
+#: xmlsitemap_file.module:104
+msgid "Attachment settings"
+msgstr ""
+
+#: xmlsitemap_file.module:105
+msgid "The settings for the node attachments to include in the site map."
+msgstr ""
+
+#: xmlsitemap_file.module:111
+msgid "Include only the attachments that are shown when the node page is rendered"
+msgstr ""
+
+#: xmlsitemap_file.module:0
 msgid "xmlsitemap_file"
 msgstr ""
 
-#: xmlsitemap_file/xmlsitemap_file.install:18
-msgid "The base table for xmlsitemap_file."
-msgstr ""
-
-#: xmlsitemap_file/xmlsitemap_file.install:21
-msgid "The ID of the file."
-msgstr ""
-
-#: xmlsitemap_file/xmlsitemap_file.install:28
-msgid "The ID of the node containing the file."
-msgstr ""
-
-#: xmlsitemap_file/xmlsitemap_file.install:35
-msgid "The change time of the file."
-msgstr ""
-
-#: xmlsitemap_file/xmlsitemap_file.install:39
-msgid "The previous change time of the file."
-msgstr ""
-
-#: xmlsitemap_file/xmlsitemap_file.info:0
+#: xmlsitemap_file.info:0
 msgid "XML Sitemap: File"
 msgstr ""
 
-#: xmlsitemap_file/xmlsitemap_file.info:0
+#: xmlsitemap_file.info:0
 msgid "Adds node file attachments to the site map."
+msgstr ""
+
+#: xmlsitemap_file.info:0
+msgid "XML Sitemap"
 msgstr ""
 
