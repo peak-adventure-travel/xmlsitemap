@@ -391,9 +391,16 @@ function xmlsitemap_user_update_6111() {
 
 /**
  * Implementation of hook_update_N().
- *
  */
 function xmlsitemap_user_update_6112() {
+  return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ *
+ */
+function xmlsitemap_user_update_6113() {
   $ret = xmlsitemap_user_update_6000();
   $ret[] = update_sql("UPDATE {system} SET weight = 10 WHERE name = 'xmlsitemap_user'");
   module_load_include('inc', 'xmlsitemap_helper', 'includes/xmlsitemap_helper.install');
