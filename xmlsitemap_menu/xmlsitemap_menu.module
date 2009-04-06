@@ -42,6 +42,7 @@ function xmlsitemap_menu_xmlsitemap_links($modules) {
         $row = new stdClass();
         $row->module = 'xmlsitemap_menu';
         $row->type = 'menu';
+        $priority = variable_get('xmlsitemap_menu_priority', -2.0);
         while ($mlid = db_result($result)) {
           $link = menu_link_load($mlid);
           // Avoid external links, or links to the front page;
@@ -51,7 +52,12 @@ function xmlsitemap_menu_xmlsitemap_links($modules) {
             $changefreq = variable_get('xmlsitemap_menu_menus_changefreq', 3600);
             $row->changed = XMLSITEMAP_TIME - $changefreq;
             $row->changefreq = $changefreq;
-            $row->priority = 1.0 - min(max(round(($link['weight'] + 50) / 100, 1), 0.0), 1.0);
+            if ($priority == -2.0) {
+              $row->priority = 1.0 - min(max(round(($link['weight'] + 50) / 100, 1), 0.0), 1.0);
+            }
+            else {
+              $row->priority = $priority;
+            }
             if (!db_result(db_query("SELECT COUNT(loc) FROM {xmlsitemap} WHERE loc = '%s'", $row->loc))) {
               drupal_write_record('xmlsitemap', $row);
             }
@@ -66,19 +72,28 @@ function xmlsitemap_menu_xmlsitemap_links($modules) {
  * Implementation of hook_xmlsitemap_sitemap_settings_alter().
  */
 function xmlsitemap_menu_xmlsitemap_sitemap_settings_alter(&$form) {
-  $opts = array();
+  $options = xmlsitemap_helper_priority_options('default');
+  $options['-2'] = t('Calculated from the menu items weight');
+  $form['general']['priority']['c']['xmlsitemap_menu_priority'] = array(
+    '#type' => 'select',
+    '#title' => t('Menu items priority'),
+    '#description' => t("The priority assigned to the menu items."),
+    '#default_value' => variable_get('xmlsitemap_menu_priority', -2.0),
+    '#options' => $options,
+  );
+  $options = array();
   $result = db_query("SELECT menu_name, title FROM {menu_custom}");
   while ($menu = db_fetch_array($result)) {
-    $opts[$menu['menu_name']] = empty($menu['title']) ? $menu['menu_name'] : $menu['title'];
+    $options[$menu['menu_name']] = empty($menu['title']) ? $menu['menu_name'] : $menu['title'];
   }
   $default_values = variable_get('xmlsitemap_menu_menus', array());
   // If a menu is not present, remove it from the default settings.
   foreach ($default_values as $opt) {
-    if (!isset($opts[$opt])) {
+    if (!isset($options[$opt])) {
       unset($default_values[$opt]);
     }
   }
-  if (!empty($opts)) {
+  if (!empty($options)) {
     $form['xmlsitemap_menu'] = array(
       '#type' => 'fieldset',
       '#title' => t('Menu settings'),
@@ -103,7 +118,7 @@ function xmlsitemap_menu_xmlsitemap_sitemap_settings_alter(&$form) {
       '#type' => 'checkboxes',
       '#title' => t('Menus to include in the site map'),
       '#default_value' => $default_values,
-      '#options' => $opts,
+      '#options' => $options,
       '#checkall' => TRUE,
     );
   }
