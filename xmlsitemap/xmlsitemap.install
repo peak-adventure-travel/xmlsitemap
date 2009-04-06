@@ -20,7 +20,7 @@ function xmlsitemap_requirements($phase) {
       $requirements['xmlsitemap'] = array(
         'title' => t('XML Sitemap'),
         'value' => t("XML Sitemap revision !revision", array('!revision' => preg_replace('/\$Rev[iI]sion:\s+(.*)\s+\$/iU', '$1', '$Revision$'))),
-        'severity' => REQUIREMENT_INFO,
+        'severity' => REQUIREMENT_OK,
       );
     }
     else {
