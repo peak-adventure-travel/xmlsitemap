@@ -51,7 +51,7 @@ function xmlsitemap_menu_xmlsitemap_links($modules) {
             $changefreq = variable_get('xmlsitemap_menu_menus_changefreq', 3600);
             $row->changed = XMLSITEMAP_TIME - $changefreq;
             $row->changefreq = $changefreq;
-            $row->priority = 1.0 - min(max(round(($link['weight'] + 10) / 20, 1), 0.0), 1.0);
+            $row->priority = 1.0 - min(max(round(($link['weight'] + 50) / 100, 1), 0.0), 1.0);
             if (!db_result(db_query("SELECT COUNT(loc) FROM {xmlsitemap} WHERE loc = '%s'", $row->loc))) {
               drupal_write_record('xmlsitemap', $row);
             }
