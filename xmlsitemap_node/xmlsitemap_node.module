@@ -244,13 +244,7 @@ function xmlsitemap_node_user($op, &$edit, &$account, $category = NULL) {
         return array();
       }
     case 'register':
-      $form['xmlsitemap'] = array(
-        '#type' => 'fieldset',
-        '#title' => t('XML site map'),
-        '#collapsible' => TRUE,
-        '#access' => user_access('override profile settings') || user_access('administer users'),
-        '#weight' => 7,
-      );
+      $form = xmlsitemap_helper_user_form_fieldset();
       $form['xmlsitemap']['xmlsitemap_node_posts_count'] = array(
         '#type' => 'select',
         '#title' => t('User posts threshold'),

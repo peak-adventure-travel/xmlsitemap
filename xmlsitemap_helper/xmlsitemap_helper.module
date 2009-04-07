@@ -161,5 +161,24 @@ function xmlsitemap_helper_update_sitemap($module = 'xmlsitemap') {
 }
 
 /**
+ * Return an array used to add additional form fields in the user form.
+ */
+function xmlsitemap_helper_user_form_fieldset() {
+  static $done = FALSE;
+  $form = array();
+  if (!$done) {
+    $form['xmlsitemap'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('XML site map'),
+      '#collapsible' => TRUE,
+      '#access' => user_access('override profile settings') || user_access('administer users'),
+      '#weight' => 7,
+    );
+    $done = TRUE;
+  }
+  return $form;
+}
+
+/**
  * @} End of "addtogroup xmlsitemap".
  */
