@@ -79,6 +79,11 @@ function xmlsitemap_term_schema() {
 function xmlsitemap_term_install() {
   drupal_install_schema('xmlsitemap_term');
   db_query("UPDATE {system} SET weight = 10 WHERE name = 'xmlsitemap_term'");
+  module_load_include('inc', 'xmlsitemap_helper', 'includes/xmlsitemap_helper.install');
+  xmlsitemap_helper_add_database_batch_operation(
+    drupal_get_path('module', 'xmlsitemap_term') .'/xmlsitemap_term.install',
+    '_xmlsitemap_term_update_database_batch'
+  );
 }
 
 /**
