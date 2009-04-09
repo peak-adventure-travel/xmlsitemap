@@ -104,7 +104,7 @@ function xmlsitemap_engines_xmlsitemap_engines($op) {
       // Moreover.com form.
       $form['moreover'] = array(
         '#type' => 'fieldset',
-        '#title' => t('Ask.com'),
+        '#title' => t('Moreover.com'),
         '#collapsible' => TRUE,
         '#collapsed' => TRUE,
       );
