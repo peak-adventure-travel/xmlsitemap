@@ -88,11 +88,9 @@ function xmlsitemap_update_2() {
     );");
   }
   menu_rebuild();
-  return array(
-    0 => array(
-      'success' => TRUE,
-      'query' => 'REBUILD DRUPAL MENU',
-    )
+  $ret[] = array(
+    'success' => TRUE,
+    'query' => 'REBUILD DRUPAL MENU',
   );
   return $ret;
 }
@@ -106,7 +104,6 @@ function xmlsitemap_update_3() {
   
 /**
  * Implementation of hook_update_N().
- * Try to remove any temporary files left.
  */
 function xmlsitemap_update_4() {
   return array();
@@ -155,6 +152,19 @@ function xmlsitemap_update_8() {
     array(
       'success' => TRUE,
       'query' => "ENABLE MODULE 'xmlsitemap_helper'"
+    )
+  );
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_9() {
+  menu_rebuild();
+  return array(
+    0 => array(
+      'success' => TRUE,
+      'query' => 'REBUILD DRUPAL MENU',
     )
   );
 }
