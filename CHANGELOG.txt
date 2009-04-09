@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 5.x-2, 2009-04-09
+-----------------------------------
+#428022: Incorrect field set title.
+
 XML Sitemap 5.x-2, 2009-03-18
 -----------------------------------
 #395488: Views sitemap uses -2.0 instead of default priority value.
