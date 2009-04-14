@@ -88,6 +88,7 @@ function xmlsitemap_form_alter(&$form, &$form_state, $form_id) {
     case 'locale_languages_configure_form':
     case 'path_admin_form':
     case 'pathauto_admin_settings':
+    case 'system_clean_url_settings':
       $form['#submit'][] = 'xmlsitemap_settings_submit';
       break;
   }
