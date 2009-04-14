@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 5.x-2, 2009-04-09
 -----------------------------------
+#347381: Check if anonymous user can view the links added to the site map.
 #428022: Incorrect field set title.
 
 XML Sitemap 5.x-2, 2009-03-18
