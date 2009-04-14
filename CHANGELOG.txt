@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1, 2009-04-14
 -----------------------------------
+#433250: Use of clean URLs.
 #433368: User role priority changes are not saved.
 
 XML Sitemap 6.x-1, 2009-04-06
