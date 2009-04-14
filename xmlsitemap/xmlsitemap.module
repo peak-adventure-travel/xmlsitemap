@@ -68,7 +68,7 @@ function xmlsitemap_exit() {
       watchdog('xmlsitemap', 'Sitemap downloaded by @user-agent at @address.',
         array(
           '@user-agent' => !empty($result) ? $result : $_SERVER['HTTP_USER_AGENT'],
-          '@address' => $_SERVER['REMOTE_ADDR'],
+          '@address' => ip_address(),
         )
       );
     }
