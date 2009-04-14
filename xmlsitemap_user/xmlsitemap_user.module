@@ -253,7 +253,7 @@ function xmlsitemap_user_xmlsitemap_sitemap_settings_alter(&$form) {
  * Form submit function.
  */
 function xmlsitemap_user_form_submit($form, &$form_state) {
-  if ($form_id == 'user_admin_role') {
+  if ($form['form_id']['#value'] == 'user_admin_role') {
     $form_values = $form_state['values'];
     $priority = db_result(db_query("SELECT priority FROM {xmlsitemap_user_role} WHERE rid = %d", $form_values['rid']));
     $row = new stdClass();
