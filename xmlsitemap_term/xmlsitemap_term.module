@@ -248,9 +248,11 @@ function xmlsitemap_term_xmlsitemap_links($modules) {
           $priority += variable_get('xmlsitemap_term_node_priority', 0.2) * $count / 100;
         }
       }
-      $row->priority = min(max(round($priority, 1), 0.0), 1.0);
-      if (!db_result(db_query("SELECT COUNT(loc) FROM {xmlsitemap} WHERE loc = '%s'", $row->loc))) {
-        drupal_write_record('xmlsitemap', $row);
+      if ($priority != -1.0) {
+        $row->priority = min(max(round($priority, 1), 0.0), 1.0);
+        if (!db_result(db_query("SELECT COUNT(loc) FROM {xmlsitemap} WHERE loc = '%s'", $row->loc))) {
+          drupal_write_record('xmlsitemap', $row);
+        }
       }
     }
   }
