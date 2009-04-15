@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 6.x-1, 2009-04-15
+-----------------------------------
+#417110: "Not in site map" not being respected.
+
 XML Sitemap 6.x-1, 2009-04-14
 -----------------------------------
 #433250: Use of clean URLs.
