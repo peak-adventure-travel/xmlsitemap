@@ -212,7 +212,7 @@ function xmlsitemap_user_xmlsitemap_links($modules) {
             )
           );
           if (isset($default->min) && isset($default->sum)) {
-            $priority = $default->min < 0 ? -1.0 : round(min($default->sum, 1), 1);
+            $priority = $default->min < 0 ? -1.0 : round(min($default->sum, 1.0), 1);
           }
           else {
             $priority = variable_get('xmlsitemap_user_default_priority', 0.5);
@@ -223,10 +223,12 @@ function xmlsitemap_user_xmlsitemap_links($modules) {
               $priority += variable_get('xmlsitemap_user_comment_priority', 0.2) * $user->comments / $maxcomments;
             }
           }
-          $row->priority = $priority;
         }
-        drupal_write_record('xmlsitemap', $row);
-        xmlsitemap_helper_update_sitemap('xmlsitemap_user');
+        if ($priority != -1.0) {
+          $row->priority = $priority;
+          drupal_write_record('xmlsitemap', $row);
+          xmlsitemap_helper_update_sitemap('xmlsitemap_user');
+        }
       }
     }
   }
