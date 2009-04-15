@@ -328,8 +328,10 @@ function xmlsitemap_node_xmlsitemap_links($modules) {
         }
         $priority += $node->comment_ratio * variable_get('xmlsitemap_node_comment_priority', 0.2);
       }
-      $row->priority = min(max(round($priority, 1), 0.0), 1.0);
-      drupal_write_record('xmlsitemap', $row);
+      if ($priority != -1.0) {
+        $row->priority = min(max(round($priority, 1), 0.0), 1.0);
+        drupal_write_record('xmlsitemap', $row);
+      }
     }
   }
 }
