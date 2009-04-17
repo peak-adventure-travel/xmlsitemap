@@ -44,7 +44,7 @@ function xmlsitemap_helper_batch_operations_finished($success, $results, $operat
 }
 
 /**
- * Return the string used to identify the cache file for the site map content;
+ * Return the string used to identify the cache file for the site map content.
  */
 function xmlsitemap_helper_cache_id() {
   static $id;
@@ -54,7 +54,6 @@ function xmlsitemap_helper_cache_id() {
   }
   return $id;
 }
-
 
 /**
  * Determine the frequency of updates to a link.
@@ -83,6 +82,17 @@ function xmlsitemap_helper_frequency($interval) {
     }
   }
   return $frequency;
+}
+
+/**
+ * Return the number of links present in xmlsitemap table.
+ */
+function xmlsitemap_helper_link_count() {
+  static $link_count;
+  if (!isset($link_count)) {
+    $link_count = db_result(db_query("SELECT COUNT(xsm.loc)". xmlsitemap_helper_sitemap_query()));
+  }
+  return $link_count;
 }
 
 /**

@@ -41,7 +41,7 @@ function xmlsitemap_exit() {
   if (variable_get('xmlsitemap_log_access', FALSE)) {
     $items = array();
     $chunk_size = variable_get('xmlsitemap_chunk_size', 200);
-    $link_count = _xmlsitemap_link_count();
+    $link_count = xmlsitemap_helper_link_count();
     if ($link_count > $chunk_size) {
       for ($chunk = 0; $chunk < $link_count / $chunk_size; ++$chunk) {
         $items["sitemap$chunk.xml"] = $chunk;
@@ -174,7 +174,7 @@ function xmlsitemap_menu() {
     'type' => MENU_CALLBACK,
   );
   $chunk_size = variable_get('xmlsitemap_chunk_size', 200);
-  $link_count = _xmlsitemap_link_count();
+  $link_count = xmlsitemap_helper_link_count();
   if ($link_count > $chunk_size) {
     for ($chunk = 0; $chunk < $link_count / $chunk_size; ++$chunk) {
       $items["sitemap$chunk.xml"] = array(
@@ -262,7 +262,7 @@ function xmlsitemap_output($chunk = NULL) {
     exit();
   }
   $chunk_size = variable_get('xmlsitemap_chunk_size', 200);
-  $link_count = _xmlsitemap_link_count();
+  $link_count = xmlsitemap_helper_link_count();
   $parent_directory = variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap');
   $headers = array("Content-type: text/xml; charset=utf-8");
   if (isset($chunk)) {
@@ -447,7 +447,7 @@ function xmlsitemap_anonymous_access() {
  */
 function _xmlsitemap_check_cache_files() {
   $chunk_size = variable_get('xmlsitemap_chunk_size', 200);
-  $link_count = _xmlsitemap_link_count();
+  $link_count = xmlsitemap_helper_link_count();
   $id = _xmlsitemap_cache_id();
   $parent_directory = variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap');
   // If the directory that should contains the cache files doesn't exist, then
@@ -531,7 +531,7 @@ function _xmlsitemap_create_cache_chunk($fp, $chunk_size, $chunk = 0) {
  */
 function _xmlsitemap_create_cache_files() {
   $chunk_size = variable_get('xmlsitemap_chunk_size', 200);
-  $link_count = _xmlsitemap_link_count();
+  $link_count = xmlsitemap_helper_link_count();
   $id = _xmlsitemap_cache_id();
   $parent_directory = variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap');
   // If the directory doesn't exist, then create it.
@@ -588,23 +588,6 @@ function _xmlsitemap_create_cache_files() {
     @chmod($parent_directory ."/xsm-$id.xml", 0664);
   }
   return TRUE;
-}
-
-/**
- * Return the number of links present in xmlsitemap table.
- */
-function _xmlsitemap_link_count() {
-  static $link_count;
-  if (!isset($link_count)) {
-    if (!function_exists('xmlsitemap_helper_sitemap_query')) {
-      if (!drupal_load('module', 'xmlsitemap_helper')) {
-        watchdog('xmlsitemap', 'Enable to load @module.', array('@module' => 'xmlsitemap_helper.module'), WATCHDOG_ERROR);
-        return 0;
-      }
-    }
-    $link_count = db_result(db_query("SELECT COUNT(xsm.loc)". xmlsitemap_helper_sitemap_query()));
-  }
-  return $link_count;
 }
 
 /**
