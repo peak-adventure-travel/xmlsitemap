@@ -44,6 +44,19 @@ function xmlsitemap_helper_batch_operations_finished($success, $results, $operat
 }
 
 /**
+ * Return the string used to identify the cache file for the site map content;
+ */
+function xmlsitemap_helper_cache_id() {
+  static $id;
+  global $base_url, $language;
+  if (!isset($id)) {
+    $id = substr(md5($language->language . $base_url), 0, 8);
+  }
+  return $id;
+}
+
+
+/**
  * Determine the frequency of updates to a link.
  * @param $interval
  *  The number of seconds since the last change, or the number of seconds
