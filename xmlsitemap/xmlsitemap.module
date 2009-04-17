@@ -323,7 +323,7 @@ function _xmlsitemap_output_chunk($chunk = 0) {
   print '  http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">'."\n";
   $chunk_size = variable_get('xmlsitemap_chunk_size', 50000);
   $start = $chunk * $chunk_size;
-  $links = db_query_range("SELECT * FROM {xmlsitemap} ORDER BY lastmod DESC, changefreq, priority DESC, loc", $start , $chunk_size);
+  $links = db_query_range("SELECT * FROM {xmlsitemap} ORDER BY priority DESC, lastmod DESC, changefreq, loc", $start , $chunk_size);
   while ($link = db_fetch_array($links)) {
     print '  <url>'."\n";
     print '    <loc>'. check_url($link['loc']) .'</loc>'."\n";
@@ -359,7 +359,7 @@ function _xmlsitemap_output_index() {
     if ($chunk < $link_count / $chunk_size) {
       $from = $chunk * $chunk_size;
       if (!empty($chunk_size)) {
-        $lastmod = db_result(db_query_range("SELECT lastmod FROM {xmlsitemap} ORDER BY lastmod DESC, loc", $from, $chunk_size));
+        $lastmod = db_result(db_query_range("SELECT lastmod FROM {xmlsitemap} ORDER BY priority DESC, lastmod DESC, loc", $from, $chunk_size));
         if (isset($lastmod) && $lastmod !== FALSE) {
           print '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $lastmod) .'</lastmod>'."\n";
         }
