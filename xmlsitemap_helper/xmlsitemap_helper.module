@@ -122,11 +122,12 @@ function xmlsitemap_helper_sitemap_query() {
         $language_query = '';
       }
       else {
-        $language_query = "AND (xsm.language = '". $language->language ."' OR xsm.language = '')";
+        $language_query = "AND xsm.language IN ('". $language->language ."', '')";
       }
       break;
     case LANGUAGE_NEGOTIATION_DOMAIN:
-      $language_query = "AND (xsm.language = '". $language->language ."' OR xsm.language = '')";
+      $language_query = "AND xsm.language IN ('". $language->language ."', '')";
+      break;
   }
   return "
     FROM {xmlsitemap} xsm
