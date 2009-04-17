@@ -514,7 +514,7 @@ function _xmlsitemap_create_cache_chunk($fp, $chunk_size, $chunk = 0) {
   fwrite($fp, '  xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9'."\n");
   fwrite($fp, '  http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">'."\n");
   $start = $chunk * $chunk_size;
-  $links = db_query_range("SELECT xsm.loc, xsm.module, xsm.type, xsm.changed, xsm.changefreq, xsm.priority". xmlsitemap_helper_sitemap_query() ."ORDER BY xsm.changed DESC, xsm.changefreq, xsm.priority DESC, xsm.loc", $start, $chunk_size);
+  $links = db_query_range("SELECT xsm.loc, xsm.module, xsm.type, xsm.changed, xsm.changefreq, xsm.priority". xmlsitemap_helper_sitemap_query() ."ORDER BY xsm.priority DESC, xsm.changed DESC, xsm.changefreq, xsm.loc", $start, $chunk_size);
   while ($link = db_fetch_object($links)) {
     if ($link->type == 'frontpage') {
       $url = url(NULL, array('absolute' => TRUE));
