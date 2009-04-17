@@ -570,7 +570,7 @@ function _xmlsitemap_create_cache_files() {
       fwrite($fp, '  <sitemap>'."\n");
       fwrite($fp, '    <loc>'. url("sitemap$chunk.xml", array('absolute' => TRUE)) .'</loc>'."\n");
       $from = $chunk * $chunk_size;
-      $changed = db_result(db_query_range("SELECT changed". xmlsitemap_helper_sitemap_query() ."ORDER BY xsm.changed DESC", $from, $chunk_size));
+      $changed = db_result(db_query_range("SELECT xsm.changed". xmlsitemap_helper_sitemap_query() ."ORDER BY xsm.priority DESC, xsm.changed DESC", $from, $chunk_size));
       fwrite($fp, '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $changed) .'</lastmod>'."\n");
       fwrite($fp, '  </sitemap>'."\n");
     }
