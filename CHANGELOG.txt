@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 5.x-2, 2009-04-17
+-----------------------------------
+#436874: The site map content is not ordered by priority.
+
 XML Sitemap 5.x-2, 2009-04-14
 -----------------------------------
 #428186: Invalid argument supplied for foreach().
