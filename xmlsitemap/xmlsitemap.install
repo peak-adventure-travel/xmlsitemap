@@ -16,26 +16,11 @@
 function xmlsitemap_requirements($phase) {
   $requirements = array();
   if ($phase == 'runtime') {
-    if (module_exists('xmlsitemap_helper')) {
-      $requirements['xmlsitemap'] = array(
-        'title' => t('XML Sitemap'),
-        'value' => t("XML Sitemap revision !revision", array('!revision' => preg_replace('/\$Rev[iI]sion:\s+(.*)\s+\$/iU', '$1', '$Revision$'))),
-        'severity' => REQUIREMENT_OK,
-      );
-    }
-    else {
-      $requirements['xmlsitemap'] = array(
-        'title' => t('XML Sitemap'),
-        'value' => t("%module has not been enabled", array('%module' => 'xmlsitemap_helper.module')),
-        'severity' => REQUIREMENT_ERROR,
-      );
-      if (variable_get('xmlsitemap_enable_helper_count', 0)) {
-        $requirements['xmlsitemap']['description'] = t('%module cannot be enabled. Verify that you correctly copied all the files; until Drupal cannot find %module, <em>XML Sitemap</em> will not work correctly. You can <a href="@url">disable</a> the <em>XML Sitemap</em> modules until you do not resolve the problem.', array('%module' => 'xmlsitemap_helper.module', '@url' => url('admin/settings/xmlsitemap/tools/disable/modules')));
-      }
-      else {
-        $requirements['xmlsitemap']['description'] = t('The module must be <a href="@url">enabled</a>.', array('@url' => url('admin/settings/xmlsitemap/tools/enable/helper')));
-      }
-    }
+    $requirements['xmlsitemap'] = array(
+      'title' => t('XML Sitemap'),
+      'value' => t("!module_file/!module_revision !install_file/!install_revision", array('!module_file' => 'xmlsitemap.module', '!module_revision' =>_xmlsitemap_revision(), '!install_file' => 'xmlsitemap.install', '!install_revision' => preg_replace('/\$Rev[iI]sion:\s+(.*)\s+\$/iU', '$1', '$Revision$'))),
+      'severity' => REQUIREMENT_OK,
+    );
   }
   return $requirements;
 }
@@ -668,15 +653,10 @@ function xmlsitemap_update_6131() {
  */
 function xmlsitemap_update_6132() {
   $ret = xmlsitemap_update_6000();
-  module_enable(array('xmlsitemap_helper'));
-  $ret[] = array(
-    'success' => TRUE,
-    'query' => "ENABLE 'xmlsitemap_helper' MODULE"
-  );
   xmlsitemap_helper_update_sitemap();
   $ret[] = array(
     'success' => TRUE,
-    'query' => 'FORCE SITEMAP UPDATE',
+    'query' => 'FORCE SITE MAP UPDATE',
   );
   return $ret;
 }

@@ -14,7 +14,6 @@
  * Implementation of hook_enable().
  */
 function xmlsitemap_user_enable() {
-  drupal_load('module', 'xmlsitemap_helper');
   xmlsitemap_helper_update_sitemap('xmlsitemap_user');
 }
 
@@ -22,7 +21,6 @@ function xmlsitemap_user_enable() {
  * Implementation of hook_disable().
  */
 function xmlsitemap_user_disable() {
-  drupal_load('module', 'xmlsitemap_helper');
   xmlsitemap_helper_update_sitemap('xmlsitemap_user');
 }
 
@@ -98,11 +96,6 @@ function xmlsitemap_user_schema() {
 function xmlsitemap_user_install() {
   drupal_install_schema('xmlsitemap_user');
   db_query("UPDATE {system} SET weight = 10 WHERE name = 'xmlsitemap_user'");
-  module_load_include('inc', 'xmlsitemap_helper', 'includes/xmlsitemap_helper.install');
-  xmlsitemap_helper_add_database_batch_operation(
-    drupal_get_path('module', 'xmlsitemap_user') .'/xmlsitemap_user.install',
-    '_xmlsitemap_user_update_database_batch'
-  );
 }
 
 /**
@@ -408,20 +401,10 @@ function xmlsitemap_user_update_6112() {
 function xmlsitemap_user_update_6113() {
   $ret = xmlsitemap_user_update_6000();
   $ret[] = update_sql("UPDATE {system} SET weight = 10 WHERE name = 'xmlsitemap_user'");
-  module_load_include('inc', 'xmlsitemap_helper', 'includes/xmlsitemap_helper.install');
-  xmlsitemap_helper_add_database_batch_operation(
-    drupal_get_path('module', 'xmlsitemap_user') .'/xmlsitemap_user.install',
-    '_xmlsitemap_user_update_database_batch'
-  );
-  $ret[] = array(
-    'success' => TRUE,
-    'query' => 'UPDATE {xmlsitemap_user} TABLE',
-  );
-  drupal_load('module', 'xmlsitemap_helper');
   xmlsitemap_helper_update_sitemap('xmlsitemap_user');
   $ret[] = array(
     'success' => TRUE,
-    'query' => 'FORCE SITEMAP UPDATE',
+    'query' => 'FORCE SITE MAP UPDATE',
   );
   return $ret;
 }
@@ -431,60 +414,4 @@ function xmlsitemap_user_update_6113() {
  */
 function xmlsitemap_user_uninstall() {
   drupal_uninstall_schema('xmlsitemap_user');
-}
-
-/*****************************************************************************
- * Private functions.
- ****************************************************************************/
-
-/**
- * Batch function to update the xmlsitemap_user table.
- */
-function _xmlsitemap_user_update_database_batch(&$context) {
-  if (!isset($context['sandbox']['progress'])) {
-    $context['sandbox']['progress'] = 0;
-    if (!($context['sandbox']['max'] = (integer) db_result(db_query('SELECT COUNT(uid) FROM {users} WHERE uid <> 0')))) {
-      return;
-    }
-    $context['sandbox']['uid'] = 0;
-  }
-  $uid = db_result(
-    db_query('SELECT uid FROM {users}
-      WHERE uid > %d', $context['sandbox']['uid']
-    )
-  );
-  if ($uid !== FALSE && ($user = user_load($uid))) {
-    $result = db_fetch_object(
-      db_query('SELECT uid, changed, previously_changed, comments, priority_override
-        FROM {xmlsitemap_user}
-        WHERE uid = %d', $uid)
-      );
-    if ($result === FALSE) {
-      $row = new stdClass();
-      $row->uid = $uid;
-      $row->changed = $user->access;
-      $row->previously_changed = $user->created;
-    }
-    else {
-      $row = $result;
-      if ($row->changed < $user->access) {
-        $row->previously_changed = $row->changed;
-        $row->changed = $user->access;
-      }
-    }
-    if (module_exists('comment')) {
-      $row->comments = (integer) db_result(db_query("SELECT COUNT(cid) FROM {comments} WHERE uid = %d", $uid));
-    }
-    drupal_write_record('xmlsitemap_user', $row, $result === FALSE ? NULL : 'uid');
-    $context['sandbox']['uid'] = $uid;
-    $context['message'] = t('Updating %name', array('%name' => $user->name));
-  }
-  $context['sandbox']['progress']++;
-  if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
-    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
-  }
-  else {
-    drupal_load('module', 'xmlsitemap_helper');
-    xmlsitemap_helper_update_sitemap('xmlsitemap_user');
-  }
 }

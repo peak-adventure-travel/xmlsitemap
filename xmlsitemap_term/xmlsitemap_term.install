@@ -14,7 +14,6 @@
  * Implementation of hook_enable().
  */
 function xmlsitemap_term_enable() {
-  drupal_load('module', 'xmlsitemap_helper');
   xmlsitemap_helper_update_sitemap('xmlsitemap_term');
 }
 
@@ -22,7 +21,6 @@ function xmlsitemap_term_enable() {
  * Implementation of hook_disable().
  */
 function xmlsitemap_term_disable() {
-  drupal_load('module', 'xmlsitemap_helper');
   xmlsitemap_helper_update_sitemap('xmlsitemap_term');
 }
 
@@ -79,11 +77,6 @@ function xmlsitemap_term_schema() {
 function xmlsitemap_term_install() {
   drupal_install_schema('xmlsitemap_term');
   db_query("UPDATE {system} SET weight = 10 WHERE name = 'xmlsitemap_term'");
-  module_load_include('inc', 'xmlsitemap_helper', 'includes/xmlsitemap_helper.install');
-  xmlsitemap_helper_add_database_batch_operation(
-    drupal_get_path('module', 'xmlsitemap_term') .'/xmlsitemap_term.install',
-    '_xmlsitemap_term_update_database_batch'
-  );
 }
 
 /**
@@ -348,20 +341,10 @@ function xmlsitemap_term_update_6111() {
  *
  */
 function xmlsitemap_term_update_6112() {
-  module_load_include('inc', 'xmlsitemap_helper', 'includes/xmlsitemap_helper.install');
-  xmlsitemap_helper_add_database_batch_operation(
-    drupal_get_path('module', 'xmlsitemap_term') .'/xmlsitemap_term.install',
-    '_xmlsitemap_term_update_database_batch'
-  );
-  $ret[] = array(
-    'success' => TRUE,
-    'query' => 'UPDATE {xmlsitemap_term} TABLE',
-  );
-  drupal_load('module', 'xmlsitemap_helper');
   xmlsitemap_helper_update_sitemap('xmlsitemap_term');
   $ret[] = array(
     'success' => TRUE,
-    'query' => 'FORCE SITEMAP UPDATE',
+    'query' => 'FORCE SITE MAP UPDATE',
   );
   return $ret;
 }
@@ -374,80 +357,3 @@ function xmlsitemap_term_uninstall() {
   db_query("DELETE FROM {variable} WHERE name LIKE 'xmlsitemap\_term\_%'");
 }
 
-/*****************************************************************************
- * Private functions.
- ****************************************************************************/
-
-/**
- * Batch function to update the xmlsitemap_term table.
- */
-function _xmlsitemap_term_update_database_batch(&$context) {
-  if (!isset($context['sandbox']['progress'])) {
-    $context['sandbox']['progress'] = 0;
-    if (!($context['sandbox']['max'] = (integer) db_result(db_query('SELECT COUNT(tid) FROM {term_data} WHERE vid <> 0')))) {
-      return;
-    }
-    $context['sandbox']['tid'] = 0;
-    $context['sandbox']['vid'] = 0;
-  }
-  if (!$context['sandbox']['vid']) {
-    $context['sandbox']['tid'] = (integer) db_result(db_query('SELECT tid 
-      FROM {term_data}
-      WHERE vid <> 0
-        AND tid > %d', $context['sandbox']['tid'])
-    );
-  }
-  if ($tid = $context['sandbox']['tid']) {
-    $data = db_fetch_object(db_query('SELECT n.vid, n.created, n.changed
-      FROM {node} n
-      INNER JOIN {term_node} tn ON tn.vid = n.vid
-      WHERE tn.tid = %d
-        AND n.vid > %d
-      ORDER BY n.changed, n.created',
-      $tid, $context['sandbox']['vid'])
-    );
-    $vocabulary = (integer) db_result(db_query('SELECT vid 
-      FROM {term_data}
-      WHERE vid <> 0
-        AND tid = %d', $tid)
-    );
-    if ($data !== FALSE && $vocabulary) {
-      $context['sandbox']['vid'] = $data->vid;
-      $result = db_fetch_object(db_query("SELECT tid, vid, changed, previously_changed, priority_override
-        FROM {xmlsitemap_term}
-        WHERE tid = %d", $tid)
-      );
-      if ($result === FALSE) {
-        $row = new stdClass();
-        $row->tid = $tid;
-        $row->vid = $vocabulary;
-        $row->changed = $data->changed;
-        $row->previously_changed = $data->created;
-      }
-      else {
-        $row = $result;
-        if (empty($row->vid)) {
-          $row->vid = $vocabulary;
-        }
-        if ($data->changed > $row->changed) {
-          $row->previously_changed = $row->changed;
-          $row->changed = $data->changed;
-        }
-      }
-      drupal_write_record('xmlsitemap_term', $row, $result === FALSE ? NULL : 'tid');
-    }
-    else {
-      $context['sandbox']['vid'] = 0;
-    }
-  }
-  if (!$context['sandbox']['vid']) {
-    $context['sandbox']['progress']++;
-  }
-  if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
-    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
-  }
-  else {
-    drupal_load('module', 'xmlsitemap_helper');
-    xmlsitemap_helper_update_sitemap('xmlsitemap_term');
-  }
-}

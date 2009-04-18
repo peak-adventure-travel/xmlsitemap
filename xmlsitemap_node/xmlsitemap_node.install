@@ -14,7 +14,6 @@
  * Implementation of hook_enable().
  */
 function xmlsitemap_node_enable() {
-  drupal_load('module', 'xmlsitemap_helper');
   xmlsitemap_helper_update_sitemap('xmlsitemap_node');
 }
 
@@ -22,7 +21,6 @@ function xmlsitemap_node_enable() {
  * Implementation of hook_disable().
  */
 function xmlsitemap_node_disable() {
-  drupal_load('module', 'xmlsitemap_helper');
   xmlsitemap_helper_update_sitemap('xmlsitemap_node');
 }
 
@@ -79,11 +77,6 @@ function xmlsitemap_node_schema() {
 function xmlsitemap_node_install() {
   drupal_install_schema('xmlsitemap_node');
   db_query("UPDATE {system} SET weight = 5 WHERE name = 'xmlsitemap_node'");
-  module_load_include('inc', 'xmlsitemap_helper', 'includes/xmlsitemap_helper.install');
-  xmlsitemap_helper_add_database_batch_operation(
-    drupal_get_path('module', 'xmlsitemap_node') .'/xmlsitemap_node.install',
-    '_xmlsitemap_node_update_database_batch'
-  );
 }
 
 /**
@@ -402,20 +395,10 @@ function xmlsitemap_node_update_6116() {
  *
  */
 function xmlsitemap_node_update_6117() {
-  module_load_include('inc', 'xmlsitemap_helper', 'includes/xmlsitemap_helper.install');
-  xmlsitemap_helper_add_database_batch_operation(
-    drupal_get_path('module', 'xmlsitemap_node') .'/xmlsitemap_node.install',
-    '_xmlsitemap_node_update_database_batch'
-  );
-  $ret[] = array(
-    'success' => TRUE,
-    'query' => 'UPDATE {xmlsitemap_node} TABLE',
-  );
-  drupal_load('module', 'xmlsitemap_helper');
   xmlsitemap_helper_update_sitemap('xmlsitemap_node');
   $ret[] = array(
     'success' => TRUE,
-    'query' => 'FORCE SITEMAP UPDATE',
+    'query' => 'FORCE SITE MAP UPDATE',
   );
   return $ret;
 }
@@ -426,68 +409,4 @@ function xmlsitemap_node_update_6117() {
 function xmlsitemap_node_uninstall() {
   drupal_uninstall_schema('xmlsitemap_node');
   db_query("DELETE FROM {variable} WHERE name LIKE 'xmlsitemap\_node\_%'");
-}
-
-/*****************************************************************************
- * Private functions.
- ****************************************************************************/
-
-/**
- * Batch function to update the xmlsitemap_node table.
- */
-function _xmlsitemap_node_update_database_batch(&$context) {
-  if (!isset($context['sandbox']['progress'])) {
-    $context['sandbox']['progress'] = 0;
-    if (!($context['sandbox']['max'] = (integer) db_result(db_query('SELECT COUNT(nid) FROM {node}')))) {
-      return;
-    }
-    $context['sandbox']['nid'] = 0;
-    if (module_exists('comment')) {
-      $context['sandbox']['maxcomments'] = (integer) db_result(db_query('SELECT MAX(comment_count) FROM {node_comment_statistics}'));
-    }
-  }
-  $nid = db_result(
-    db_query('SELECT nid FROM {node}
-      WHERE nid > %d', $context['sandbox']['nid']
-    )
-  );
-  if ($nid !== FALSE && ($node = node_load($nid, NULL, TRUE))) {
-    $result = db_fetch_object(
-      db_query('SELECT nid, changed, previously_changed, comment_ratio, priority_override
-        FROM {xmlsitemap_node}
-        WHERE nid = %d', $nid
-      )
-    );
-    if ($result === FALSE) {
-      $row = new stdClass();
-      $row->nid = $nid;
-      $row->changed = $node->changed;
-      $row->previously_changed = $node->created;
-    }
-    else {
-      $row = $result;
-      if ($node->changed > $row->changed) {
-        $row->previously_changed = $row->changed;
-        $row->changed = $node->changed;
-      }
-    }
-    if (isset($context['sandbox']['maxcomments']) && $context['sandbox']['maxcomments'] > 1) {
-      $comments = (integer) db_result(db_query('SELECT comment_count
-        FROM {node_comment_statistics}
-        WHERE nid = %d', $nid)
-      );
-      $row->comment_ratio = $comments / $context['sandbox']['maxcomments'];
-    }
-    drupal_write_record('xmlsitemap_node', $row, $result === FALSE ? NULL : 'nid');
-    $context['sandbox']['nid'] = $nid;
-    $context['message'] = t('Updating %title', array('%title' => $node->title));
-  }
-  $context['sandbox']['progress']++;
-  if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
-    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
-  }
-  else {
-    drupal_load('module', 'xmlsitemap_helper');
-    xmlsitemap_helper_update_sitemap('xmlsitemap_node');
-  }
 }

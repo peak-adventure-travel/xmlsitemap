@@ -154,19 +154,6 @@ function xmlsitemap_menu() {
     'access arguments' => $access_config,
     'type' => MENU_LOCAL_TASK,
   );
-  $items['admin/settings/xmlsitemap/tools/disable/modules'] = array(
-    'title' => 'Disable modules',
-    'page callback' => 'xmlsitemap_disable_modules',
-    'access arguments' => $access_config,
-    'type' => MENU_CALLBACK,
-  );
-  $items['admin/settings/xmlsitemap/tools/enable/helper'] = array(
-    'title' => 'Enable !module',
-    'title arguments' => array('!module' => 'xmlsitemap_helper.module'),
-    'page callback' => 'xmlsitemap_enable_helper',
-    'access arguments' => $access_config,
-    'type' => MENU_CALLBACK,
-  );
   $items['sitemap.xml'] = array(
     'title' => 'Site map index',
     'page callback' => 'xmlsitemap_output',
@@ -201,23 +188,6 @@ function xmlsitemap_perm() {
 /*****************************************************************************
  * Menu callbacks / form builders, submit/validate functions.
  ****************************************************************************/
-
-/**
- * Disable the XML Sitemap modules.
- */
-function xmlsitemap_disable_modules() {
-  module_disable(module_implements('xmlsitemap_links'));
-  drupal_goto('admin/reports/status');
-}
-
-/**
- * Enable xmlsitemap_helper.module if it has not been enabled.
- */
-function xmlsitemap_enable_helper() {
-  module_enable(array('xmlsitemap_helper'));
-  variable_set('xmlsitemap_enable_helper_count', variable_get('xmlsitemap_enable_helper_count', 0) + 1);
-  drupal_goto('admin/reports/status');
-}
 
 /**
  * Menu callback; display the site map.
@@ -428,8 +398,8 @@ function xmlsitemap_settings_submit($form, &$form_state) {
  ****************************************************************************/
 
 /**
- * Function used to determinate if the user is an anonymous user, and then he
- * can access the site map content.
+ * Function used to determinate if the current user has logged in, and can
+ * view the site map content (only the anonymous user is enabled).
  */
 function xmlsitemap_anonymous_access() {
   global $user;
@@ -588,6 +558,13 @@ function _xmlsitemap_create_cache_files() {
     @chmod($parent_directory ."/xsm-$id.xml", 0664);
   }
   return TRUE;
+}
+
+/**
+ * Return the revision number as extracted from the CVS revision tag.
+ */
+function _xmlsitemap_revision() {
+  return preg_replace('/\$Rev[iI]sion:\s+(.*)\s+\$/iU', '$1', '$Revision$');
 }
 
 /**
