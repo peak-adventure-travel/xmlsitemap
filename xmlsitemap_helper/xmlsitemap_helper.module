@@ -19,7 +19,7 @@
  * Implementation of hook_boot().
  */
 function xmlsitemap_helper_boot() {
-  define('XMLSITEMAP_TIME', time());
+  define('XMLSITEMAP_TIME', $_SERVER['REQUEST_TIME']);
 }
 
 /*****************************************************************************
