@@ -14,7 +14,6 @@
  * Implementation of hook_enable().
  */
 function xmlsitemap_menu_enable() {
-  drupal_load('module', 'xmlsitemap_helper');
   xmlsitemap_helper_update_sitemap('xmlsitemap_menu');
 }
 
@@ -22,7 +21,6 @@ function xmlsitemap_menu_enable() {
  * Implementation of hook_disable().
  */
 function xmlsitemap_menu_disable() {
-  drupal_load('module', 'xmlsitemap_helper');
   xmlsitemap_helper_update_sitemap('xmlsitemap_menu');
 }
 
@@ -113,11 +111,10 @@ function xmlsitemap_menu_update_6106() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_menu_update_6107() {
-  drupal_load('module', 'xmlsitemap_helper');
   xmlsitemap_helper_update_sitemap('xmlsitemap_menu');
   $ret[] = array(
     'success' => TRUE,
-    'query' => 'FORCE SITEMAP UPDATE',
+    'query' => 'FORCE SITE MAP UPDATE',
   );
   return $ret;
 }
