@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 6.x-1, 2009-04-18
+-----------------------------------
+#437288: Call to undefined function _xmlsitemap_cache_id().
+
 XML Sitemap 6.x-1, 2009-04-17
 -----------------------------------
 #436874: The site map content is not ordered by priority.
@@ -73,7 +77,7 @@ XML Sitemap 6.x-1, 2009-02-27
 XML Sitemap 6.x-1, 2009-02-26
 -----------------------------------
 #374580: xmlsitemap table should not be emptied all times.
-#383890: Change the arguments for hook_xmlsitemap_links() and xmlsitemap_helper_update_sitemap().
+#383890: Change the arguments for hook_xmlsitemap_links() and xmlsitemap_update_sitemap().
 
 XML Sitemap 6.x-1, 2009-02-25
 -----------------------------------
