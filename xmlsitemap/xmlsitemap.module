@@ -230,7 +230,7 @@ function xmlsitemap_output($chunk = NULL) {
     drupal_not_found();
     exit();
   }
-  $id = _xmlsitemap_cache_id();
+  $id = xmlsitemap_helper_cache_id();
   if (variable_get('xmlsitemap_sitemap_needs_update', FALSE)) {
     variable_set('xmlsitemap_update_timestamp', XMLSITEMAP_TIME);
     db_query("DELETE FROM {xmlsitemap} WHERE type ='frontpage'");
@@ -448,7 +448,7 @@ function xmlsitemap_anonymous_access() {
 function _xmlsitemap_check_cache_files() {
   $chunk_size = variable_get('xmlsitemap_chunk_size', 200);
   $link_count = xmlsitemap_helper_link_count();
-  $id = _xmlsitemap_cache_id();
+  $id = xmlsitemap_helper_cache_id();
   $parent_directory = variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap');
   // If the directory that should contains the cache files doesn't exist, then
   // the cache files must be created.
@@ -532,7 +532,7 @@ function _xmlsitemap_create_cache_chunk($fp, $chunk_size, $chunk = 0) {
 function _xmlsitemap_create_cache_files() {
   $chunk_size = variable_get('xmlsitemap_chunk_size', 200);
   $link_count = xmlsitemap_helper_link_count();
-  $id = _xmlsitemap_cache_id();
+  $id = xmlsitemap_helper_cache_id();
   $parent_directory = variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap');
   // If the directory doesn't exist, then create it.
   if (!is_dir($parent_directory)) {
