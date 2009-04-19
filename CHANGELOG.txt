@@ -1,7 +1,12 @@
 $Id$
 
+XML Sitemap 6.x-1, 2009-04-19
+-----------------------------------
+#437704: $_SERVER['REQUEST_TIME'] is not defined on PHP 4.x and 5.0.x.
+
 XML Sitemap 6.x-1, 2009-04-18
 -----------------------------------
+#437262: Auto-starting batch process on enabling module can create problems.
 #437288: Call to undefined function _xmlsitemap_cache_id().
 
 XML Sitemap 6.x-1, 2009-04-17
