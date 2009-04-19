@@ -484,14 +484,16 @@ function _xmlsitemap_create_cache_chunk($fp, $chunk_size, $chunk = 0) {
     else {
       $url = url($link->loc, array('absolute' => TRUE));
     }
-    $priority = $link->priority;
-    drupal_alter('xmlsitemap_priority', $priority, $link->type, $link->id, $link->sid);
-    fwrite($fp, '  <url>'."\n");
-    fwrite($fp, '    <loc>'. check_url($url) .'</loc>'."\n");
-    fwrite($fp, '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $link->changed) .'</lastmod>'."\n");
-    fwrite($fp, '    <changefreq>'. xmlsitemap_helper_frequency($link->changefreq) .'</changefreq>'."\n");
-    fwrite($fp, '    <priority>'. number_format($priority, 1) .'</priority>'."\n");
-    fwrite($fp, '  </url>'."\n");
+    $link->url = $url;
+    drupal_alter('xmlsitemap_data', $link);
+    if (!empty($link->url) && $link->changed != 0 && $link->changefreq != 0 && $link->priority >= 0.0 && $link->priority <= 1.0) {
+      fwrite($fp, '  <url>'."\n");
+      fwrite($fp, '    <loc>'. check_url($link->url) .'</loc>'."\n");
+      fwrite($fp, '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $link->changed) .'</lastmod>'."\n");
+      fwrite($fp, '    <changefreq>'. xmlsitemap_helper_frequency($link->changefreq) .'</changefreq>'."\n");
+      fwrite($fp, '    <priority>'. number_format($link->priority, 1) .'</priority>'."\n");
+      fwrite($fp, '  </url>'."\n");
+    }
   }
   fwrite($fp, '</urlset>');
 }
