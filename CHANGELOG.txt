@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1, 2009-04-19
 -----------------------------------
+#378924: Allow third-party modules to change the priority of the links added in the site map.
 #437704: $_SERVER['REQUEST_TIME'] is not defined on PHP 4.x and 5.0.x.
 
 XML Sitemap 6.x-1, 2009-04-18
