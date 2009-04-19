@@ -2,5 +2,6 @@
 name = XML Sitemap: Node
 description = Adds nodes to the site map.
 package = XML Sitemap
+dependencies[] = xmlsitemap
 dependencies[] = xmlsitemap_helper
 core = "6.x"
