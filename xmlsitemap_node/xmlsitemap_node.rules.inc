@@ -40,7 +40,25 @@ function xmlsitemap_node_rules_action_info() {
  */
 function xmlsitemap_node_action_set_priority($node, $priority) {
   if ($priority >= 0.0 && $priority <= 1.0) {
-    
+    $result = db_fetch_object(db_query("SELECT nid, changed, previously_changed, comment_ratio, priority_override
+      FROM {xmlsitemap_node}
+      WHERE nid = %d", $node->nid)
+    );
+    if ($result === FALSE) {
+      $row = new stdClass();
+      $row->nid = $node->nid;
+      $row->changed = $node->changed;
+      $row->previously_changed = $node->created;
+    }
+    else {
+      $row = $result;
+      if ($node->changed > $row->changed) {
+        $row->previously_changed = $row->changed;
+        $row->changed = $node->changed;
+      }
+    }
+    $row->priority_override = $priority;
+    drupal_write_record('xmlsitemap_node', $row, $result === FALSE ? NULL : 'nid');
   }
 }
 
