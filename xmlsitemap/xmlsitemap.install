@@ -117,17 +117,8 @@ function xmlsitemap_schema() {
  */
 function xmlsitemap_install() {
   drupal_install_schema('xmlsitemap');
-  if ($GLOBALS['db_type'] == 'pgsql') {
-    db_query('CREATE OR REPLACE FUNCTION first(anyelement, anyelement) RETURNS anyelement AS \'SELECT COALESCE($1, $2);\' LANGUAGE \'sql\';');
-    @db_query("DROP AGGREGATE first(anyelement)");
-    db_query("CREATE AGGREGATE first(
-      sfunc = first,
-      basetype = anyelement,
-      stype = anyelement
-    );");
-  }
   variable_set('xmlsitemap_chunk_size', 200);
-  db_query("UPDATE {system} SET weight = 2 WHERE name = 'xmlsitemap'");
+  db_query("UPDATE {system} SET weight = 5 WHERE name = 'xmlsitemap'");
 }
 
 /**
@@ -136,16 +127,11 @@ function xmlsitemap_install() {
 function xmlsitemap_update_6000() {
   $ret = array();
   if ($GLOBALS['db_type'] == 'pgsql') {
-    $ret[] = update_sql('CREATE OR REPLACE FUNCTION first(anyelement, anyelement) RETURNS anyelement AS \'SELECT COALESCE($1, $2);\' LANGUAGE \'sql\';');
+    $ret[] = update_sql('DROP FUNCTION IF EXISTS first(anyelement, anyelement);');
     $result = @update_sql("DROP AGGREGATE first(anyelement)");
     if ($result['success']) {
       $ret[] = $result;
     }
-    $ret[] = update_sql("CREATE AGGREGATE first(
-      sfunc = first,
-      basetype = anyelement,
-      stype = anyelement
-    );");
   }
   if (db_table_exists('xmlsitemap_additional')) {
     db_drop_table($ret, 'xmlsitemap_additional');
@@ -553,7 +539,6 @@ function xmlsitemap_update_6118() {
     'success' => TRUE,
     'query' => 'UPDATE MODULE SETTINGS'
   );
-  $ret[] = update_sql("UPDATE {system} SET weight = 2 WHERE name = 'xmlsitemap'");
   return $ret;
 }
 
@@ -658,6 +643,21 @@ function xmlsitemap_update_6132() {
     'success' => TRUE,
     'query' => 'FORCE SITE MAP UPDATE',
   );
+  return $ret;
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_6133() {
+  if ($GLOBALS['db_type'] == 'pgsql') {
+    $ret[] = update_sql('DROP FUNCTION IF EXISTS first(anyelement, anyelement);');
+    $result = @update_sql("DROP AGGREGATE first(anyelement)");
+    if ($result['success']) {
+      $ret[] = $result;
+    }
+  }
+  $ret[] = update_sql("UPDATE {system} SET weight = 5 WHERE name = 'xmlsitemap'");
   return $ret;
 }
 
