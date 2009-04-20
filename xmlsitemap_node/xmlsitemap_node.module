@@ -369,6 +369,52 @@ function xmlsitemap_node_type_submit($form, &$form_state) {
 }
 
 /*****************************************************************************
+ * Public functions.
+ ****************************************************************************/
+
+/**
+ * Set the node priority in the site map.
+ * @param $node
+ *   The node object, or the node ID.
+ * @param $priority
+ *   The priority for the node.
+ * @return
+ *   The node object, or FALSE.
+ */
+function xmlsitemap_node_set_priority($node, $priority) {
+  if (is_object($node)) {
+    $nid = $node->nid;
+  }
+  else {
+    $nid = $node;
+    $node = node_load($nid);
+  }
+  if ($node) {
+    $result = db_fetch_object(db_query("SELECT nid, changed, previously_changed, comment_ratio, priority_override
+      FROM {xmlsitemap_node}
+      WHERE nid = %d", $nid)
+    );
+    if ($result === FALSE) {
+      $row = new stdClass();
+      $row->nid = $nid;
+      $row->changed = $node->changed;
+      $row->previously_changed = $node->created;
+    }
+    else {
+      $row = $result;
+      if ($node->changed > $row->changed) {
+        $row->previously_changed = $row->changed;
+        $row->changed = $node->changed;
+      }
+    }
+    $row->priority_override = $priority;
+    drupal_write_record('xmlsitemap_node', $row, $result === FALSE ? NULL : 'nid');
+    return $node;
+  }
+  return FALSE;
+}
+
+/*****************************************************************************
  * Private functions - node operation callbacks.
  ****************************************************************************/
 
@@ -407,27 +453,8 @@ function _xmlsitemap_node_batch_process($nodes, $priority, &$context) {
     }
   }
   $nid = array_shift($context['sandbox']['nodes']);
-  if ($node = node_load($nid, NULL, TRUE)) {
-    $result = db_fetch_object(db_query("SELECT nid, changed, previously_changed, comment_ratio, priority_override
-      FROM {xmlsitemap_node}
-      WHERE nid = %d", $nid)
-    );
-    if ($result === FALSE) {
-      $row = new stdClass();
-      $row->nid = $nid;
-      $row->changed = $node->changed;
-      $row->previously_changed = $node->created;
-    }
-    else {
-      $row = $result;
-      if ($node->changed > $row->changed) {
-        $row->previously_changed = $row->changed;
-        $row->changed = $node->changed;
-      }
-    }
-    $row->priority_override = $priority;
-    drupal_write_record('xmlsitemap_node', $row, $result === FALSE ? NULL : 'nid');
-    $context['results'][] = l($node->title, 'node/'. $node->nid);
+  if ($node = xmlsitemap_node_set_priority($nid, $priority)) {
+    $context['results'][] = l($node->title, 'node/'. $nid);
     if (count($context['results']) > 6) {
       array_shift($context['results']);
     }
