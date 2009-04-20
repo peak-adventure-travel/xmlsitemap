@@ -1,0 +1,26 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Install file for XML Sitemap: Helper.
+ */
+
+/*****************************************************************************
+ * Drupal hooks.
+ ****************************************************************************/
+
+/**
+ * Implementation of hook_install().
+ */
+function xmlsitemap_helper_install() {
+  db_query("UPDATE {system} SET weight = 15 WHERE name = 'xmlsitemap_helper'");
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_helper_update_6100() {
+  $ret[] = update_sql("UPDATE {system} SET weight = 15 WHERE name = 'xmlsitemap_helper'");
+  return $ret;
+}
