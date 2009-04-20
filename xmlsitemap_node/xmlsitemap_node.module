@@ -382,7 +382,8 @@ function xmlsitemap_node_type_submit($form, &$form_state) {
  *   The node object, or FALSE.
  */
 function xmlsitemap_node_set_priority($node, $priority) {
-  if (is_object($node)) {
+  if (!is_numeric($node)) {
+    $node = (object) $node;
     $nid = $node->nid;
   }
   else {
