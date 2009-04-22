@@ -2,6 +2,11 @@ $Id$
 
 XML Sitemap 6.x-1, 2009-04-22
 -----------------------------------
+#441564: Remove any not necessary calls to menu_rebuild().
+#439948: Use hook_form_FORM_ID_alter().
+#439908: Rename xmlsitemap_helper_update_sitemap to something more indicative of what it does.
+#439922: Changes to xmlsitemap_engines.module.
+#439886: menu_rebuild() called twice when submitting settings form.
 #439836: Function xmlsitemap_helper_add_database_batch_operation defined and not used.
 #439940: Description of "XML Sitemap" menu could be improved.
 #439880: Typo in xmlsitemap_user.module.
@@ -121,7 +126,7 @@ XML Sitemap 6.x-1, 2009-02-21
 -----------------------------------
 #379450: Implement hook_enable(), and hook_disable().
 #379422: drupal _set_header() is called prematurely.
-#378986: xmlsitemap_settings_sitemap_submit() is missing.
+#378986: xmlsitemap_settings_submit() is missing.
 
 XML Sitemap 6.x-1, 2009-02-18
 -----------------------------------
