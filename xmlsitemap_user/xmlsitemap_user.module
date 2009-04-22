@@ -16,57 +16,70 @@
  ****************************************************************************/
 
 /**
- * Implementation of hook_form_alter().
+ * Implementation of hook_form_FORM_ID_alter().
  */
-function xmlsitemap_user_form_alter(&$form, &$form_state, $form_id) {
-  switch ($form_id) {
-    case 'user_admin_settings':
-      if (!isset($form['xmlsitemap'])) {
-        $form['xmlsitemap'] = array(
-          '#type' => 'fieldset',
-          '#title' => t('XML site map'),
-          '#collapsible' => TRUE,
-        );
-      }
-      $default = variable_get('xmlsitemap_user_default_priority', 0.5);
-      $form['xmlsitemap']['xmlsitemap_user_default_priority'] = array(
-        '#type' => 'select',
-        '#title' => t('Default user priority'),
-        '#description' => t('The default priority for users who have only the authenticated user role.'),
-        '#default_value' => $default,
-        '#options' => xmlsitemap_helper_priority_options('exclude'),
-      );
-      $form['buttons']['#weight'] = isset($form['buttons']['#weight']) ? $form['buttons']['#weight'] + 1 : 1;
-      $form['#submit'][] = 'xmlsitemap_user_form_submit';
-      break;
-    case 'user_admin_role':
-      $options = xmlsitemap_helper_priority_options('exclude');
-      $priority = db_result(db_query("SELECT priority
-        FROM {xmlsitemap_user_role}
-        WHERE rid = %d", $form['rid']['#value'])
-      );
-      if ($priority === FALSE) {
-        $priority = 0.5;
-      }
-      if (!isset($form['xmlsitemap'])) {
-        $form['xmlsitemap'] = array(
-          '#type' => 'fieldset',
-          '#title' => t('XML site map'),
-          '#collapsible' => TRUE,
-        );
-      }
-      $form['xmlsitemap']['xmlsitemap_user_role_priority'] = array(
-        '#type' => 'select',
-        '#title' => t('Default priority'),
-        '#description' => t("The priority of all a user's roles will be added together to set the user's default priority. If all role priorities are left at default, the user's default priority will be %priority.", array('%priority' => $options[variable_get('xmlsitemap_user_default_priority', '0.5')])),
-        '#default_value' => $priority,
-        '#options' => $options,
-      );
-      $form['submit']['#weight'] = isset($form['submit']['#weight']) ? $form['submit']['#weight'] + 1 : 1;
-      $form['delete']['#weight'] = isset($form['delete']['#weight']) ? $form['delete']['#weight'] + 1 : 1;
-      $form['#submit'][] = 'xmlsitemap_user_form_submit';
-      break;
+function xmlsitemap_user_form_user_admin_settings_alter(&$form, &$from_state) {
+  if (!isset($form['xmlsitemap'])) {
+    $form['xmlsitemap'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('XML site map'),
+      '#collapsible' => TRUE,
+    );
   }
+  $default = variable_get('xmlsitemap_user_default_priority', 0.5);
+  $form['xmlsitemap']['xmlsitemap_user_default_priority'] = array(
+    '#type' => 'select',
+    '#title' => t('Default user priority'),
+    '#description' => t('The default priority for users who have only the authenticated user role.'),
+    '#default_value' => $default,
+    '#options' => xmlsitemap_helper_priority_options('exclude'),
+  );
+  $form['buttons']['#weight'] = isset($form['buttons']['#weight']) ? $form['buttons']['#weight'] + 1 : 1;
+  $form['#submit'][] = 'xmlsitemap_user_form_submit';
+}
+
+/**
+ * Implementation of hook_form_FORM_ID_alter().
+ */
+function xmlsitemap_user_form_user_admin_role_alter(&$form, &$from_state) {
+  $options = xmlsitemap_helper_priority_options('exclude');
+  $priority = db_result(db_query("SELECT priority
+    FROM {xmlsitemap_user_role}
+    WHERE rid = %d", $form['rid']['#value'])
+  );
+  if ($priority === FALSE) {
+    $priority = 0.5;
+  }
+  if (!isset($form['xmlsitemap'])) {
+    $form['xmlsitemap'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('XML site map'),
+      '#collapsible' => TRUE,
+    );
+  }
+  $form['xmlsitemap']['xmlsitemap_user_role_priority'] = array(
+    '#type' => 'select',
+    '#title' => t('Default priority'),
+    '#description' => t("The priority of all a user's roles will be added together to set the user's default priority. If all role priorities are left at default, the user's default priority will be %priority.", array('%priority' => $options[variable_get('xmlsitemap_user_default_priority', '0.5')])),
+    '#default_value' => $priority,
+    '#options' => $options,
+  );
+  $form['submit']['#weight'] = isset($form['submit']['#weight']) ? $form['submit']['#weight'] + 1 : 1;
+  $form['delete']['#weight'] = isset($form['delete']['#weight']) ? $form['delete']['#weight'] + 1 : 1;
+  $form['#submit'][] = 'xmlsitemap_user_form_submit';
+}
+
+/**
+ * Implementation of hook_form_FORM_ID_alter().
+ */
+function xmlsitemap_user_form_xmlsitemap_settings_alter(&$form, &$from_state) {
+  $form['general']['priority']['third_group']['xmlsitemap_user_comment_priority'] = array(
+    '#type' => 'select',
+    '#title' => t('Comment ratio weight - users'),
+    '#description' => t("This number will be added to the priority of the user who authored the highest number of comments; for the other users, the number is calculated proportionally to the number of authored comments. This doesn't apply if the maximum number of comments is one, nor for the users for which the priority is overriden."),
+    '#default_value' => variable_get('xmlsitemap_user_comment_priority', 0.2),
+    '#options' => xmlsitemap_helper_priority_options(),
+  );
 }
 
 /**
@@ -232,19 +245,6 @@ function xmlsitemap_user_xmlsitemap_links($modules) {
       }
     }
   }
-}
-
-/**
- * Implementation of hook_xmlsitemap_sitemap_settings_alter().
- */
-function xmlsitemap_user_xmlsitemap_sitemap_settings_alter(&$form) {
-  $form['general']['priority']['c']['xmlsitemap_user_comment_priority'] = array(
-    '#type' => 'select',
-    '#title' => t('Comment ratio weight - users'),
-    '#description' => t("This number will be added to the priority of the user who authored the highest number of comments; for the other users, the number is calculated proportionally to the number of authored comments. This doesn't apply if the maximum number of comments is one, nor for the users for which the priority is overriden."),
-    '#default_value' => variable_get('xmlsitemap_user_comment_priority', 0.2),
-    '#options' => xmlsitemap_helper_priority_options(),
-  );
 }
 
 /*****************************************************************************

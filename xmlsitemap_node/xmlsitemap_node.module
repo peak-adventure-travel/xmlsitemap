@@ -60,85 +60,110 @@ function xmlsitemap_node_comment($a1, $op) {
  * Implementation of hook_form_alter().
  */
 function xmlsitemap_node_form_alter(&$form, &$form_state, $form_id) {
-  switch ($form_id) {
-    case 'user_admin_settings':
-      if (!isset($form['xmlsitemap'])) {
-        $form['xmlsitemap'] = array(
-          '#type' => 'fieldset',
-          '#title' => t('XML site map'),
-          '#collapsible' => TRUE,
-        );
-      }
-      $form['xmlsitemap']['xmlsitemap_node_posts_count'] = array(
-        '#type' => 'select',
-        '#title' => t('User posts threshold'),
-        '#description' => t('The number of posts a user must author before his posts are added to the site map.') .' '. t('This is the default value used for the users for which the post threshold has not been set.'),
-        '#default_value' => variable_get('xmlsitemap_node_posts_count', 100),
-        '#options' => array(
-          '1' => t('1'),
-          '5' => t('5'),
-          '10' => t('10'),
-          '20' => t('20'),
-          '50' => t('50'),
-          '100' => t('100'),
-          '200' => t('200'),
-          '500' => t('500'),
-          '0' => t('Never add the posts'),
-        ),
-        '#access' => user_access('override profile settings') || user_access('administer users'),
+  if (isset($form['type']) && $form_id == $form['type']['#value'] .'_node_form') {
+    $node = $form['#node'];
+    if (!isset($form['xmlsitemap'])) {
+      $form['xmlsitemap'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('XML site map'),
+        '#collapsible' => TRUE,
+        '#access' => user_access('override node priority') || user_access('administer nodes'),
+        '#weight' => 30,
       );
-      $form['buttons']['#weight'] = isset($form['buttons']['#weight']) ? $form['buttons']['#weight'] + 1 : 1;
-      $form['#submit'][] = 'xmlsitemap_user_form_submit';
-      break;
-    case 'node_type_form':
-      if (isset($form['identity']['type'])) {
-        if (!isset($form['xmlsitemap'])) {
-          $form['xmlsitemap'] = array(
-            '#type' => 'fieldset',
-            '#title' => t('XML site map'),
-            '#collapsible' => TRUE,
-            '#weight' => 30,
-          );
-        }
-        $form['xmlsitemap']['xmlsitemap_node_type_priority'] = array(
-          '#type' => 'select',
-          '#title' => t('Priority adjustment'),
-          '#description' => t('This number will be added to the priority of this content type.'),
-          '#default_value' => variable_get('xmlsitemap_node_type_priority_'. $form['#node_type']->type, 0.5),
-          '#options' => xmlsitemap_helper_priority_options('exclude'),
-        );
-        $form['#submit'][] = 'xmlsitemap_node_type_submit';
-      }
-      break;
-    default:
-      if (isset($form['type']) && $form_id == $form['type']['#value'] .'_node_form') {
-        $node = $form['#node'];
-        if (!isset($form['xmlsitemap'])) {
-          $form['xmlsitemap'] = array(
-            '#type' => 'fieldset',
-            '#title' => t('XML site map'),
-            '#collapsible' => TRUE,
-            '#access' => user_access('override node priority') || user_access('administer nodes'),
-            '#weight' => 30,
-          );
-        }
-        $options = xmlsitemap_helper_priority_options('both');
-        $default = variable_get('xmlsitemap_node_type_priority_'. $node->type, '0.5');
-        $form['xmlsitemap']['priority_override'] = array(
-          '#type' => 'select',
-          '#title' => t('Priority'),
-          '#description' => t('The default priority is %priority.', array('%priority' => $options[$default])),
-          '#default_value' => isset($node->priority_override) ? $node->priority_override : -2.0,
-          '#options' => $options,
-          '#access' => user_access('override node priority') || user_access('administer nodes'),
-        );
-        $form['xmlsitemap_node_status'] = array(
-          '#type' => 'value',
-          '#value' => $node->status,
-        );
-      }
-      break;
+    }
+    $options = xmlsitemap_helper_priority_options('both');
+    $default = variable_get('xmlsitemap_node_type_priority_'. $node->type, '0.5');
+    $form['xmlsitemap']['priority_override'] = array(
+      '#type' => 'select',
+      '#title' => t('Priority'),
+      '#description' => t('The default priority is %priority.', array('%priority' => $options[$default])),
+      '#default_value' => isset($node->priority_override) ? $node->priority_override : -2.0,
+      '#options' => $options,
+      '#access' => user_access('override node priority') || user_access('administer nodes'),
+    );
+    $form['xmlsitemap_node_status'] = array(
+      '#type' => 'value',
+      '#value' => $node->status,
+    );
   }
+}
+
+/**
+ * Implementation of hook_form_FORM_ID_alter().
+ */
+function xmlsitemap_node_form_node_type_form_alter(&$form, &$from_state) {
+  if (isset($form['identity']['type'])) {
+    if (!isset($form['xmlsitemap'])) {
+      $form['xmlsitemap'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('XML site map'),
+        '#collapsible' => TRUE,
+        '#weight' => 30,
+      );
+    }
+    $form['xmlsitemap']['xmlsitemap_node_type_priority'] = array(
+      '#type' => 'select',
+      '#title' => t('Priority adjustment'),
+      '#description' => t('This number will be added to the priority of this content type.'),
+      '#default_value' => variable_get('xmlsitemap_node_type_priority_'. $form['#node_type']->type, 0.5),
+      '#options' => xmlsitemap_helper_priority_options('exclude'),
+    );
+    $form['#submit'][] = 'xmlsitemap_node_type_submit';
+  }
+}
+
+/**
+ * Implementation of hook_form_FORM_ID_alter().
+ */
+function xmlsitemap_node_form_user_admin_settings_alter(&$form, &$from_state) {
+  if (!isset($form['xmlsitemap'])) {
+    $form['xmlsitemap'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('XML site map'),
+      '#collapsible' => TRUE,
+    );
+  }
+  $form['xmlsitemap']['xmlsitemap_node_posts_count'] = array(
+    '#type' => 'select',
+    '#title' => t('User posts threshold'),
+    '#description' => t('The number of posts a user must author before his posts are added to the site map.') .' '. t('This is the default value used for the users for which the post threshold has not been set.'),
+    '#default_value' => variable_get('xmlsitemap_node_posts_count', 100),
+    '#options' => array(
+      '1' => t('1'),
+      '5' => t('5'),
+      '10' => t('10'),
+      '20' => t('20'),
+      '50' => t('50'),
+      '100' => t('100'),
+      '200' => t('200'),
+      '500' => t('500'),
+      '0' => t('Never add the posts'),
+    ),
+    '#access' => user_access('override profile settings') || user_access('administer users'),
+  );
+  $form['buttons']['#weight'] = isset($form['buttons']['#weight']) ? $form['buttons']['#weight'] + 1 : 1;
+  $form['#submit'][] = 'xmlsitemap_user_form_submit';
+}
+
+/**
+ * Implementation of hook_form_FORM_ID_alter().
+ */
+function xmlsitemap_node_form_xmlsitemap_settings_alter(&$form, &$from_state) {
+  $options = xmlsitemap_helper_priority_options();
+  $form['general']['priority']['first_group']['xmlsitemap_node_promote_priority'] = array(
+    '#type' => 'select',
+    '#title' => t('Promotion adjustment'),
+    '#description' => t("This number will be added to the priority of each post that is promoted to the front page. This setting doesn't apply for the nodes for which the priority is overriden."),
+    '#default_value' => variable_get('xmlsitemap_node_promote_priority', 0.3),
+    '#options' => $options,
+  );
+  $form['general']['priority']['first_group']['xmlsitemap_node_comment_priority'] = array(
+    '#type' => 'select',
+    '#title' => t('Comment ratio weight - nodes'),
+    '#description' => t("This number will be added to the priority of the post with the highest number of comments; for the other posts, the number is calculated proportionally to the number of comments. This doesn't apply if the maximum number of comments is one, nor for the nodes for which the priority is overriden."),
+    '#default_value' => variable_get('xmlsitemap_node_comment_priority', 0.2),
+    '#options' => $options,
+  );
 }
 
 /**
@@ -334,27 +359,6 @@ function xmlsitemap_node_xmlsitemap_links($modules) {
       }
     }
   }
-}
-
-/**
- * Implementation of hook_xmlsitemap_sitemap_settings_alter().
- */
-function xmlsitemap_node_xmlsitemap_sitemap_settings_alter(&$form) {
-  $options = xmlsitemap_helper_priority_options();
-  $form['general']['priority']['a']['xmlsitemap_node_promote_priority'] = array(
-    '#type' => 'select',
-    '#title' => t('Promotion adjustment'),
-    '#description' => t("This number will be added to the priority of each post that is promoted to the front page. This setting doesn't apply for the nodes for which the priority is overriden."),
-    '#default_value' => variable_get('xmlsitemap_node_promote_priority', 0.3),
-    '#options' => $options,
-  );
-  $form['general']['priority']['a']['xmlsitemap_node_comment_priority'] = array(
-    '#type' => 'select',
-    '#title' => t('Comment ratio weight - nodes'),
-    '#description' => t("This number will be added to the priority of the post with the highest number of comments; for the other posts, the number is calculated proportionally to the number of comments. This doesn't apply if the maximum number of comments is one, nor for the nodes for which the priority is overriden."),
-    '#default_value' => variable_get('xmlsitemap_node_comment_priority', 0.2),
-    '#options' => $options,
-  );
 }
 
 /*****************************************************************************

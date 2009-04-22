@@ -19,68 +19,86 @@
  * Implementation of hook_form_alter().
  */
 function xmlsitemap_term_form_alter(&$form, $form_state, $form_id) {
-  switch ($form_id) {
-    case 'taxonomy_form_term':
-      $priority = db_result(db_query("SELECT priority_override
-        FROM {xmlsitemap_term}
-        WHERE tid = %d", $form['tid']['#value'])
-      );
-      if ($priority === FALSE) {
-        $priority = -2.0;
+  if (isset($form['type']['#value']) && $form_id == $form['type']['#value'] .'_node_form') {
+    $node = $form['#node'];
+    if (isset($form['type']) && isset($node->nid)) {
+      if (isset($node->taxonomy)) {
+        $terms = $node->taxonomy;
       }
-      $options = xmlsitemap_helper_priority_options('both');
-      $default = variable_get('xmlsitemap_term_vocabulary_priority_'. $form['vid']['#value'], '0.5');
-      if (!isset($form['xmlsitemap'])) {
-        $form['xmlsitemap'] = array(
-          '#type' => 'fieldset',
-          '#title' => t('XML site map'),
-          '#collapsible' => TRUE,
-        );
+      else {
+        $terms = taxonomy_node_get_terms($node->nid);
       }
-      $form['xmlsitemap']['xmlsitemap_term_priority'] = array(
-        '#type' => 'select',
-        '#title' => t('Priority'),
-        '#description' => t('The default priority is %priority.', array('%priority' => $options[$default])),
-        '#default_value' => $priority,
-        '#options' => $options,
+      $form['xmlsitemap_term_taxonomy'] = array(
+        '#type' => 'value',
+        '#value' => $terms,
       );
-      $form['submit']['#weight'] = isset($form['submit']['#weight']) ? $form['submit']['#weight'] + 1 : 1;
-      $form['delete']['#weight'] = isset($form['delete']['#weight']) ? $form['delete']['#weight'] + 1 : 1;
-      break;
-    case 'taxonomy_form_vocabulary':
-      $form['xmlsitemap'] = array(
-        '#type' => 'fieldset',
-        '#title' => t('XML site map'),
-        '#collapsible' => TRUE,
-      );
-      $form['xmlsitemap']['xmlsitemap_term_vocabulary_priority'] = array(
-        '#type' => 'select',
-        '#title' => t('Priority'),
-        '#description' => t('This will be the default priority of terms in this vocabulary.'),
-        '#default_value' => variable_get('xmlsitemap_term_vocabulary_priority_'. $form['vid']['#value'], 0.5),
-        '#options' => xmlsitemap_helper_priority_options('exclude'),
-      );
-      $form['submit']['#weight'] = isset($form['submit']['#weight']) ? $form['submit']['#weight'] + 1 : 1;
-      $form['delete']['#weight'] = isset($form['delete']['#weight']) ? $form['delete']['#weight'] + 1 : 1;
-      break;
-    default:
-      if (isset($form['type']['#value']) && $form_id == $form['type']['#value'] .'_node_form') {
-        $node = $form['#node'];
-        if (isset($form['type']) && isset($node->nid)) {
-          if (isset($node->taxonomy)) {
-            $terms = $node->taxonomy;
-          }
-          else {
-            $terms = taxonomy_node_get_terms($node->nid);
-          }
-          $form['xmlsitemap_term_taxonomy'] = array(
-            '#type' => 'value',
-            '#value' => $terms,
-          );
-        }
-      }
-      break;
+    }
   }
+}
+
+/**
+ * Implementation of hook_form_FORM_ID_alter().
+ */
+function xmlsitemap_term_taxonomy_form_term_alter(&$form, &$from_state) {
+  $priority = db_result(db_query("SELECT priority_override
+    FROM {xmlsitemap_term}
+    WHERE tid = %d", $form['tid']['#value'])
+  );
+  if ($priority === FALSE) {
+    $priority = -2.0;
+  }
+  $options = xmlsitemap_helper_priority_options('both');
+  $default = variable_get('xmlsitemap_term_vocabulary_priority_'. $form['vid']['#value'], '0.5');
+  if (!isset($form['xmlsitemap'])) {
+    $form['xmlsitemap'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('XML site map'),
+      '#collapsible' => TRUE,
+    );
+  }
+  $form['xmlsitemap']['xmlsitemap_term_priority'] = array(
+    '#type' => 'select',
+    '#title' => t('Priority'),
+    '#description' => t('The default priority is %priority.', array('%priority' => $options[$default])),
+    '#default_value' => $priority,
+    '#options' => $options,
+  );
+  $form['submit']['#weight'] = isset($form['submit']['#weight']) ? $form['submit']['#weight'] + 1 : 1;
+  $form['delete']['#weight'] = isset($form['delete']['#weight']) ? $form['delete']['#weight'] + 1 : 1;
+}
+
+/**
+ * Implementation of hook_form_FORM_ID_alter().
+ */
+function xmlsitemap_term_taxonomy_form_vocabulary_alter(&$form, &$from_state) {
+  $form['xmlsitemap'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('XML site map'),
+    '#collapsible' => TRUE,
+  );
+  $form['xmlsitemap']['xmlsitemap_term_vocabulary_priority'] = array(
+    '#type' => 'select',
+    '#title' => t('Priority'),
+    '#description' => t('This will be the default priority of terms in this vocabulary.'),
+    '#default_value' => variable_get('xmlsitemap_term_vocabulary_priority_'. $form['vid']['#value'], 0.5),
+    '#options' => xmlsitemap_helper_priority_options('exclude'),
+  );
+  $form['submit']['#weight'] = isset($form['submit']['#weight']) ? $form['submit']['#weight'] + 1 : 1;
+  $form['delete']['#weight'] = isset($form['delete']['#weight']) ? $form['delete']['#weight'] + 1 : 1;
+}
+
+/**
+ * Implementation of hook_form_FORM_ID_alter().
+ */
+function xmlsitemap_term_form_xmlsitemap_settings_alter(&$form, &$from_state) {
+  $options = xmlsitemap_helper_priority_options();
+  $form['general']['priority']['second_group']['xmlsitemap_term_node_priority'] = array(
+    '#type' => 'select',
+    '#title' => t('Term ratio weight - nodes'),
+    '#description' => t("This number will be added to the priority of vocabulary term which is used by 100 nodes; for the other terms, the number is calculated proportionally to the number of nodes. This doesn't apply for terms that are used for just one node, nor for the vocabulary terms  for which the priority is overriden."),
+    '#default_value' => variable_get('xmlsitemap_term_node_priority', 0.2),
+    '#options' => $options,
+  );
 }
 
 /**
@@ -257,21 +275,6 @@ function xmlsitemap_term_xmlsitemap_links($modules) {
     }
   }
 }
-
-/**
- * Implementation of hook_xmlsitemap_sitemap_settings_alter().
- */
-function xmlsitemap_term_xmlsitemap_sitemap_settings_alter(&$form) {
-  $options = xmlsitemap_helper_priority_options();
-  $form['general']['priority']['b']['xmlsitemap_term_node_priority'] = array(
-    '#type' => 'select',
-    '#title' => t('Term ratio weight - nodes'),
-    '#description' => t("This number will be added to the priority of vocabulary term which is used by 100 nodes; for the other terms, the number is calculated proportionally to the number of nodes. This doesn't apply for terms that are used for just one node, nor for the vocabulary terms  for which the priority is overriden."),
-    '#default_value' => variable_get('xmlsitemap_term_node_priority', 0.2),
-    '#options' => $options,
-  );
-}
-
 
 /*****************************************************************************
  * Private functions - node operation callbacks.
