@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1, 2009-04-22
 -----------------------------------
+#439832: Constant XMLSITEMAP_TIME should be global in scope.
 #441564: Remove any not necessary calls to menu_rebuild().
 #439948: Use hook_form_FORM_ID_alter().
 #439908: Rename xmlsitemap_helper_update_sitemap to something more indicative of what it does.
