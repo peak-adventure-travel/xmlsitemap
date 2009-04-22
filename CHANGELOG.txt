@@ -1,7 +1,12 @@
 $Id$
 
+XML Sitemap 6.x-1, 2009-04-22
+-----------------------------------
+#439880: Typo in xmlsitemap_user.module.
+
 XML Sitemap 6.x-1, 2009-04-20
 -----------------------------------
+#384160: Implement hook_rules_action_info().
 #438194: Error during uninstall.
 
 XML Sitemap 6.x-1, 2009-04-19
