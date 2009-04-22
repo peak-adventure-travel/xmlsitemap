@@ -2,6 +2,8 @@ $Id$
 
 XML Sitemap 6.x-1, 2009-04-22
 -----------------------------------
+#439836: Function xmlsitemap_helper_add_database_batch_operation defined and not used.
+#439940: Description of "XML Sitemap" menu could be improved.
 #439880: Typo in xmlsitemap_user.module.
 
 XML Sitemap 6.x-1, 2009-04-20
