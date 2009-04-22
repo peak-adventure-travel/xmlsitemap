@@ -133,7 +133,7 @@ function xmlsitemap_term_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
           }
         }
         drupal_write_record('xmlsitemap_term', $row, $result === FALSE ? NULL : 'tid');
-        xmlsitemap_helper_update_sitemap('xmlsitemap_term');
+        xmlsitemap_helper_flag_sitemap('xmlsitemap_term');
       }
       break;
   }
@@ -149,14 +149,14 @@ function xmlsitemap_term_taxonomy($op, $type, $array = NULL) {
       case 'delete':
         db_query("DELETE FROM {xmlsitemap_term} WHERE vid = %d", $array['vid']);
         variable_del('xmlsitemap_term_vocabulary_priority_'. $array['vid']);
-        xmlsitemap_helper_update_sitemap('xmlsitemap_term');
+        xmlsitemap_helper_flag_sitemap('xmlsitemap_term');
         break;
       case 'insert':
       case 'update':
         if (isset($array['vid'])) {
           if (variable_get('xmlsitemap_term_vocabulary_priority_'. $array['vid'], 0.5) != $array['xmlsitemap_term_vocabulary_priority']) {
             variable_set('xmlsitemap_term_vocabulary_priority_'. $array['vid'], $array['xmlsitemap_term_vocabulary_priority']);
-            xmlsitemap_helper_update_sitemap('xmlsitemap_term');
+            xmlsitemap_helper_flag_sitemap('xmlsitemap_term');
           }
         }
         break;
@@ -198,7 +198,7 @@ function xmlsitemap_term_taxonomy($op, $type, $array = NULL) {
         drupal_write_record('xmlsitemap_term', $row, $result === FALSE ? NULL : 'tid');
         break;
     }
-    xmlsitemap_helper_update_sitemap('xmlsitemap_term');
+    xmlsitemap_helper_flag_sitemap('xmlsitemap_term');
   }
 }
 
@@ -354,7 +354,7 @@ function _xmlsitemap_term_batch_process($nodes, $priority, &$context) {
     $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
   }
   else {
-    xmlsitemap_helper_update_sitemap('xmlsitemap_term');
+    xmlsitemap_helper_flag_sitemap('xmlsitemap_term');
   }
 }
 

@@ -118,7 +118,7 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
       $row->priority_override = isset($edit['xmlsitemap_user_priority']) ? $edit['xmlsitemap_user_priority'] : -2.0;
       drupal_write_record('xmlsitemap_user', $row);
       $edit['xmlsitemap_user_priority'] = NULL;
-      xmlsitemap_helper_update_sitemap('xmlsitemap_user');
+      xmlsitemap_helper_flag_sitemap('xmlsitemap_user');
       break;
     case 'update':
       if (($result = db_fetch_object(db_query("SELECT uid, changed, previously_changed, comments, priority_override FROM {xmlsitemap_user} WHERE uid = %d", $account->uid))) === FALSE) {
@@ -139,11 +139,11 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
         $row->priority_override = $edit['xmlsitemap_user_priority'];
       }
       drupal_write_record('xmlsitemap_user', $row, $result !== FALSE ? 'uid' : NULL);
-      xmlsitemap_helper_update_sitemap('xmlsitemap_user');
+      xmlsitemap_helper_flag_sitemap('xmlsitemap_user');
       break;
     case 'delete':
       db_query("DELETE FROM {xmlsitemap_user} WHERE uid = %d", $account->uid);
-      xmlsitemap_helper_update_sitemap('xmlsitemap_user');
+      xmlsitemap_helper_flag_sitemap('xmlsitemap_user');
       break;
   }
 }
@@ -227,7 +227,7 @@ function xmlsitemap_user_xmlsitemap_links($modules) {
         if ($priority != -1.0) {
           $row->priority = $priority;
           drupal_write_record('xmlsitemap', $row);
-          xmlsitemap_helper_update_sitemap('xmlsitemap_user');
+          xmlsitemap_helper_flag_sitemap('xmlsitemap_user');
         }
       }
     }
@@ -263,7 +263,7 @@ function xmlsitemap_user_form_submit($form, &$form_state) {
     $row->priority = $form_values['xmlsitemap_user_role_priority'];
     drupal_write_record('xmlsitemap_user_role', $row, $priority !== FALSE ? 'rid' : NULL);
   }
-  xmlsitemap_helper_update_sitemap('xmlsitemap_user');
+  xmlsitemap_helper_flag_sitemap('xmlsitemap_user');
 }
 
 /*****************************************************************************
@@ -335,7 +335,7 @@ function _xmlsitemap_user_batch_process($accounts, $priority, &$context) {
     $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
   }
   else {
-    xmlsitemap_helper_update_sitemap('xmlsitemap_user');
+    xmlsitemap_helper_flag_sitemap('xmlsitemap_user');
   }
 }
 
