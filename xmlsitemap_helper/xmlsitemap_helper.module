@@ -12,15 +12,13 @@
  */
 
 /*****************************************************************************
- * Drupal hooks.
+ * Public constants.
  ****************************************************************************/
 
 /**
- * Implementation of hook_boot().
+ * Timestamp of server request to avoid repeatedly generating value.
  */
-function xmlsitemap_helper_boot() {
-  define('XMLSITEMAP_TIME', time());
-}
+define('XMLSITEMAP_TIME', time());
 
 /*****************************************************************************
  * Public functions.
