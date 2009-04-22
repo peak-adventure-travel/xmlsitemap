@@ -389,7 +389,6 @@ function xmlsitemap_settings_sitemap_validate($form, &$form_state) {
  * Submit the settings form.
  */
 function xmlsitemap_settings_submit($form, &$form_state) {
-  menu_rebuild();
   xmlsitemap_helper_update_sitemap();
 }
 
