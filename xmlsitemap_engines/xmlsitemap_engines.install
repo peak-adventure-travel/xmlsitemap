@@ -14,11 +14,16 @@
  * Implementation of hook_update_N().
  */
 function xmlsitemap_engines_update_6000() {
-  variable_set('xmlsitemap_engines_ask_url', 'http://submissions.ask.com/ping?sitemap=[sitemap]');
-  variable_set('xmlsitemap_engines_google_url', 'http://www.google.com/webmasters/tools/ping?sitemap=[sitemap]');
-  variable_set('xmlsitemap_engines_morover_url', 'http://api.moreover.com/ping?u=[sitemap]');
-  variable_set('xmlsitemap_engines_live_url', 'http://webmaster.live.com/ping.aspx?siteMap=[sitemap]');
-  variable_set('xmlsitemap_engines_yahoo_url', 'http://search.yahooapis.com/SiteExplorerService/V1/ping?sitemap=[sitemap]');
+  $variables = array(
+    'ask_url' => 'http://submissions.ask.com/ping?sitemap=[sitemap]',
+    'google_url' => 'http://www.google.com/webmasters/tools/ping?sitemap=[sitemap]',
+    'morover_url' => 'http://api.moreover.com/ping?u=[sitemap]',
+    'live_url' => 'http://webmaster.live.com/ping.aspx?siteMap=[sitemap]',
+    'yahoo_url' => 'http://search.yahooapis.com/SiteExplorerService/V1/ping?sitemap=[sitemap]',
+  );
+  foreach($variables as $variable => $value) {
+    variable_set('xmlsitemap_engines_'. $variable, $value);
+  }
   $ret[] = array(
     'success' => TRUE,
     'query' => 'UPDATE MODULE SETTINGS',
@@ -40,8 +45,28 @@ function xmlsitemap_engines_update_6101() {
   return array();
 }
 
+/**
+ * Implementation of hook_update_N().
+ */
 function xmlsitemap_engines_update_6102() {
   return xmlsitemap_engines_update_6000();
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_engines_update_6103() {
+  $ret = array();
+  $variables = array(
+    'submit',
+    'log_access',
+    'cron_submit_frequency',
+    'cron_submit_delay'
+  );
+  foreach ($variables as $variable) {
+    $ret[] = update_sql("UPDATE {variable} SET name = 'xmlsitemap_engines_{$variable}' WHERE name = 'xmlsitemap_{$variable}'");
+  }
+  return $ret;
 }
 
 /**

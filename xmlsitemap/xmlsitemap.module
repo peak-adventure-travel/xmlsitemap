@@ -16,71 +16,6 @@
  ****************************************************************************/
 
 /**
- * Implementation of hook_cron().
- */
-function xmlsitemap_cron() {
-  if (!variable_get('site_offline', 0) && variable_get('xmlsitemap_cron_submit_frequency', -1) >= 0 && variable_get('xmlsitemap_sitemap_is_changed', FALSE)) {
-    $count = variable_get('xmlsitemap_cron_submit_delay', -1);
-    if (--$count <= 0) {
-      module_invoke_all('xmlsitemap_engines', 'ping');
-      variable_set('xmlsitemap_sitemap_is_changed', FALSE);
-      $count = variable_get('xmlsitemap_cron_submit_frequency', -1);
-    }
-    variable_set('xmlsitemap_cron_submit_delay', $count);
-  }
-}
-
-/**
- * Implementation of hook_exit().
- */
-function xmlsitemap_exit() {
-  drupal_bootstrap(DRUPAL_BOOTSTRAP_PATH);
-  if (variable_get('site_offline', 0) || arg(0) == 'batch') {
-    return;
-  }
-  if (variable_get('xmlsitemap_log_access', FALSE)) {
-    $items = array();
-    $chunk_size = variable_get('xmlsitemap_chunk_size', 200);
-    $link_count = xmlsitemap_helper_link_count();
-    if ($link_count > $chunk_size) {
-      for ($chunk = 0; $chunk < $link_count / $chunk_size; ++$chunk) {
-        $items["sitemap$chunk.xml"] = $chunk;
-      }
-    }
-    if (isset($items[arg(0)]) && is_null(arg(1))) {
-      $chunk = $items[arg(0)];
-      if ($chunk < $link_count / $chunk_size) {
-        $write_log = TRUE;
-      }
-    }
-    elseif (arg(0) == 'sitemap.xml' && is_null(arg(1))) {
-      $write_log = TRUE;
-    }
-    if (isset($write_log)) {
-      drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
-      foreach (module_implements('xmlsitemap_engines') as $module) {
-        $function = $module .'_xmlsitemap_engines';
-        $result = $function('access');
-        if (!empty($result)) {
-          break;
-        }
-      }
-      watchdog('xmlsitemap', 'Sitemap downloaded by @user-agent at @address.',
-        array(
-          '@user-agent' => !empty($result) ? $result : $_SERVER['HTTP_USER_AGENT'],
-          '@address' => ip_address(),
-        )
-      );
-    }
-  }
-  if (!isset($write_log) && variable_get('xmlsitemap_submit', FALSE) && variable_get('xmlsitemap_sitemap_is_changed', FALSE)) {
-    drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
-    module_invoke_all('xmlsitemap_engines', 'ping');
-    variable_set('xmlsitemap_sitemap_is_changed', FALSE);
-  }
-}
-
-/**
  * Implementation of hook_form_alter().
  */
 function xmlsitemap_form_alter(&$form, &$form_state, $form_id) {
@@ -145,14 +80,6 @@ function xmlsitemap_menu() {
     'description' => 'Configure the XML site map.',
     'weight' => -1,
     'type' => MENU_DEFAULT_LOCAL_TASK,
-  );
-  $items['admin/settings/xmlsitemap/engines'] = array(
-    'title' => 'Search engines',
-    'description' => 'Configure the submission settings of the XML site map to the search engines.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('xmlsitemap_settings_engines'),
-    'access arguments' => $access_config,
-    'type' => MENU_LOCAL_TASK,
   );
   $items['sitemap.xml'] = array(
     'title' => 'Site map index',
@@ -243,66 +170,6 @@ function xmlsitemap_output($chunk = NULL) {
   else {
     file_transfer("$parent_directory/xsm-$id.xml", $headers);
   }
-}
-
-/**
- * Form builder; return the search engine settings form.
- */
-function xmlsitemap_settings_engines() {
-  $form['submission'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Submission settings'),
-    '#collapsible' => TRUE,
-  );
-  $form['submission']['xmlsitemap_submit'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Submit the site map when updated'),
-    '#description' => t('If enabled, the search engines will be notified of changes to the site map each time it is updated.'),
-    '#default_value' => variable_get('xmlsitemap_submit', FALSE),
-  );
-  $form['submission']['xmlsitemap_log_access'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Log access'),
-    '#description' => t('If enabled, a watchdog entry will be made each time the site map is accessed, containing information about the requestor.'),
-    '#default_value' => variable_get('xmlsitemap_log_access', FALSE),
-  );
-  $form['submission']['xmlsitemap_cron_submit_frequency'] = array(
-    '#type' => 'select',
-    '#title' => t('Frequency of site map submission'),
-    '#description' => t('The rate at which the site map is submitted to the search engines over the times the cron maintenance tasks are executed.'),
-    '#default_value' => variable_get('xmlsitemap_cron_submit_frequency', -1),
-    '#options' => array(
-      '1000' => t('Once every one thousand times'),
-      '500' => t('Once every five hundred times'),
-      '400' => t('Once every four hundred times'),
-      '300' => t('Once every three hundred times'),
-      '200' => t('Once every two hundred times'),
-      '100' => t('Once every one hundred times'),
-      '90' => t('Once every ninety times'),
-      '80' => t('Once every eighty times'),
-      '70' => t('Once every seventy times'),
-      '60' => t('Once every sixty times'),
-      '50' => t('Once every fifty times'),
-      '40' => t('Once every forty times'),
-      '30' => t('Once every thirty times'),
-      '20' => t('Once every twenty times'),
-      '10' => t('Once every ten times'),
-      '9' => t('Once every nine times'),
-      '8' => t('Once every eight times'),
-      '7' => t('Once every seven times'),
-      '6' => t('Once every six times'),
-      '5' => t('Once every five times'),
-      '4' => t('Once every four times'),
-      '3' => t('Once every three times'),
-      '2' => t('Once every two times'),
-      '1' => t('Always'),
-      '-1' => t('Never'),
-    ),
-  );
-  drupal_alter('xmlsitemap_engine_settings', $form);
-  $form = system_settings_form($form);
-  array_unshift($form['#submit'], 'xmlsitemap_settings_submit');
-  return $form;
 }
 
 /**
