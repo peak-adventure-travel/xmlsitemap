@@ -87,7 +87,7 @@ function xmlsitemap_menu() {
     'access callback' => 'xmlsitemap_anonymous_access',
     'type' => MENU_CALLBACK,
   );
-  $chunk_size = variable_get('xmlsitemap_chunk_size', 200);
+  $chunk_size = variable_get('xmlsitemap_chunk_size', 1000);
   $link_count = xmlsitemap_helper_link_count();
   if ($link_count > $chunk_size) {
     for ($chunk = 0; $chunk < $link_count / $chunk_size; ++$chunk) {
@@ -123,7 +123,7 @@ function xmlsitemap_perm() {
  *  If not set and there is more than one chunk, display the site map index.
  */
 function xmlsitemap_output($chunk = NULL) {
-  $chunk_size = variable_get('xmlsitemap_chunk_size', 200);
+  $chunk_size = variable_get('xmlsitemap_chunk_size', 1000);
   $link_count = xmlsitemap_helper_link_count();
   if (isset($chunk) && !preg_match('/[0-9]+/', $chunk)) {
     drupal_not_found();
@@ -190,7 +190,7 @@ function xmlsitemap_settings() {
   $form['general']['xmlsitemap_chunk_size'] = array(
     '#type' => 'textfield',
     '#title' => t('Chunk size'),
-    '#default_value' => variable_get('xmlsitemap_chunk_size', 200),
+    '#default_value' => variable_get('xmlsitemap_chunk_size', 1000),
     '#size' => 10,
     '#maxlength' => 5,
     '#description' => t('This is the number of links to include in one site map. Values can range between 1 and 50,000. If the total number of links exceeds the chunk size, multiple site maps will be generated.'),
@@ -290,7 +290,7 @@ function xmlsitemap_anonymous_access() {
  *   TRUE if the cache files must be updated / created, FALSE otherwise.
  */
 function _xmlsitemap_check_cache_files() {
-  $chunk_size = variable_get('xmlsitemap_chunk_size', 200);
+  $chunk_size = variable_get('xmlsitemap_chunk_size', 1000);
   $link_count = xmlsitemap_helper_link_count();
   $id = xmlsitemap_helper_cache_id();
   $parent_directory = variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap');
@@ -378,7 +378,7 @@ function _xmlsitemap_create_cache_chunk($fp, $chunk_size, $chunk = 0) {
  *  TRUE if the operation has been successfull, FALSE otherwise.
  */
 function _xmlsitemap_create_cache_files() {
-  $chunk_size = variable_get('xmlsitemap_chunk_size', 200);
+  $chunk_size = variable_get('xmlsitemap_chunk_size', 1000);
   $link_count = xmlsitemap_helper_link_count();
   $id = xmlsitemap_helper_cache_id();
   $parent_directory = variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap');

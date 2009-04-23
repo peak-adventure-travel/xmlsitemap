@@ -40,7 +40,7 @@ function xmlsitemap_engines_exit() {
   }
   if (variable_get('xmlsitemap_engines_log_access', FALSE)) {
     $items = array();
-    $chunk_size = variable_get('xmlsitemap_chunk_size', 200);
+    $chunk_size = variable_get('xmlsitemap_chunk_size', 1000);
     $link_count = xmlsitemap_helper_link_count();
     if ($link_count > $chunk_size) {
       for ($chunk = 0; $chunk < $link_count / $chunk_size; ++$chunk) {
