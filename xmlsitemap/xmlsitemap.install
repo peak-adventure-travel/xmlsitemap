@@ -117,7 +117,7 @@ function xmlsitemap_schema() {
  */
 function xmlsitemap_install() {
   drupal_install_schema('xmlsitemap');
-  variable_set('xmlsitemap_chunk_size', 200);
+  variable_set('xmlsitemap_chunk_size', 1000);
   db_query("UPDATE {system} SET weight = 5 WHERE name = 'xmlsitemap'");
 }
 
@@ -515,12 +515,7 @@ function xmlsitemap_update_6115() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_update_6116() {
-  variable_get('xmlsitemap_chunk_size', 200);
-  $ret[] = array(
-    'success' => TRUE,
-    'query' => 'UPDATE XMLSITEMAP_CHUNK_SIZE'
-  );
-  return $ret;
+  return array();
 }
 
 /**
@@ -670,6 +665,28 @@ function xmlsitemap_update_6134() {
     'success' => TRUE,
     'query' => 'UPDATE MENU CALLBACKS',
   );
+  return $ret;
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_6135() {
+  $chunk_size = variable_get('xmlsitemap_chunk_size', 1000);
+  $link_count = xmlsitemap_helper_link_count();
+  if (($chunks = (integer) $link_count / $chunk_size) > 1000) {
+    if ($chunk_size < 1000) {
+      $chunk_size = 1000;
+    }
+    else {
+      $chunk_size += 200;
+    }
+    variable_set('xmlsitemap_chunk_size', $chunk_size);
+    $ret[] = array(
+      'success' => TRUE,
+      'query' => 'UPDATE XMLSITEMAP_CHUNK_SIZE'
+    );
+  }
   return $ret;
 }
 
