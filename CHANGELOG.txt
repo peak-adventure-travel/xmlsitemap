@@ -1,5 +1,11 @@
 $Id$
 
+XML Sitemap 6.x-1, 2009-04-23
+-----------------------------------
+#442968: Change the default value for the chunk size.
+#442516: Add a check for the number of chunks being generated.
+#442062: Missing string delimiter for an SQL query.
+
 XML Sitemap 6.x-1, 2009-04-22
 -----------------------------------
 #439832: Constant XMLSITEMAP_TIME should be global in scope.
