@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1, 2009-04-23
 -----------------------------------
+#443172: Database table is emptied all times some settings are changed.
 #442968: Change the default value for the chunk size.
 #442516: Add a check for the number of chunks being generated.
 #442062: Missing string delimiter for an SQL query.
