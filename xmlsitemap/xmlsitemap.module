@@ -81,6 +81,13 @@ function xmlsitemap_menu() {
     'weight' => -1,
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
+  $items['admin/settings/xmlsitemap/tools/disable/warning'] = array(
+    'title' => 'Disable the warning',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('xmlsitemap_tools_disable_warning_confirm'),
+    'access arguments' => $access_config,
+    'type' => MENU_CALLBACK,
+  );
   $items['sitemap.xml'] = array(
     'title' => 'Site map index',
     'page callback' => 'xmlsitemap_output',
@@ -267,6 +274,27 @@ function xmlsitemap_settings_submit($form, &$form_state) {
   xmlsitemap_helper_flag_sitemap();
 }
 
+/**
+ * Menu callback; display the confirmation dialog for the disabled warning.
+ */
+function xmlsitemap_tools_disable_warning_confirm() {
+  return confirm_form(
+    array(),
+    t('Are you sure you want to disable the warning?'),
+    'admin/settings/xmlsitemap',
+    t(' The module will not emit a warning for an incorrect value of the chunk size. This action cannot be undone.'),
+    t('Disable'),
+    t('Cancel')
+  );
+}
+
+function xmlsitemap_tools_disable_warning_confirm_submit(&$form, &$form_state) {
+  if ($form['confirm']) {
+    variable_set('xmlsitemap_check_chunk_size', FALSE);
+    drupal_set_message(t('The warning has been disabled.'));
+    $form_state['redirect'] = 'admin/settings/xmlsitemap';
+  }
+}
 /*****************************************************************************
  * Public functions.
  ****************************************************************************/

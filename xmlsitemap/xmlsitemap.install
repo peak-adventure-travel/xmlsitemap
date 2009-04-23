@@ -18,20 +18,18 @@ function xmlsitemap_requirements($phase) {
   if ($phase == 'runtime') {
     $chunk_size = variable_get('xmlsitemap_chunk_size', 1000);
     $link_count = xmlsitemap_helper_link_count();
-    if (($chunks = (integer) $link_count / $chunk_size) > 1000) {
-      $requirements['xmlsitemap'] = array(
-        'title' => t('XML Sitemap'),
-        'value' => t('The value for the chunk size could cause problems.'),
-        'description' => t('The current value set for the chunk size will cause the site map to contain more than 1,000 chunks, that is the maximum value allowed. Visit the <a href="@settings">settings page</a> to change its value.', array("@settings" => url('admin/settings/xmlsitemap'))),
-        'severity' => REQUIREMENT_WARNING,
-      );
+    $requirements['xmlsitemap'] = array(
+      'title' => t('XML Sitemap')
+    );
+    if (variable_get('xmlsitemap_check_chunk_size', TRUE) && ($chunks = (integer) $link_count / $chunk_size) > 1000) {
+      $requirements['xmlsitemap']['value'] = t('The chunk size could cause problems.');
+      $requirements['xmlsitemap']['description'] = t('The current value set for the chunk size will cause the site map to contain more than 1,000 chunks, that is the maximum value allowed. You can <a href="@settings">change the chunk size</a>, or <a href="@disable">disable this warning</a>.', array("@settings" => url('admin/settings/xmlsitemap'), "@disable" => url('admin/settings/xmlsitemap/tools/disable/warning')));
+      $requirements['xmlsitemap']['severity'] = REQUIREMENT_WARNING;
     }
     else {
-      $requirements['xmlsitemap'] = array(
-        'title' => t('XML Sitemap'),
-        'value' => t("!module_file/!module_revision !install_file/!install_revision", array('!module_file' => 'xmlsitemap.module', '!module_revision' =>_xmlsitemap_revision(), '!install_file' => 'xmlsitemap.install', '!install_revision' => preg_replace('/\$Rev[iI]sion:\s+(.*)\s+\$/iU', '$1', '$Revision$'))),
-        'severity' => REQUIREMENT_OK,
-      );
+      $requirements['xmlsitemap']['title'] = t('XML Sitemap');
+      $requirements['xmlsitemap']['value'] = t("!module_file/!module_revision !install_file/!install_revision", array('!module_file' => 'xmlsitemap.module', '!module_revision' =>_xmlsitemap_revision(), '!install_file' => 'xmlsitemap.install', '!install_revision' => preg_replace('/\$Rev[iI]sion:\s+(.*)\s+\$/iU', '$1', '$Revision$')));
+      $requirements['xmlsitemap']['severity'] = REQUIREMENT_OK;
     }
   }
   return $requirements;
@@ -672,18 +670,14 @@ function xmlsitemap_update_6133() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_update_6134() {
-  menu_rebuild();
-  $ret[] = array(
-    'success' => TRUE,
-    'query' => 'UPDATE MENU CALLBACKS',
-  );
-  return $ret;
+  return array();
 }
 
 /**
  * Implementation of hook_update_N().
  */
 function xmlsitemap_update_6135() {
+  $ret = array();
   $chunk_size = variable_get('xmlsitemap_chunk_size', 1000);
   $link_count = xmlsitemap_helper_link_count();
   if (($chunks = (integer) $link_count / $chunk_size) > 1000) {
@@ -699,6 +693,11 @@ function xmlsitemap_update_6135() {
       'query' => 'UPDATE XMLSITEMAP_CHUNK_SIZE'
     );
   }
+  menu_rebuild();
+  $ret[] = array(
+    'success' => TRUE,
+    'query' => 'UPDATE MENU CALLBACKS',
+  );
   return $ret;
 }
 
