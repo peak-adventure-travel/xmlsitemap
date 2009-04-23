@@ -123,7 +123,14 @@ function xmlsitemap_menu_update_6107() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_menu_update_6108() {
-  $ret[] = update_sql("UPDATE {menu_custom} SET description =". t('A custom menu added by <em>XML Sitemap: Menu</em> module, which can optionally be used as a source for menu links in the sitemap for more fine-grained control.'). " WHERE menu_name = 'menu-xmlsitemap'");
+  return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_menu_update_6109() {
+  $ret[] = update_sql("UPDATE {menu_custom} SET description ='". t('A custom menu added by <em>XML Sitemap: Menu</em> module, which can optionally be used as a source for menu links in the sitemap for more fine-grained control.'). "' WHERE menu_name = 'menu-xmlsitemap'");
   return $ret;
 }
 
