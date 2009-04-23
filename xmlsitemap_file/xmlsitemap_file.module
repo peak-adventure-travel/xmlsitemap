@@ -19,13 +19,8 @@
  * Implementation of hook_form_alter().
  */
 function xmlsitemap_file_form_alter(&$form, $form_state, $form_id) {
-  switch ($form_id) {
-    case 'menu_edit_item':
-    case 'menu_edit_menu':
-    case 'menu_overview_form':
-    case 'system_file_system_settings':
-      $form['#submit'][] = 'xmlsitemap_file_update_sitemap_submit';
-      break;
+  if ($form_id == 'system_file_system_settings') {
+    $form['#submit'][] = 'xmlsitemap_file_update_sitemap_submit';
   }
 }
 
@@ -61,7 +56,7 @@ function xmlsitemap_file_form_xmlsitemap_settings_alter(&$form, &$form_state) {
  * Implementation of hook_xmlsitemap_links().
  */
 function xmlsitemap_file_xmlsitemap_links($modules) {
-  if (isset($modules['xmlsitemap']) || isset($modules['xmlsitemap_node']) || isset($modules['xmlsitemap_file'])) {
+  if (isset($modules['xmlsitemap_node']) || isset($modules['xmlsitemap_file'])) {
     db_query("DELETE FROM {xmlsitemap} WHERE type ='attachment'");
     $result = db_query("SELECT xsm.id, xsm.priority, f.fid, f.filename, f.timestamp, u.list, u.weight
       FROM {xmlsitemap} xsm
@@ -121,7 +116,7 @@ function xmlsitemap_file_xmlsitemap_links($modules) {
  * Add submit actions to forms.
  */
 function xmlsitemap_file_update_sitemap_submit($form, &$form_state) {
-  xmlsitemap_helper_flag_sitemap('xmlsitemap_file');
+  xmlsitemap_helper_flag_sitemap();
 }
 
 /*****************************************************************************

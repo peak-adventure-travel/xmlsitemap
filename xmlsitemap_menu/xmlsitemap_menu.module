@@ -16,6 +16,19 @@
  ****************************************************************************/
 
 /**
+ * Implementation of hook_form_alter().
+ */
+function xmlsitemap_menu_form_alter(&$form, $form_state, $form_id) {
+  switch ($form_id) {
+    case 'menu_edit_item':
+    case 'menu_edit_menu':
+    case 'menu_overview_form':
+      $form['#submit'][] = 'xmlsitemap_menu_update_sitemap_submit';
+      break;
+  }
+}
+
+/**
  * Implementation of hook_form_FORM_ID_alter().
  */
 function xmlsitemap_menu_form_xmlsitemap_settings_alter(&$form, &$from_state) {
@@ -83,7 +96,7 @@ function xmlsitemap_menu_xmlsitemap_description() {
  * Implementation of hook_xmlsitmap_links().
  */
 function xmlsitemap_menu_xmlsitemap_links($modules) {
-  if (isset($modules['xmlsitemap']) || isset($modules['xmlsitemap_menu'])) {
+  if (isset($modules['xmlsitemap_menu'])) {
     db_query("DELETE FROM {xmlsitemap} WHERE type ='menu'");
     $menus = variable_get('xmlsitemap_menu_menus', array());
     foreach ($menus as $menu) {
@@ -122,6 +135,17 @@ function xmlsitemap_menu_xmlsitemap_links($modules) {
       }
     }
   }
+}
+
+/*****************************************************************************
+ * Menu callbacks / form builders, submit/validate functions.
+ ****************************************************************************/
+
+/**
+ * Add submit actions to forms.
+ */
+function xmlsitemap_menu_update_sitemap_submit($form, &$form_state) {
+  xmlsitemap_helper_flag_sitemap('xmlsitemap_menu');
 }
 
 /**
