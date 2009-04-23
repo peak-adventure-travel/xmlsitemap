@@ -248,8 +248,12 @@ function xmlsitemap_settings() {
  */
 function xmlsitemap_settings_validate($form, &$form_state) {
   $chunk_size = $form_state['values']['xmlsitemap_chunk_size'];
+  $link_count = xmlsitemap_helper_link_count();
   if (!is_numeric($chunk_size) || $chunk_size <= 0 || $chunk_size > 50000) {
     form_set_error('xmlsitemap_chunk_size', t('The number of links in a site map chunk must be a number between 1, and 50,000 (1 and 50,000 included).'));
+  }
+  elseif (($chunks = (integer) $link_count / $chunk_size) > 1000) {
+    form_set_error('xmlsitemap_chunk_size', t('A site map cannot contain more than 1,000 chunks; the actual number of chunks which would be created are !chunks. Change the chunk size to a higher number.', array('!chunks' => $chunks)));
   }
   $directory = $form_state['values']['xmlsitemap_cache_directory'];
   file_check_directory($directory, FILE_CREATE_DIRECTORY, 'xmlsitemap_cache_directory');
