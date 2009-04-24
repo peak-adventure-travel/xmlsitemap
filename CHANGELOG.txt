@@ -1,5 +1,12 @@
 $Id$
 
+XML Sitemap 6.x-1, 2009-04-24
+-----------------------------------
+#429598: Remove xmlsitemap_helper.module, and move the code to xmlsitemap.module.
+#442516: Chunk size should be calculated from the module.
+#443172: Database table is emptied all times some settings are changed.
+#443712: Unpublished nodes appear in the site map.
+
 XML Sitemap 6.x-1, 2009-04-23
 -----------------------------------
 #443172: Database table is emptied all times some settings are changed.
