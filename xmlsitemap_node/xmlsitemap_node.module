@@ -81,10 +81,6 @@ function xmlsitemap_node_form_alter(&$form, &$form_state, $form_id) {
       '#options' => $options,
       '#access' => user_access('override node priority') || user_access('administer nodes'),
     );
-    $form['xmlsitemap_node_status'] = array(
-      '#type' => 'value',
-      '#value' => $node->status,
-    );
   }
 }
 
@@ -201,7 +197,6 @@ function xmlsitemap_node_node_type($op, $info) {
     variable_set('xmlsitemap_node_type_priority_'. $info->type, variable_get('xmlsitemap_node_type_priority_'. $info->old_type, 0.5));
     variable_del('xmlsitemap_node_type_priority_'. $info->old_type);
   }
-  xmlsitemap_helper_flag_sitemap('xmlsitemap_node');
 }
 
 /**
@@ -226,7 +221,7 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
       $row->priority_override = isset($node->priority_override) ? $node->priority_override : -2.0;
       drupal_write_record('xmlsitemap_node', $row);
       if ($node->status) {
-        xmlsitemap_helper_flag_sitemap('xmlsitemap_node');
+        xmlsitemap_helper_flag_sitemap();
       }
       break;
     case 'update':
@@ -246,14 +241,12 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
         }
       }
       drupal_write_record('xmlsitemap_node', $row, $result === FALSE ? NULL : 'nid');
-      if ($node->status || $node->xmlsitemap_node_status) {
-        xmlsitemap_helper_flag_sitemap('xmlsitemap_node');
-      }
+      xmlsitemap_helper_flag_sitemap();
       break;
     case 'delete':
       db_query("DELETE FROM {xmlsitemap_node} WHERE nid = %d", $node->nid);
       if ($node->status) {
-        xmlsitemap_helper_flag_sitemap('xmlsitemap_node');
+        xmlsitemap_helper_flag_sitemap();
       }
       break;
   }
@@ -294,12 +287,12 @@ function xmlsitemap_node_user($op, &$edit, &$account, $category = NULL) {
       if (isset($edit['xmlsitemap_node_posts_count'])) {
         variable_set('xmlsitemap_node_posts_count_'. $account->uid, $edit['xmlsitemap_node_posts_count']);
         $edit['xmlsitemap_node_posts_count'] = NULL;
-        xmlsitemap_helper_flag_sitemap('xmlsitemap_node');
+        xmlsitemap_helper_flag_sitemap();
       }
       break;
     case 'delete':
       variable_del('xmlsitemap_node_posts_count_'. $account->uid);
-      xmlsitemap_helper_flag_sitemap('xmlsitemap_node');
+      xmlsitemap_helper_flag_sitemap();
       break;
   }
 }
@@ -326,46 +319,45 @@ function xmlsitemap_node_xmlsitemap_link_status($type, $id, $sid) {
 /**
  * Implementation of hook_xmlsitemap_links().
  */
-function xmlsitemap_node_xmlsitemap_links($modules) {
-  if (isset($modules['xmlsitemap_node'])) {
-    db_query("DELETE FROM {xmlsitemap} WHERE type ='node'");
-    $query = "SELECT n.nid, n.vid, n.type, n.language, n.uid, n.promote, xn.changed, xn.previously_changed, xn.priority_override, xn.comment_ratio
-      FROM {node} n
-      INNER JOIN {xmlsitemap_node} xn ON n.nid = xn.nid
-      WHERE n.status > 0
-        AND xn.priority_override <> -1.0";
-    $result = db_query(db_rewrite_sql($query));
-    $row = new stdClass();
-    $row->module = 'xmlsitemap_node';
-    $row->type = 'node';
-    while ($node = db_fetch_object($result)) {
-      $posts_threshold = variable_get('xmlsitemap_node_posts_count_'. $node->uid, variable_get('xmlsitemap_node_posts_count', 100));
-      $posts = (integer) db_result(db_query("SELECT COUNT(nid) FROM {node} WHERE uid = %d", $node->uid));
-      $user = user_load($node->uid);
-      // Don't add the nodes authored by a user who has been deleted.
-      if ($user === FALSE) {
-        continue;
+function xmlsitemap_node_xmlsitemap_links() {
+  $query = "SELECT n.nid, n.vid, n.type, n.language, n.uid, n.promote, xn.changed, xn.previously_changed, xn.priority_override, xn.comment_ratio
+    FROM {node} n
+    INNER JOIN {xmlsitemap_node} xn ON n.nid = xn.nid
+    WHERE n.status > 0
+      AND xn.priority_override <> -1.0";
+  $result = db_query(db_rewrite_sql($query));
+  $row = new stdClass();
+  $row->module = 'xmlsitemap_node';
+  $row->type = 'node';
+  while ($node = db_fetch_object($result)) {
+    $posts_threshold = variable_get('xmlsitemap_node_posts_count_'. $node->uid, variable_get('xmlsitemap_node_posts_count', 100));
+    $posts = (integer) db_result(db_query("SELECT COUNT(nid) FROM {node} WHERE uid = %d", $node->uid));
+    $user = user_load($node->uid);
+    // Don't add the nodes authored by a user who has been deleted.
+    if ($user === FALSE) {
+      continue;
+    }
+    if (!user_access('by-pass the authored nodes check', $user) && $posts_threshold > $posts) {
+      continue;
+    }
+    $row->loc = 'node/'. $node->nid;
+    $row->id = $node->nid;
+    $row->sid = $node->vid;
+    $row->language = $node->language;
+    $row->changed = $node->changed;
+    $row->changefreq = max(XMLSITEMAP_TIME - $node->changed, empty($node->previously_changed) ? 0 : $node->changed - $node->previously_changed);
+    if ($node->priority_override != -2.0) {
+      $priority = $node->priority_override;
+    }
+    elseif (($priority = variable_get('xmlsitemap_node_type_priority_'. $node->type, 0.5)) != -1.0) {
+      if ($node->promote) {
+        $priority += variable_get('xmlsitemap_node_promote_priority', 0.3);
       }
-      if (!user_access('by-pass the authored nodes check', $user) && $posts_threshold > $posts) {
-        continue;
-      }
-      $row->loc = 'node/'. $node->nid;
-      $row->id = $node->nid;
-      $row->sid = $node->vid;
-      $row->language = $node->language;
-      $row->changed = $node->changed;
-      $row->changefreq = max(XMLSITEMAP_TIME - $node->changed, empty($node->previously_changed) ? 0 : $node->changed - $node->previously_changed);
-      if ($node->priority_override != -2.0) {
-        $priority = $node->priority_override;
-      }
-      elseif (($priority = variable_get('xmlsitemap_node_type_priority_'. $node->type, 0.5)) != -1.0) {
-        if ($node->promote) {
-          $priority += variable_get('xmlsitemap_node_promote_priority', 0.3);
-        }
-        $priority += $node->comment_ratio * variable_get('xmlsitemap_node_comment_priority', 0.2);
-      }
-      if ($priority != -1.0) {
-        $row->priority = min(max(round($priority, 1), 0.0), 1.0);
+      $priority += $node->comment_ratio * variable_get('xmlsitemap_node_comment_priority', 0.2);
+    }
+    if ($priority != -1.0) {
+      $row->priority = min(max(round($priority, 1), 0.0), 1.0);
+      if (!db_result(db_query("SELECT COUNT(loc) FROM {xmlsitemap} WHERE loc = '%s'", $row->loc))) {
         drupal_write_record('xmlsitemap', $row);
       }
     }
@@ -380,7 +372,7 @@ function xmlsitemap_node_xmlsitemap_links($modules) {
  * Add submit actions to forms.
  */
 function xmlsitemap_node_type_submit($form, &$form_state) {
-  xmlsitemap_helper_flag_sitemap('xmlsitemap_node');
+  xmlsitemap_helper_flag_sitemap();
 }
 
 /*****************************************************************************
@@ -480,7 +472,7 @@ function _xmlsitemap_node_batch_process($nodes, $priority, &$context) {
     $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
   }
   else {
-    xmlsitemap_helper_flag_sitemap('xmlsitemap_node');
+    xmlsitemap_helper_flag_sitemap();
   }
 }
 

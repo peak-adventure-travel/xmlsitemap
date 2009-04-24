@@ -14,14 +14,14 @@
  * Implementation of hook_enable().
  */
 function xmlsitemap_node_enable() {
-  xmlsitemap_helper_flag_sitemap('xmlsitemap_node');
+  xmlsitemap_helper_flag_sitemap();
 }
 
 /**
  * Implementation of hook_disable().
  */
 function xmlsitemap_node_disable() {
-  xmlsitemap_helper_flag_sitemap('xmlsitemap_node');
+  xmlsitemap_helper_flag_sitemap();
 }
 
 /**
@@ -395,12 +395,7 @@ function xmlsitemap_node_update_6116() {
  *
  */
 function xmlsitemap_node_update_6117() {
-  xmlsitemap_helper_flag_sitemap('xmlsitemap_node');
-  $ret[] = array(
-    'success' => TRUE,
-    'query' => 'UPDATE SITE MAP',
-  );
-  return $ret;
+  return array();
 }
 
 /**
