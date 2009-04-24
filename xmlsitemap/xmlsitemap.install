@@ -147,26 +147,26 @@ function xmlsitemap_update_7() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_update_8() {
-  module_enable(array('xmlsitemap'));
-  return array(
-    array(
-      'success' => TRUE,
-      'query' => "ENABLE MODULE 'xmlsitemap'"
-    )
-  );
+  return array();
 }
 
 /**
  * Implementation of hook_update_N().
  */
 function xmlsitemap_update_9() {
+  return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_10() {
   menu_rebuild();
-  return array(
-    0 => array(
-      'success' => TRUE,
-      'query' => 'REBUILD DRUPAL MENU',
-    )
+  $ret[] = array(
+    'success' => TRUE,
+    'query' => 'REBUILD DRUPAL MENU',
   );
+  return $ret;
 }
 
 /**
