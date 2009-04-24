@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 5.x-2, 2009-04-24
+-----------------------------------
+#429598: Remove xmlsitemap_helper.module, and move the code to xmlsitemap.module.
+
 XML Sitemap 5.x-2, 2009-04-17
 -----------------------------------
 #436874: The site map content is not ordered by priority.
