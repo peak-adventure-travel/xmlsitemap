@@ -100,11 +100,6 @@ function xmlsitemap_node_update_5() {
   if ($result['success']) {
     $ret[] = $result;
   }
-  menu_rebuild();
-  $ret[] = array(
-    'success' => TRUE,
-    'query' => 'UPDATE DRUPAL MENUS'
-  );
   return $ret;
 }
 

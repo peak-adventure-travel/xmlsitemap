@@ -120,7 +120,7 @@ function xmlsitemap_file_xmlsitemap_links() {
       $access = module_invoke_all('file_download', $file->filepath);
     }
     if (!in_array(-1, $access)) {
-      $age = time() - $file->changed;
+      $age = XMLSITEMAP_TIME - $file->changed;
       $interval = empty($file->previously_changed) ? 0 : $file->changed - $file->previously_changed;
       db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)",
         xmlsitemap_file_create_url($file->filepath, $file->alias),

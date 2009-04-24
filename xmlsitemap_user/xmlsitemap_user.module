@@ -121,7 +121,7 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
         $priority = db_result(db_query("SELECT priority_override FROM {xmlsitemap_user} WHERE uid = %d", $account->uid));
       }
       db_query("INSERT INTO {xmlsitemap_user} (uid, last_changed, priority_override) VALUES (%d, %d, %s)",
-        $account->uid, time(), isset($priority) && $priority !== FALSE ? $priority : 'NULL'
+        $account->uid, XMLSITEMAP_TIME, isset($priority) && $priority !== FALSE ? $priority : 'NULL'
       );
       xmlsitemap_flag_sitemap();
       break;
@@ -135,7 +135,7 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
       db_query("UPDATE {xmlsitemap_user}
         SET previously_changed = last_changed, last_changed = %d, priority_override = %s
         WHERE uid = %d",
-        time(), $priority !== FALSE ? $priority : 'NULL', $account->uid
+        XMLSITEMAP_TIME, $priority !== FALSE ? $priority : 'NULL', $account->uid
       );
       xmlsitemap_flag_sitemap();
       break;
@@ -185,7 +185,7 @@ function xmlsitemap_user_xmlsitemap_links() {
       $uid, variable_get('xmlsitemap_user_default_priority', 0.5)
     );
     while ($user = db_fetch_object($result)) {
-      $age = time() - $user->last_changed;
+      $age = XMLSITEMAP_TIME - $user->last_changed;
       $interval = empty($user->previously_changed) ? 0 : $user->last_changed - $user->previously_changed;
       if (isset($user->priority_override)) {
         $priority = $user->priority_override;
