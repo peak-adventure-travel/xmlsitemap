@@ -44,14 +44,14 @@ function xmlsitemap_node_enable() {
     WHERE xn.nid IS NULL
     GROUP BY n.nid, n.changed, s.last_comment_timestamp
   ");
-  xmlsitemap_helper_update_sitemap();
+  xmlsitemap_update_sitemap();
 }
 
 /**
  * Implementation of hook_disable().
  */
 function xmlsitemap_node_disable() {
-  xmlsitemap_helper_update_sitemap();
+  xmlsitemap_update_sitemap();
 }
 
 /**

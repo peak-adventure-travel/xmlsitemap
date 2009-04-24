@@ -2,4 +2,4 @@
 name = XML Sitemap: User
 description = Adds user profiles to the site map.
 package = XML Sitemap
-dependencies = xmlsitemap_helper
+dependencies = xmlsitemap

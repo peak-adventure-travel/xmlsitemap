@@ -231,7 +231,7 @@ function xmlsitemap_settings_sitemap() {
     '#title' => t('Front page priority'),
     '#description' => t('This is the absolute priority for the front page.'),
     '#default_value' => variable_get('xmlsitemap_front_page_priority', 1),
-    '#options' => xmlsitemap_helper_priority_options(),
+    '#options' => xmlsitemap_priority_options(),
   );
   return system_settings_form($form);
 }
@@ -250,7 +250,7 @@ function xmlsitemap_settings_sitemap_validate($form_id, $form_values) {
  */
 function xmlsitemap_settings_sitemap_submit($form_id, $form_values) {
   system_settings_form_submit($form_id, $form_values);
-  xmlsitemap_helper_update_sitemap();
+  xmlsitemap_update_sitemap();
 }
 
 /**
@@ -296,8 +296,233 @@ function xmlsitemap_settings_engines_submit($form_id, $form_values) {
 }
 
 /*****************************************************************************
+ * Public functions.
+ ****************************************************************************/
+
+/**
+ * Modified version of file_create_url(). Allows us to remove language prefixes.
+ * @param $path: the path to the file
+ * @return A URL to the file
+ */
+function xmlsitemap_file_create_url($path, $alias = NULL) {
+  $path = trim(substr($path, strlen(file_directory_path())), '\\/');
+  if (variable_get('file_downloads', FILE_DOWNLOADS_PUBLIC) == FILE_DOWNLOADS_PRIVATE) {
+    return xmlsitemap_url('system/files/'. $path, $alias, NULL, NULL, TRUE);
+  }
+  else {
+    return "$GLOBALS[base_url]/". file_directory_path() .'/'. str_replace('\\', '/', $path);
+  }
+}
+
+/**
+ * Determine the frequency of updates to a link.
+ * @param $interval
+ *  The number of seconds since the last change, or the number of seconds
+ *  between the last change, and the previous change.
+ * @return
+ *  A string representing the update frequency according to the sitemaps.org
+ *  protocol.
+ */
+function xmlsitemap_frequency($interval) {
+  $frequencies = array(
+    'always' => 3600,
+    'hourly' => 86400,
+    'daily' => 604800,
+    'weekly' => 2419200,
+    'monthly' => 29030400,
+    'yearly' => 100000000,
+  );
+  if (array_key_exists($interval, $frequencies)) {
+    return $interval;
+  }
+  if ($interval < 0 || !is_numeric($interval)) {
+    return 'never';
+  }
+  foreach ($frequencies as $frequency => $value) {
+    if ($interval < $value) {
+      break;
+    }
+  }
+  return $frequency;
+}
+
+/**
+ * Given a database field type, return the correct %-placeholder.
+ * Embed the placeholder in a query to be passed to db_query and and pass as an
+ * argument to db_query a value of the specified type.
+ * This is the backport of the function present in Drupal 6.
+ *
+ * @param $type
+ *   The type of a database field.
+ * @return
+ *   The placeholder string to embed in a query for that type.
+ */
+function xmlsitemap_placeholder($type) {
+  switch ($type) {
+    case 'varchar':
+    case 'char':
+    case 'text':
+    case 'datetime':
+      return "'%s'";
+    case 'numeric':
+      return '%n';
+    case 'serial':
+    case 'int':
+      return '%d';
+    case 'float':
+      return '%f';
+    case 'blob':
+      return '%b';
+  }
+  return 'unsupported type '. $type .'for xmlsitemap_placeholder';
+}
+
+/**
+ * Generate placeholders for an array of query arguments of a single type.
+ * Given a database field type, return correct %-placeholders to
+ * embed in a query.
+ * This is the backport of a function present in Drupal 6.
+ *
+ * @param $arguments
+ *  An array with at least one element.
+ * @param $type
+ *   The database type of a field (e.g. 'int', 'text', or 'varchar').
+ * @return
+ *   An array of placeholders for the passed database type.
+ */
+ function xmlsitemap_placeholders($arguments, $type = 'int') {
+  $placeholder = xmlsitemap_placeholder($type);
+  return implode(',', array_fill(0, count($arguments), $placeholder));
+}
+
+/**
+ * Get an array of site map priority options.
+ * @param $option:
+ * If not given, the array will include priority values from 0.0 to 1.0.
+ * - exclude: Add option to exclude item from site map.
+ * - default: Add option to use default priority. Only for cases where a default
+ *   priority exists.
+ * - both: Add both the default and exclude options.
+ * @return An array of priority options.
+ */
+function xmlsitemap_priority_options($option = '') {
+  $options = array(
+    '1' => t('1.0'),
+    '0.9' => t('0.9'),
+    '0.8' => t('0.8'),
+    '0.7' => t('0.7'),
+    '0.6' => t('0.6'),
+    '0.5' => t('0.5'),
+    '0.4' => t('0.4'),
+    '0.3' => t('0.3'),
+    '0.2' => t('0.2'),
+    '0.1' => t('0.1'),
+    '0' => t('0.0')
+  );
+  if ($option == 'exclude' || $option == 'both') {
+    $options['-1'] = t('Not in site map');
+  }
+  if ($option == 'default' || $option == 'both') {
+    $options['-2'] = t('Default');
+  }
+  return $options;
+}
+
+/**
+ * Mark the site map as changed and the cache as needing update.
+ * @return None
+ */
+function xmlsitemap_update_sitemap() {
+  if (!variable_get('xmlsitemap_changed', FALSE)) {
+    variable_set('xmlsitemap_changed', TRUE);
+  }
+  if (!variable_get('xmlsitemap_update', FALSE)) {
+    variable_set('xmlsitemap_update', TRUE);
+  }
+  if (variable_get('xmlsitemap_submit', FALSE)) {
+    _xmlsitemap_submit_on_exit();
+  }
+}
+
+/**
+ * Modified version of url(). We don't want to do a separate database query for
+ * each url, so we pass the alias as an extra parameter.
+ * @param $alias: The URL alias. Default is NULL.
+ * @return The fully formatted URL
+ */
+function xmlsitemap_url($path = NULL, $alias = NULL, $query = NULL, $fragment = NULL, $absolute = FALSE) {
+  if (isset($fragment)) {
+    $fragment = "#$fragment";
+  }
+  $colonpos = strpos($path, ':');
+  if ($colonpos !== FALSE && !preg_match('![/?#]!', substr($path, 0, $colonpos)) && filter_xss_bad_protocol($path, FALSE) == check_plain($path)) {
+    if (strpos($path, '#') !== FALSE) {
+      list($path, $old_fragment) = explode('#', $path, 2);
+      if (isset($old_fragment) && !isset($fragment)) {
+        $fragment = "#$old_fragment";
+      }
+    }
+    if (isset($query)) {
+      $path .= (strpos($path, '?') !== FALSE ? '&' : '?') . $query;
+    }
+    return $path . $fragment;
+  }
+  static $script;
+  $script = isset($script) ? $script : strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') === FALSE ? 'index.php' : '';
+  $base = ($absolute ? "$GLOBALS[base_url]/" : base_path());
+  if (!empty($path) && $path != '<front>') {
+    $path = _xmlsitemap_get_path_alias($path, $alias);
+    $path = drupal_urlencode($path);
+    if (!variable_get('clean_url', FALSE)) {
+      if (isset($query)) {
+        return $base . $script .'?q='. $path .'&'. $query . $fragment;
+      }
+      else {
+        return $base . $script .'?q='. $path . $fragment;
+      }
+    }
+    else {
+      if (isset($query)) {
+        return $base . $path .'?'. $query . $fragment;
+      }
+      else {
+        return $base . $path . $fragment;
+      }
+    }
+  }
+  else {
+    if (isset($query)) {
+      return $base . $script .'?'. $query . $fragment;
+    }
+    else {
+      return $base . $fragment;
+    }
+  }
+}
+
+/*****************************************************************************
  * Private functions.
  ****************************************************************************/
+
+/**
+ * Modified version of drupal_get_path_alias() for xmlsitemap_url().
+ * @param $path: An internal Drupal path
+ * @param $alias: The URL alias. Default is NULL.
+ * @return A processed path
+ */
+function _xmlsitemap_get_path_alias($path, $alias = NULL) {
+  $result = $path;
+  if (!empty($alias)) {
+    $result = $alias;
+  }
+  if (function_exists('custom_url_rewrite')) {
+    $result = custom_url_rewrite('alias', $result, $path);
+  }
+  if (module_exists('i18n') && i18n_get_lang() == i18n_default_language()) {
+    i18n_get_lang_prefix($result, TRUE);
+  }
+  return $result;
+}
 
 /**
  * Return the number of links in the site map.
@@ -331,7 +556,7 @@ function _xmlsitemap_output_chunk($chunk = 0) {
       print '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $link['lastmod']) .'</lastmod>'."\n";
     }
     if (isset($link['changefreq'])) {
-      print '    <changefreq>'. xmlsitemap_helper_frequency($link['changefreq']) .'</changefreq>'."\n";
+      print '    <changefreq>'. xmlsitemap_frequency($link['changefreq']) .'</changefreq>'."\n";
     }
     if (isset($link['priority']) && $link['priority'] <= 1 && $link['priority'] >= 0) {
       print '    <priority>'. number_format($link['priority'], 1) .'</priority>'."\n";
@@ -355,7 +580,7 @@ function _xmlsitemap_output_index() {
   $link_count = _xmlsitemap_link_count();
   for ($chunk = 0; $chunk < $link_count / $chunk_size; ++$chunk) {
     print '  <sitemap>'."\n";
-    print '    <loc>'. xmlsitemap_helper_url("sitemap$chunk.xml", NULL, NULL, NULL, TRUE) .'</loc>'."\n";
+    print '    <loc>'. xmlsitemap_url("sitemap$chunk.xml", NULL, NULL, NULL, TRUE) .'</loc>'."\n";
     if ($chunk < $link_count / $chunk_size) {
       $from = $chunk * $chunk_size;
       if (!empty($chunk_size)) {
@@ -407,23 +632,23 @@ function _xmlsitemap_update() {
     foreach ($languages['name'] as $key => $lang) {
       i18n_get_lang($key);
       $key = $key == i18n_default_language() ? NULL : $key;
-      db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)", xmlsitemap_helper_url($key, NULL, NULL, NULL, TRUE), time() - 1, 1, $fp_priority);
+      db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)", xmlsitemap_url($key, NULL, NULL, NULL, TRUE), time() - 1, 1, $fp_priority);
       module_invoke_all('xmlsitemap_links');
     }
     i18n_get_lang($language);
     $language = $language == i18n_default_language() ? NULL : $language;
-    db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)", xmlsitemap_helper_url($language, NULL, NULL, NULL, TRUE), time() - 1, 1, $fp_priority);
+    db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)", xmlsitemap_url($language, NULL, NULL, NULL, TRUE), time() - 1, 1, $fp_priority);
     i18n_selection_mode('simple');
     module_invoke_all('xmlsitemap_links');
     i18n_selection_mode('reset');
   }
   else {
-    db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)", xmlsitemap_helper_url(NULL, NULL, NULL, NULL, TRUE), time() - 1, 1, $fp_priority);
+    db_query("INSERT INTO {xmlsitemap} (loc, lastmod, changefreq, priority) VALUES ('%s', %d, %d, %f)", xmlsitemap_url(NULL, NULL, NULL, NULL, TRUE), time() - 1, 1, $fp_priority);
     module_invoke_all('xmlsitemap_links');
   }
   $user = $current_user;
   menu_rebuild();
-  cache_clear_all(xmlsitemap_helper_url('sitemap.xml', NULL, NULL, NULL, TRUE), 'cache_page', TRUE);
+  cache_clear_all(xmlsitemap_url('sitemap.xml', NULL, NULL, NULL, TRUE), 'cache_page', TRUE);
   variable_set('xmlsitemap_update', FALSE);
 }
 

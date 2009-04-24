@@ -46,7 +46,7 @@ function xmlsitemap_menu_menu($may_cache) {
   if ($may_cache) {
     global $user;
     if (!empty($user->uid)) {
-      xmlsitemap_helper_update_sitemap();
+      xmlsitemap_update_sitemap();
     }
   }
 }
@@ -92,7 +92,7 @@ function _xmlsitemap_menu_process_link($mid, $menu) {
     $alias = db_result(db_query("SELECT dst FROM {url_alias} WHERE src = '%s'", $item['path']));
     $alias = $alias === FALSE ? NULL : $alias;
     $priority = 1.0 - min(max(round(($menu['items'][$mid]['weight'] + 10) / 20, 1), 0.0), 1.0);
-    db_query("INSERT INTO {xmlsitemap} (loc, priority) VALUES ('%s', %f)", xmlsitemap_helper_url($item['path'], $alias, NULL, NULL, TRUE), $priority);
+    db_query("INSERT INTO {xmlsitemap} (loc, priority) VALUES ('%s', %f)", xmlsitemap_url($item['path'], $alias, NULL, NULL, TRUE), $priority);
   }
   if (isset($item['children'])) {
     foreach ($item['children'] as $mid) {

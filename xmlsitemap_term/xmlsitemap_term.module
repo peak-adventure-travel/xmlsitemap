@@ -42,7 +42,7 @@ function xmlsitemap_term_form_alter($form_id, &$form) {
           $priority = 'NULL';
         }
         if (user_access('override term priority')) {
-          $options = xmlsitemap_helper_priority_options('both');
+          $options = xmlsitemap_priority_options('both');
           $default = variable_get('xmlsitemap_term_vocabulary_priority_'. $form['vid']['#value'], '0.5');
           $form['xmlsitemap_term_priority'] = array(
             '#type' => 'select',
@@ -63,7 +63,7 @@ function xmlsitemap_term_form_alter($form_id, &$form) {
           '#type' => 'select',
           '#title' => t('Site map priority'),
           '#default_value' => variable_get('xmlsitemap_term_vocabulary_priority_'. $form['vid']['#value'], 0.5),
-          '#options' => xmlsitemap_helper_priority_options('exclude'),
+          '#options' => xmlsitemap_priority_options('exclude'),
           '#description' => t('This will be the default priority of terms in this vocabulary.'),
         );
         $form['submit']['#weight'] = 1;
@@ -99,10 +99,10 @@ function xmlsitemap_term_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
   }
   if (!empty($terms)) {
     db_query("UPDATE {xmlsitemap_term}
-      SET previously_changed = last_changed, last_changed = %d WHERE tid IN(". xmlsitemap_helper_placeholders($terms, 'int') .")",
+      SET previously_changed = last_changed, last_changed = %d WHERE tid IN(". xmlsitemap_placeholders($terms, 'int') .")",
       $query_args
     );
-    xmlsitemap_helper_update_sitemap();
+    xmlsitemap_update_sitemap();
   }
 }
 
@@ -114,13 +114,13 @@ function xmlsitemap_term_taxonomy($op, $type, $array = NULL) {
     switch ($op) {
       case 'delete':
         variable_del('xmlsitemap_term_vocabulary_priority_'. $array['vid']);
-        xmlsitemap_helper_update_sitemap();
+        xmlsitemap_update_sitemap();
         break;
       case 'insert':
       case 'update':
         if (variable_get('xmlsitemap_term_vocabulary_priority_'. $array['vid'], 0.5) != $array['xmlsitemap_term_vocabulary_priority']) {
           variable_set('xmlsitemap_term_vocabulary_priority_'. $array['vid'], $array['xmlsitemap_term_vocabulary_priority']);
-          xmlsitemap_helper_update_sitemap();
+          xmlsitemap_update_sitemap();
         }
         break;
     }
@@ -147,7 +147,7 @@ function xmlsitemap_term_taxonomy($op, $type, $array = NULL) {
         db_query("DELETE FROM {xmlsitemap_term} WHERE tid = %d", $array['tid']);
         break;
     }
-    xmlsitemap_helper_update_sitemap();
+    xmlsitemap_update_sitemap();
   }
 }
 
@@ -186,7 +186,7 @@ function xmlsitemap_term_xmlsitemap_links() {
     FROM {term_data} t
     LEFT JOIN {vocabulary} v ON t.vid = v.vid
     LEFT JOIN {xmlsitemap_term} xt ON t.tid = xt.tid
-    WHERE (t.vid NOT IN (". xmlsitemap_helper_placeholders($excludes, 'int') .") AND xt.priority_override IS NULL OR xt.priority_override >= 0)
+    WHERE (t.vid NOT IN (". xmlsitemap_placeholders($excludes, 'int') .") AND xt.priority_override IS NULL OR xt.priority_override >= 0)
     AND t.tid <> %d
     GROUP BY t.tid, t.vid, v.module, xt.last_changed, xt.previously_changed, xt.priority_override", 't', 'tid'), $query_args
   );
@@ -204,7 +204,7 @@ function xmlsitemap_term_xmlsitemap_links() {
     if ($alias === FALSE) {
       $alias = NULL;
     }
-    $url = xmlsitemap_helper_url($path, $alias, NULL, NULL, TRUE);
+    $url = xmlsitemap_url($path, $alias, NULL, NULL, TRUE);
     $age = time() - $term->last_changed;
     $interval = empty($term->previously_changed) ? 0 : $term->last_changed - $term->previously_changed;
     if (isset($term->priority_override)) {

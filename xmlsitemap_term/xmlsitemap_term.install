@@ -51,14 +51,14 @@ function xmlsitemap_term_enable() {
     LEFT JOIN {xmlsitemap_term} xt ON xt.tid = td.tid
     WHERE xt.tid IS NULL
   ", time());
-  xmlsitemap_helper_update_sitemap();
+  xmlsitemap_update_sitemap();
 }
 
 /**
  * Implementation of hook_disable().
  */
 function xmlsitemap_term_disable() {
-  xmlsitemap_helper_update_sitemap();
+  xmlsitemap_update_sitemap();
 }
 
 /**

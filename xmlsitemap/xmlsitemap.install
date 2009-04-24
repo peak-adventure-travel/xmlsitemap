@@ -14,7 +14,7 @@
  * Implementation of hook_enable().
  */
 function xmlsitemap_enable() {
-  xmlsitemap_helper_update_sitemap();
+  xmlsitemap_update_sitemap();
 }
 
 /**
@@ -147,11 +147,11 @@ function xmlsitemap_update_7() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_update_8() {
-  module_enable(array('xmlsitemap_helper'));
+  module_enable(array('xmlsitemap'));
   return array(
     array(
       'success' => TRUE,
-      'query' => "ENABLE MODULE 'xmlsitemap_helper'"
+      'query' => "ENABLE MODULE 'xmlsitemap'"
     )
   );
 }
