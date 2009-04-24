@@ -102,7 +102,7 @@ function xmlsitemap_term_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       SET previously_changed = last_changed, last_changed = %d WHERE tid IN(". xmlsitemap_placeholders($terms, 'int') .")",
       $query_args
     );
-    xmlsitemap_update_sitemap();
+    xmlsitemap_flag_sitemap();
   }
 }
 
@@ -114,13 +114,13 @@ function xmlsitemap_term_taxonomy($op, $type, $array = NULL) {
     switch ($op) {
       case 'delete':
         variable_del('xmlsitemap_term_vocabulary_priority_'. $array['vid']);
-        xmlsitemap_update_sitemap();
+        xmlsitemap_flag_sitemap();
         break;
       case 'insert':
       case 'update':
         if (variable_get('xmlsitemap_term_vocabulary_priority_'. $array['vid'], 0.5) != $array['xmlsitemap_term_vocabulary_priority']) {
           variable_set('xmlsitemap_term_vocabulary_priority_'. $array['vid'], $array['xmlsitemap_term_vocabulary_priority']);
-          xmlsitemap_update_sitemap();
+          xmlsitemap_flag_sitemap();
         }
         break;
     }
@@ -147,7 +147,7 @@ function xmlsitemap_term_taxonomy($op, $type, $array = NULL) {
         db_query("DELETE FROM {xmlsitemap_term} WHERE tid = %d", $array['tid']);
         break;
     }
-    xmlsitemap_update_sitemap();
+    xmlsitemap_flag_sitemap();
   }
 }
 

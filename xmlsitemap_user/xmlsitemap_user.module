@@ -123,7 +123,7 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
       db_query("INSERT INTO {xmlsitemap_user} (uid, last_changed, priority_override) VALUES (%d, %d, %s)",
         $account->uid, time(), isset($priority) && $priority !== FALSE ? $priority : 'NULL'
       );
-      xmlsitemap_update_sitemap();
+      xmlsitemap_flag_sitemap();
       break;
     case 'update':
       if (isset($edit['xmlsitemap_user_priority'])) {
@@ -137,11 +137,11 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
         WHERE uid = %d",
         time(), $priority !== FALSE ? $priority : 'NULL', $account->uid
       );
-      xmlsitemap_update_sitemap();
+      xmlsitemap_flag_sitemap();
       break;
     case 'delete':
       db_query("DELETE FROM {xmlsitemap_user} WHERE uid = %d", $account->uid);
-      xmlsitemap_update_sitemap();
+      xmlsitemap_flag_sitemap();
       break;
   }
 }
@@ -211,14 +211,14 @@ function xmlsitemap_user_xmlsitemap_links() {
  */
 function _xmlsitemap_user_submit($form_id, $form_values) {
   if ($form_id == 'user_admin_settings' && $form_values['xmlsitemap_user_default_priority'] != $form_values['xmlsitemap_user_old_default_priority']) {
-    xmlsitemap_update_sitemap();
+    xmlsitemap_flag_sitemap();
   }
   elseif ($form_id == 'user_admin_role') {
     $priority = db_result(db_query("SELECT priority FROM {xmlsitemap_user_role} WHERE rid = %d", $form_values['rid']));
     if ($form_values['op'] == t('Delete role')) {
       db_query("DELETE FROM {xmlsitemap_user_role} WHERE rid = %d", $form_values['rid']);
       if ($priority !== FALSE) {
-        xmlsitemap_update_sitemap();
+        xmlsitemap_flag_sitemap();
       }
     }
     elseif ($form_values['op'] == t('Save role')) {
@@ -229,7 +229,7 @@ function _xmlsitemap_user_submit($form_id, $form_values) {
       elseif ($form_values['xmlsitemap_user_role_priority'] != $priority) {
         db_query("UPDATE {xmlsitemap_user_role} SET priority = %s WHERE rid = %d", $query_args);
       }
-      xmlsitemap_update_sitemap();
+      xmlsitemap_flag_sitemap();
     }
   }
 }

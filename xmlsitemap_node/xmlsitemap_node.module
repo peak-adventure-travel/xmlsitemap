@@ -27,7 +27,7 @@ function xmlsitemap_node_comment($comment, $op) {
     case 'delete':
       db_query("UPDATE {xmlsitemap_node} SET previous_comment = last_comment, last_comment = %d WHERE nid = %d", $comment->timestamp, $comment->nid);
       if (variable_get('xmlsitemap_node_count_comments', TRUE)) {
-        xmlsitemap_update_sitemap();
+        xmlsitemap_flag_sitemap();
       }
       break;
   }
@@ -135,7 +135,7 @@ function xmlsitemap_node_node_type($op, $info) {
     variable_set('xmlsitemap_node_type_priority_'. $info->type, variable_get('xmlsitemap_node_type_priority_'. $info->old_type, 0.5));
     variable_del('xmlsitemap_node_type_priority_'. $info->old_type);
   }
-  xmlsitemap_update_sitemap();
+  xmlsitemap_flag_sitemap();
 }
 
 /**
@@ -154,7 +154,7 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
       $node->priority_override = isset($node->priority_override) ? $node->priority_override : 'NULL';
       db_query("INSERT INTO {xmlsitemap_node} (nid, last_changed, priority_override) VALUES (%d, %d, %s)", $node->nid, $node->changed, $node->priority_override);
       if ($node->status) {
-        xmlsitemap_update_sitemap();
+        xmlsitemap_flag_sitemap();
       }
       break;
     case 'update':
@@ -167,12 +167,12 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
         WHERE nid = %d",
         $node->changed, $node->priority_override, $node->nid
       );
-      xmlsitemap_update_sitemap();
+      xmlsitemap_flag_sitemap();
       break;
     case 'delete':
       db_query("DELETE FROM {xmlsitemap_node} WHERE nid = %d", $node->nid);
       if ($node->status) {
-        xmlsitemap_update_sitemap();
+        xmlsitemap_flag_sitemap();
       }
       break;
   }
@@ -311,7 +311,7 @@ function _xmlsitemap_node_submit($form_id, $form_values) {
   $priority = $form_values['xmlsitemap_node_type_priority'];
   $old_priority = $form_values['xmlsitemap_old_priority'];
   if ($op == t('Save content type') && $priority != $old_priority || $op == t('Reset to defaults') && $old_priority != 0.1) {
-    xmlsitemap_update_sitemap();
+    xmlsitemap_flag_sitemap();
   }
 }
 
@@ -335,7 +335,7 @@ function theme_xmlsitemap_node_view_news($view, $nodes, $type) {
     print '  <url>'."\n";
     print '    <loc>'. xmlsitemap_url('node/'. $node->nid, $node->alias, NULL, NULL, TRUE) .'</loc>'."\n";
     print '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $lastmod) .'</lastmod>'."\n";
-    print '    <changefreq>'. xmlsitemap_frequency(xmlsitemap_node_frequency($node)) .'</changefreq>'."\n";
+    print '    <changefreq>'. xmlsitemap_sitemap_frequency(xmlsitemap_node_frequency($node)) .'</changefreq>'."\n";
     print '    <news:news>'."\n";
     print '      <news:publication_date>'. gmdate('Y-m-d\TH:i:s+00:00', $node->created) .'</news:publication_date>'."\n";
     print '    </news:news>'."\n";
@@ -367,7 +367,7 @@ function theme_xmlsitemap_node_view_sitemap($view, $nodes, $type) {
     print '  <url>'."\n";
     print '    <loc>'. xmlsitemap_url('node/'. $node->nid, $node->alias, NULL, NULL, TRUE) .'</loc>'."\n";
     print '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $lastmod) .'</lastmod>'."\n";
-    print '    <changefreq>'. xmlsitemap_frequency(xmlsitemap_node_frequency($node)) .'</changefreq>'."\n";
+    print '    <changefreq>'. xmlsitemap_sitemap_frequency(xmlsitemap_node_frequency($node)) .'</changefreq>'."\n";
     print '    <priority>'. number_format(xmlsitemap_node_priority($node), 1) .'</priority>'."\n";
     print '  </url>'."\n";
   }

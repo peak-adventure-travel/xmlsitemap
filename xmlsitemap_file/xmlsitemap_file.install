@@ -63,14 +63,14 @@ function xmlsitemap_file_enable() {
       );
     }
   }
-  xmlsitemap_update_sitemap();
+  xmlsitemap_flag_sitemap();
 }
 
 /**
  * Implementation of hook_disable().
  */
 function xmlsitemap_file_disable() {
-  xmlsitemap_update_sitemap();
+  xmlsitemap_flag_sitemap();
 }
 
 /**

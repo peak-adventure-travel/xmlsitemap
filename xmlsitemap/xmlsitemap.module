@@ -34,7 +34,7 @@ function xmlsitemap_exit() {
   if (variable_get('xmlsitemap_log_access', FALSE)) {
     $items = array();
     $chunk_size = variable_get('xmlsitemap_chunk_size', 50000);
-    $link_count = _xmlsitemap_link_count();
+    $link_count = xmlsitemap_link_count();
     if ($link_count / $chunk_size > 1) {
       for ($chunk = 0; $chunk < $link_count / $chunk_size; ++$chunk) {
         $items["sitemap$chunk.xml"] = $chunk;
@@ -149,7 +149,7 @@ function xmlsitemap_menu($may_cache) {
   }
   else {
     $chunk_size = variable_get('xmlsitemap_chunk_size', 50000);
-    $link_count = _xmlsitemap_link_count();
+    $link_count = xmlsitemap_link_count();
     if ($link_count / $chunk_size > 1) {
       for ($chunk = 0; $chunk < $link_count / $chunk_size; ++$chunk) {
         $items[] = array(
@@ -183,7 +183,7 @@ function xmlsitemap_output($chunk = NULL) {
   }
   drupal_set_header('Content-type: text/xml; charset=utf-8');
   $chunk_size = variable_get('xmlsitemap_chunk_size', 50000);
-  $link_count = _xmlsitemap_link_count();
+  $link_count = xmlsitemap_link_count();
   if (isset($chunk)) {
     if ($chunk < $link_count / $chunk_size) {
       _xmlsitemap_output_chunk($chunk);
@@ -250,7 +250,7 @@ function xmlsitemap_settings_sitemap_validate($form_id, $form_values) {
  */
 function xmlsitemap_settings_sitemap_submit($form_id, $form_values) {
   system_settings_form_submit($form_id, $form_values);
-  xmlsitemap_update_sitemap();
+  xmlsitemap_flag_sitemap();
 }
 
 /**
@@ -315,35 +315,14 @@ function xmlsitemap_file_create_url($path, $alias = NULL) {
 }
 
 /**
- * Determine the frequency of updates to a link.
- * @param $interval
- *  The number of seconds since the last change, or the number of seconds
- *  between the last change, and the previous change.
- * @return
- *  A string representing the update frequency according to the sitemaps.org
- *  protocol.
+ * Return the number of links in the site map.
  */
-function xmlsitemap_frequency($interval) {
-  $frequencies = array(
-    'always' => 3600,
-    'hourly' => 86400,
-    'daily' => 604800,
-    'weekly' => 2419200,
-    'monthly' => 29030400,
-    'yearly' => 100000000,
-  );
-  if (array_key_exists($interval, $frequencies)) {
-    return $interval;
+function xmlsitemap_link_count() {
+  static $link_count;
+  if (!isset($link_count)) {
+    $link_count = db_result(db_query("SELECT COUNT(*) FROM {xmlsitemap}"));
   }
-  if ($interval < 0 || !is_numeric($interval)) {
-    return 'never';
-  }
-  foreach ($frequencies as $frequency => $value) {
-    if ($interval < $value) {
-      break;
-    }
-  }
-  return $frequency;
+  return $link_count;
 }
 
 /**
@@ -429,10 +408,42 @@ function xmlsitemap_priority_options($option = '') {
 }
 
 /**
+ * Determine the frequency of updates to a link.
+ * @param $interval
+ *  The number of seconds since the last change, or the number of seconds
+ *  between the last change, and the previous change.
+ * @return
+ *  A string representing the update frequency according to the sitemaps.org
+ *  protocol.
+ */
+function xmlsitemap_sitemap_frequency($interval) {
+  $frequencies = array(
+    'always' => 3600,
+    'hourly' => 86400,
+    'daily' => 604800,
+    'weekly' => 2419200,
+    'monthly' => 29030400,
+    'yearly' => 100000000,
+  );
+  if (array_key_exists($interval, $frequencies)) {
+    return $interval;
+  }
+  if ($interval < 0 || !is_numeric($interval)) {
+    return 'never';
+  }
+  foreach ($frequencies as $frequency => $value) {
+    if ($interval < $value) {
+      break;
+    }
+  }
+  return $frequency;
+}
+
+/**
  * Mark the site map as changed and the cache as needing update.
  * @return None
  */
-function xmlsitemap_update_sitemap() {
+function xmlsitemap_flag_sitemap() {
   if (!variable_get('xmlsitemap_changed', FALSE)) {
     variable_set('xmlsitemap_changed', TRUE);
   }
@@ -525,17 +536,6 @@ function _xmlsitemap_get_path_alias($path, $alias = NULL) {
 }
 
 /**
- * Return the number of links in the site map.
- */
-function _xmlsitemap_link_count() {
-  static $link_count;
-  if (!isset($link_count)) {
-    $link_count = db_result(db_query("SELECT COUNT(*) FROM {xmlsitemap}"));
-  }
-  return $link_count;
-}
-
-/**
  * Display a chunk of the site map.
  * @param $chunk: An integer specifying which chunk of the site map to display
  * @return None
@@ -556,7 +556,7 @@ function _xmlsitemap_output_chunk($chunk = 0) {
       print '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $link['lastmod']) .'</lastmod>'."\n";
     }
     if (isset($link['changefreq'])) {
-      print '    <changefreq>'. xmlsitemap_frequency($link['changefreq']) .'</changefreq>'."\n";
+      print '    <changefreq>'. xmlsitemap_sitemap_frequency($link['changefreq']) .'</changefreq>'."\n";
     }
     if (isset($link['priority']) && $link['priority'] <= 1 && $link['priority'] >= 0) {
       print '    <priority>'. number_format($link['priority'], 1) .'</priority>'."\n";
@@ -577,7 +577,7 @@ function _xmlsitemap_output_index() {
   print '  xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9'."\n";
   print '  http://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd">'."\n";
   $chunk_size = variable_get('xmlsitemap_chunk_size', 50000);
-  $link_count = _xmlsitemap_link_count();
+  $link_count = xmlsitemap_link_count();
   for ($chunk = 0; $chunk < $link_count / $chunk_size; ++$chunk) {
     print '  <sitemap>'."\n";
     print '    <loc>'. xmlsitemap_url("sitemap$chunk.xml", NULL, NULL, NULL, TRUE) .'</loc>'."\n";

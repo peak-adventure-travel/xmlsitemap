@@ -30,7 +30,7 @@ function xmlsitemap_file_form_alter($form_id, &$form) {
     }
   }
   elseif ($form_id == 'system_file_system_settings') {
-    $form['#submit']['xmlsitemap_update_sitemap'] = array();
+    $form['#submit']['xmlsitemap_flag_sitemap'] = array();
   }
 }
 
@@ -68,7 +68,7 @@ function xmlsitemap_file_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
           }
           $file = (object) $node->files[$file->fid];
           if ($file->list || $node->xmlsitemap_file_list[$file->fid]) {
-            xmlsitemap_update_sitemap();
+            xmlsitemap_flag_sitemap();
           }
         }
         break;
@@ -76,7 +76,7 @@ function xmlsitemap_file_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
         db_query("DELETE FROM {xmlsitemap_file} WHERE nid = %d", $node->nid);
         foreach ($node->files as $file) {
           if ($file->list) {
-            xmlsitemap_update_sitemap();
+            xmlsitemap_flag_sitemap();
             break;
           }
         }

@@ -46,7 +46,7 @@ function xmlsitemap_menu_menu($may_cache) {
   if ($may_cache) {
     global $user;
     if (!empty($user->uid)) {
-      xmlsitemap_update_sitemap();
+      xmlsitemap_flag_sitemap();
     }
   }
 }
