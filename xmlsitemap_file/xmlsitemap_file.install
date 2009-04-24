@@ -14,14 +14,14 @@
  * Implementation of hook_enable().
  */
 function xmlsitemap_file_enable() {
-  xmlsitemap_helper_flag_sitemap();
+  xmlsitemap_flag_sitemap();
 }
 
 /**
  * Implementation of hook_disable().
  */
 function xmlsitemap_file_disable() {
-  xmlsitemap_helper_flag_sitemap();
+  xmlsitemap_flag_sitemap();
 }
 
 /**

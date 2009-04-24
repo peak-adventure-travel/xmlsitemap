@@ -103,7 +103,7 @@ function xmlsitemap_menu() {
     'type' => MENU_CALLBACK,
   );
   $chunk_size = variable_get('xmlsitemap_chunk_size', 1000);
-  $link_count = xmlsitemap_helper_link_count();
+  $link_count = xmlsitemap_link_count();
   if ($link_count > $chunk_size) {
     for ($chunk = 0; $chunk < $link_count / $chunk_size; ++$chunk) {
       $items["sitemap$chunk.xml"] = array(
@@ -139,7 +139,7 @@ function xmlsitemap_perm() {
  */
 function xmlsitemap_output($chunk = NULL) {
   $chunk_size = variable_get('xmlsitemap_chunk_size', 1000);
-  $link_count = xmlsitemap_helper_link_count();
+  $link_count = xmlsitemap_link_count();
   if (($link_count / $chunk_size) > 1000) {
     $chunk_size = (integer) $link_count / 1000;
     if ($chunk_size != variable_get('xmlsitemap_chunk_size', 1000)) {
@@ -150,7 +150,7 @@ function xmlsitemap_output($chunk = NULL) {
     drupal_not_found();
     exit();
   }
-  $id = xmlsitemap_helper_cache_id();
+  $id = xmlsitemap_cache_id();
   if (variable_get('xmlsitemap_sitemap_needs_update', FALSE)) {
     variable_set('xmlsitemap_update_timestamp', XMLSITEMAP_TIME);
     db_query("DELETE FROM {xmlsitemap} WHERE type ='frontpage'");
@@ -247,7 +247,7 @@ function xmlsitemap_settings() {
     '#title' => t('Front page priority'),
     '#description' => t('The absolute priority for the front page.'),
     '#default_value' => variable_get('xmlsitemap_front_page_priority', 1),
-    '#options' => xmlsitemap_helper_priority_options(),
+    '#options' => xmlsitemap_priority_options(),
   );
   $form = system_settings_form($form);
   $form['#submit'][] = 'xmlsitemap_settings_submit';
@@ -268,7 +268,175 @@ function xmlsitemap_settings_validate($form, &$form_state) {
  * Submit the settings form.
  */
 function xmlsitemap_settings_submit($form, &$form_state) {
-  xmlsitemap_helper_flag_sitemap();
+  xmlsitemap_flag_sitemap();
+}
+
+/*****************************************************************************
+ * Public functions.
+ ****************************************************************************/
+
+/**
+ * Batch callback called when the batch operations are completed.
+ */
+function xmlsitemap_batch_operations_finished($success, $results, $operations) {
+  if ($success) {
+    drupal_set_message(t('The update has been performed.'));
+  }
+  else {
+    drupal_set_message(t('An error occurred and processing did not complete.'), 'error');
+    $message = format_plural($count = count($results), '1 item successfully processed.', '@count items successfully processed.');
+    if ($count) {
+      $message .= theme('item_list', $results, t('Last items successfully processed:'));
+    }
+    drupal_set_message($message);
+  }
+}
+
+/**
+ * Return the string used to identify the cache file for the site map content.
+ */
+function xmlsitemap_cache_id() {
+  static $id;
+  global $base_url, $language;
+  if (!isset($id)) {
+    $id = substr(md5($language->language . $base_url), 0, 8);
+  }
+  return $id;
+}
+
+/**
+ * Mark the site map as changed, and the cache as needing update.
+ */
+function xmlsitemap_flag_sitemap() {
+  if (!variable_get('xmlsitemap_sitemap_is_changed', FALSE)) {
+    variable_set('xmlsitemap_sitemap_is_changed', TRUE);
+  }
+  if (!variable_get('xmlsitemap_sitemap_needs_update', FALSE)) {
+    variable_set('xmlsitemap_sitemap_needs_update', TRUE);
+  }
+}
+
+/**
+ * Return the number of links present in xmlsitemap table.
+ */
+function xmlsitemap_link_count() {
+  static $link_count;
+  if (!isset($link_count)) {
+    $link_count = db_result(db_query("SELECT COUNT(xsm.loc)". xmlsitemap_sitemap_query()));
+  }
+  return $link_count;
+}
+
+/**
+ * Get an array of site map priority options.
+ * @param $option
+ *  If not given, the array will include priority values from 0.0 to 1.0.
+ * - exclude: Add option to exclude item from site map.
+ * - default: Add option to use default priority. Only for cases where a
+ *   default priority exists.
+ * - both: Add both the default and exclude options.
+ * @return
+ *  An array of priority options.
+ */
+function xmlsitemap_priority_options($option = '') {
+  $options = array(
+    '1' => t('1.0'),
+    '0.9' => t('0.9'),
+    '0.8' => t('0.8'),
+    '0.7' => t('0.7'),
+    '0.6' => t('0.6'),
+    '0.5' => t('0.5'),
+    '0.4' => t('0.4'),
+    '0.3' => t('0.3'),
+    '0.2' => t('0.2'),
+    '0.1' => t('0.1'),
+    '0' => t('0.0')
+  );
+  if ($option == 'exclude' || $option == 'both') {
+    $options['-1'] = t('Not in site map');
+  }
+  if ($option == 'default' || $option == 'both') {
+    $options['-2'] = t('Default');
+  }
+  return $options;
+}
+
+/**
+ * Determine the frequency of updates to a link.
+ * @param $interval
+ *  The number of seconds since the last change, or the number of seconds
+ *  between the last change, and the previous change.
+ * @return
+ *  A string representing the update frequency according to the sitemaps.org
+ *  protocol.
+ */
+function xmlsitemap_sitemap_frequency($interval) {
+  $frequencies = array(
+    'always' => 3600,
+    'hourly' => 86400,
+    'daily' => 604800,
+    'weekly' => 2419200,
+    'monthly' => 29030400,
+    'yearly' => 100000000,
+  );
+  if ($interval < 0 || !is_numeric($interval)) {
+    return 'never';
+  }
+  foreach ($frequencies as $frequency => $value) {
+    if ($interval < $value) {
+      break;
+    }
+  }
+  return $frequency;
+}
+
+/**
+ * Complete the query used to select rows from the xmlsitemap table.
+ */
+function xmlsitemap_sitemap_query() {
+  global $language;
+  $default = language_default();
+  $language_query = "AND xsm.language IN ('". $language->language ."', '')";
+  switch(variable_get('language_negotiation', LANGUAGE_NEGOTIATION_NONE)) {
+    case LANGUAGE_NEGOTIATION_NONE:
+      $language_query = '';
+      break;
+    case LANGUAGE_NEGOTIATION_PATH_DEFAULT:
+    case LANGUAGE_NEGOTIATION_PATH:
+      if (variable_get('xmlsitemap_all_links_to_default_language', 0) && $language->language == $default->language) {
+        $language_query = '';
+      }
+      break;
+  }
+  return "
+    FROM {xmlsitemap} xsm
+    INNER JOIN {system} s ON s.name = xsm.module
+    WHERE s.type = 'module'
+      AND s.status = 1
+      AND xsm.changefreq <> 0
+      AND xsm.changed <> 0
+      $language_query
+      AND (xsm.priority >= 0 AND xsm.priority <= 1)
+    ";
+}
+
+/**
+ * Return an array used to add additional form fields in the user form.
+ */
+function xmlsitemap_user_form_fieldset() {
+  static $done = FALSE;
+  $form = array();
+  if (!$done) {
+    $form['xmlsitemap'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('XML site map'),
+      '#collapsible' => TRUE,
+      '#access' => user_access('override profile settings') || user_access('administer users'),
+      '#weight' => 7,
+    );
+    $done = TRUE;
+  }
+  return $form;
 }
 
 /*****************************************************************************
@@ -291,8 +459,8 @@ function _xmlsitemap_anonymous_access() {
  */
 function _xmlsitemap_check_cache_files() {
   $chunk_size = variable_get('xmlsitemap_chunk_size', 1000);
-  $link_count = xmlsitemap_helper_link_count();
-  $id = xmlsitemap_helper_cache_id();
+  $link_count = xmlsitemap_link_count();
+  $id = xmlsitemap_cache_id();
   $parent_directory = variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap');
   // If the directory that should contains the cache files doesn't exist, then
   // the cache files must be created.
@@ -346,7 +514,7 @@ function _xmlsitemap_create_cache_chunk($fp, $chunk_size, $chunk = 0) {
   fwrite($fp, '  xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9'."\n");
   fwrite($fp, '  http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">'."\n");
   $start = $chunk * $chunk_size;
-  $links = db_query_range("SELECT xsm.loc, xsm.module, xsm.type, xsm.id, xsm.sid, xsm.changed, xsm.changefreq, xsm.priority". xmlsitemap_helper_sitemap_query() ."ORDER BY xsm.priority DESC, xsm.changed DESC, xsm.changefreq, xsm.loc", $start, $chunk_size);
+  $links = db_query_range("SELECT xsm.loc, xsm.module, xsm.type, xsm.id, xsm.sid, xsm.changed, xsm.changefreq, xsm.priority". xmlsitemap_sitemap_query() ."ORDER BY xsm.priority DESC, xsm.changed DESC, xsm.changefreq, xsm.loc", $start, $chunk_size);
   while ($link = db_fetch_object($links)) {
     if ($link->type == 'frontpage') {
       $url = url(NULL, array('absolute' => TRUE));
@@ -371,7 +539,7 @@ function _xmlsitemap_create_cache_chunk($fp, $chunk_size, $chunk = 0) {
       fwrite($fp, '  <url>'."\n");
       fwrite($fp, '    <loc>'. check_url($link->url) .'</loc>'."\n");
       fwrite($fp, '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $link->changed) .'</lastmod>'."\n");
-      fwrite($fp, '    <changefreq>'. xmlsitemap_helper_frequency($link->changefreq) .'</changefreq>'."\n");
+      fwrite($fp, '    <changefreq>'. xmlsitemap_sitemap_frequency($link->changefreq) .'</changefreq>'."\n");
       fwrite($fp, '    <priority>'. number_format($link->priority, 1) .'</priority>'."\n");
       fwrite($fp, '  </url>'."\n");
     }
@@ -386,8 +554,8 @@ function _xmlsitemap_create_cache_chunk($fp, $chunk_size, $chunk = 0) {
  */
 function _xmlsitemap_create_cache_files() {
   $chunk_size = variable_get('xmlsitemap_chunk_size', 1000);
-  $link_count = xmlsitemap_helper_link_count();
-  $id = xmlsitemap_helper_cache_id();
+  $link_count = xmlsitemap_link_count();
+  $id = xmlsitemap_cache_id();
   $parent_directory = variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap');
   // If the directory doesn't exist, then create it.
   if (!is_dir($parent_directory)) {
@@ -413,7 +581,7 @@ function _xmlsitemap_create_cache_files() {
       fwrite($fp, '  <sitemap>'."\n");
       fwrite($fp, '    <loc>'. url("sitemap$chunk.xml", array('absolute' => TRUE)) .'</loc>'."\n");
       $from = $chunk * $chunk_size;
-      $changed = db_result(db_query_range("SELECT xsm.changed". xmlsitemap_helper_sitemap_query() ."ORDER BY xsm.priority DESC, xsm.changed DESC", $from, $chunk_size));
+      $changed = db_result(db_query_range("SELECT xsm.changed". xmlsitemap_sitemap_query() ."ORDER BY xsm.priority DESC, xsm.changed DESC", $from, $chunk_size));
       fwrite($fp, '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $changed) .'</lastmod>'."\n");
       fwrite($fp, '  </sitemap>'."\n");
     }

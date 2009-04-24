@@ -668,7 +668,7 @@ function xmlsitemap_update_6135() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_update_6136() {
-  xmlsitemap_helper_flag_sitemap();
+  xmlsitemap_flag_sitemap();
   $ret[] = array(
     'success' => TRUE,
     'query' => 'UPDATE SITE MAP',

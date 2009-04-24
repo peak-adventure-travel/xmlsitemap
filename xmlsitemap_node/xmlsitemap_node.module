@@ -71,7 +71,7 @@ function xmlsitemap_node_form_alter(&$form, &$form_state, $form_id) {
         '#weight' => 30,
       );
     }
-    $options = xmlsitemap_helper_priority_options('both');
+    $options = xmlsitemap_priority_options('both');
     $default = variable_get('xmlsitemap_node_type_priority_'. $node->type, '0.5');
     $form['xmlsitemap']['priority_override'] = array(
       '#type' => 'select',
@@ -102,7 +102,7 @@ function xmlsitemap_node_form_node_type_form_alter(&$form, &$from_state) {
       '#title' => t('Priority adjustment'),
       '#description' => t('This number will be added to the priority of this content type.'),
       '#default_value' => variable_get('xmlsitemap_node_type_priority_'. $form['#node_type']->type, 0.5),
-      '#options' => xmlsitemap_helper_priority_options('exclude'),
+      '#options' => xmlsitemap_priority_options('exclude'),
     );
     $form['#submit'][] = 'xmlsitemap_node_type_submit';
   }
@@ -145,7 +145,7 @@ function xmlsitemap_node_form_user_admin_settings_alter(&$form, &$from_state) {
  * Implementation of hook_form_FORM_ID_alter().
  */
 function xmlsitemap_node_form_xmlsitemap_settings_alter(&$form, &$from_state) {
-  $options = xmlsitemap_helper_priority_options();
+  $options = xmlsitemap_priority_options();
   $form['general']['priority']['first_group']['xmlsitemap_node_promote_priority'] = array(
     '#type' => 'select',
     '#title' => t('Promotion adjustment'),
@@ -221,7 +221,7 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
       $row->priority_override = isset($node->priority_override) ? $node->priority_override : -2.0;
       drupal_write_record('xmlsitemap_node', $row);
       if ($node->status) {
-        xmlsitemap_helper_flag_sitemap();
+        xmlsitemap_flag_sitemap();
       }
       break;
     case 'update':
@@ -241,12 +241,12 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
         }
       }
       drupal_write_record('xmlsitemap_node', $row, $result === FALSE ? NULL : 'nid');
-      xmlsitemap_helper_flag_sitemap();
+      xmlsitemap_flag_sitemap();
       break;
     case 'delete':
       db_query("DELETE FROM {xmlsitemap_node} WHERE nid = %d", $node->nid);
       if ($node->status) {
-        xmlsitemap_helper_flag_sitemap();
+        xmlsitemap_flag_sitemap();
       }
       break;
   }
@@ -262,7 +262,7 @@ function xmlsitemap_node_user($op, &$edit, &$account, $category = NULL) {
         return array();
       }
     case 'register':
-      $form = xmlsitemap_helper_user_form_fieldset();
+      $form = xmlsitemap_user_form_fieldset();
       $form['xmlsitemap']['xmlsitemap_node_posts_count'] = array(
         '#type' => 'select',
         '#title' => t('User posts threshold'),
@@ -287,12 +287,12 @@ function xmlsitemap_node_user($op, &$edit, &$account, $category = NULL) {
       if (isset($edit['xmlsitemap_node_posts_count'])) {
         variable_set('xmlsitemap_node_posts_count_'. $account->uid, $edit['xmlsitemap_node_posts_count']);
         $edit['xmlsitemap_node_posts_count'] = NULL;
-        xmlsitemap_helper_flag_sitemap();
+        xmlsitemap_flag_sitemap();
       }
       break;
     case 'delete':
       variable_del('xmlsitemap_node_posts_count_'. $account->uid);
-      xmlsitemap_helper_flag_sitemap();
+      xmlsitemap_flag_sitemap();
       break;
   }
 }
@@ -372,7 +372,7 @@ function xmlsitemap_node_xmlsitemap_links() {
  * Add submit actions to forms.
  */
 function xmlsitemap_node_type_submit($form, &$form_state) {
-  xmlsitemap_helper_flag_sitemap();
+  xmlsitemap_flag_sitemap();
 }
 
 /*****************************************************************************
@@ -435,7 +435,7 @@ function _xmlsitemap_node_priority_operations($nodes, $priority) {
       'operations' => array(
         array('_xmlsitemap_node_batch_process', array($nodes, $priority))
       ),
-      'finished' => 'xmlsitemap_helper_batch_operations_finished',
+      'finished' => 'xmlsitemap_batch_operations_finished',
       'title' => t('Processing'),
       'progress_message' => '',
       'error_message' => t('The update has encountered an error.'),
@@ -472,7 +472,7 @@ function _xmlsitemap_node_batch_process($nodes, $priority, &$context) {
     $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
   }
   else {
-    xmlsitemap_helper_flag_sitemap();
+    xmlsitemap_flag_sitemap();
   }
 }
 

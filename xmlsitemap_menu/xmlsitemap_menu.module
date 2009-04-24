@@ -32,7 +32,7 @@ function xmlsitemap_menu_form_alter(&$form, $form_state, $form_id) {
  * Implementation of hook_form_FORM_ID_alter().
  */
 function xmlsitemap_menu_form_xmlsitemap_settings_alter(&$form, &$from_state) {
-  $options = xmlsitemap_helper_priority_options('default');
+  $options = xmlsitemap_priority_options('default');
   $options['-2'] = t('Calculated from the menu items weight');
   $form['general']['priority']['third_group']['xmlsitemap_menu_priority'] = array(
     '#type' => 'select',
@@ -142,7 +142,7 @@ function xmlsitemap_menu_xmlsitemap_links() {
  * Add submit actions to forms.
  */
 function xmlsitemap_menu_update_sitemap_submit($form, &$form_state) {
-  xmlsitemap_helper_flag_sitemap();
+  xmlsitemap_flag_sitemap();
 }
 
 /**

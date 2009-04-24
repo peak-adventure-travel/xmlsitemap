@@ -47,7 +47,7 @@ function xmlsitemap_term_taxonomy_form_term_alter(&$form, &$from_state) {
   if ($priority === FALSE) {
     $priority = -2.0;
   }
-  $options = xmlsitemap_helper_priority_options('both');
+  $options = xmlsitemap_priority_options('both');
   $default = variable_get('xmlsitemap_term_vocabulary_priority_'. $form['vid']['#value'], '0.5');
   if (!isset($form['xmlsitemap'])) {
     $form['xmlsitemap'] = array(
@@ -81,7 +81,7 @@ function xmlsitemap_term_taxonomy_form_vocabulary_alter(&$form, &$from_state) {
     '#title' => t('Priority'),
     '#description' => t('This will be the default priority of terms in this vocabulary.'),
     '#default_value' => variable_get('xmlsitemap_term_vocabulary_priority_'. $form['vid']['#value'], 0.5),
-    '#options' => xmlsitemap_helper_priority_options('exclude'),
+    '#options' => xmlsitemap_priority_options('exclude'),
   );
   $form['submit']['#weight'] = isset($form['submit']['#weight']) ? $form['submit']['#weight'] + 1 : 1;
   $form['delete']['#weight'] = isset($form['delete']['#weight']) ? $form['delete']['#weight'] + 1 : 1;
@@ -91,7 +91,7 @@ function xmlsitemap_term_taxonomy_form_vocabulary_alter(&$form, &$from_state) {
  * Implementation of hook_form_FORM_ID_alter().
  */
 function xmlsitemap_term_form_xmlsitemap_settings_alter(&$form, &$from_state) {
-  $options = xmlsitemap_helper_priority_options();
+  $options = xmlsitemap_priority_options();
   $form['general']['priority']['second_group']['xmlsitemap_term_node_priority'] = array(
     '#type' => 'select',
     '#title' => t('Term ratio weight - nodes'),
@@ -151,7 +151,7 @@ function xmlsitemap_term_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
           }
         }
         drupal_write_record('xmlsitemap_term', $row, $result === FALSE ? NULL : 'tid');
-        xmlsitemap_helper_flag_sitemap();
+        xmlsitemap_flag_sitemap();
       }
       break;
   }
@@ -167,14 +167,14 @@ function xmlsitemap_term_taxonomy($op, $type, $array = NULL) {
       case 'delete':
         db_query("DELETE FROM {xmlsitemap_term} WHERE vid = %d", $array['vid']);
         variable_del('xmlsitemap_term_vocabulary_priority_'. $array['vid']);
-        xmlsitemap_helper_flag_sitemap();
+        xmlsitemap_flag_sitemap();
         break;
       case 'insert':
       case 'update':
         if (isset($array['vid'])) {
           if (variable_get('xmlsitemap_term_vocabulary_priority_'. $array['vid'], 0.5) != $array['xmlsitemap_term_vocabulary_priority']) {
             variable_set('xmlsitemap_term_vocabulary_priority_'. $array['vid'], $array['xmlsitemap_term_vocabulary_priority']);
-            xmlsitemap_helper_flag_sitemap();
+            xmlsitemap_flag_sitemap();
           }
         }
         break;
@@ -216,7 +216,7 @@ function xmlsitemap_term_taxonomy($op, $type, $array = NULL) {
         drupal_write_record('xmlsitemap_term', $row, $result === FALSE ? NULL : 'tid');
         break;
     }
-    xmlsitemap_helper_flag_sitemap();
+    xmlsitemap_flag_sitemap();
   }
 }
 
@@ -286,7 +286,7 @@ function _xmlsitemap_term_priority_operations($nodes, $priority) {
       'operations' => array(
         array('_xmlsitemap_term_batch_process', array($nodes, $priority))
       ),
-      'finished' => 'xmlsitemap_helper_batch_operations_finished',
+      'finished' => 'xmlsitemap_batch_operations_finished',
       'title' => t('Processing'),
       'progress_message' => '',
       'error_message' => t('The update has encountered an error.'),
@@ -354,7 +354,7 @@ function _xmlsitemap_term_batch_process($nodes, $priority, &$context) {
     $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
   }
   else {
-    xmlsitemap_helper_flag_sitemap();
+    xmlsitemap_flag_sitemap();
   }
 }
 
