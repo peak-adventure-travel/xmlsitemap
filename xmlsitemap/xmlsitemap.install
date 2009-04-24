@@ -87,11 +87,6 @@ function xmlsitemap_update_2() {
       stype = anyelement
     );");
   }
-  menu_rebuild();
-  $ret[] = array(
-    'success' => TRUE,
-    'query' => 'REBUILD DRUPAL MENU',
-  );
   return $ret;
 }
 

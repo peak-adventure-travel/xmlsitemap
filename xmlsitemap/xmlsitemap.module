@@ -275,7 +275,6 @@ function xmlsitemap_settings_engines() {
     '#description' => t('If enabled, a watchdog entry will be made each time the site map is accessed, containing information about the requestor.'),
   );
   $form = array_merge($form, module_invoke_all('xmlsitemap_engines', 'form'));
-  menu_rebuild();
   return system_settings_form($form);
 }
 
@@ -642,7 +641,6 @@ function _xmlsitemap_update() {
     module_invoke_all('xmlsitemap_links');
   }
   $user = $current_user;
-  menu_rebuild();
   cache_clear_all(xmlsitemap_url('sitemap.xml', NULL, NULL, NULL, TRUE), 'cache_page', TRUE);
   variable_set('xmlsitemap_update', FALSE);
 }
