@@ -96,17 +96,10 @@ function xmlsitemap_menu() {
     'weight' => -1,
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
-  $items['admin/settings/xmlsitemap/tools/disable/warning'] = array(
-    'title' => 'Disable the warning',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('xmlsitemap_tools_disable_warning_confirm'),
-    'access arguments' => $access_config,
-    'type' => MENU_CALLBACK,
-  );
   $items['sitemap.xml'] = array(
     'title' => 'Site map index',
     'page callback' => 'xmlsitemap_output',
-    'access callback' => 'xmlsitemap_anonymous_access',
+    'access callback' => '_xmlsitemap_anonymous_access',
     'type' => MENU_CALLBACK,
   );
   $chunk_size = variable_get('xmlsitemap_chunk_size', 1000);
@@ -118,7 +111,7 @@ function xmlsitemap_menu() {
         'title arguments' => array('!number' => $chunk),
         'page callback' => 'xmlsitemap_output',
         'page arguments' => array((string) $chunk),
-        'access callback' => 'xmlsitemap_anonymous_access',
+        'access callback' => '_xmlsitemap_anonymous_access',
         'type' => MENU_CALLBACK,
       );
     }
@@ -147,6 +140,12 @@ function xmlsitemap_perm() {
 function xmlsitemap_output($chunk = NULL) {
   $chunk_size = variable_get('xmlsitemap_chunk_size', 1000);
   $link_count = xmlsitemap_helper_link_count();
+  if (($link_count / $chunk_size) > 1000) {
+    $chunk_size = (integer) $link_count / 1000;
+    if ($chunk_size != variable_get('xmlsitemap_chunk_size', 1000)) {
+      variable_set('xmlsitemap_chunk_size', $chunk_size);
+    }
+  }
   if (isset($chunk) && !preg_match('/[0-9]+/', $chunk)) {
     drupal_not_found();
     exit();
@@ -208,14 +207,6 @@ function xmlsitemap_settings() {
     '#collapsible' => TRUE,
     '#weight' => -1,
   );
-  $form['general']['xmlsitemap_chunk_size'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Chunk size'),
-    '#default_value' => variable_get('xmlsitemap_chunk_size', 1000),
-    '#size' => 10,
-    '#maxlength' => 5,
-    '#description' => t('This is the number of links to include in one site map. Values can range between 1 and 50,000. If the total number of links exceeds the chunk size, multiple site maps will be generated.'),
-  );
   $form['general']['xmlsitemap_all_links_to_default_language'] = array(
     '#type' => 'checkbox',
     '#title' => t('Add all the links to the default language site map'),
@@ -268,14 +259,6 @@ function xmlsitemap_settings() {
  * Validate the site map settings form.
  */
 function xmlsitemap_settings_validate($form, &$form_state) {
-  $chunk_size = $form_state['values']['xmlsitemap_chunk_size'];
-  $link_count = xmlsitemap_helper_link_count();
-  if (!is_numeric($chunk_size) || $chunk_size <= 0 || $chunk_size > 50000) {
-    form_set_error('xmlsitemap_chunk_size', t('The number of links in a site map chunk must be a number between 1, and 50,000 (1 and 50,000 included).'));
-  }
-  elseif (($chunks = (integer) $link_count / $chunk_size) > 1000) {
-    form_set_error('xmlsitemap_chunk_size', t('A site map cannot contain more than 1,000 chunks; the actual number of chunks which would be created are !chunks. Change the chunk size to a higher number.', array('!chunks' => $chunks)));
-  }
   $directory = $form_state['values']['xmlsitemap_cache_directory'];
   file_check_directory($directory, FILE_CREATE_DIRECTORY, 'xmlsitemap_cache_directory');
   $form_state['values']['xmlsitemap_cache_directory'] = $directory;
@@ -288,43 +271,18 @@ function xmlsitemap_settings_submit($form, &$form_state) {
   xmlsitemap_helper_flag_sitemap();
 }
 
-/**
- * Menu callback; display the confirmation dialog for the disabled warning.
- */
-function xmlsitemap_tools_disable_warning_confirm() {
-  return confirm_form(
-    array(),
-    t('Are you sure you want to disable the warning?'),
-    'admin/settings/xmlsitemap',
-    t(' The module will not emit a warning for an incorrect value of the chunk size. This action cannot be undone.'),
-    t('Disable'),
-    t('Cancel')
-  );
-}
-
-function xmlsitemap_tools_disable_warning_confirm_submit(&$form, &$form_state) {
-  if ($form['confirm']) {
-    variable_set('xmlsitemap_check_chunk_size', FALSE);
-    drupal_set_message(t('The warning has been disabled.'));
-    $form_state['redirect'] = 'admin/settings/xmlsitemap';
-  }
-}
 /*****************************************************************************
- * Public functions.
+ * Private functions.
  ****************************************************************************/
 
 /**
  * Function used to determinate if the current user has logged in, and can
  * view the site map content (only the anonymous user is enabled).
  */
-function xmlsitemap_anonymous_access() {
+function _xmlsitemap_anonymous_access() {
   global $user;
   return $user->uid == 0;
 }
-
-/*****************************************************************************
- * Private functions.
- ****************************************************************************/
 
 /**
  * Check the cache files.
