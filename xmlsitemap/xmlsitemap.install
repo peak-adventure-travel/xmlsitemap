@@ -703,6 +703,7 @@ function xmlsitemap_update_6136() {
     'success' => TRUE,
     'query' => 'UPDATE SITE MAP',
   );
+  $ret[] = update_sql("DELETE FROM {variable} WHERE name = 'xmlsitemap_update_sitemap_request'");
   return $ret;
 }
 

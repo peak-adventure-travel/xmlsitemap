@@ -164,7 +164,6 @@ function xmlsitemap_output($chunk = NULL) {
     $row->priority = variable_get('xmlsitemap_front_page_priority', 1);
     drupal_write_record('xmlsitemap', $row);
     module_invoke_all('xmlsitemap_links');
-    variable_set('xmlsitemap_update_sitemap_request', array());
     variable_set('xmlsitemap_sitemap_needs_update', FALSE);
     $result = _xmlsitemap_create_cache_files();
     if (variable_get("xmlsitemap_create_cache_result_$id", -1) !== $result) {
