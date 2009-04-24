@@ -313,6 +313,17 @@ function xmlsitemap_node_xmlsitemap_description() {
 }
 
 /**
+ * Implementation of hook_xmlsitemap_link_status().
+ */
+function xmlsitemap_node_xmlsitemap_link_status($type, $id, $sid) {
+  $status = db_result(db_query("SELECT status from {node} WHERE nid = %d", $id));
+  if ($status) {
+    return 0;
+  }
+  return XMLSITEMAP_LINK_DISABLED;
+}
+
+/**
  * Implementation of hook_xmlsitemap_links().
  */
 function xmlsitemap_node_xmlsitemap_links($modules) {

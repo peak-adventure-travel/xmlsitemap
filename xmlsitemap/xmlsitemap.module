@@ -12,6 +12,21 @@
  */
 
 /*****************************************************************************
+ * Public constants.
+ ****************************************************************************/
+
+/**
+ * The timestamp of server request to avoid repeatedly generating value.
+ */
+define('XMLSITEMAP_TIME', time());
+
+/**
+ * The flag set when a site map link is not enabled.
+ */
+define('XMLSITEMAP_LINK_DISABLED', 1);
+
+
+/*****************************************************************************
  * Drupal hooks.
  ****************************************************************************/
 
@@ -387,8 +402,15 @@ function _xmlsitemap_create_cache_chunk($fp, $chunk_size, $chunk = 0) {
       $url = url($link->loc, array('absolute' => TRUE));
     }
     $link->url = $url;
+    if ($link->module && function_exists($link->module .'_xmlsitemap_link_status')) {
+      $function = $link->module .'_xmlsitemap_link_status';
+      $link->status = $function($link->type, $link->id, $link->sid);
+    }
+    else {
+      $link->status = 0;
+    }
     drupal_alter('xmlsitemap_data', $link);
-    if (!empty($link->url) && $link->changed != 0 && $link->changefreq != 0 && $link->priority >= 0.0 && $link->priority <= 1.0) {
+    if (($link->status & XMLSITEMAP_LINK_DISABLED) != XMLSITEMAP_LINK_DISABLED) {
       fwrite($fp, '  <url>'."\n");
       fwrite($fp, '    <loc>'. check_url($link->url) .'</loc>'."\n");
       fwrite($fp, '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $link->changed) .'</lastmod>'."\n");
