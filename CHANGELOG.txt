@@ -2,6 +2,8 @@ $Id$
 
 XML Sitemap 5.x-2, 2009-04-24
 -----------------------------------
+#441564: Remove any not necessary calls to menu_rebuild().
+#442516: Chunk size should be calculated from the module.
 #429598: Remove xmlsitemap_helper.module, and move the code to xmlsitemap.module.
 
 XML Sitemap 5.x-2, 2009-04-17
