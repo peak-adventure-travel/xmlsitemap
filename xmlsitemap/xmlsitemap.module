@@ -199,13 +199,7 @@ function xmlsitemap_output($chunk = NULL) {
       variable_set('xmlsitemap_chunk_size', $chunk_size);
     }
   }
-  if (!isset($chunk)) {
-    if (($chunks = (integer) $link_count / $chunk_size) != variable_get('xmlsitemap_previous_chunks_count', -1)) {
-      variable_set('xmlsitemap_previous_chunks_count', $chunks);
-      menu_rebuild();
-    }
-  }
-  else {
+  if (isset($chunk)) {
     if ($chunk < $link_count / $chunk_size) {
       _xmlsitemap_output_chunk($chunk);
     }
