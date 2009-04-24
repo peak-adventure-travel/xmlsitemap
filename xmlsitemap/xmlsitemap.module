@@ -184,7 +184,19 @@ function xmlsitemap_output($chunk = NULL) {
   drupal_set_header('Content-type: text/xml; charset=utf-8');
   $chunk_size = variable_get('xmlsitemap_chunk_size', 50000);
   $link_count = xmlsitemap_link_count();
-  if (isset($chunk)) {
+  if (($link_count / $chunk_size) > 1000) {
+    $chunk_size = (integer) $link_count / 1000;
+    if ($chunk_size != variable_get('xmlsitemap_chunk_size', 50000)) {
+      variable_set('xmlsitemap_chunk_size', $chunk_size);
+    }
+  }
+  if (!isset($chunk)) {
+    if (($chunks = (integer) $link_count / $chunk_size) != variable_get('xmlsitemap_previous_chunks_count', -1)) {
+      variable_set('xmlsitemap_previous_chunks_count', $chunks);
+      menu_rebuild();
+    }
+  }
+  else {
     if ($chunk < $link_count / $chunk_size) {
       _xmlsitemap_output_chunk($chunk);
     }
@@ -213,14 +225,6 @@ function xmlsitemap_settings_sitemap() {
     '#title' => t('General settings'),
     '#collapsible' => TRUE,
   );
-  $form['general']['xmlsitemap_chunk_size'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Chunk size'),
-    '#default_value' => variable_get('xmlsitemap_chunk_size', 50000),
-    '#size' => 10,
-    '#maxlength' => 5,
-    '#description' => t('This is the number of links to include in one site map. Values can range between 1 and 50,000. If the total number of links exceeds the chunk size, multiple site maps will be generated.'),
-  );
   $form['general']['priority'] = array(
     '#type' => 'fieldset',
     '#title' => t('Priority'),
@@ -234,15 +238,6 @@ function xmlsitemap_settings_sitemap() {
     '#options' => xmlsitemap_priority_options(),
   );
   return system_settings_form($form);
-}
-
-/**
- * Validate site map settings form.
- */
-function xmlsitemap_settings_sitemap_validate($form_id, $form_values) {
-  if ($form_values['xmlsitemap_chunk_size'] <= 0 || $form_values['xmlsitemap_chunk_size'] > 50000) {
-    form_set_error('xmlsitemap_chunk_size', t('The number of links in a site map chunk must be a number between 1, and 50,000.'));
-  }
 }
 
 /**
