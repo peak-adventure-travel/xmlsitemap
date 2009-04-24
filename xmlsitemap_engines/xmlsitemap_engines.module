@@ -19,14 +19,12 @@
  * Implementation of hook_cron().
  */
 function xmlsitemap_engines_cron() {
-  if (!variable_get('site_offline', 0) && variable_get('xmlsitemap_engines_cron_submit_frequency', -1) >= 0 && variable_get('xmlsitemap_sitemap_is_changed', FALSE)) {
-    $count = variable_get('xmlsitemap_engines_cron_submit_delay', -1);
-    if (--$count <= 0) {
+  if (!variable_get('site_offline', 0) && variable_get('xmlsitemap_engines_cron_submit_frequency', 3600) > 0 && variable_get('xmlsitemap_sitemap_is_changed', FALSE)) {
+    if ((XMLSITEMAP_TIME - variable_get('xmlsitemap_engines_cron_timestamp_submit', XMLSITEMAP_TIME)) >= variable_get('xmlsitemap_engines_cron_submit_frequency', 3600)) {
       xmlsitemap_engines_ping_sitemap();
       variable_set('xmlsitemap_sitemap_is_changed', FALSE);
-      $count = variable_get('xmlsitemap_engines_cron_submit_frequency', -1);
+      variable_set('xmlsitemap_engines_cron_timestamp_submit', XMLSITEMAP_TIME);
     }
-    variable_set('xmlsitemap_engines_cron_submit_delay', $count);
   }
 }
 
@@ -142,33 +140,16 @@ function xmlsitemap_engines_settings() {
   $form['submission']['xmlsitemap_engines_cron_submit_frequency'] = array(
     '#type' => 'select',
     '#title' => t('Frequency of site map submission'),
-    '#description' => t('The rate at which the site map is submitted to the search engines over the times the cron maintenance tasks are executed.'),
-    '#default_value' => variable_get('xmlsitemap_engines_cron_submit_frequency', -1),
+    '#description' => t('The rate at which the site map is submitted to the search engines.'),
+    '#default_value' => variable_get('xmlsitemap_engines_cron_submit_frequency', 3600),
     '#options' => array(
-      '1000' => t('Once every one thousand times'),
-      '500' => t('Once every five hundred times'),
-      '400' => t('Once every four hundred times'),
-      '300' => t('Once every three hundred times'),
-      '200' => t('Once every two hundred times'),
-      '100' => t('Once every one hundred times'),
-      '90' => t('Once every ninety times'),
-      '80' => t('Once every eighty times'),
-      '70' => t('Once every seventy times'),
-      '60' => t('Once every sixty times'),
-      '50' => t('Once every fifty times'),
-      '40' => t('Once every forty times'),
-      '30' => t('Once every thirty times'),
-      '20' => t('Once every twenty times'),
-      '10' => t('Once every ten times'),
-      '9' => t('Once every nine times'),
-      '8' => t('Once every eight times'),
-      '7' => t('Once every seven times'),
-      '6' => t('Once every six times'),
-      '5' => t('Once every five times'),
-      '4' => t('Once every four times'),
-      '3' => t('Once every three times'),
-      '2' => t('Once every two times'),
-      '1' => t('Always'),
+      '29030400' => t('Yearly'),
+      '14515200' => t('Every 6 months'),
+      '2419200' => t('Monthly'),
+      '1296000' => t('Every 15 days'),
+      '604800' => t('Weekly'),
+      '86400' => t('Daily'),
+      '3600' => t('Hourly'),
       '-1' => t('Never'),
     ),
   );
