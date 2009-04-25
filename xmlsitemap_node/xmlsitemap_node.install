@@ -403,6 +403,14 @@ function xmlsitemap_node_update_6117() {
  *
  */
 function xmlsitemap_node_update_6118() {
+  return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ *
+ */
+function xmlsitemap_node_update_6119() {
   $ret = array();
   if (function_exists('rules_clear_cache')) {
     rules_clear_cache();
