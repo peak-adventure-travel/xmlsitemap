@@ -1,5 +1,10 @@
 $Id$
 
+XML Sitemap 6.x-1, 2009-04-25
+-----------------------------------
+#445016: File for Rules integration causes an error during update of the module.
+#444622: Remove xmlsitemap_file.module.
+
 XML Sitemap 6.x-1, 2009-04-24
 -----------------------------------
 #441748: Change from 'every Nth time cron is run' to hourly/daily/etc.
