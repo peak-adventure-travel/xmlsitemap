@@ -82,21 +82,32 @@ function xmlsitemap_engines_menu() {
     'access arguments' => array('administer site configuration'),
     'type' => MENU_LOCAL_TASK,
   );
-  $engines_id = array(
-    'google' => 'Google verification page',
-    'yahoo' => 'Yahoo! verification page',
-    'live' => 'Windows Live verification page',
-  );
-  foreach ($engines_id as $id => $title) {
-    if ($verify = variable_get("xmlsitemap_engines_{$id}_verify", '')) {
-      $items[$verify] = array(
-        'title' => $title,
-        'page callback' => 'xmlsitemap_engines_verify',
-        'page arguments' => array($id),
-        'access arguments' => array('access content'),
-        'type' => MENU_CALLBACK,
-      );
-    }
+  if ($verify = variable_get("xmlsitemap_engines_google_verify", '')) {
+    $items[$verify] = array(
+      'title' => 'Google verification page',
+      'page callback' => 'xmlsitemap_engines_verify',
+      'page arguments' => array('google'),
+      'access arguments' => array('access content'),
+      'type' => MENU_CALLBACK,
+    );
+  }
+  if ($verify = variable_get("xmlsitemap_engines_yahoo_verify", '')) {
+    $items[$verify] = array(
+      'title' => 'Yahoo! verification page',
+      'page callback' => 'xmlsitemap_engines_verify',
+      'page arguments' => array('yahoo'),
+      'access arguments' => array('access content'),
+      'type' => MENU_CALLBACK,
+    );
+  }
+  if ($verify = variable_get("xmlsitemap_engines_live_verify", '')) {
+    $items[$verify] = array(
+      'title' => 'Windows Live verification page',
+      'page callback' => 'xmlsitemap_engines_verify',
+      'page arguments' => array('live'),
+      'access arguments' => array('access content'),
+      'type' => MENU_CALLBACK,
+    );
   }
   return $items;
 }
