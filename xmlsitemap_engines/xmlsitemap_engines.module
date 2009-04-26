@@ -112,17 +112,6 @@ function xmlsitemap_engines_menu() {
   return $items;
 }
 
-/**
- * Return the identifier for the search engine that accessed to the site map,
- * or the content of $_SERVER['HTTP_USER_AGENT'].
- */
-function xmlsitemap_engines_search_engine_id() {
-  if (strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot') !== FALSE) {
-    return 'Google';
-  }
-  return $_SERVER['HTTP_USER_AGENT'];
-}
-
 /*****************************************************************************
  * Menu callbaks / Form builders.
  ****************************************************************************/
@@ -353,6 +342,17 @@ function xmlsitemap_engines_ping_sitemap() {
       xmlsitemap_engines_submit_sitemap($info[0], "xmlsitemap_engines_{$id}_url", $info[1]);
     }
   }
+}
+
+/**
+ * Return the identifier for the search engine that accessed to the site map,
+ * or the content of $_SERVER['HTTP_USER_AGENT'].
+ */
+function xmlsitemap_engines_search_engine_id() {
+  if (strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot') !== FALSE) {
+    return 'Google';
+  }
+  return $_SERVER['HTTP_USER_AGENT'];
 }
 
 /**
