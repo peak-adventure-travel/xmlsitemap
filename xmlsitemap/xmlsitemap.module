@@ -102,7 +102,6 @@ function xmlsitemap_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('xmlsitemap_tools'),
     'access arguments' => $access_config,
-    'weight' => 5,
     'type' => MENU_LOCAL_TASK,
   );
   $items['sitemap.xml'] = array(
