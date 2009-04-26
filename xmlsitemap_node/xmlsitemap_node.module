@@ -309,8 +309,18 @@ function xmlsitemap_node_xmlsitemap_description() {
  * Implementation of hook_xmlsitemap_link_status().
  */
 function xmlsitemap_node_xmlsitemap_link_status($type, $id, $sid) {
-  $status = db_result(db_query("SELECT status from {node} WHERE nid = %d", $id));
-  if ($status) {
+  if (!($node = node_load($id))) {
+    return XMLSITEMAP_LINK_DISABLED;
+  }
+  if (!($user = user_load($node->uid))) {
+    return XMLSITEMAP_LINK_DISABLED;
+  }
+  $posts_threshold = variable_get('xmlsitemap_node_posts_count_'. $node->uid, variable_get('xmlsitemap_node_posts_count', 100));
+  $posts = (integer) db_result(db_query("SELECT COUNT(nid) FROM {node} WHERE uid = %d", $node->uid));
+  if (!user_access('by-pass the authored nodes check', $user) && $posts_threshold > $posts) {
+    return XMLSITEMAP_LINK_DISABLED;
+  }
+  if ($node->status) {
     return 0;
   }
   return XMLSITEMAP_LINK_DISABLED;
@@ -330,16 +340,6 @@ function xmlsitemap_node_xmlsitemap_links() {
   $row->module = 'xmlsitemap_node';
   $row->type = 'node';
   while ($node = db_fetch_object($result)) {
-    $posts_threshold = variable_get('xmlsitemap_node_posts_count_'. $node->uid, variable_get('xmlsitemap_node_posts_count', 100));
-    $posts = (integer) db_result(db_query("SELECT COUNT(nid) FROM {node} WHERE uid = %d", $node->uid));
-    $user = user_load($node->uid);
-    // Don't add the nodes authored by a user who has been deleted.
-    if ($user === FALSE) {
-      continue;
-    }
-    if (!user_access('by-pass the authored nodes check', $user) && $posts_threshold > $posts) {
-      continue;
-    }
     $row->loc = 'node/'. $node->nid;
     $row->id = $node->nid;
     $row->sid = $node->vid;
