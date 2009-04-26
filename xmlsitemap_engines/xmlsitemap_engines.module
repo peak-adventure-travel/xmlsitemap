@@ -112,6 +112,43 @@ function xmlsitemap_engines_menu() {
   return $items;
 }
 
+/**
+ * Implementation of hook_xmlsitemap_operations().
+ */
+function xmlsitemap_engines_xmlsitemap_operations() {
+  return array(
+    'submit_to_all' => array(
+      'label' => t('Submit the site map to all the active search engines'),
+      'callback' => 'xmlsitemap_engines_ping_sitemap',
+    ),
+    'submit_to_askcom' => array(
+      'label' => t('Submit the site map to Ask.com'),
+      'callback' => 'xmlsitemap_engines_ping_sitemap',
+      'callback arguments' => array('engine' => 'ask'),
+    ),
+    'submit_to_google' => array(
+      'label' => t('Submit the site map to Google'),
+      'callback' => 'xmlsitemap_engines_ping_sitemap',
+      'callback arguments' => array('engine' => 'google'),
+    ),
+    'submit_to_moreovercom' => array(
+      'label' => t('Submit the site map to Moreover.com'),
+      'callback' => 'xmlsitemap_engines_ping_sitemap',
+      'callback arguments' => array('engine' => 'moreover'),
+    ),
+    'submit_to_live' => array(
+      'label' => t('Submit the site map to Microsoft Live'),
+      'callback' => 'xmlsitemap_engines_ping_sitemap',
+      'callback arguments' => array('engine' => 'live'),
+    ),
+    'submit_to_yahoo' => array(
+      'label' => t('Submit the site map to Yahoo!'),
+      'callback' => 'xmlsitemap_engines_ping_sitemap',
+      'callback arguments' => array('engine' => 'yahoo'),
+    ),
+  );
+}
+
 /*****************************************************************************
  * Menu callbaks / Form builders.
  ****************************************************************************/
@@ -314,7 +351,7 @@ function xmlsitemap_engines_verify($engine) {
 /**
  * Submit the sitemap to the selected engines.
  */
-function xmlsitemap_engines_ping_sitemap() {
+function xmlsitemap_engines_ping_sitemap($engine = NULL) {
   $engines = array(
     'ask' => array(
       'Ask.com',
@@ -337,10 +374,15 @@ function xmlsitemap_engines_ping_sitemap() {
       'http://search.yahooapis.com/SiteExplorerService/V1/ping?sitemap=[sitemap]'
     ),
   );
-  foreach ($engines as $id => $info) {
-    if (variable_get("xmlsitemap_engines_{$id}_submit", FALSE)) {
-      xmlsitemap_engines_submit_sitemap($info[0], "xmlsitemap_engines_{$id}_url", $info[1]);
+  if (!isset($engine)) {
+    foreach ($engines as $id => $info) {
+      if (variable_get("xmlsitemap_engines_{$id}_submit", FALSE)) {
+        xmlsitemap_engines_submit_sitemap($info[0], "xmlsitemap_engines_{$id}_url", $info[1]);
+      }
     }
+  }
+  elseif (isset($engines[$engine])) {
+    xmlsitemap_engines_submit_sitemap($engines[$engine][0], "xmlsitemap_engines_{$engine}_url", $engines[$engine][1]);
   }
 }
 
