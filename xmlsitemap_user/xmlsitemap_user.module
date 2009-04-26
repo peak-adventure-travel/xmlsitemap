@@ -246,6 +246,56 @@ function xmlsitemap_user_xmlsitemap_links() {
 }
 
 /*****************************************************************************
+ * Public functions.
+ ****************************************************************************/
+
+/**
+ * Set the user priority in the site map.
+ * @param $user
+ *   The user object, or the user ID.
+ * @param $priority
+ *   The priority for the user.
+ * @return
+ *   The user object, or FALSE.
+ */
+function xmlsitemap_user_set_priority($user, $priority) {
+  if (!is_numeric($user)) {
+    $user = (object) $user;
+    $uid = $user->uid;
+  }
+  else {
+    $uid = $user;
+    $user = user_load($uid);
+  }
+  if ($user) {
+    $result = db_fetch_object(db_query("SELECT uid, changed, previously_changed, comments, priority_override
+      FROM {xmlsitemap_user}
+      WHERE uid = %d", $uid)
+    );
+    if ($result === FALSE) {
+      $row = new stdClass();
+      $row->uid = $user->uid;
+      $row->changed = $user->access;
+      $row->previously_changed = $user->created;
+    }
+    else {
+      $row = $result;
+      if ($row->changed < $user->access) {
+        $row->previously_changed = $row->changed;
+        $row->changed = $user->access;
+      }
+    }
+    if (module_exists('comment')) {
+      $row->comments = (integer) db_result(db_query("SELECT COUNT(cid) FROM {comments} WHERE uid = %d", $uid));
+    }
+    $row->priority_override = $priority;
+    drupal_write_record('xmlsitemap_user', $row, $result === FALSE ? NULL : 'uid');
+    return $user;
+  }
+  return FALSE;
+}
+
+/*****************************************************************************
  * Menu callbacks / form builders, submit/validate functions.
  ****************************************************************************/
 
@@ -305,29 +355,7 @@ function _xmlsitemap_user_batch_process($accounts, $priority, &$context) {
     $context['sandbox']['accounts'] = $accounts;
   }
   $uid = array_shift($context['sandbox']['accounts']);
-  if ($user = user_load($uid)) {
-    $result = db_fetch_object(db_query("SELECT uid, changed, previously_changed, comments, priority_override
-      FROM {xmlsitemap_user}
-      WHERE uid = %d", $uid)
-    );
-    if ($result === FALSE) {
-      $row = new stdClass();
-      $row->uid = $user->uid;
-      $row->changed = $user->access;
-      $row->previously_changed = $user->created;
-    }
-    else {
-      $row = $result;
-      if ($row->changed < $user->access) {
-        $row->previously_changed = $row->changed;
-        $row->changed = $user->access;
-      }
-    }
-    if (module_exists('comment')) {
-      $row->comments = (integer) db_result(db_query("SELECT COUNT(cid) FROM {comments} WHERE uid = %d", $user->uid));
-    }
-    $row->priority_override = $priority;
-    drupal_write_record('xmlsitemap_user', $row, $result === FALSE ? NULL : 'uid');
+  if ($user = xmlsitemap_user_set_priority($uid, $priority)) {
     $context['results'][] = l($user->name, 'user/'. $user->uid);
     if (count($context['results']) > 6) {
       array_shift($context['results']);
