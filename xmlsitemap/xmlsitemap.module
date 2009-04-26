@@ -96,6 +96,15 @@ function xmlsitemap_menu() {
     'weight' => -1,
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
+  $items['admin/settings/xmlsitemap/tools'] = array(
+    'title' => 'Tools',
+    'description' => 'Site map tools.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('xmlsitemap_tools'),
+    'access arguments' => $access_config,
+    'weight' => 5,
+    'type' => MENU_LOCAL_TASK,
+  );
   $items['sitemap.xml'] = array(
     'title' => 'Site map index',
     'page callback' => 'xmlsitemap_output',
@@ -126,6 +135,21 @@ function xmlsitemap_perm() {
   return array('by-pass the authored nodes check', 'override node settings', 'override profile settings');
 }
 
+/**
+ * Implementation of hook_xmlsitemap_operations().
+ */
+function xmlsitemap_xmlsitemap_operations() {
+  return array(
+    'delete_cache_files' => array(
+      'label' => t('Delete the site map cache files'),
+      'callback' => 'xmlsitemap_delete_cache_files',
+    ),
+    'flag_sitemap' => array(
+      'label' => t('Flag the site map as requiring update'),
+      'callback' => 'xmlsitemap_flag_sitemap',
+    ),
+  );
+}
 
 /*****************************************************************************
  * Menu callbacks / form builders, submit/validate functions.
@@ -348,6 +372,20 @@ function xmlsitemap_cache_id() {
     $id = substr(md5($language->language . $base_url), 0, 8);
   }
   return $id;
+}
+
+/**
+ * Delete the cache file used for the site map content, and mark the site map as
+ * changed.
+ */
+function xmlsitemap_delete_cache_files() {
+  $parent_directory = variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap');
+  if (!is_dir($parent_directory)) {
+    return;
+  }
+  file_scan_directory($parent_directory, 'xsm-.*\.xml', array('.', '..', 'CVS'), 'unlink', FALSE);
+  xmlsitemap_flag_sitemap();
+  return;
 }
 
 /**

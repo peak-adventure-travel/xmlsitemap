@@ -679,6 +679,13 @@ function xmlsitemap_update_6136() {
     'success' => TRUE,
     'query' => 'UPDATE XMLSITEMAP_CHUNK_SIZE'
   );
+  return $ret;
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_6137() {
   menu_rebuild();
   $ret[] = array(
     'success' => TRUE,
