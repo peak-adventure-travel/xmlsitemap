@@ -326,25 +326,32 @@ function xmlsitemap_engines_verify($engine) {
  * Submit the sitemap to the selected engines.
  */
 function xmlsitemap_engines_ping_sitemap() {
-  // Submit the site map to Ask.com.
-  if (variable_get('xmlsitemap_engines_ask_submit', FALSE)) {
-    xmlsitemap_engines_submit_sitemap('Ask.com', 'xmlsitemap_engines_ask_url', 'http://submissions.ask.com/ping?sitemap=[sitemap]');
-  }
-  // Submit the site map to Google.
-  if (variable_get('xmlsitemap_engines_google_submit', FALSE)) {
-    xmlsitemap_engines_submit_sitemap('Google', 'xmlsitemap_engines_google_url', 'http://www.google.com/webmasters/tools/ping?sitemap=[sitemap]');
-  }
-  // Submit the site map to Moreover.com.
-  if (variable_get('xmlsitemap_engines_moreover_submit', FALSE)) {
-    xmlsitemap_engines_submit_sitemap('Moreover.com', 'xmlsitemap_engines_moreover_url', 'http://api.moreover.com/ping?u=[sitemap]');
-  }
-  // Submit the site map to Windows Live.
-  if (variable_get('xmlsitemap_engines_live_submit', FALSE)) {
-    xmlsitemap_engines_submit_sitemap('Windows Live', 'xmlsitemap_engines_live_url', 'http://webmaster.live.com/ping.aspx?siteMap=[sitemap]');
-  }
-  // Submit the site map to Yahoo!.
-  if (variable_get('xmlsitemap_engines_yahoo_submit', FALSE)) {
-    xmlsitemap_engines_submit_sitemap('Yahoo!', 'xmlsitemap_engines_yahoo_url', 'http://search.yahooapis.com/SiteExplorerService/V1/ping?sitemap=[sitemap]');
+  $engines = array(
+    'ask' => array(
+      'Ask.com',
+      'http://submissions.ask.com/ping?sitemap=[sitemap]'
+    ),
+    'google' => array(
+      'Google',
+      'http://www.google.com/webmasters/tools/ping?sitemap=[sitemap]'
+    ),
+    'moreover' => array(
+      'Moreover.com',
+      'http://api.moreover.com/ping?u=[sitemap]'
+    ),
+    'live' => array(
+      'Windows Live',
+      'http://webmaster.live.com/ping.aspx?siteMap=[sitemap]'
+    ),
+    'yahoo' => array(
+      'Yahoo!',
+      'http://search.yahooapis.com/SiteExplorerService/V1/ping?sitemap=[sitemap]'
+    ),
+  );
+  foreach ($engines as $id => $info) {
+    if (variable_get("xmlsitemap_engines_{$id}_submit", FALSE)) {
+      xmlsitemap_engines_submit_sitemap($info[0], "xmlsitemap_engines_{$id}_url", $info[1]);
+    }
   }
 }
 
