@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 5.x-2, 2009-04-26
+-----------------------------------
+#444622: Remove xmlsitemap_file.module.
+
 XML Sitemap 5.x-2, 2009-04-24
 -----------------------------------
 #441564: Remove any not necessary calls to menu_rebuild().
