@@ -686,6 +686,7 @@ function xmlsitemap_update_6136() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_update_6137() {
+  $ret[] = update_sql("DELETE FROM {system} WHERE name = 'xmlsitemap_file' AND type = 'module'");
   menu_rebuild();
   $ret[] = array(
     'success' => TRUE,
