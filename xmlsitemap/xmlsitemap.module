@@ -271,6 +271,52 @@ function xmlsitemap_settings_submit($form, &$form_state) {
   xmlsitemap_flag_sitemap();
 }
 
+/**
+ * Form builder; return the tools form.
+ */
+function xmlsitemap_tools() {
+  $form['options'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Operations'),
+    '#collapsible' => FALSE, 
+    '#collapsed' => FALSE,
+    '#prefix' => '<div class="container-inline">',
+    '#suffix' => '</div>',
+  );
+  $options = array();
+  foreach (module_invoke_all('xmlsitemap_operations') as $operation => $info) {
+    $options[$operation] = $info['label'];
+  }
+  resert($options);
+  $form['options']['operation'] = array(
+    '#type' => 'select',
+    '#options' => $options,
+    '#default_value' => key($options),
+  );
+  $form['options']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Apply'),
+    '#submit' => array('xmlsitemap_tools_submit'),
+  );
+}
+
+/**
+ * Submit the tools form.
+ */
+function xmlsitemap_tools_submit($form, &$form_state) {
+  $operations = module_invoke_all('xmlsitemap_operations');
+  $operation = $operations[$form_state['values']['operation']];
+  $function = $operation['callback'];
+  if (isset($operation['callback arguments'])) {
+    $args = $operation['callback arguments'];
+  }
+  else {
+    $args = array();
+  }
+  call_user_func_array($function, $args);
+  $form_state['redirect'] = 'admin/settings/xmlsitemap/tools';
+}
+
 /*****************************************************************************
  * Public functions.
  ****************************************************************************/
