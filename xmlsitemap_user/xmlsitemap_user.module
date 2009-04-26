@@ -35,7 +35,7 @@ function xmlsitemap_user_form_user_admin_settings_alter(&$form, &$from_state) {
     '#options' => xmlsitemap_priority_options('exclude'),
   );
   $form['buttons']['#weight'] = isset($form['buttons']['#weight']) ? $form['buttons']['#weight'] + 1 : 1;
-  $form['#submit'][] = 'xmlsitemap_user_form_submit';
+  $form['#submit'][] = 'xmlsitemap_user_admin_settings_submit';
 }
 
 /**
@@ -66,7 +66,7 @@ function xmlsitemap_user_form_user_admin_role_alter(&$form, &$from_state) {
   );
   $form['submit']['#weight'] = isset($form['submit']['#weight']) ? $form['submit']['#weight'] + 1 : 1;
   $form['delete']['#weight'] = isset($form['delete']['#weight']) ? $form['delete']['#weight'] + 1 : 1;
-  $form['#submit'][] = 'xmlsitemap_user_form_submit';
+  $form['#submit'][] = 'xmlsitemap_user_admin_role_submit';
 }
 
 /**
@@ -252,15 +252,20 @@ function xmlsitemap_user_xmlsitemap_links() {
 /**
  * Form submit function.
  */
-function xmlsitemap_user_form_submit($form, &$form_state) {
-  if ($form['form_id']['#value'] == 'user_admin_role') {
-    $form_values = $form_state['values'];
-    $priority = db_result(db_query("SELECT priority FROM {xmlsitemap_user_role} WHERE rid = %d", $form_values['rid']));
-    $row = new stdClass();
-    $row->rid = $form_values['rid'];
-    $row->priority = $form_values['xmlsitemap_user_role_priority'];
-    drupal_write_record('xmlsitemap_user_role', $row, $priority !== FALSE ? 'rid' : NULL);
-  }
+function xmlsitemap_user_admin_role_submit($form, &$form_state) {
+  $form_values = $form_state['values'];
+  $priority = db_result(db_query("SELECT priority FROM {xmlsitemap_user_role} WHERE rid = %d", $form_values['rid']));
+  $row = new stdClass();
+  $row->rid = $form_values['rid'];
+  $row->priority = $form_values['xmlsitemap_user_role_priority'];
+  drupal_write_record('xmlsitemap_user_role', $row, $priority !== FALSE ? 'rid' : NULL);
+  xmlsitemap_flag_sitemap();
+}
+
+/**
+ * Form submit function.
+ */
+function xmlsitemap_user_admin_settings_submit($form, &$form_state) {
   xmlsitemap_flag_sitemap();
 }
 
