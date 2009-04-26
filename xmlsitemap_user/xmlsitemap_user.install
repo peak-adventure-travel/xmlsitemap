@@ -405,6 +405,22 @@ function xmlsitemap_user_update_6113() {
 }
 
 /**
+ * Implementation of hook_update_N().
+ *
+ */
+function xmlsitemap_user_update_6114() {
+  $ret = array();
+  if (function_exists('rules_clear_cache')) {
+    rules_clear_cache();
+    $ret[] = array(
+      'success' => TRUE,
+      'query' => 'CLEAR RULES CACHE',
+    );
+  }
+  return $ret;
+}
+
+/**
  * Implementation of hook_uninstall().
  */
 function xmlsitemap_user_uninstall() {
