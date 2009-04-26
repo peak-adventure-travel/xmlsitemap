@@ -1,5 +1,10 @@
 $Id$
 
+XML Sitemap 6.x-1, 2009-04-26
+-----------------------------------
+#384160: Implement hook_rules_action_info().
+#442538: Add a tools menu.
+
 XML Sitemap 6.x-1, 2009-04-25
 -----------------------------------
 #445016: File for Rules integration causes an error during update of the module.
