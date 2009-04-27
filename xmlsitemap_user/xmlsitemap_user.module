@@ -73,9 +73,15 @@ function xmlsitemap_user_form_user_admin_role_alter(&$form, &$from_state) {
  * Implementation of hook_form_FORM_ID_alter().
  */
 function xmlsitemap_user_form_xmlsitemap_settings_alter(&$form, &$from_state) {
-  $form['general']['priority']['xmlsitemap_user_comment_priority'] = array(
+  $form['xmlsitemap_user'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('User settings'),
+    '#description' => t('The settings for the users to include in the site map.'),
+    '#collapsible' => TRUE,
+  );
+  $form['xmlsitemap_user']['xmlsitemap_user_comment_priority'] = array(
     '#type' => 'select',
-    '#title' => t('Comment ratio weight - users'),
+    '#title' => t('Comment ratio priority adjustment'),
     '#description' => t("This number will be added to the priority of the user who authored the highest number of comments; for the other users, the number is calculated proportionally to the number of authored comments. This doesn't apply if the maximum number of comments is one, nor for the users for which the priority is overriden."),
     '#default_value' => variable_get('xmlsitemap_user_comment_priority', 0.2),
     '#options' => xmlsitemap_priority_options(),

@@ -92,9 +92,15 @@ function xmlsitemap_term_taxonomy_form_vocabulary_alter(&$form, &$from_state) {
  */
 function xmlsitemap_term_form_xmlsitemap_settings_alter(&$form, &$from_state) {
   $options = xmlsitemap_priority_options();
-  $form['general']['priority']['xmlsitemap_term_node_priority'] = array(
+  $form['xmlsitemap_term'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Taxonomy terms settings'),
+    '#description' => t('The settings for the taxonomy terms to include in the site map.'),
+    '#collapsible' => TRUE,
+  );
+  $form['xmlsitemap_term']['xmlsitemap_term_node_priority'] = array(
     '#type' => 'select',
-    '#title' => t('Term ratio weight - nodes'),
+    '#title' => t('Terms use priority adjustment'),
     '#description' => t("This number will be added to the priority of vocabulary term which is used by 100 nodes; for the other terms, the number is calculated proportionally to the number of nodes. This doesn't apply for terms that are used for just one node, nor for the vocabulary terms  for which the priority is overriden."),
     '#default_value' => variable_get('xmlsitemap_term_node_priority', 0.2),
     '#options' => $options,
