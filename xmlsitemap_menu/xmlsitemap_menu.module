@@ -34,7 +34,7 @@ function xmlsitemap_menu_form_alter(&$form, $form_state, $form_id) {
 function xmlsitemap_menu_form_xmlsitemap_settings_alter(&$form, &$from_state) {
   $options = xmlsitemap_priority_options('default');
   $options['-2'] = t('Calculated from the menu items weight');
-  $form['general']['priority']['third_group']['xmlsitemap_menu_priority'] = array(
+  $form['general']['priority']['xmlsitemap_menu_priority'] = array(
     '#type' => 'select',
     '#title' => t('Menu items priority'),
     '#description' => t("The priority assigned to the menu items."),

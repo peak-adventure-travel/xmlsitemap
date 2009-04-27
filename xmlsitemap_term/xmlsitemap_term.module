@@ -92,7 +92,7 @@ function xmlsitemap_term_taxonomy_form_vocabulary_alter(&$form, &$from_state) {
  */
 function xmlsitemap_term_form_xmlsitemap_settings_alter(&$form, &$from_state) {
   $options = xmlsitemap_priority_options();
-  $form['general']['priority']['second_group']['xmlsitemap_term_node_priority'] = array(
+  $form['general']['priority']['xmlsitemap_term_node_priority'] = array(
     '#type' => 'select',
     '#title' => t('Term ratio weight - nodes'),
     '#description' => t("This number will be added to the priority of vocabulary term which is used by 100 nodes; for the other terms, the number is calculated proportionally to the number of nodes. This doesn't apply for terms that are used for just one node, nor for the vocabulary terms  for which the priority is overriden."),
