@@ -321,6 +321,7 @@ function xmlsitemap_tools() {
     '#value' => t('Apply'),
     '#submit' => array('xmlsitemap_tools_submit'),
   );
+  return $form;
 }
 
 /**
