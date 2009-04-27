@@ -331,12 +331,11 @@ function xmlsitemap_tools_submit($form, &$form_state) {
   $operation = $operations[$form_state['values']['operation']];
   $function = $operation['callback'];
   if (isset($operation['callback arguments'])) {
-    $args = $operation['callback arguments'];
+    call_user_func_array($function, $operation['callback arguments']);
   }
   else {
-    $args = array();
+    call_user_func($function, NULL);
   }
-  call_user_func_array($function, $args);
   $form_state['redirect'] = 'admin/settings/xmlsitemap/tools';
 }
 
