@@ -102,7 +102,6 @@ function xmlsitemap_schema() {
     ),
     'indexes' => array(
       'link_module' => array(array('module', 25)),
-      'link_type' => array(array('type', 10)),
       'link_language' => array('language'),
       'link_changed' => array('changed'),
       'link_priority' => array('priority'),
@@ -213,8 +212,7 @@ function xmlsitemap_update_6000() {
           'length' => 32,
           'not null' => TRUE,
           'default' => '',
-        ),
-        array('indexes' => array('link_type' => array(array('type', 10))))
+        )
       );
     }
     else {
@@ -225,8 +223,7 @@ function xmlsitemap_update_6000() {
           'length' => 32,
           'not null' => TRUE,
           'default' => '',
-        ),
-        array('indexes' => array('link_type' => array(array('type', 10))))
+        )
       );
     }
     if (!db_column_exists('xmlsitemap', 'id')) {
@@ -387,7 +384,6 @@ function xmlsitemap_update_6000() {
         ),
         'indexes' => array(
           'link_module' => array(array('module', 25)),
-          'link_type' => array(array(array('type', 10))),
           'link_language' => array('language'),
           'link_changed' => array('changed'),
           'link_priority' => array('priority'),
@@ -687,6 +683,19 @@ function xmlsitemap_update_6136() {
  */
 function xmlsitemap_update_6137() {
   $ret[] = update_sql("DELETE FROM {system} WHERE name = 'xmlsitemap_file' AND type = 'module'");
+  return $ret;
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_6138() {
+  $ret = array();
+  $result = array();
+  @db_drop_index($result, 'xmlsitemap', 'link_type');
+  if ($result[0]['success']) {
+    $ret[] = $result[0];
+  }
   menu_rebuild();
   $ret[] = array(
     'success' => TRUE,
