@@ -310,7 +310,7 @@ function xmlsitemap_tools() {
   foreach (module_invoke_all('xmlsitemap_operations') as $operation => $info) {
     $options[$operation] = $info['label'];
   }
-  resert($options);
+  reset($options);
   $form['options']['operation'] = array(
     '#type' => 'select',
     '#options' => $options,
