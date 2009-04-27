@@ -1,7 +1,9 @@
 $Id$
 
-XML Sitemap 6.x-1, 2009-04-26
+XML Sitemap 6.x-1, 2009-04-27
 -----------------------------------
+#366197: hook_cron() support for missing nodes and terms.
+#446144: Tools page doesn't show anything.
 #445882: Call to undefined function.
 
 XML Sitemap 6.x-1, 2009-04-26
