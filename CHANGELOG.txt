@@ -2,6 +2,10 @@ $Id$
 
 XML Sitemap 6.x-1, 2009-04-26
 -----------------------------------
+#445882: Call to undefined function.
+
+XML Sitemap 6.x-1, 2009-04-26
+-----------------------------------
 #384160: Implement hook_rules_action_info().
 #442538: Add a tools menu.
 
