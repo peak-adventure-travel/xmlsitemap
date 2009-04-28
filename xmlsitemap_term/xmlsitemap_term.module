@@ -39,7 +39,7 @@ function xmlsitemap_term_form_alter(&$form, $form_state, $form_id) {
 /**
  * Implementation of hook_form_FORM_ID_alter().
  */
-function xmlsitemap_term_taxonomy_form_term_alter(&$form, &$from_state) {
+function xmlsitemap_term_form_taxonomy_form_term_alter(&$form, &$from_state) {
   $priority = db_result(db_query("SELECT priority_override
     FROM {xmlsitemap_term}
     WHERE tid = %d", $form['tid']['#value'])
@@ -70,7 +70,7 @@ function xmlsitemap_term_taxonomy_form_term_alter(&$form, &$from_state) {
 /**
  * Implementation of hook_form_FORM_ID_alter().
  */
-function xmlsitemap_term_taxonomy_form_vocabulary_alter(&$form, &$from_state) {
+function xmlsitemap_term_form_taxonomy_form_vocabulary_alter(&$form, &$from_state) {
   $form['xmlsitemap'] = array(
     '#type' => 'fieldset',
     '#title' => t('XML site map'),
