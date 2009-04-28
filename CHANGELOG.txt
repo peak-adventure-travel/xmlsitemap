@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 5.x-2, 2009-04-28
+-----------------------------------
+#446400: Module permissions are not declared.
+
 XML Sitemap 5.x-2, 2009-04-26
 -----------------------------------
 #444622: Remove xmlsitemap_file.module.
