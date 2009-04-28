@@ -392,6 +392,11 @@ function xmlsitemap_update_6000() {
       )
     );
   }
+  module_rebuild_cache();
+  $ret[] = array(
+    'success' => TRUE,
+    'query' => 'UPDATE MODULES LIST',
+  );
   return $ret;
 }
 
