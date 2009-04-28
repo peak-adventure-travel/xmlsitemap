@@ -16,6 +16,25 @@
  ****************************************************************************/
 
 /**
+ * Implementation of hook_cron().
+ */
+function xmlsitemap_term_cron() {
+  if (($limit = variable_get('xmlsitemap_term_cron_limit', -1)) != -1) {
+    $sql = "SELECT * FROM {term_data} t
+      LEFT JOIN {xmlsitemap_term} xt ON xt.tid = t.tid
+      WHERE xt.tid IS NULL";
+    $result = db_query($sql);
+    while ($limit-- && ($term = db_fetch_object($result))) {
+      $row = new stdClass();
+      $row->tid = $term->tid;
+      $row->vid = $term->vid;
+      $row->changed = XMLSITEMAP_TIME;
+      drupal_write_record('xmlsitemap_term', $row);
+    }
+  }
+}
+
+/**
  * Implementation of hook_form_alter().
  */
 function xmlsitemap_term_form_alter(&$form, $form_state, $form_id) {
