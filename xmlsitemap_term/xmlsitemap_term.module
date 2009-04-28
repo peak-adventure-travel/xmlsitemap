@@ -35,27 +35,6 @@ function xmlsitemap_term_cron() {
 }
 
 /**
- * Implementation of hook_form_alter().
- */
-function xmlsitemap_term_form_alter(&$form, $form_state, $form_id) {
-  if (isset($form['type']['#value']) && $form_id == $form['type']['#value'] .'_node_form') {
-    $node = $form['#node'];
-    if (isset($form['type']) && isset($node->nid)) {
-      if (isset($node->taxonomy)) {
-        $terms = $node->taxonomy;
-      }
-      else {
-        $terms = taxonomy_node_get_terms($node->nid);
-      }
-      $form['xmlsitemap_term_taxonomy'] = array(
-        '#type' => 'value',
-        '#value' => $terms,
-      );
-    }
-  }
-}
-
-/**
  * Implementation of hook_form_FORM_ID_alter().
  */
 function xmlsitemap_term_form_taxonomy_form_term_alter(&$form, &$from_state) {
