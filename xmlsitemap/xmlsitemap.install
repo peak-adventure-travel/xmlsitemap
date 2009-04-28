@@ -708,6 +708,11 @@ function xmlsitemap_update_6139() {
     'success' => TRUE,
     'query' => 'UPDATE MENU CALLBACKS',
   );
+  module_rebuild_cache();
+  $ret[] = array(
+    'success' => TRUE,
+    'query' => 'UPDATE MODULES LIST',
+  );
   return $ret;
 }
 
