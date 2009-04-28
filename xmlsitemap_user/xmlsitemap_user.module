@@ -16,6 +16,29 @@
  ****************************************************************************/
 
 /**
+ * Implementation of hook_cron().
+ */
+function xmlsitemap_user_cron() {
+  if (($limit = variable_get('xmlsitemap_user_cron_limit', -1)) != -1) {
+    $sql = "SELECT * FROM {users} u
+      LEFT JOIN {xmlsitemap_user} xu ON xu.uid = u.uid
+      WHERE xu.uid IS NULL
+        AND u.uid <> 0";
+    $result = db_query($sql);
+    while ($limit-- && ($account = db_fetch_object($result))) {
+      $row = new stdClass();
+      $row->uid = $account->uid;
+      $row->changed = !empty($account->access) ? $account->access : XMLSITEMAP_TIME;
+      $row->previously_changed = $account->created;
+      if (module_exists('comment')) {
+        $row->comments = (integer) db_result(db_query("SELECT COUNT(cid) FROM {comments} WHERE uid = %d", $account->uid));
+      }
+      drupal_write_record('xmlsitemap_user', $row);
+    }
+  }
+}
+
+/**
  * Implementation of hook_form_FORM_ID_alter().
  */
 function xmlsitemap_user_form_user_admin_settings_alter(&$form, &$from_state) {
@@ -132,7 +155,7 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
     case 'insert':
       $row = new stdClass();
       $row->uid = $account->uid;
-      $row->changed = XMLSITEMAP_TIME;
+      $row->changed = !empty($account->access) ? $account->access : XMLSITEMAP_TIME;
       $row->previously_changed = $account->created;
       $row->priority_override = isset($edit['xmlsitemap_user_priority']) ? $edit['xmlsitemap_user_priority'] : -2.0;
       drupal_write_record('xmlsitemap_user', $row);
@@ -144,12 +167,20 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
         $row = new stdClass();
         $row->uid = $account->uid;
         $row->previously_changed = $account->created;
-        $row->changed = XMLSITEMAP_TIME;
+        $row->changed = !empty($account->access) ? $account->access : XMLSITEMAP_TIME;
       }
       else {
         $row = $result;
-        $row->previously_changed = $row->changed;
-        $row->changed = XMLSITEMAP_TIME;
+        if (!empty($account->access)) {
+          if ($row->changed < $account->access) {
+            $row->previously_changed = $row->changed;
+            $row->changed = $account->access;
+          }
+        }
+        else {
+          $row->previously_changed = $row->changed;
+          $row->changed = XMLSITEMAP_TIME;
+        }
       }
       if (module_exists('comment')) {
         $row->comments = (integer) db_result(db_query("SELECT COUNT(cid) FROM {comments} WHERE uid = %d", $account->uid));
