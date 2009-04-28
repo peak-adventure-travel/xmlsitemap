@@ -31,6 +31,12 @@ define('XMLSITEMAP_LINK_DISABLED', 1);
  ****************************************************************************/
 
 /**
+ * Implementation of hook_exit().
+ */
+function xmlsitemap_exit() {
+}
+
+/**
  * Implementation of hook_form_alter().
  */
 function xmlsitemap_form_alter(&$form, &$form_state, $form_id) {
