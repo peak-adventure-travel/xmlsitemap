@@ -175,6 +175,13 @@ function xmlsitemap_menu($may_cache) {
   return $items;
 }
 
+/**
+ * Implementation of hook_perm().
+ */
+function xmlsitemap_perm() {
+  return array('override node settings', 'override profile settings');
+}
+
 /*****************************************************************************
  * Menu callbacks / form builders, submit/validate functions.
  ****************************************************************************/
