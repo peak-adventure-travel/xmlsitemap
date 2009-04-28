@@ -392,6 +392,15 @@ function xmlsitemap_update_6000() {
       )
     );
   }
+  $ret[] = update_sql("DELETE FROM {system} WHERE name IN ('xmlsitemap_file', 'xmlsitemap_helper') AND type = 'module'");
+  if (db_table_exists('xmlsitemap_file')) {
+    db_drop_table($ret, 'xmlsitemap_file');
+  }
+  menu_rebuild();
+  $ret[] = array(
+    'success' => TRUE,
+    'query' => 'UPDATE MENU CALLBACKS',
+  );
   module_rebuild_cache();
   $ret[] = array(
     'success' => TRUE,
@@ -687,8 +696,7 @@ function xmlsitemap_update_6136() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_update_6137() {
-  $ret[] = update_sql("DELETE FROM {system} WHERE name = 'xmlsitemap_file' AND type = 'module'");
-  return $ret;
+  return array();
 }
 
 /**
@@ -708,6 +716,10 @@ function xmlsitemap_update_6138() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_update_6139() {
+  $ret[] = update_sql("DELETE FROM {system} WHERE name IN ('xmlsitemap_file', 'xmlsitemap_helper') AND type = 'module'");
+  if (db_table_exists('xmlsitemap_file')) {
+    db_drop_table($ret, 'xmlsitemap_file');
+  }
   menu_rebuild();
   $ret[] = array(
     'success' => TRUE,
