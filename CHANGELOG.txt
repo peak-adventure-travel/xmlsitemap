@@ -2,14 +2,14 @@ $Id$
 
 XML Sitemap 6.x-1, 2009-04-28
 -----------------------------------
+#366197: hook_cron() support for populating the database tables.
 #447126: Call to undefined function xmlsitemap_link_count() on execution of hook_exit().
-#366197: hook_cron() support for missing nodes and terms.
 #447132: hook_form_FORM_ID_alter() hooks are not correctly named.
 
 XML Sitemap 6.x-1, 2009-04-27
 -----------------------------------
 #446590: Index definition seems to not be parsed correctly.
-#366197: hook_cron() support for missing nodes and terms.
+#366197: hook_cron() support for populating the database tables.
 #446144: Tools page doesn't show anything.
 #445882: Call to undefined function.
 
