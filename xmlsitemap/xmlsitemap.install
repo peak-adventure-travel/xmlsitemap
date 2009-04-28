@@ -696,6 +696,13 @@ function xmlsitemap_update_6138() {
   if ($result[0]['success']) {
     $ret[] = $result[0];
   }
+  return $ret;
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_6139() {
   menu_rebuild();
   $ret[] = array(
     'success' => TRUE,
