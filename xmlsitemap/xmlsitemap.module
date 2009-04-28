@@ -371,6 +371,27 @@ function xmlsitemap_cache_id() {
 }
 
 /**
+ * Return the array for the cron limit options.
+ */
+function xmlsitemap_cron_options() {
+  return array(
+    '400' => t('400'),
+    '300' => t('300'),
+    '200' => t('200'),
+    '150' => t('150'),
+    '100' => t('100'),
+    '75' => t('75'),
+    '50' => t('50'),
+    '25' => t('25'),
+    '20' => t('20'),
+    '15' => t('15'),
+    '10' => t('10'),
+    '5' => t('5'),
+    '-1' => t('0'),
+  );
+}
+
+/**
  * Delete the cache file used for the site map content, and mark the site map as
  * changed.
  */
@@ -408,7 +429,7 @@ function xmlsitemap_link_count() {
 }
 
 /**
- * Get an array of site map priority options.
+ * Return an array of site map priority options.
  * @param $option
  *  If not given, the array will include priority values from 0.0 to 1.0.
  * - exclude: Add option to exclude item from site map.
