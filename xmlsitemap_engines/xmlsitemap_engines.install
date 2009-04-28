@@ -13,7 +13,7 @@
 /**
  * Implementation of hook_install().
  */
-function xmlsitemap_user_install() {
+function xmlsitemap_engines_install() {
   db_query("UPDATE {system} SET weight = 15 WHERE name = 'xmlsitemap_engines'");
 }
 
