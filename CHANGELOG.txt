@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1, 2009-04-28
 -----------------------------------
+#441732: Use page splitting to move UI code to .inc files.
 #366197: hook_cron() support for populating the database tables.
 #447126: Call to undefined function xmlsitemap_link_count() on execution of hook_exit().
 #447132: hook_form_FORM_ID_alter() hooks are not correctly named.
