@@ -31,9 +31,9 @@ define('XMLSITEMAP_LINK_DISABLED', 1);
  ****************************************************************************/
 
 /**
- * Implementation of hook_exit().
+ * Implementation of hook_boot().
  */
-function xmlsitemap_exit() {
+function xmlsitemap_boot() {
 }
 
 /**
