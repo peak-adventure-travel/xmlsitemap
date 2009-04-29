@@ -23,9 +23,10 @@ function xmlsitemap_user_cron() {
     $sql = "SELECT * FROM {users} u
       LEFT JOIN {xmlsitemap_user} xu ON xu.uid = u.uid
       WHERE xu.uid IS NULL
-        AND u.uid <> 0";
-    $result = db_query($sql);
-    while ($limit-- && ($account = db_fetch_object($result))) {
+        AND u.uid <> 0
+      LIMIT = %d";
+    $result = db_query($sql, $limit);
+    while ($account = db_fetch_object($result)) {
       $row = new stdClass();
       $row->uid = $account->uid;
       $row->changed = !empty($account->access) ? $account->access : XMLSITEMAP_TIME;

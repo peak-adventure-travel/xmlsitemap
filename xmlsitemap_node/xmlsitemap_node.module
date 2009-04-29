@@ -67,9 +67,10 @@ function xmlsitemap_node_cron() {
     $sql = "SELECT n.nid FROM {node} n
       LEFT JOIN {xmlsitemap_node} xn ON n.nid = xn.nid
       WHERE xn.nid IS NULL
-        AND n.status = 1";
-    $result = db_query($sql);
-    while ($limit-- && ($nid = db_fetch_array($result))) {
+        AND n.status = 1
+      LIMIT = %d";
+    $result = db_query($sql, $limit);
+    while ($nid = db_fetch_array($result)) {
       if ($node = node_load($nid)) {
         if (module_exists('comment')) {
           $maxcomments = (integer) db_result(db_query('SELECT MAX(comment_count) FROM {node_comment_statistics}'));
