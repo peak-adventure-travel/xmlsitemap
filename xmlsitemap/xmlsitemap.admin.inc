@@ -65,6 +65,7 @@ function xmlsitemap_settings() {
     '#options' => xmlsitemap_priority_options(),
   );
   $form = system_settings_form($form);
+  $form['buttons']['#weight'] = 10;
   $form['#submit'][] = 'xmlsitemap_settings_submit';
   $form['#validate'][] = 'xmlsitemap_settings_validate';
   return $form;
