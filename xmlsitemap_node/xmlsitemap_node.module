@@ -69,7 +69,7 @@ function xmlsitemap_node_cron() {
       WHERE xn.nid IS NULL
         AND n.status = 1
       LIMIT %d";
-    $result = db_query($sql, $limit);
+    $result = db_query_range($sql, 0, $limit);
     while ($node = db_fetch_object($result)) {
       if (module_exists('comment')) {
         $maxcomments = (integer) db_result(db_query('SELECT MAX(comment_count) FROM {node_comment_statistics}'));

@@ -25,7 +25,7 @@ function xmlsitemap_user_cron() {
       WHERE xu.uid IS NULL
         AND u.uid <> 0
       LIMIT %d";
-    $result = db_query($sql, $limit);
+    $result = db_query_range($sql, 0, $limit);
     while ($account = db_fetch_object($result)) {
       $row = new stdClass();
       $row->uid = $account->uid;
