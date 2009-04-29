@@ -65,7 +65,7 @@ function xmlsitemap_node_comment($a1, $op) {
 function xmlsitemap_node_cron() {
   if (($limit = variable_get('xmlsitemap_node_cron_limit', 100)) != -1) {
     $sql = "SELECT n.* FROM {node} n
-      LEFT JOIN {xmlsitemap_node} xn ON n.nid = xn.nid
+      LEFT JOIN {xmlsitemap_node} xn ON xn.nid = n.nid
       WHERE xn.nid IS NULL
         AND n.status <> 0";
     $result = db_query_range($sql, 0, $limit);
