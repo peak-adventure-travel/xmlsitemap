@@ -32,6 +32,35 @@ function xmlsitemap_menu_form_alter(&$form, $form_state, $form_id) {
  * Implementation of hook_form_FORM_ID_alter().
  */
 function xmlsitemap_menu_form_xmlsitemap_settings_alter(&$form, &$from_state) {
+  $form['xmlsitemap_menu'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Menu settings'),
+    '#description' => t('The settings for the menus to include in the site map.'),
+    '#collapsible' => TRUE,
+    '#weight' => 0,
+  );
+  $form['xmlsitemap_menu']['xmlsitemap_menu_menus_changefreq'] = array(
+    '#type' => 'select',
+    '#title' => t('Menu links change frequency'),
+    '#description' => t('The change frequency associated with the menu links.'),
+    '#default_value' => variable_get('xmlsitemap_menu_menus_changefreq', 3600),
+    '#options' => array(
+      '3600' => 'Hourly',
+      '86400' => 'Daily',
+      '604800' => 'Weekly',
+      '2419200' => 'Monthly',
+      '29030400' => 'Yearly',
+    ),
+  );
+  $options = xmlsitemap_priority_options('default');
+  $options['-2'] = t('Calculated from the menu items weight');
+  $form['xmlsitemap_menu']['xmlsitemap_menu_priority'] = array(
+    '#type' => 'select',
+    '#title' => t('Menu items priority'),
+    '#description' => t("The priority assigned to the menu items."),
+    '#default_value' => variable_get('xmlsitemap_menu_priority', -2.0),
+    '#options' => $options,
+  );
   $options = array();
   $result = db_query("SELECT menu_name, title FROM {menu_custom}");
   while ($menu = db_fetch_array($result)) {
@@ -45,35 +74,6 @@ function xmlsitemap_menu_form_xmlsitemap_settings_alter(&$form, &$from_state) {
     }
   }
   if (!empty($options)) {
-    $form['xmlsitemap_menu'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('Menu settings'),
-      '#description' => t('The settings for the menus to include in the site map.'),
-      '#collapsible' => TRUE,
-      '#weight' => 0,
-    );
-    $form['xmlsitemap_menu']['xmlsitemap_menu_menus_changefreq'] = array(
-      '#type' => 'select',
-      '#title' => t('Menu links change frequency'),
-      '#description' => t('The change frequency associated with the menu links.'),
-      '#default_value' => variable_get('xmlsitemap_menu_menus_changefreq', 3600),
-      '#options' => array(
-        '3600' => 'Hourly',
-        '86400' => 'Daily',
-        '604800' => 'Weekly',
-        '2419200' => 'Monthly',
-        '29030400' => 'Yearly',
-      ),
-    );
-    $options = xmlsitemap_priority_options('default');
-    $options['-2'] = t('Calculated from the menu items weight');
-    $form['xmlsitemap_menu']['xmlsitemap_menu_priority'] = array(
-      '#type' => 'select',
-      '#title' => t('Menu items priority'),
-      '#description' => t("The priority assigned to the menu items."),
-      '#default_value' => variable_get('xmlsitemap_menu_priority', -2.0),
-      '#options' => $options,
-    );
     $form['xmlsitemap_menu']['xmlsitemap_menu_menus'] = array(
       '#type' => 'checkboxes',
       '#title' => t('Menus to include in the site map'),
