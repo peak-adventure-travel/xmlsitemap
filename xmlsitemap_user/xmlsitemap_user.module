@@ -20,7 +20,7 @@
  */
 function xmlsitemap_user_cron() {
   if (($limit = variable_get('xmlsitemap_user_cron_limit', 100)) != -1) {
-    $sql = "SELECT * FROM {users} u
+    $sql = "SELECT u.* FROM {users} u
       LEFT JOIN {xmlsitemap_user} xu ON xu.uid = u.uid
       WHERE xu.uid IS NULL
         AND u.uid <> 0
