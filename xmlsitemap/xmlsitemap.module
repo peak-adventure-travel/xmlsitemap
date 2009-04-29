@@ -118,6 +118,7 @@ function xmlsitemap_menu() {
     'page callback' => 'xmlsitemap_output',
     'access callback' => '_xmlsitemap_anonymous_access',
     'type' => MENU_CALLBACK,
+    'file' => 'xmlsitemap.pages.inc',
   );
   $chunk_size = variable_get('xmlsitemap_chunk_size', 1000);
   $link_count = xmlsitemap_link_count();
@@ -130,6 +131,7 @@ function xmlsitemap_menu() {
         'page arguments' => array((string) $chunk),
         'access callback' => '_xmlsitemap_anonymous_access',
         'type' => MENU_CALLBACK,
+        'file' => 'xmlsitemap.pages.inc',
       );
     }
   }
