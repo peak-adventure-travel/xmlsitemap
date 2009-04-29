@@ -95,6 +95,7 @@ function xmlsitemap_term_form_xmlsitemap_settings_alter(&$form, &$from_state) {
     '#title' => t('Taxonomy terms settings'),
     '#description' => t('The settings for the taxonomy terms to include in the site map.'),
     '#collapsible' => TRUE,
+    '#weight' => 2,
   );
   $form['xmlsitemap_term']['xmlsitemap_term_node_priority'] = array(
     '#type' => 'select',

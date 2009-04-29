@@ -101,6 +101,7 @@ function xmlsitemap_user_form_xmlsitemap_settings_alter(&$form, &$from_state) {
     '#title' => t('User settings'),
     '#description' => t('The settings for the users to include in the site map.'),
     '#collapsible' => TRUE,
+    '#weight' => 3,
   );
   $form['xmlsitemap_user']['xmlsitemap_user_comment_priority'] = array(
     '#type' => 'select',

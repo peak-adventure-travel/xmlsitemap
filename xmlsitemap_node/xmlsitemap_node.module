@@ -189,6 +189,7 @@ function xmlsitemap_node_form_xmlsitemap_settings_alter(&$form, &$from_state) {
     '#title' => t('Node settings'),
     '#description' => t('The settings for the nodes to include in the site map.'),
     '#collapsible' => TRUE,
+    '#weight' => 1,
   );
   $form['xmlsitemap_node']['xmlsitemap_node_promote_priority'] = array(
     '#type' => 'select',
