@@ -22,8 +22,7 @@ function xmlsitemap_term_cron() {
   if (($limit = variable_get('xmlsitemap_term_cron_limit', 100)) != -1) {
     $sql = "SELECT t.* FROM {term_data} t
       LEFT JOIN {xmlsitemap_term} xt ON xt.tid = t.tid
-      WHERE xt.tid IS NULL
-      LIMIT %d";
+      WHERE xt.tid IS NULL";
     $result = db_query_range($sql, 0, $limit);
     while ($term = db_fetch_object($result)) {
       $row = new stdClass();

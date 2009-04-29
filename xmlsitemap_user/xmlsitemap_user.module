@@ -24,8 +24,7 @@ function xmlsitemap_user_cron() {
       LEFT JOIN {xmlsitemap_user} xu ON xu.uid = u.uid
       WHERE xu.uid IS NULL
         AND u.uid <> 0
-        AND u.status <> 0
-      LIMIT %d";
+        AND u.status <> 0";
     $result = db_query_range($sql, 0, $limit);
     while ($account = db_fetch_object($result)) {
       $row = new stdClass();
