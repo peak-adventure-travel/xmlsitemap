@@ -24,6 +24,7 @@ function xmlsitemap_user_cron() {
       LEFT JOIN {xmlsitemap_user} xu ON xu.uid = u.uid
       WHERE xu.uid IS NULL
         AND u.uid <> 0
+        AND u.status <> 0
       LIMIT %d";
     $result = db_query_range($sql, 0, $limit);
     while ($account = db_fetch_object($result)) {
@@ -162,43 +163,47 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
       );
       return $form;
     case 'insert':
-      $row = new stdClass();
-      $row->uid = $account->uid;
-      $row->changed = !empty($account->access) ? $account->access : XMLSITEMAP_TIME;
-      $row->previously_changed = $account->created;
-      $row->priority_override = isset($edit['xmlsitemap_user_priority']) ? $edit['xmlsitemap_user_priority'] : -2.0;
-      drupal_write_record('xmlsitemap_user', $row);
-      $edit['xmlsitemap_user_priority'] = NULL;
-      xmlsitemap_flag_sitemap();
-      break;
-    case 'update':
-      if (($result = db_fetch_object(db_query("SELECT uid, changed, previously_changed, comments, priority_override FROM {xmlsitemap_user} WHERE uid = %d", $account->uid))) === FALSE) {
+      if ($account->status) {
         $row = new stdClass();
         $row->uid = $account->uid;
-        $row->previously_changed = $account->created;
         $row->changed = !empty($account->access) ? $account->access : XMLSITEMAP_TIME;
+        $row->previously_changed = $account->created;
+        $row->priority_override = isset($edit['xmlsitemap_user_priority']) ? $edit['xmlsitemap_user_priority'] : -2.0;
+        drupal_write_record('xmlsitemap_user', $row);
+        $edit['xmlsitemap_user_priority'] = NULL;
+        xmlsitemap_flag_sitemap();
       }
-      else {
-        $row = $result;
-        if (!empty($account->access)) {
-          if ($row->changed < $account->access) {
-            $row->previously_changed = $row->changed;
-            $row->changed = $account->access;
-          }
+      break;
+    case 'update':
+      if ($account->status) {
+        if (($result = db_fetch_object(db_query("SELECT uid, changed, previously_changed, comments, priority_override FROM {xmlsitemap_user} WHERE uid = %d", $account->uid))) === FALSE) {
+          $row = new stdClass();
+          $row->uid = $account->uid;
+          $row->previously_changed = $account->created;
+          $row->changed = !empty($account->access) ? $account->access : XMLSITEMAP_TIME;
         }
         else {
-          $row->previously_changed = $row->changed;
-          $row->changed = XMLSITEMAP_TIME;
+          $row = $result;
+          if (!empty($account->access)) {
+            if ($row->changed < $account->access) {
+              $row->previously_changed = $row->changed;
+              $row->changed = $account->access;
+            }
+          }
+          else {
+            $row->previously_changed = $row->changed;
+            $row->changed = XMLSITEMAP_TIME;
+          }
         }
+        if (module_exists('comment')) {
+          $row->comments = (integer) db_result(db_query("SELECT COUNT(cid) FROM {comments} WHERE uid = %d", $account->uid));
+        }
+        if (isset($edit['xmlsitemap_user_priority'])) {
+          $row->priority_override = $edit['xmlsitemap_user_priority'];
+        }
+        drupal_write_record('xmlsitemap_user', $row, $result !== FALSE ? 'uid' : NULL);
+        xmlsitemap_flag_sitemap();
       }
-      if (module_exists('comment')) {
-        $row->comments = (integer) db_result(db_query("SELECT COUNT(cid) FROM {comments} WHERE uid = %d", $account->uid));
-      }
-      if (isset($edit['xmlsitemap_user_priority'])) {
-        $row->priority_override = $edit['xmlsitemap_user_priority'];
-      }
-      drupal_write_record('xmlsitemap_user', $row, $result !== FALSE ? 'uid' : NULL);
-      xmlsitemap_flag_sitemap();
       break;
     case 'delete':
       db_query("DELETE FROM {xmlsitemap_user} WHERE uid = %d", $account->uid);
@@ -296,7 +301,8 @@ function xmlsitemap_user_xmlsitemap_links() {
  ****************************************************************************/
 
 /**
- * Set the user priority in the site map.
+ * Set the user priority in the site map. It doesn't change the priority of a
+ * blocked user.
  * @param $user
  *   The user object, or the user ID.
  * @param $priority
@@ -313,7 +319,7 @@ function xmlsitemap_user_set_priority($user, $priority) {
     $uid = $user;
     $user = user_load($uid);
   }
-  if ($user) {
+  if ($user && $user->status) {
     $result = db_fetch_object(db_query("SELECT uid, changed, previously_changed, comments, priority_override
       FROM {xmlsitemap_user}
       WHERE uid = %d", $uid)
