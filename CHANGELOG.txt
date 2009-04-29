@@ -1,5 +1,11 @@
 $Id$
 
+XML Sitemap 6.x-1, 2009-04-29
+-----------------------------------
+#447912: Change the default value for the cron limit.
+#441732: WSOD on sitemap.xml.
+#447854: Settings field sets appear under the form buttons.
+
 XML Sitemap 6.x-1, 2009-04-28
 -----------------------------------
 #447552: xmlsitemap_user_install() is declared twice.
