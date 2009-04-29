@@ -64,33 +64,31 @@ function xmlsitemap_node_comment($a1, $op) {
  */
 function xmlsitemap_node_cron() {
   if (($limit = variable_get('xmlsitemap_node_cron_limit', 100)) != -1) {
-    $sql = "SELECT n.nid FROM {node} n
+    $sql = "SELECT n.* FROM {node} n
       LEFT JOIN {xmlsitemap_node} xn ON n.nid = xn.nid
       WHERE xn.nid IS NULL
         AND n.status = 1
       LIMIT %d";
     $result = db_query($sql, $limit);
-    while ($nid = db_fetch_array($result)) {
-      if ($node = node_load($nid)) {
-        if (module_exists('comment')) {
-          $maxcomments = (integer) db_result(db_query('SELECT MAX(comment_count) FROM {node_comment_statistics}'));
-          $comments = (integer) db_result(db_query('SELECT comment_count
-            FROM {node_comment_statistics}
-            WHERE nid = %d', $nid)
-          );
-        }
-        else {
-          $maxcomments = 0;          
-        }
-        $row = new stdClass();
-        $row->nid = $nid;
-        $row->changed = $node->changed;
-        $row->previously_changed = $node->created;
-        if ($maxcomments > 1) {
-          $row->comment_ratio = $comments / $maxcomments;
-        }
-        drupal_write_record('xmlsitemap_node', $row);
+    while ($node = db_fetch_object($result)) {
+      if (module_exists('comment')) {
+        $maxcomments = (integer) db_result(db_query('SELECT MAX(comment_count) FROM {node_comment_statistics}'));
+        $comments = (integer) db_result(db_query('SELECT comment_count
+          FROM {node_comment_statistics}
+          WHERE nid = %d', $node->nid)
+        );
       }
+      else {
+        $maxcomments = 0;          
+      }
+      $row = new stdClass();
+      $row->nid = $node->nid;
+      $row->changed = $node->changed;
+      $row->previously_changed = $node->created;
+      if ($maxcomments > 1) {
+        $row->comment_ratio = $comments / $maxcomments;
+      }
+      drupal_write_record('xmlsitemap_node', $row);
     }
   }
 }
