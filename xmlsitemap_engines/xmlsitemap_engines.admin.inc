@@ -173,8 +173,15 @@ function xmlsitemap_engines_settings() {
     '#default_value' => variable_get('xmlsitemap_engines_yahoo_verify_string', ''),
   );
   $form = system_settings_form($form);
-  array_unshift($form['#submit'], 'xmlsitemap_settings_submit');
+  $form['#submit'][] = 'xmlsitemap_engines_settings_submit';
   return $form;
+}
+
+/**
+ * Submit the settings form.
+ */
+function xmlsitemap_engines_settings_submit($form, &$form_state) {
+  variable_set('menu_rebuild_needed', TRUE);
 }
 
 /**
