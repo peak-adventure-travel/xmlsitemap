@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1, 2009-05-01
 -----------------------------------
+#450798: Minor warning when updating the database.
 #433828: Google doesn't find the verification file.
 
 XML Sitemap 6.x-1, 2009-04-29
