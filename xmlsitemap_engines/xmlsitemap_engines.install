@@ -20,7 +20,8 @@ function xmlsitemap_engines_install() {
 /**
  * Implementation of hook_update_N().
  */
-function xmlsitemap_engines_update_6000() {
+function xmlsitemap_engines_update_6100() {
+  $ret[] = update_sql("DELETE FROM {variable} WHERE name = 'xmlsitemap_engines_cron_submit_delay'");
   $variables = array(
     'ask_url' => 'http://submissions.ask.com/ping?sitemap=[sitemap]',
     'google_url' => 'http://www.google.com/webmasters/tools/ping?sitemap=[sitemap]',
@@ -28,7 +29,6 @@ function xmlsitemap_engines_update_6000() {
     'live_url' => 'http://webmaster.live.com/ping.aspx?siteMap=[sitemap]',
     'yahoo_url' => 'http://search.yahooapis.com/SiteExplorerService/V1/ping?sitemap=[sitemap]',
   );
-  $ret[] = update_sql("DELETE FROM {variable} WHERE name = 'xmlsitemap_engines_cron_submit_delay'");
   foreach($variables as $variable => $value) {
     variable_set('xmlsitemap_engines_'. $variable, $value);
   }
@@ -37,24 +37,7 @@ function xmlsitemap_engines_update_6000() {
     'success' => TRUE,
     'query' => 'UPDATE MODULE SETTINGS'
   );
-  $variables = array(
-    'submit',
-    'log_access',
-    'cron_submit_frequency',
-    'cron_submit_delay'
-  );
-  foreach ($variables as $variable) {
-    $ret[] = update_sql("UPDATE {variable} SET name = 'xmlsitemap_engines_{$variable}' WHERE name = 'xmlsitemap_{$variable}'");
-  }
-  $ret[] = update_sql("UPDATE {system} SET weight = 15 WHERE name = 'xmlsitemap_engines'");
   return $ret;
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_engines_update_6100() {
-  return array();
 }
 
 /**
@@ -89,7 +72,25 @@ function xmlsitemap_engines_update_6104() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_engines_update_6105() {
-  return xmlsitemap_engines_update_6000();
+  return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_engines_update_6106() {
+  $variables = array(
+    'submit',
+    'log_access',
+    'cron_submit_frequency',
+    'cron_submit_delay'
+  );
+  foreach ($variables as $variable) {
+    $ret[] = @update_sql("UPDATE {variable} SET name = 'xmlsitemap_engines_{$variable}' WHERE name = 'xmlsitemap_{$variable}'");
+    $ret[] = update_sql("DELETE FROM {variable} WHERE name = 'xmlsitemap_{$variable}'");
+  }
+  $ret[] = update_sql("UPDATE {system} SET weight = 15 WHERE name = 'xmlsitemap_engines'");
+  return $ret;
 }
 
 /**
