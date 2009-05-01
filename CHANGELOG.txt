@@ -6,6 +6,11 @@ XML Sitemap 6.x-1, 2009-05-01
 
 XML Sitemap 6.x-1, 2009-04-29
 -----------------------------------
+#447292: Users are inserted in the site map even if they are blocked.
+#448104: Use db_query_range().
+#448424: Invalid SQL syntax for the LIMIT parameter.
+#448452: Duplicate entry error during cron execution.
+#448432: Wrong settings are shown.
 #447912: Change the default value for the cron limit.
 #441732: WSOD on sitemap.xml.
 #447854: Settings field sets appear under the form buttons.
