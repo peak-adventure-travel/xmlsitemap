@@ -78,7 +78,7 @@ function xmlsitemap_node_cron() {
         );
       }
       else {
-        $maxcomments = 0;          
+        $maxcomments = 0;
       }
       $row = new stdClass();
       $row->nid = $node->nid;
