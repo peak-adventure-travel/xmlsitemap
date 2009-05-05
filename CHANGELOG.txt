@@ -5,6 +5,7 @@ XML Sitemap 6.x-1, 2009-05-05
 #412456: Update README.txt and INSTALL.txt.
 #449284: Setting priority to 'Not in Sitemap' doesn't remove link from sitemap.
 #450936: Remove the user posts threshold feature.
+#453434: Rename the modules.
 #453566: Default value for variable_get('xmlsitemap_menu_menus', array()) is 
 incorrect.
 

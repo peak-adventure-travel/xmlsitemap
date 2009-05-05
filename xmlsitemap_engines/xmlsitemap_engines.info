@@ -1,6 +1,6 @@
 ; $Id$
-name = XML Sitemap: Engines
-description = Submits site map to search engines.
-package = XML Sitemap
+name = XML sitemap engines
+description = Submit the sitemap to search engines.
+package = XML sitemap
 dependencies[] = xmlsitemap
 core = "6.x"

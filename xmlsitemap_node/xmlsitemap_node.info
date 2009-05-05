@@ -1,6 +1,6 @@
 ; $Id$
-name = XML Sitemap: Node
-description = Adds nodes to the site map.
-package = XML Sitemap
+name = XML sitemap node
+description = Add node links to the sitemap.
+package = XML sitemap
 dependencies[] = xmlsitemap
 core = "6.x"

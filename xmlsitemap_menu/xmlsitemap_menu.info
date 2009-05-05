@@ -1,6 +1,6 @@
 ; $Id$
-name = XML Sitemap: Menu
-description = Adds menu items to the site map.
-package = XML Sitemap
+name = XML sitemap menu
+description = Add specified menu item links to the sitemap.
+package = XML sitemap
 dependencies[] = xmlsitemap
 core = "6.x"

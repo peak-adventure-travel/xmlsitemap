@@ -1,6 +1,6 @@
 ; $Id$
-name = XML Sitemap: Term
-description = Adds taxonomy terms to the site map.
-package = XML Sitemap
+name = XML sitemap term
+description = Add taxonomy term links to the sitemap.
+package = XML sitemap
 dependencies[] = xmlsitemap_node
 core = "6.x"

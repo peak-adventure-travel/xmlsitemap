@@ -1,5 +1,5 @@
 ; $Id$
-name = XML Sitemap
-description = Creates an XML site map in accordance with sitemaps.org specifications.
-package = XML Sitemap
+name = XML sitemap
+description = Create a XML sitemap conforming to sitemaps.org specifications.
+package = XML sitemap
 core = 6.x
