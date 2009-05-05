@@ -383,8 +383,7 @@ function xmlsitemap_node_xmlsitemap_links() {
   $query = "SELECT n.nid, n.vid, n.type, n.language, n.uid, n.promote, xn.changed, xn.previously_changed, xn.priority_override, xn.comment_ratio
     FROM {node} n
     INNER JOIN {xmlsitemap_node} xn ON n.nid = xn.nid
-    WHERE n.status > 0
-      AND xn.priority_override <> -1.0";
+    WHERE n.status > 0";
   $result = db_query(db_rewrite_sql($query));
   $row = new stdClass();
   $row->module = 'xmlsitemap_node';
@@ -405,11 +404,17 @@ function xmlsitemap_node_xmlsitemap_links() {
       }
       $priority += $node->comment_ratio * variable_get('xmlsitemap_node_comment_priority', 0.2);
     }
-    if ($priority != -1.0) {
-      $row->priority = min(max(round($priority, 1), 0.0), 1.0);
-      if (!db_result(db_query("SELECT COUNT(loc) FROM {xmlsitemap} WHERE loc = '%s'", $row->loc))) {
-        drupal_write_record('xmlsitemap', $row);
-      }
+    if (!isset($priority)) {
+      $priority = -1.0;
+    }
+    $row->priority = ($priority == -1) ? $priority : min(max(round($priority, 1), 0.0), 1.0);
+    $old_row = db_fetch_object(db_query("SELECT lid, type, priority FROM {xmlsitemap} WHERE loc = '%s'", $row->loc));
+    if ($old_row === FALSE) {
+      drupal_write_record('xmlsitemap', $row);
+    }
+    elseif ($old_row->type == 'node' && $old_row->priority != $row->priority) {
+      $row->lid = $old_row->lid;
+      drupal_write_record('xmlsitemap', $row, 'lid');
     }
   }
 }

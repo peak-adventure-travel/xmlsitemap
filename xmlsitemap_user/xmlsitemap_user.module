@@ -262,7 +262,7 @@ function xmlsitemap_user_xmlsitemap_links() {
       $row->changed = $user->changed;
       $row->changefreq = max(XMLSITEMAP_TIME - $user->changed, empty($user->previously_changed) ? 0 : $user->changed - $user->previously_changed);
       if ($user->priority_override != -2.0) {
-        $row->priority = $user->priority_override;
+        $priority = $user->priority_override;
       }
       else {
         $default = db_fetch_object(
@@ -285,11 +285,17 @@ function xmlsitemap_user_xmlsitemap_links() {
           }
         }
       }
-      if ($priority != -1.0) {
-        $row->priority = $priority;
-        if (!db_result(db_query("SELECT COUNT(loc) FROM {xmlsitemap} WHERE loc = '%s'", $row->loc))) {
-          drupal_write_record('xmlsitemap', $row);
-        }
+      if (!isset($priority)) {
+        $priority = -1.0;
+      }
+      $row->priority = $priority;
+      $old_row = db_fetch_object(db_query("SELECT lid, type, priority FROM {xmlsitemap} WHERE loc = '%s'", $row->loc));
+      if ($old_row === FALSE) {
+        drupal_write_record('xmlsitemap', $row);
+      }
+      elseif ($old_row->type == 'user' && $old_row->priority != $priority) {
+        $row->lid = $old_row->lid;
+        drupal_write_record('xmlsitemap', $row, 'lid');
       }
     }
   }

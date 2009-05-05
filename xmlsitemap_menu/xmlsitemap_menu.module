@@ -66,7 +66,7 @@ function xmlsitemap_menu_form_xmlsitemap_settings_alter(&$form, &$from_state) {
   while ($menu = db_fetch_array($result)) {
     $options[$menu['menu_name']] = empty($menu['title']) ? $menu['menu_name'] : $menu['title'];
   }
-  $default_values = variable_get('xmlsitemap_menu_menus', array());
+  $default_values = variable_get('xmlsitemap_menu_menus', array('menu-xmlsitemap'));
   // If a menu is not present, remove it from the default settings.
   foreach ($default_values as $opt) {
     if (!isset($options[$opt])) {
@@ -96,7 +96,7 @@ function xmlsitemap_menu_xmlsitemap_description() {
  * Implementation of hook_xmlsitmap_links().
  */
 function xmlsitemap_menu_xmlsitemap_links() {
-  $menus = variable_get('xmlsitemap_menu_menus', array());
+  $menus = variable_get('xmlsitemap_menu_menus', array('menu-xmlsitemap'));
   foreach ($menus as $menu) {
     if (is_string($menu)) {
       $result = db_query("SELECT ml.mlid
@@ -123,11 +123,19 @@ function xmlsitemap_menu_xmlsitemap_links() {
             $row->priority = 1.0 - min(max(round(($link['weight'] + 50) / 100, 1), 0.0), 1.0);
           }
           else {
+	    if (!isset($priority)) {
+	      $priority = -1.0;
+	    }
             $row->priority = $priority;
           }
-          if (!db_result(db_query("SELECT COUNT(loc) FROM {xmlsitemap} WHERE loc = '%s'", $row->loc))) {
+          $old_row = db_fetch_object(db_query("SELECT lid, type, priority FROM {xmlsitemap} WHERE loc = '%s'", $row->loc));
+	  if ($old_row === FALSE) {
             drupal_write_record('xmlsitemap', $row);
           }
+	  elseif ($old_row->type == 'menu' && $old_row->priority != $row->priority) {
+	    $row->lid = $old_row->lid;
+	    drupal_write_record('xmlsitemap', $row, 'lid');
+	  }
         }
       }
     }

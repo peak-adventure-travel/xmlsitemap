@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 6.x-1, 2009-05-05
+-----------------------------------
+#449284: Setting priority to 'Not in Sitemap' doesn't remove link from sitemap.
+
 XML Sitemap 6.x-1, 2009-05-01
 -----------------------------------
 #450798: Minor warning when updating the database.

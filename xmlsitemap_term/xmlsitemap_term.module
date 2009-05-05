@@ -249,8 +249,7 @@ function xmlsitemap_term_xmlsitemap_links() {
       "SELECT t.tid, t.vid, v.module, xt.changed, xt.previously_changed, xt.priority_override
         FROM {term_data} t
         LEFT JOIN {vocabulary} v ON t.vid = v.vid
-        LEFT JOIN {xmlsitemap_term} xt ON t.tid = xt.tid
-        WHERE xt.priority_override <> -1",
+        LEFT JOIN {xmlsitemap_term} xt ON t.tid = xt.tid",
       't', 'tid'
     )
   );
@@ -276,11 +275,17 @@ function xmlsitemap_term_xmlsitemap_links() {
         $priority += variable_get('xmlsitemap_term_node_priority', 0.2) * $count / 100;
       }
     }
-    if ($priority != -1.0) {
-      $row->priority = min(max(round($priority, 1), 0.0), 1.0);
-      if (!db_result(db_query("SELECT COUNT(loc) FROM {xmlsitemap} WHERE loc = '%s'", $row->loc))) {
-        drupal_write_record('xmlsitemap', $row);
-      }
+    if (!isset($priority)) {
+      $priority = -1.0;
+    }
+    $row->priority = ($priority == -1) ? $priority : min(max(round($priority, 1), 0.0), 1.0);
+    $old_row = db_fetch_object(db_query("SELECT lid, type, priority FROM {xmlsitemap} WHERE loc = '%s'", $row->loc));
+    if ($old_row === FALSE) {
+      drupal_write_record('xmlsitemap', $row);
+    }
+    elseif ($old_row->type = 'taxonomy' && $old_row->priority != $row->priority) {
+      $row->lid = $old_row->lid;
+      drupal_write_record('xmlsitemap', $row, 'lid');
     }
   }
 }
