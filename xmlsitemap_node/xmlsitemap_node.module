@@ -147,39 +147,6 @@ function xmlsitemap_node_form_node_type_form_alter(&$form, &$from_state) {
 /**
  * Implementation of hook_form_FORM_ID_alter().
  */
-function xmlsitemap_node_form_user_admin_settings_alter(&$form, &$from_state) {
-  if (!isset($form['xmlsitemap'])) {
-    $form['xmlsitemap'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('XML site map'),
-      '#collapsible' => TRUE,
-    );
-  }
-  $form['xmlsitemap']['xmlsitemap_node_posts_count'] = array(
-    '#type' => 'select',
-    '#title' => t('User posts threshold'),
-    '#description' => t('The number of posts a user must author before his posts are added to the site map.') .' '. t('This is the default value used for the users for which the post threshold has not been set.'),
-    '#default_value' => variable_get('xmlsitemap_node_posts_count', 100),
-    '#options' => array(
-      '1' => t('1'),
-      '5' => t('5'),
-      '10' => t('10'),
-      '20' => t('20'),
-      '50' => t('50'),
-      '100' => t('100'),
-      '200' => t('200'),
-      '500' => t('500'),
-      '0' => t('Never add the posts'),
-    ),
-    '#access' => user_access('override profile settings') || user_access('administer users'),
-  );
-  $form['buttons']['#weight'] = isset($form['buttons']['#weight']) ? $form['buttons']['#weight'] + 1 : 1;
-  $form['#submit'][] = 'xmlsitemap_user_form_submit';
-}
-
-/**
- * Implementation of hook_form_FORM_ID_alter().
- */
 function xmlsitemap_node_form_xmlsitemap_settings_alter(&$form, &$from_state) {
   $options = xmlsitemap_priority_options();
   $form['xmlsitemap_node'] = array(
@@ -303,51 +270,6 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
 }
 
 /**
- * Implementation of hook_user().
- */
-function xmlsitemap_node_user($op, &$edit, &$account, $category = NULL) {
-  switch ($op) {
-    case 'form':
-      if ($category != 'account') {
-        return array();
-      }
-    case 'register':
-      $form = xmlsitemap_user_form_fieldset();
-      $form['xmlsitemap']['xmlsitemap_node_posts_count'] = array(
-        '#type' => 'select',
-        '#title' => t('User posts threshold'),
-        '#description' => t('The number of posts a user must author before his posts are added to the site map.'),
-        '#default_value' => variable_get('xmlsitemap_node_posts_count_'. $account->uid, variable_get('xmlsitemap_node_posts_count', 100)),
-        '#options' => array(
-          '1' => t('1'),
-          '5' => t('5'),
-          '10' => t('10'),
-          '20' => t('20'),
-          '50' => t('50'),
-          '100' => t('100'),
-          '200' => t('200'),
-          '500' => t('500'),
-          '0' => t('Never add the posts'),
-        ),
-        '#access' => user_access('override profile settings') || user_access('administer users'),
-      );
-      return $form;
-    case 'insert':
-    case 'update':
-      if (isset($edit['xmlsitemap_node_posts_count'])) {
-        variable_set('xmlsitemap_node_posts_count_'. $account->uid, $edit['xmlsitemap_node_posts_count']);
-        $edit['xmlsitemap_node_posts_count'] = NULL;
-        xmlsitemap_flag_sitemap();
-      }
-      break;
-    case 'delete':
-      variable_del('xmlsitemap_node_posts_count_'. $account->uid);
-      xmlsitemap_flag_sitemap();
-      break;
-  }
-}
-
-/**
  * Implementation of hook_xmlsitemap_description().
  */
 function xmlsitemap_node_xmlsitemap_description() {
@@ -360,14 +282,6 @@ function xmlsitemap_node_xmlsitemap_description() {
  */
 function xmlsitemap_node_xmlsitemap_link_status($type, $id, $sid) {
   if (!($node = node_load($id))) {
-    return XMLSITEMAP_LINK_DISABLED;
-  }
-  if (!($user = user_load($node->uid))) {
-    return XMLSITEMAP_LINK_DISABLED;
-  }
-  $posts_threshold = variable_get('xmlsitemap_node_posts_count_'. $node->uid, variable_get('xmlsitemap_node_posts_count', 100));
-  $posts = (integer) db_result(db_query("SELECT COUNT(nid) FROM {node} WHERE uid = %d", $node->uid));
-  if (!user_access('by-pass the authored nodes check', $user) && $posts_threshold > $posts) {
     return XMLSITEMAP_LINK_DISABLED;
   }
   if ($node->status) {
