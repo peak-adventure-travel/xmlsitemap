@@ -5,13 +5,12 @@ This module was originally written as part of Google Summer of Code 2005.
 
 DESCRIPTION
 -----------
-The XML Sitemap module creates an XML site map at
-http://www.example.com/?q=sitemap.xml that conforms to the sitemaps.org
+The XML sitemap module creates a sitemap report conforming to the sitemaps.org
 specification. It provides many options for customizing the data reported in the
-site map.
+sitemap.
 
-INSTALLATION
-------------
+INSTALLATION AND UPGRADING
+--------------------------
 See INSTALL.txt in this directory.
 
 KNOWN ISSUES
@@ -25,10 +24,12 @@ configured at http://www.example.com/?q=admin/settings/xmlsitemap/engines.
 
 MORE INFORMATION
 ----------------
-The Sitemap protocol: http://sitemaps.org.
+The sitemap protocol: http://sitemaps.org.
 
-Search engines:
-http://www.google.com/webmasters/sitemap (Google)
-http://developer.yahoo.com/search/siteexplorer/V1/ping.html (Yahoo!)
-http://webmaster.live.com/ (Windows Live)
-
+SEARCH ENGINES
+--------------
+Ask - http://submissions.ask.com/ping
+Google - http://www.google.com/webmasters/sitemap
+Moreover - http://w.moreover.com/public/products/search_engine_toolkit.html
+Windows Live - http://webmaster.live.com/
+Yahoo! - http://developer.yahoo.com/search/siteexplorer/V1/ping.html
