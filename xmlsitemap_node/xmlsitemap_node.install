@@ -411,15 +411,7 @@ function xmlsitemap_node_update_6118() {
  *
  */
 function xmlsitemap_node_update_6119() {
-  $ret = array();
-  if (function_exists('rules_clear_cache')) {
-    rules_clear_cache();
-    $ret[] = array(
-      'success' => TRUE,
-      'query' => 'CLEAR RULES CACHE',
-    );
-  }
-  return $ret;
+  return array();
 }
 
 /**
