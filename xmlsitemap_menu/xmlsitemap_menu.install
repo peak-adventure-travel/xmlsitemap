@@ -35,7 +35,9 @@ function xmlsitemap_menu_install() {
         t('A custom menu added by <em>XML sitemap menu</em> module, which can optionally be used as a source for menu links in the sitemap for more fine-grained control.'),
       )
     );
-    menu_rebuild();
+    if (!variable_get('menu_rebuild_needed', FALSE)) {
+      variable_set('menu_rebuild_needed', TRUE);
+    }
     db_query("UPDATE {system} SET weight = 10 WHERE name = 'xmlsitemap_menu'");
   }
 }
@@ -51,7 +53,13 @@ function xmlsitemap_menu_update_6000() {
   }
   if (db_result(db_query("SELECT menu_name FROM {menu_custom} WHERE menu_name = 'menu-xmlsitemap'")) != 'menu-xmlsitemap') {
     $ret[] = update_sql("INSERT INTO {menu_custom} (menu_name, title, description) VALUES ('menu-xmlsitemap', '". t('XML sitemap') ."', '". t('A custom menu added by <em>XML sitemap menu</em> module, which can optionally be used as a source for menu links in the sitemap for more fine-grained control.') ."')");
-    menu_rebuild();
+    if (!variable_get('menu_rebuild_needed', FALSE)) {
+      variable_set('menu_rebuild_needed', TRUE);
+      $ret[] = array(
+        'success' => TRUE,
+        'query' => 'UPDATE MENU CALLBACKS',
+      );
+    }
   }
   return $ret;
 }

@@ -62,7 +62,9 @@ function xmlsitemap_output($chunk = NULL) {
   if (!isset($chunk)) {
     if (($chunks = (integer) $link_count / $chunk_size) != variable_get('xmlsitemap_previous_chunks_count', -1)) {
       variable_set('xmlsitemap_previous_chunks_count', $chunks);
-      menu_rebuild();
+      if (!variable_get('menu_rebuild_needed', FALSE)) {
+        variable_set('menu_rebuild_needed', TRUE);
+      }
     }
   }
   if (isset($result) && !$result) {

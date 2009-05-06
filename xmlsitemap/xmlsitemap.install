@@ -392,15 +392,23 @@ function xmlsitemap_update_6000() {
       )
     );
   }
+  if (module_exists('xmlsitemap_file')) {
+    module_disable(array('xmlsitemap_file'));
+  }
+  if (module_exists('xmlsitemap_helper')) {
+    module_disable(array('xmlsitemap_helper'));
+  }
   $ret[] = update_sql("DELETE FROM {system} WHERE name IN ('xmlsitemap_file', 'xmlsitemap_helper') AND type = 'module'");
   if (db_table_exists('xmlsitemap_file')) {
     db_drop_table($ret, 'xmlsitemap_file');
   }
-  menu_rebuild();
-  $ret[] = array(
-    'success' => TRUE,
-    'query' => 'UPDATE MENU CALLBACKS',
-  );
+  if (!variable_get('menu_rebuild_needed', FALSE)) {
+    variable_set('menu_rebuild_needed', TRUE);
+    $ret[] = array(
+      'success' => TRUE,
+      'query' => 'UPDATE MENU CALLBACKS',
+    );
+  }
   module_rebuild_cache();
   $ret[] = array(
     'success' => TRUE,
@@ -720,11 +728,13 @@ function xmlsitemap_update_6139() {
   if (db_table_exists('xmlsitemap_file')) {
     db_drop_table($ret, 'xmlsitemap_file');
   }
-  menu_rebuild();
-  $ret[] = array(
-    'success' => TRUE,
-    'query' => 'UPDATE MENU CALLBACKS',
-  );
+  if (!variable_get('menu_rebuild_needed', FALSE)) {
+    variable_set('menu_rebuild_needed', TRUE);
+    $ret[] = array(
+      'success' => TRUE,
+      'query' => 'UPDATE MENU CALLBACKS',
+    );
+  }
   module_rebuild_cache();
   $ret[] = array(
     'success' => TRUE,
