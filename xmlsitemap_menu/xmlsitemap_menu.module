@@ -96,46 +96,44 @@ function xmlsitemap_menu_xmlsitemap_description() {
  * Implementation of hook_xmlsitmap_links().
  */
 function xmlsitemap_menu_xmlsitemap_links() {
-  $menus = variable_get('xmlsitemap_menu_menus', array('menu-xmlsitemap'));
+  $menus = array_filter(variable_get('xmlsitemap_menu_menus', array('menu-xmlsitemap')), 'is_string');
   foreach ($menus as $menu) {
-    if (is_string($menu)) {
-      $result = db_query("SELECT ml.mlid
-        FROM {menu_links} ml
-        LEFT JOIN {menu_router} m ON m.path = ml.router_path
-        WHERE  ml.menu_name = '%s'
-        ORDER BY ml.mlid ASC",
-        $menu
-      );
-      $row = new stdClass();
-      $row->module = 'xmlsitemap_menu';
-      $row->type = 'menu';
-      $priority = variable_get('xmlsitemap_menu_priority', -2.0);
-      while ($mlid = db_result($result)) {
-        $link = menu_link_load($mlid);
-        // Avoid external links, or links to the front page;
-        // both have $link['external'] set to 1.
-        if (!$link['external'] && !$link['hidden'] && $link['access'] == 1) {
-          $row->loc = $link['href'];
-          $changefreq = variable_get('xmlsitemap_menu_menus_changefreq', 3600);
-          $row->changed = XMLSITEMAP_TIME - $changefreq;
-          $row->changefreq = $changefreq;
-          if ($priority == -2.0) {
-            $row->priority = 1.0 - min(max(round(($link['weight'] + 50) / 100, 1), 0.0), 1.0);
+    $result = db_query("SELECT ml.mlid
+      FROM {menu_links} ml
+      LEFT JOIN {menu_router} m ON m.path = ml.router_path
+      WHERE  ml.menu_name = '%s'
+      ORDER BY ml.mlid ASC",
+      $menu
+    );
+    $row = new stdClass();
+    $row->module = 'xmlsitemap_menu';
+    $row->type = 'menu';
+    $priority = variable_get('xmlsitemap_menu_priority', -2.0);
+    while ($mlid = db_result($result)) {
+      $link = menu_link_load($mlid);
+      // Avoid external links, or links to the front page;
+      // both have $link['external'] set to 1.
+      if (!$link['external'] && !$link['hidden'] && $link['access'] == 1) {
+        $row->loc = $link['href'];
+        $changefreq = variable_get('xmlsitemap_menu_menus_changefreq', 3600);
+        $row->changed = XMLSITEMAP_TIME - $changefreq;
+        $row->changefreq = $changefreq;
+        if ($priority == -2.0) {
+          $row->priority = 1.0 - min(max(round(($link['weight'] + 50) / 100, 1), 0.0), 1.0);
+        }
+        else {
+          if (!isset($priority)) {
+            $priority = -1.0;
           }
-          else {
-           if (!isset($priority)) {
-             $priority = -1.0;
-           }
-            $row->priority = $priority;
-          }
-          $old_row = db_fetch_object(db_query("SELECT lid, type, priority FROM {xmlsitemap} WHERE loc = '%s'", $row->loc));
-         if ($old_row === FALSE) {
-            drupal_write_record('xmlsitemap', $row);
-          }
-         elseif ($old_row->type == 'menu' && $old_row->priority != $row->priority) {
-           $row->lid = $old_row->lid;
-           drupal_write_record('xmlsitemap', $row, 'lid');
-         }
+          $row->priority = $priority;
+        }
+        $old_row = db_fetch_object(db_query("SELECT lid, type, priority FROM {xmlsitemap} WHERE loc = '%s'", $row->loc));
+        if ($old_row === FALSE) {
+          drupal_write_record('xmlsitemap', $row);
+        }
+        elseif ($old_row->type == 'menu' && $old_row->priority != $row->priority) {
+          $row->lid = $old_row->lid;
+          drupal_write_record('xmlsitemap', $row, 'lid');
         }
       }
     }
