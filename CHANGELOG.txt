@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1, 2009-05-06
 -----------------------------------
+#441564: Remove any not necessary calls to menu_rebuild().
 #453434: Rename the modules.
 #455144: Strings need updated throughout the code.
 
@@ -11,8 +12,7 @@ XML Sitemap 6.x-1, 2009-05-05
 #449284: Setting priority to 'Not in Sitemap' doesn't remove link from sitemap.
 #450936: Remove the user posts threshold feature.
 #453434: Rename the modules.
-#453566: Default value for variable_get('xmlsitemap_menu_menus', array()) is 
-incorrect.
+#453566: Default value for variable_get('xmlsitemap_menu_menus', array()) is incorrect.
 
 XML Sitemap 6.x-1, 2009-05-01
 -----------------------------------
