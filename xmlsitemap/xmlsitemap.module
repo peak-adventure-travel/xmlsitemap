@@ -153,6 +153,13 @@ function xmlsitemap_perm() {
 }
 
 /**
+ * Implementation of hook_robotstxt().
+ */
+function xmlsitemap_robotstxt() {
+  return array("Sitemap: ". url('sitemap.xml', array('absolute' => TRUE)));
+}
+
+/**
  * Implementation of hook_xmlsitemap_operations().
  */
 function xmlsitemap_xmlsitemap_operations() {
