@@ -18,7 +18,14 @@
 /**
  * The timestamp of server request to avoid repeatedly generating value.
  */
-define('XMLSITEMAP_TIME', time());
+if (!defined('REQUEST_TIME')) {
+  if (isset($_SERVER['REQUEST_TIME'])) {
+    define('REQUEST_TIME', $_SERVER['REQUEST_TIME']);
+  }
+  else {
+    define('REQUEST_TIME', time());
+  }
+}
 
 /**
  * The flag set when a sitemap link is not enabled.

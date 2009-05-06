@@ -29,7 +29,7 @@ function xmlsitemap_user_cron() {
     while ($account = db_fetch_object($result)) {
       $row = new stdClass();
       $row->uid = $account->uid;
-      $row->changed = !empty($account->access) ? $account->access : XMLSITEMAP_TIME;
+      $row->changed = !empty($account->access) ? $account->access : REQUEST_TIME;
       $row->previously_changed = $account->created;
       if (module_exists('comment')) {
         $row->comments = (integer) db_result(db_query("SELECT COUNT(cid) FROM {comments} WHERE uid = %d", $account->uid));
@@ -164,7 +164,7 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
       if ($account->status) {
         $row = new stdClass();
         $row->uid = $account->uid;
-        $row->changed = !empty($account->access) ? $account->access : XMLSITEMAP_TIME;
+        $row->changed = !empty($account->access) ? $account->access : REQUEST_TIME;
         $row->previously_changed = $account->created;
         $row->priority_override = isset($edit['xmlsitemap_user_priority']) ? $edit['xmlsitemap_user_priority'] : -2.0;
         drupal_write_record('xmlsitemap_user', $row);
@@ -178,7 +178,7 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
           $row = new stdClass();
           $row->uid = $account->uid;
           $row->previously_changed = $account->created;
-          $row->changed = !empty($account->access) ? $account->access : XMLSITEMAP_TIME;
+          $row->changed = !empty($account->access) ? $account->access : REQUEST_TIME;
         }
         else {
           $row = $result;
@@ -190,7 +190,7 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
           }
           else {
             $row->previously_changed = $row->changed;
-            $row->changed = XMLSITEMAP_TIME;
+            $row->changed = REQUEST_TIME;
           }
         }
         if (module_exists('comment')) {
@@ -259,7 +259,7 @@ function xmlsitemap_user_xmlsitemap_links() {
       $row->loc = 'user/'. $user->uid;
       $row->id = $user->uid;
       $row->changed = $user->changed;
-      $row->changefreq = max(XMLSITEMAP_TIME - $user->changed, empty($user->previously_changed) ? 0 : $user->changed - $user->previously_changed);
+      $row->changefreq = max(REQUEST_TIME - $user->changed, empty($user->previously_changed) ? 0 : $user->changed - $user->previously_changed);
       if ($user->priority_override != -2.0) {
         $priority = $user->priority_override;
       }

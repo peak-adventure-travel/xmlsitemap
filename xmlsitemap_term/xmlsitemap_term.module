@@ -28,7 +28,7 @@ function xmlsitemap_term_cron() {
       $row = new stdClass();
       $row->tid = $term->tid;
       $row->vid = $term->vid;
-      $row->changed = XMLSITEMAP_TIME;
+      $row->changed = REQUEST_TIME;
       drupal_write_record('xmlsitemap_term', $row);
     }
   }
@@ -202,7 +202,7 @@ function xmlsitemap_term_taxonomy($op, $type, $array = NULL) {
           $row = new stdClass();
           $row->tid = $array['tid'];
           $row->vid = $array['vid'];
-          $row->changed = XMLSITEMAP_TIME;
+          $row->changed = REQUEST_TIME;
           $row->priority_override = isset($array['xmlsitemap_term_priority']) ? $array['xmlsitemap_term_priority'] : -2.0;
           drupal_write_record('xmlsitemap_term', $row);
         }
@@ -216,7 +216,7 @@ function xmlsitemap_term_taxonomy($op, $type, $array = NULL) {
           $row = new stdClass();
           $row->tid = $array['tid'];
           $row->vid = $array['vid'];
-          $row->changed = XMLSITEMAP_TIME;
+          $row->changed = REQUEST_TIME;
           $row->priority_override = isset($array['xmlsitemap_term_priority']) ? $array['xmlsitemap_term_priority'] : -2.0;
         }
         else {
@@ -265,7 +265,7 @@ function xmlsitemap_term_xmlsitemap_links() {
     }
     $row->id = $term->tid;
     $row->changed = $term->changed;
-    $row->changefreq = max(XMLSITEMAP_TIME - $term->changed, empty($term->previously_changed) ? 0 : $term->changed - $term->previously_changed);
+    $row->changefreq = max(REQUEST_TIME - $term->changed, empty($term->previously_changed) ? 0 : $term->changed - $term->previously_changed);
     if ($term->priority_override != -2.0) {
       $priority = $term->priority_override;
     }

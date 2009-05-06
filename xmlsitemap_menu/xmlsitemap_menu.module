@@ -116,7 +116,7 @@ function xmlsitemap_menu_xmlsitemap_links() {
       if (!$link['external'] && !$link['hidden'] && $link['access'] == 1) {
         $row->loc = $link['href'];
         $changefreq = variable_get('xmlsitemap_menu_menus_changefreq', 3600);
-        $row->changed = XMLSITEMAP_TIME - $changefreq;
+        $row->changed = REQUEST_TIME - $changefreq;
         $row->changefreq = $changefreq;
         if ($priority == -2.0) {
           $row->priority = 1.0 - min(max(round(($link['weight'] + 50) / 100, 1), 0.0), 1.0);

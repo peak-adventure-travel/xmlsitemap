@@ -36,13 +36,13 @@ function xmlsitemap_output($chunk = NULL) {
   }
   $id = xmlsitemap_cache_id();
   if (variable_get('xmlsitemap_sitemap_needs_update', FALSE)) {
-    variable_set('xmlsitemap_update_timestamp', XMLSITEMAP_TIME);
+    variable_set('xmlsitemap_update_timestamp', REQUEST_TIME);
     db_query("DELETE FROM {xmlsitemap} WHERE type ='frontpage'");
     $row = new stdClass();
     $row->module = 'xmlsitemap';
     $row->type = 'frontpage';
     $changefreq = variable_get('xmlsitemap_front_page_changefreq', 3600);
-    $row->changed = XMLSITEMAP_TIME - $changefreq;
+    $row->changed = REQUEST_TIME - $changefreq;
     $row->changefreq = $changefreq;
     $row->priority = variable_get('xmlsitemap_front_page_priority', 1);
     drupal_write_record('xmlsitemap', $row);
@@ -100,7 +100,7 @@ function _xmlsitemap_check_cache_files() {
   if (!is_dir($parent_directory)) {
     return TRUE;
   }
-  $update_timestamp = variable_get('xmlsitemap_update_timestamp', XMLSITEMAP_TIME);
+  $update_timestamp = variable_get('xmlsitemap_update_timestamp', REQUEST_TIME);
   // If the cache files creation has failed last time, the cache files must be
   // created.
   if (variable_get("xmlsitemap_create_cache_result_$id", -1) !== TRUE) {

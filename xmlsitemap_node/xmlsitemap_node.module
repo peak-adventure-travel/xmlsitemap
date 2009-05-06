@@ -308,7 +308,7 @@ function xmlsitemap_node_xmlsitemap_links() {
     $row->sid = $node->vid;
     $row->language = $node->language;
     $row->changed = $node->changed;
-    $row->changefreq = max(XMLSITEMAP_TIME - $node->changed, empty($node->previously_changed) ? 0 : $node->changed - $node->previously_changed);
+    $row->changefreq = max(REQUEST_TIME - $node->changed, empty($node->previously_changed) ? 0 : $node->changed - $node->previously_changed);
     if ($node->priority_override != -2.0) {
       $priority = $node->priority_override;
     }

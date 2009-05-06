@@ -20,10 +20,10 @@
  */
 function xmlsitemap_engines_cron() {
   if (!variable_get('site_offline', 0) && variable_get('xmlsitemap_engines_cron_submit_frequency', 3600) > 0 && variable_get('xmlsitemap_sitemap_is_changed', FALSE)) {
-    if ((XMLSITEMAP_TIME - variable_get('xmlsitemap_engines_cron_timestamp_submit', XMLSITEMAP_TIME)) >= variable_get('xmlsitemap_engines_cron_submit_frequency', 3600)) {
+    if ((REQUEST_TIME - variable_get('xmlsitemap_engines_cron_timestamp_submit', REQUEST_TIME)) >= variable_get('xmlsitemap_engines_cron_submit_frequency', 3600)) {
       xmlsitemap_engines_ping_sitemap();
       variable_set('xmlsitemap_sitemap_is_changed', FALSE);
-      variable_set('xmlsitemap_engines_cron_timestamp_submit', XMLSITEMAP_TIME);
+      variable_set('xmlsitemap_engines_cron_timestamp_submit', REQUEST_TIME);
     }
   }
 }
