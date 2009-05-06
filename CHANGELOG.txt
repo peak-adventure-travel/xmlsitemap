@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1, 2009-05-06
 -----------------------------------
+#359901: Re-implement hook_robotstxt().
 #455678: Removal of not necessary features.
 #441564: Remove any not necessary calls to menu_rebuild().
 #453434: Rename the modules.
