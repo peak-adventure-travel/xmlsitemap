@@ -1,0 +1,6 @@
+; $Id$
+name = XML sitemap taxonomy
+description = Add taxonomy term links to the sitemap.
+package = XML sitemap
+dependencies[] = xmlsitemap_node
+core = "6.x"
