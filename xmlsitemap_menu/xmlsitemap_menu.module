@@ -3,7 +3,7 @@
 
 /**
  * @file
- * Adds menu items to the site map.
+ * Adds menu items to the sitemap.
  */
 
 /**
@@ -35,7 +35,7 @@ function xmlsitemap_menu_form_xmlsitemap_settings_alter(&$form, &$from_state) {
   $form['xmlsitemap_menu'] = array(
     '#type' => 'fieldset',
     '#title' => t('Menu settings'),
-    '#description' => t('The settings for the menus to include in the site map.'),
+    '#description' => t('The settings for the menus to include in the sitemap.'),
     '#collapsible' => TRUE,
     '#weight' => 0,
   );
@@ -76,7 +76,7 @@ function xmlsitemap_menu_form_xmlsitemap_settings_alter(&$form, &$from_state) {
   if (!empty($options)) {
     $form['xmlsitemap_menu']['xmlsitemap_menu_menus'] = array(
       '#type' => 'checkboxes',
-      '#title' => t('Menus to include in the site map'),
+      '#title' => t('Menus to include in the sitemap'),
       '#default_value' => $default_values,
       '#options' => $options,
       '#checkall' => TRUE,
@@ -88,8 +88,8 @@ function xmlsitemap_menu_form_xmlsitemap_settings_alter(&$form, &$from_state) {
  * Implementation of hook_xmlsitemap_description().
  */
 function xmlsitemap_menu_xmlsitemap_description() {
-  return '<dt>'. t('XML Sitemap: Menu') .'</dt>'.
-    '<dd>'. t('The module allows menu items to be added to the site map. You can choose the menus to include on the XML Sitemap administration page and can add and remove menu items on the <a href="@menu">menu administration</a> page. The priority of a menu item is determined by its weight.', array('@menu' => url('admin/build/menu'))) .'</dd>';
+  return '<dt>'. t('XML sitemap menu') .'</dt>'.
+    '<dd>'. t('The module allows menu items to be added to the sitemap. You can choose the menus to include on the XML sitemap administration page and can add and remove menu items on the <a href="@menu">menu administration</a> page. The priority of a menu item is determined by its weight.', array('@menu' => url('admin/build/menu'))) .'</dd>';
 }
 
 /**

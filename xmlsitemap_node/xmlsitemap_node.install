@@ -3,7 +3,7 @@
 
 /**
  * @file
- * Installation file for XML Sitemap: Node.
+ * Installation file for XML sitemap node.
  */
 
 /*****************************************************************************
@@ -59,7 +59,7 @@ function xmlsitemap_node_schema() {
         'default' => 0.0,
       ),
       'priority_override' => array(
-        'description' => 'The priority of the node in the site map.',
+        'description' => 'The priority of the node in the sitemap.',
         'type' => 'float',
         'not null' => TRUE,
         'default' => -2.0,
@@ -193,7 +193,7 @@ function xmlsitemap_node_update_6000() {
     );
     db_change_field($ret, 'xmlsitemap_node', 'priority_override', 'priority_override',
       array(
-        'description' => 'The priority of the node in the site map.',
+        'description' => 'The priority of the node in the sitemap.',
         'type' => 'float',
         'not null' => TRUE,
         'default' => -2.0,
@@ -233,7 +233,7 @@ function xmlsitemap_node_update_6000() {
             'default' => 0.0,
           ),
           'priority_override' => array(
-            'description' => 'The priority of the node in the site map.',
+            'description' => 'The priority of the node in the sitemap.',
             'type' => 'float',
             'not null' => TRUE,
             'default' => -2.0,

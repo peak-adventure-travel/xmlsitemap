@@ -3,7 +3,7 @@
 
 /**
  * @file
- * Adds user profiles to the site map.
+ * Adds user profiles to the sitemap.
  */
 
 /**
@@ -46,7 +46,7 @@ function xmlsitemap_user_form_user_admin_settings_alter(&$form, &$from_state) {
   if (!isset($form['xmlsitemap'])) {
     $form['xmlsitemap'] = array(
       '#type' => 'fieldset',
-      '#title' => t('XML site map'),
+      '#title' => t('XML sitemap'),
       '#collapsible' => TRUE,
     );
   }
@@ -77,7 +77,7 @@ function xmlsitemap_user_form_user_admin_role_alter(&$form, &$from_state) {
   if (!isset($form['xmlsitemap'])) {
     $form['xmlsitemap'] = array(
       '#type' => 'fieldset',
-      '#title' => t('XML site map'),
+      '#title' => t('XML sitemap'),
       '#collapsible' => TRUE,
     );
   }
@@ -100,7 +100,7 @@ function xmlsitemap_user_form_xmlsitemap_settings_alter(&$form, &$from_state) {
   $form['xmlsitemap_user'] = array(
     '#type' => 'fieldset',
     '#title' => t('User settings'),
-    '#description' => t('The settings for the users to include in the site map.'),
+    '#description' => t('The settings for the users to include in the sitemap.'),
     '#collapsible' => TRUE,
     '#weight' => 3,
   );
@@ -217,17 +217,17 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
 function xmlsitemap_user_user_operations() {
   $operations = array(
     'xmlsitemap_add_users' => array(
-      'label' => t('Add the selected users to the XML site map'),
+      'label' => t('Add the selected users to the XML sitemap'),
       'callback' => '_xmlsitemap_user_priority_operations',
       'callback arguments' => array('priority' => 0.5),
     ),
     'xmlsitemap_change_users_priority' => array(
-      'label' => t('Change the XML site map priority of the selected users to default'),
+      'label' => t('Change the XML sitemap priority of the selected users to default'),
       'callback' => '_xmlsitemap_user_priority_operations',
       'callback arguments' => array('priority' => -2.0),
     ),
     'xmlsitemap_remove_users' => array(
-      'label' => t('Remove the selected users from the XML site map'),
+      'label' => t('Remove the selected users from the XML sitemap'),
       'callback' => '_xmlsitemap_user_priority_operations',
       'callback arguments' => array('priority' => -1.0),
     ),
@@ -239,8 +239,8 @@ function xmlsitemap_user_user_operations() {
  * Implementation of hook_xmlsitemap_description().
  */
 function xmlsitemap_user_xmlsitemap_description() {
-  return '<dt>'. t('XML Sitemap: User') .'</dt>'.
-    '<dd>'. t('The module adds user profiles to the site map. The <em>anonymous user</em> role must have permission to access user profiles on the <a href="@access">access control page</a>. You can change the default user priority on the <a href="@user_settings">user settings</a> page. The <a href="@user">user role priority</a> will override the default user priority. You can override both the default priority and the role priority when you add or edit a user.', array('@access' => url('admin/user/access'), '@user_settings' => url('admin/user/settings'), '@user_role' => url('admin/user/roles'))) .'</dd>';
+  return '<dt>'. t('XML sitemap user') .'</dt>'.
+    '<dd>'. t('The module adds user profiles to the sitemap. The <em>anonymous user</em> role must have permission to access user profiles on the <a href="@access">access control page</a>. You can change the default user priority on the <a href="@user_settings">user settings</a> page. The <a href="@user">user role priority</a> will override the default user priority. You can override both the default priority and the role priority when you add or edit a user.', array('@access' => url('admin/user/access'), '@user_settings' => url('admin/user/settings'), '@user_role' => url('admin/user/roles'))) .'</dd>';
 }
 
 /**
@@ -306,7 +306,7 @@ function xmlsitemap_user_xmlsitemap_links() {
  ****************************************************************************/
 
 /**
- * Set the user priority in the site map. It doesn't change the priority of a
+ * Set the user priority in the sitemap. It doesn't change the priority of a
  * blocked user.
  * @param $user
  *   The user object, or the user ID.

@@ -21,26 +21,26 @@
 function xmlsitemap_node_rules_action_info() {
   return array(
     'xmlsitemap_node_action_remove' => array(
-      'label' => t('Remove the content from the site map'),
+      'label' => t('Remove the content from the sitemap'),
       'arguments' => array(
         'node' => array('type' => 'node', 'label' => t('Content')),
       ),
-      'module' => 'XML Sitemap',
+      'module' => 'XML sitemap',
     ),
     'xmlsitemap_node_action_reset_priority' => array(
-      'label' => t('Set the site map content priority to the content type value'),
+      'label' => t('Set the sitemap content priority to the content type value'),
       'arguments' => array(
         'node' => array('type' => 'node', 'label' => t('Content')),
       ),
-      'module' => 'XML Sitemap',
+      'module' => 'XML sitemap',
     ),
     'xmlsitemap_node_action_set_priority' => array(
-      'label' => t('Set the site map content priority'),
+      'label' => t('Set the sitemap content priority'),
       'arguments' => array(
         'node' => array('type' => 'node', 'label' => t('Content')),
         'priority' => array('type' => 'number', 'label' => t('Priority')),
       ),
-      'module' => 'XML Sitemap',
+      'module' => 'XML sitemap',
     ),
   );
 }
@@ -50,21 +50,21 @@ function xmlsitemap_node_rules_action_info() {
  ****************************************************************************/
 
 /**
- * Action implementation: remove the node from the site map.
+ * Action implementation: remove the node from the sitemap.
  */
 function xmlsitemap_node_action_remove($node) {
   xmlsitemap_node_set_priority($node, -1.0);
 }
 
 /**
- * Action implementation: set the site map priority to the content type value.
+ * Action implementation: set the sitemap priority to the content type value.
  */
 function xmlsitemap_node_action_reset_priority($node) {
   xmlsitemap_node_set_priority($node, -2.0);
 }
 
 /**
- * Action implementation: change the site map node priority.
+ * Action implementation: change the sitemap node priority.
  */
 function xmlsitemap_node_action_set_priority($node, $priority) {
   if ($priority >= 0.0 && $priority <= 1.0) {

@@ -3,7 +3,7 @@
 
 /**
  * @file
- * XML Sitemap: Engines page callbacks.
+ * XML sitemap engines page callbacks.
  */
 
 /**

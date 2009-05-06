@@ -8,7 +8,7 @@ INSTALLATION INSTRUCTIONS
 
 2) Enable the XML sitemap modules you wish to use.
    You must enable the XML sitemap engines module if you want to automatically
-   submit your site map to search engines.
+   submit your sitemap to search engines.
 
 3) You can configure settings for the XML sitemap module at
    admin/settings/xmlsitemap.  Settings for specific links are available

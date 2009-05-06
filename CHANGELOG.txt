@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 6.x-1, 2009-05-06
+-----------------------------------
+#455144: Strings need updated throughout the code.
+
 XML Sitemap 6.x-1, 2009-05-05
 -----------------------------------
 #412456: Update README.txt and INSTALL.txt.

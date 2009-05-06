@@ -3,7 +3,7 @@
 
 /**
  * @file
- * XML Sitemap settings UI.
+ * XML sitemap settings UI.
  */
 
 /**
@@ -16,7 +16,7 @@
  ****************************************************************************/
 
 /**
- * Form builder; return the site map settings form.
+ * Form builder; return the sitemap settings form.
  */
 function xmlsitemap_settings() {
   $form['general'] = array(
@@ -27,7 +27,7 @@ function xmlsitemap_settings() {
   );
   $form['general']['xmlsitemap_all_links_to_default_language'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Add all the links to the default language site map'),
+    '#title' => t('Add all the links to the default language sitemap'),
     '#default_value' => variable_get('xmlsitemap_all_links_to_default_language', 0),
     '#description' => t('This option will be used only when the language negotiation uses a path prefix mechanism.'),
   );
@@ -72,7 +72,7 @@ function xmlsitemap_settings() {
 }
 
 /**
- * Validate the site map settings form.
+ * Validate the sitemap settings form.
  */
 function xmlsitemap_settings_validate($form, &$form_state) {
   $directory = $form_state['values']['xmlsitemap_cache_directory'];

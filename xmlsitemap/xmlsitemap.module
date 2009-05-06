@@ -3,7 +3,7 @@
 
 /**
  * @file
- * Creates a site map compatible with the sitemaps.org schema.
+ * Creates a sitemap compatible with the sitemaps.org schema.
  */
 
 /**
@@ -21,7 +21,7 @@
 define('XMLSITEMAP_TIME', time());
 
 /**
- * The flag set when a site map link is not enabled.
+ * The flag set when a sitemap link is not enabled.
  */
 define('XMLSITEMAP_LINK_DISABLED', 1);
 
@@ -56,15 +56,15 @@ function xmlsitemap_form_alter(&$form, &$form_state, $form_id) {
 function xmlsitemap_help($path, $arg) {
   switch ($path) {
     case 'admin/settings/xmlsitemap':
-      $output = t('Configure the site map.');
+      $output = t('Configure the sitemap.');
       break;
     case 'admin/settings/xmlsitemap/engines':
       $output = t('Configure the behavior for search engines.');
       break;
     case 'admin/help#xmlsitemap':
-      $output = '<p>'. t('XML Sitemap automatically creates a site map that conforms to the <a href="@sitemaps.org">sitemaps.org specification</a>. This helps search engines keep their search results up to date.', array('@sitemaps.org' => 'http://www.sitemaps.org')) .'</p>';
+      $output = '<p>'. t('XML sitemap automatically creates a sitemap that conforms to the <a href="@sitemaps.org">sitemaps.org specification</a>. This helps search engines keep their search results up to date.', array('@sitemaps.org' => 'http://www.sitemaps.org')) .'</p>';
       $output .= '<h3>'. t('Supporting modules') .'</h3>';
-      $output .= '<p>'. t('By itself, the XML Sitemap module adds only the front page of your site to the site map. Other types of links are handled by supporting modules.') .'</p>';
+      $output .= '<p>'. t('By itself, the XML sitemap module adds only the front page of your site to the sitemap. Other types of links are handled by supporting modules.') .'</p>';
       $optional = '';
       foreach (module_implements('xmlsitemap_description', TRUE) as $module) {
         $function = $module .'_xmlsitemap_description';
@@ -73,8 +73,8 @@ function xmlsitemap_help($path, $arg) {
       if (!empty($optional)) {
         $output .= "<dl>$optional</dl>";
       }
-      $output .= '<p>'. t('Links may be assigned a priority between 0.0 and 1.0. The default priority is 0.5. A priority of <em>Not in site map</em> excludes a link from the site map.') .'</p>';
-      $output .= '<p>'. t('More information is available in the <a href="@module_docs">XML Sitemap documentation</a>.', array('@module_docs' => 'http://drupal.org/handbook/modules/gsitemap')) .'</p>';
+      $output .= '<p>'. t('Links may be assigned a priority between 0.0 and 1.0. The default priority is 0.5. A priority of <em>Not in sitemap</em> excludes a link from the sitemap.') .'</p>';
+      $output .= '<p>'. t('More information is available in the <a href="@module_docs">XML sitemap documentation</a>.', array('@module_docs' => 'http://drupal.org/handbook/modules/gsitemap')) .'</p>';
       break;
     default:
       $output = '';
@@ -90,23 +90,23 @@ function xmlsitemap_menu() {
   $items = array();
   $access_config = array('administer site configuration');
   $items['admin/settings/xmlsitemap'] = array(
-    'title' => 'XML Sitemap',
-    'description' => 'Configure the XML site map.',
+    'title' => 'XML sitemap',
+    'description' => 'Configure the XML sitemap.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('xmlsitemap_settings'),
     'access arguments' => $access_config,
     'file' => 'xmlsitemap.admin.inc',
   );
   $items['admin/settings/xmlsitemap/sitemap'] = array(
-    'title' => 'Site map',
-    'description' => 'Configure the XML site map.',
+    'title' => 'Sitemap',
+    'description' => 'Configure the XML sitemap.',
     'weight' => -1,
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'file' => 'xmlsitemap.admin.inc',
   );
   $items['admin/settings/xmlsitemap/tools'] = array(
     'title' => 'Tools',
-    'description' => 'Site map tools.',
+    'description' => 'Sitemap tools.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('xmlsitemap_tools'),
     'access arguments' => $access_config,
@@ -114,7 +114,7 @@ function xmlsitemap_menu() {
     'file' => 'xmlsitemap.admin.inc',
   );
   $items['sitemap.xml'] = array(
-    'title' => 'Site map index',
+    'title' => 'Sitemap index',
     'page callback' => 'xmlsitemap_output',
     'access callback' => '_xmlsitemap_anonymous_access',
     'type' => MENU_CALLBACK,
@@ -125,7 +125,7 @@ function xmlsitemap_menu() {
   if ($link_count > $chunk_size) {
     for ($chunk = 0; $chunk < $link_count / $chunk_size; ++$chunk) {
       $items["sitemap$chunk.xml"] = array(
-        'title' => 'Site map !number',
+        'title' => 'Sitemap !number',
         'title arguments' => array('!number' => $chunk),
         'page callback' => 'xmlsitemap_output',
         'page arguments' => array((string) $chunk),
@@ -151,11 +151,11 @@ function xmlsitemap_perm() {
 function xmlsitemap_xmlsitemap_operations() {
   return array(
     'delete_cache_files' => array(
-      'label' => t('Delete the site map cache files'),
+      'label' => t('Delete the sitemap cache files'),
       'callback' => 'xmlsitemap_delete_cache_files',
     ),
     'flag_sitemap' => array(
-      'label' => t('Flag the site map as requiring update'),
+      'label' => t('Flag the sitemap as requiring update'),
       'callback' => 'xmlsitemap_flag_sitemap',
     ),
   );
@@ -183,7 +183,7 @@ function xmlsitemap_batch_operations_finished($success, $results, $operations) {
 }
 
 /**
- * Return the string used to identify the cache file for the site map content.
+ * Return the string used to identify the cache file for the sitemap content.
  */
 function xmlsitemap_cache_id() {
   static $id;
@@ -216,7 +216,7 @@ function xmlsitemap_cron_options() {
 }
 
 /**
- * Delete the cache file used for the site map content, and mark the site map as
+ * Delete the cache file used for the sitemap content, and mark the sitemap as
  * changed.
  */
 function xmlsitemap_delete_cache_files() {
@@ -230,7 +230,7 @@ function xmlsitemap_delete_cache_files() {
 }
 
 /**
- * Mark the site map as changed, and the cache as needing update.
+ * Mark the sitemap as changed, and the cache as needing update.
  */
 function xmlsitemap_flag_sitemap() {
   if (!variable_get('xmlsitemap_sitemap_is_changed', FALSE)) {
@@ -253,10 +253,10 @@ function xmlsitemap_link_count() {
 }
 
 /**
- * Return an array of site map priority options.
+ * Return an array of sitemap priority options.
  * @param $option
  *  If not given, the array will include priority values from 0.0 to 1.0.
- * - exclude: Add option to exclude item from site map.
+ * - exclude: Add option to exclude item from sitemap.
  * - default: Add option to use default priority. Only for cases where a
  *   default priority exists.
  * - both: Add both the default and exclude options.
@@ -278,7 +278,7 @@ function xmlsitemap_priority_options($option = '') {
     '0' => t('0.0')
   );
   if ($option == 'exclude' || $option == 'both') {
-    $options['-1'] = t('Not in site map');
+    $options['-1'] = t('Not in sitemap');
   }
   if ($option == 'default' || $option == 'both') {
     $options['-2'] = t('Default');
@@ -354,7 +354,7 @@ function xmlsitemap_user_form_fieldset() {
   if (!$done) {
     $form['xmlsitemap'] = array(
       '#type' => 'fieldset',
-      '#title' => t('XML site map'),
+      '#title' => t('XML sitemap'),
       '#collapsible' => TRUE,
       '#access' => user_access('override profile settings') || user_access('administer users'),
       '#weight' => 7,
@@ -370,7 +370,7 @@ function xmlsitemap_user_form_fieldset() {
 
 /**
  * Function used to determinate if the current user has logged in, and can
- * view the site map content (only the anonymous user is enabled).
+ * view the sitemap content (only the anonymous user is enabled).
  */
 function _xmlsitemap_anonymous_access() {
   global $user;

@@ -3,7 +3,7 @@
 
 /**
  * @file
- * Install file for XML Sitemap: Menu.
+ * Install file for XML sitemap menu.
  */
 
 /*****************************************************************************
@@ -31,8 +31,8 @@ function xmlsitemap_menu_install() {
   if (db_result(db_query("SELECT menu_name FROM {menu_custom} WHERE menu_name = 'menu-xmlsitemap'")) != 'menu-xmlsitemap') {
     db_query("INSERT INTO {menu_custom} (menu_name, title, description) VALUES ('menu-xmlsitemap', '%s', '%s')",
       array(
-        t('XML Sitemap'),
-        t('A custom menu added by <em>XML Sitemap: Menu</em> module, which can optionally be used as a source for menu links in the sitemap for more fine-grained control.'),
+        t('XML sitemap'),
+        t('A custom menu added by <em>XML sitemap menu</em> module, which can optionally be used as a source for menu links in the sitemap for more fine-grained control.'),
       )
     );
     menu_rebuild();
@@ -50,7 +50,7 @@ function xmlsitemap_menu_update_6000() {
     $ret[] = $result;
   }
   if (db_result(db_query("SELECT menu_name FROM {menu_custom} WHERE menu_name = 'menu-xmlsitemap'")) != 'menu-xmlsitemap') {
-    $ret[] = update_sql("INSERT INTO {menu_custom} (menu_name, title, description) VALUES ('menu-xmlsitemap', '". t('XML Sitemap') ."', '". t('A custom menu added by <em>XML Sitemap: Menu</em> module, which can optionally be used as a source for menu links in the sitemap for more fine-grained control.') ."')");
+    $ret[] = update_sql("INSERT INTO {menu_custom} (menu_name, title, description) VALUES ('menu-xmlsitemap', '". t('XML sitemap') ."', '". t('A custom menu added by <em>XML sitemap menu</em> module, which can optionally be used as a source for menu links in the sitemap for more fine-grained control.') ."')");
     menu_rebuild();
   }
   return $ret;
@@ -125,7 +125,7 @@ function xmlsitemap_menu_update_6108() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_menu_update_6109() {
-  $ret[] = update_sql("UPDATE {menu_custom} SET description ='". t('A custom menu added by <em>XML Sitemap: Menu</em> module, which can optionally be used as a source for menu links in the sitemap for more fine-grained control.'). "' WHERE menu_name = 'menu-xmlsitemap'");
+  $ret[] = update_sql("UPDATE {menu_custom} SET description ='". t('A custom menu added by <em>XML sitemap menu</em> module, which can optionally be used as a source for menu links in the sitemap for more fine-grained control.'). "' WHERE menu_name = 'menu-xmlsitemap'");
   return $ret;
 }
 

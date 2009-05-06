@@ -3,7 +3,7 @@
 
 /**
  * @file
- * Adds nodes to the site map.
+ * Adds nodes to the sitemap.
  */
 
 /**
@@ -101,7 +101,7 @@ function xmlsitemap_node_form_alter(&$form, &$form_state, $form_id) {
     if (!isset($form['xmlsitemap'])) {
       $form['xmlsitemap'] = array(
         '#type' => 'fieldset',
-        '#title' => t('XML site map'),
+        '#title' => t('XML sitemap'),
         '#collapsible' => TRUE,
         '#access' => user_access('override node priority') || user_access('administer nodes'),
         '#weight' => 30,
@@ -128,7 +128,7 @@ function xmlsitemap_node_form_node_type_form_alter(&$form, &$from_state) {
     if (!isset($form['xmlsitemap'])) {
       $form['xmlsitemap'] = array(
         '#type' => 'fieldset',
-        '#title' => t('XML site map'),
+        '#title' => t('XML sitemap'),
         '#collapsible' => TRUE,
         '#weight' => 30,
       );
@@ -152,7 +152,7 @@ function xmlsitemap_node_form_xmlsitemap_settings_alter(&$form, &$from_state) {
   $form['xmlsitemap_node'] = array(
     '#type' => 'fieldset',
     '#title' => t('Node settings'),
-    '#description' => t('The settings for the nodes to include in the site map.'),
+    '#description' => t('The settings for the nodes to include in the sitemap.'),
     '#collapsible' => TRUE,
     '#weight' => 1,
   );
@@ -185,17 +185,17 @@ function xmlsitemap_node_form_xmlsitemap_settings_alter(&$form, &$from_state) {
 function xmlsitemap_node_node_operations() {
   $operations = array(
     'xmlsitemap_add_nodes' => array(
-      'label' => t('Add the selected posts to the XML site map'),
+      'label' => t('Add the selected posts to the XML sitemap'),
       'callback' => '_xmlsitemap_node_priority_operations',
       'callback arguments' => array('priority' => 0.5),
     ),
     'xmlsitemap_change_nodes_priority' => array(
-      'label' => t('Change the XML site map priority of the selected posts to default'),
+      'label' => t('Change the XML sitemap priority of the selected posts to default'),
       'callback' => '_xmlsitemap_node_priority_operations',
       'callback arguments' => array('priority' => -2.0),
     ),
     'xmlsitemap_remove_nodes' => array(
-      'label' => t('Remove the selected posts from the XML site map'),
+      'label' => t('Remove the selected posts from the XML sitemap'),
       'callback' => '_xmlsitemap_node_priority_operations',
       'callback arguments' => array('priority' => -1.0),
     ),
@@ -273,8 +273,8 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
  * Implementation of hook_xmlsitemap_description().
  */
 function xmlsitemap_node_xmlsitemap_description() {
-  return '<dt>'. t('XML Sitemap: Node') .'</dt>'.
-    '<dd>'. t('<em>XML Sitemap: Node</em> adds nodes (content) to the site map. The default priority of a node is determined by a combination of its <a href="@content">content type</a> priority, whether it appears on the front page of your site, and the number of comments it has received. You can override the default priority for individual nodes when you add or edit a node.', array('@content' => url('admin/content/types'))) .'</dd>';
+  return '<dt>'. t('XML sitemap node') .'</dt>'.
+    '<dd>'. t('<em>XML sitemap node</em> adds nodes (content) to the sitemap. The default priority of a node is determined by a combination of its <a href="@content">content type</a> priority, whether it appears on the front page of your site, and the number of comments it has received. You can override the default priority for individual nodes when you add or edit a node.', array('@content' => url('admin/content/types'))) .'</dd>';
 }
 
 /**
@@ -349,7 +349,7 @@ function xmlsitemap_node_type_submit($form, &$form_state) {
  ****************************************************************************/
 
 /**
- * Set the node priority in the site map.
+ * Set the node priority in the sitemap.
  * @param $node
  *   The node object, or the node ID.
  * @param $priority

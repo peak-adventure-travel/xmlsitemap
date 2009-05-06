@@ -3,7 +3,7 @@
 
 /**
  * @file
- * XML Sitemap page callbacks.
+ * XML sitemap page callbacks.
  */
 
 /**
@@ -16,10 +16,10 @@
  ****************************************************************************/
 
 /**
- * Menu callback; display the site map.
+ * Menu callback; display the sitemap.
  * @param $chunk
- *  An integer specifying which chunk of the site map is being requested.
- *  If not set and there is more than one chunk, display the site map index.
+ *  An integer specifying which chunk of the sitemap is being requested.
+ *  If not set and there is more than one chunk, display the sitemap index.
  */
 function xmlsitemap_output($chunk = NULL) {
   $chunk_size = variable_get('xmlsitemap_chunk_size', 1000);
@@ -111,7 +111,7 @@ function _xmlsitemap_check_cache_files() {
   if (!file_exists($parent_directory ."/xsm-$id.xml")) {
     return TRUE;
   }
-  // If the main cache file has been created before the site map content has
+  // If the main cache file has been created before the sitemap content has
   // been updated, then the cache files must be updated.
   if (filemtime($parent_directory ."/xsm-$id.xml") < $update_timestamp) {
     return TRUE;
@@ -131,13 +131,13 @@ function _xmlsitemap_check_cache_files() {
 }
 
 /**
- * Create a site map chunk cache file.
+ * Create a sitemap chunk cache file.
  * @param $fp
  *  A file resource used to write in.
  * @param $chunk_size
  *  The number of links the chunk must cointain.
  * @param $chunk
- *  The progressive number associated with the site map chunk (starting from
+ *  The progressive number associated with the sitemap chunk (starting from
  *  0).
  */
 function _xmlsitemap_create_cache_chunk($fp, $chunk_size, $chunk = 0) {
@@ -181,7 +181,7 @@ function _xmlsitemap_create_cache_chunk($fp, $chunk_size, $chunk = 0) {
 }
 
 /**
- * Create the cache files containing the site map.
+ * Create the cache files containing the sitemap.
  * @return
  *  TRUE if the operation has been successfull, FALSE otherwise.
  */

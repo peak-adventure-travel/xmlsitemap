@@ -3,7 +3,7 @@
 
 /**
  * @file
- * Installation file for XML Sitemap: User.
+ * Installation file for XML sitemap user.
  */
 
 /*****************************************************************************
@@ -60,7 +60,7 @@ function xmlsitemap_user_schema() {
         'default' => 0,
       ),
       'priority_override' => array(
-        'description' => 'The priority of the term in the site map.',
+        'description' => 'The priority of the term in the sitemap.',
         'type' => 'float',
         'not null' => TRUE,
         'default' => -2.0,
@@ -181,7 +181,7 @@ function xmlsitemap_user_update_6000() {
     );
     db_change_field($ret, 'xmlsitemap_user', 'priority_override', 'priority_override',
       array(
-        'description' => 'The priority of the term in the site map.',
+        'description' => 'The priority of the term in the sitemap.',
         'type' => 'float',
         'not null' => TRUE,
         'default' => -2.0,
@@ -222,7 +222,7 @@ function xmlsitemap_user_update_6000() {
             'default' => 0,
           ),
           'priority_override' => array(
-            'description' => 'The priority of the term in the site map.',
+            'description' => 'The priority of the term in the sitemap.',
             'type' => 'float',
             'not null' => TRUE,
             'default' => -2.0,

@@ -3,7 +3,7 @@
 
 /**
  * @file
- * Adds terms to the site map.
+ * Adds terms to the sitemap.
  */
 
 /**
@@ -50,7 +50,7 @@ function xmlsitemap_term_form_taxonomy_form_term_alter(&$form, &$from_state) {
   if (!isset($form['xmlsitemap'])) {
     $form['xmlsitemap'] = array(
       '#type' => 'fieldset',
-      '#title' => t('XML site map'),
+      '#title' => t('XML sitemap'),
       '#collapsible' => TRUE,
     );
   }
@@ -71,7 +71,7 @@ function xmlsitemap_term_form_taxonomy_form_term_alter(&$form, &$from_state) {
 function xmlsitemap_term_form_taxonomy_form_vocabulary_alter(&$form, &$from_state) {
   $form['xmlsitemap'] = array(
     '#type' => 'fieldset',
-    '#title' => t('XML site map'),
+    '#title' => t('XML sitemap'),
     '#collapsible' => TRUE,
   );
   $form['xmlsitemap']['xmlsitemap_term_vocabulary_priority'] = array(
@@ -93,7 +93,7 @@ function xmlsitemap_term_form_xmlsitemap_settings_alter(&$form, &$from_state) {
   $form['xmlsitemap_term'] = array(
     '#type' => 'fieldset',
     '#title' => t('Taxonomy terms settings'),
-    '#description' => t('The settings for the taxonomy terms to include in the site map.'),
+    '#description' => t('The settings for the taxonomy terms to include in the sitemap.'),
     '#collapsible' => TRUE,
     '#weight' => 2,
   );
@@ -119,17 +119,17 @@ function xmlsitemap_term_form_xmlsitemap_settings_alter(&$form, &$from_state) {
 function xmlsitemap_term_node_operations() {
   $operations = array(
     'xmlsitemap_add_terms' => array(
-      'label' => t('Add the vocabulary terms of the selected posts to the XML site map'),
+      'label' => t('Add the vocabulary terms of the selected posts to the XML sitemap'),
       'callback' => '_xmlsitemap_term_priority_operations',
       'callback arguments' => array('priority' => 0.5),
     ),
     'xmlsitemap_change_terms_priority' => array(
-      'label' => t('Change the XML site map priority of the selected posts vocabulary terms to default'),
+      'label' => t('Change the XML sitemap priority of the selected posts vocabulary terms to default'),
       'callback' => '_xmlsitemap_term_priority_operations',
       'callback arguments' => array('priority' => -2.0),
     ),
     'xmlsitemap_remove_terms' => array(
-      'label' => t('Remove the vocabulary terms of the selected posts from the XML site map'),
+      'label' => t('Remove the vocabulary terms of the selected posts from the XML sitemap'),
       'callback' => '_xmlsitemap_term_priority_operations',
       'callback arguments' => array('priority' => -1.0),
     ),
@@ -236,8 +236,8 @@ function xmlsitemap_term_taxonomy($op, $type, $array = NULL) {
  * Implementation of hook_xmlsitemap_description().
  */
 function xmlsitemap_term_xmlsitemap_description() {
-  return '<dt>'. t('XML Sitemap: Term') .'</dt>'.
-    '<dd>'. t('The module adds <a href="@terms">taxonomy terms</a> (categories) to the site map. You can change the default priority when you add or edit a vocabulary, and you can override the default priority when you add or edit individual terms.', array('@terms' => url('admin/content/taxonomy'))) .'</dd>';
+  return '<dt>'. t('XML sitemap term') .'</dt>'.
+    '<dd>'. t('The module adds <a href="@terms">taxonomy terms</a> (categories) to the sitemap. You can change the default priority when you add or edit a vocabulary, and you can override the default priority when you add or edit individual terms.', array('@terms' => url('admin/content/taxonomy'))) .'</dd>';
 }
 
 /**

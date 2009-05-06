@@ -76,7 +76,7 @@ function xmlsitemap_engines_menu() {
   $items = array();
   $items['admin/settings/xmlsitemap/engines'] = array(
     'title' => 'Search engines',
-    'description' => 'Configure the submission settings of the XML site map to the search engines.',
+    'description' => 'Configure the submission settings of the XML sitemap to the search engines.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('xmlsitemap_engines_settings'),
     'access arguments' => array('administer site configuration'),
@@ -122,31 +122,31 @@ function xmlsitemap_engines_menu() {
 function xmlsitemap_engines_xmlsitemap_operations() {
   return array(
     'submit_to_all' => array(
-      'label' => t('Submit the site map to all the active search engines'),
+      'label' => t('Submit the sitemap to all the active search engines'),
       'callback' => 'xmlsitemap_engines_ping_sitemap',
     ),
     'submit_to_askcom' => array(
-      'label' => t('Submit the site map to Ask.com'),
+      'label' => t('Submit the sitemap to Ask.com'),
       'callback' => 'xmlsitemap_engines_ping_sitemap',
       'callback arguments' => array('engine' => 'ask'),
     ),
     'submit_to_google' => array(
-      'label' => t('Submit the site map to Google'),
+      'label' => t('Submit the sitemap to Google'),
       'callback' => 'xmlsitemap_engines_ping_sitemap',
       'callback arguments' => array('engine' => 'google'),
     ),
     'submit_to_moreovercom' => array(
-      'label' => t('Submit the site map to Moreover.com'),
+      'label' => t('Submit the sitemap to Moreover.com'),
       'callback' => 'xmlsitemap_engines_ping_sitemap',
       'callback arguments' => array('engine' => 'moreover'),
     ),
     'submit_to_live' => array(
-      'label' => t('Submit the site map to Microsoft Live'),
+      'label' => t('Submit the sitemap to Microsoft Live'),
       'callback' => 'xmlsitemap_engines_ping_sitemap',
       'callback arguments' => array('engine' => 'live'),
     ),
     'submit_to_yahoo' => array(
-      'label' => t('Submit the site map to Yahoo!'),
+      'label' => t('Submit the sitemap to Yahoo!'),
       'callback' => 'xmlsitemap_engines_ping_sitemap',
       'callback arguments' => array('engine' => 'yahoo'),
     ),
@@ -196,7 +196,7 @@ function xmlsitemap_engines_ping_sitemap($engine = NULL) {
 }
 
 /**
- * Return the identifier for the search engine that accessed to the site map,
+ * Return the identifier for the search engine that accessed to the sitemap,
  * or the content of $_SERVER['HTTP_USER_AGENT'].
  */
 function xmlsitemap_engines_search_engine_id() {
@@ -208,7 +208,7 @@ function xmlsitemap_engines_search_engine_id() {
 
 /**
  * Helper function for xmlsitemap_engines_ping_sitemap().
- * Submit the site map to the engine passed as argument, and write a message in
+ * Submit the sitemap to the engine passed as argument, and write a message in
  * Drupal log.
  *
  * @param $engine

@@ -3,7 +3,7 @@
 
 /**
  * @file
- * Installation file for XML Sitemap.
+ * Installation file for XML sitemap.
  */
 
 /*****************************************************************************
@@ -17,7 +17,7 @@ function xmlsitemap_requirements($phase) {
   $requirements = array();
   if ($phase == 'runtime') {
     $requirements['xmlsitemap'] = array(
-      'title' => t('XML Sitemap'),
+      'title' => t('XML sitemap'),
       'value' => t("!module_file/!module_revision !install_file/!install_revision", array('!module_file' => 'xmlsitemap.module', '!module_revision' =>_xmlsitemap_revision(), '!install_file' => 'xmlsitemap.install', '!install_revision' => preg_replace('/\$Rev[iI]sion:\s+(.*)\s+\$/iU', '$1', '$Revision$'))),
       'severity' => REQUIREMENT_OK,
     );
@@ -94,7 +94,7 @@ function xmlsitemap_schema() {
         'default' => 0,
       ),
       'priority' => array(
-        'description' => 'The priority of this node in the site map.',
+        'description' => 'The priority of this node in the sitemap.',
         'type' => 'float',
         'not null' => TRUE,
         'default' => 0.5,
@@ -300,7 +300,7 @@ function xmlsitemap_update_6000() {
     if (db_column_exists('xmlsitemap', 'priority')) {
       db_change_field($ret, 'xmlsitemap', 'priority', 'priority',
         array(
-          'description' => 'The priority of this node in the site map.',
+          'description' => 'The priority of this node in the sitemap.',
           'type' => 'float',
           'not null' => TRUE,
           'default' => 0.5,
@@ -376,7 +376,7 @@ function xmlsitemap_update_6000() {
             'default' => 0,
           ),
           'priority' => array(
-            'description' => 'The priority of this node in the site map.',
+            'description' => 'The priority of this node in the sitemap.',
             'type' => 'float',
             'not null' => TRUE,
             'default' => 0.5,
@@ -681,7 +681,7 @@ function xmlsitemap_update_6136() {
   xmlsitemap_flag_sitemap();
   $ret[] = array(
     'success' => TRUE,
-    'query' => 'UPDATE SITE MAP',
+    'query' => 'UPDATE SITEMAP',
   );
   $ret[] = update_sql("DELETE FROM {variable} WHERE name = 'xmlsitemap_update_sitemap_request'");
   variable_set('xmlsitemap_chunk_size', 1000);
