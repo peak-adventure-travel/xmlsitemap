@@ -734,6 +734,16 @@ function xmlsitemap_update_6139() {
 }
 
 /**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_6140() {
+  if (module_exists('xmlsitemap_term')) {
+    module_disable(array('xmlsitemap_term'));
+    drupal_set_message(t('XML sitemap term has been deprecated in favor of XML sitemap taxonomy; enable it in the <a href="@modules">modules page.', array('@modules' => url('admin/build/modules'))), 'status', FALSE);
+  }
+}
+
+/**
  * Implementation of hook_uninstall().
  */
 function xmlsitemap_uninstall() {
