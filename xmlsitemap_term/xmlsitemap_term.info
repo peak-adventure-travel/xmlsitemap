@@ -1,6 +1,6 @@
 ; $Id$
 name = XML sitemap term
-description = Add taxonomy term links to the sitemap. This module has been replaced by XML sitemap taxonomy.
+description = This module has been replaced by XML sitemap taxonomy.
 package = XML sitemap
 dependencies[] = xmlsitemap_node
 core = "6.x"
