@@ -63,10 +63,8 @@ function xmlsitemap_form_alter(&$form, &$form_state, $form_id) {
 function xmlsitemap_help($path, $arg) {
   switch ($path) {
     case 'admin/settings/xmlsitemap':
-      $output = t('Configure the sitemap.');
-      break;
     case 'admin/settings/xmlsitemap/engines':
-      $output = t('Configure the behavior for search engines.');
+      $output = t('The sitemap is located at @sitemap.', array('@sitemap' => url('sitemap.xml', array('absolute' => TRUE))));
       break;
     case 'admin/help#xmlsitemap':
       $output = '<p>'. t('XML sitemap automatically creates a sitemap that conforms to the <a href="@sitemaps.org">sitemaps.org specification</a>. This helps search engines keep their search results up to date.', array('@sitemaps.org' => 'http://www.sitemaps.org')) .'</p>';
