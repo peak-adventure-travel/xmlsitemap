@@ -302,7 +302,7 @@ function xmlsitemap_node_xmlsitemap_links() {
     $row->language = $node->language;
     $row->changed = $node->changed;
     $row->changefreq = max(REQUEST_TIME - $node->changed, empty($node->previously_changed) ? $node->changed - $node->created : $node->changed - $node->previously_changed);
-    $priority = xmlsitemap_get_priority($node);
+    $priority = xmlsitemap_node_get_priority($node);
     $row->priority = ($priority == -1.0) ? $priority : min(max(round($priority, 1), 0.0), 1.0);
     $old_row = db_fetch_object(db_query("SELECT lid, type, priority FROM {xmlsitemap} WHERE loc = '%s'", $row->loc));
     if ($old_row === FALSE) {
