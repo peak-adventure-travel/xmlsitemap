@@ -173,7 +173,7 @@ function _xmlsitemap_create_cache_chunk($fp, $chunk_size, $chunk = 0) {
     if (($link->status & XMLSITEMAP_LINK_DISABLED) != XMLSITEMAP_LINK_DISABLED) {
       fwrite($fp, '  <url>'."\n");
       fwrite($fp, '    <loc>'. check_url($link->url) .'</loc>'."\n");
-      fwrite($fp, '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $link->changed) .'</lastmod>'."\n");
+      fwrite($fp, '    <lastmod>'. gmdate(DATE_W3C, $link->changed) .'</lastmod>'."\n");
       fwrite($fp, '    <changefreq>'. xmlsitemap_sitemap_frequency($link->changefreq) .'</changefreq>'."\n");
       fwrite($fp, '    <priority>'. number_format($link->priority, 1) .'</priority>'."\n");
       fwrite($fp, '  </url>'."\n");
@@ -217,7 +217,7 @@ function _xmlsitemap_create_cache_files() {
       fwrite($fp, '    <loc>'. url("sitemap$chunk.xml", array('absolute' => TRUE)) .'</loc>'."\n");
       $from = $chunk * $chunk_size;
       $changed = db_result(db_query_range("SELECT xsm.changed". xmlsitemap_sitemap_query() ."ORDER BY xsm.priority DESC, xsm.changed DESC", $from, $chunk_size));
-      fwrite($fp, '    <lastmod>'. gmdate('Y-m-d\TH:i:s+00:00', $changed) .'</lastmod>'."\n");
+      fwrite($fp, '    <lastmod>'. gmdate(DATE_W3C, $changed) .'</lastmod>'."\n");
       fwrite($fp, '  </sitemap>'."\n");
     }
     fwrite($fp, '</sitemapindex>');

@@ -16,6 +16,13 @@
  ****************************************************************************/
 
 /**
+ * The date format used in the sitemap.
+ */
+if (!defined('DATE_W3C')) {
+  define('DATE_W3C', 'Y-m-d\TH:i:s+00:00');
+}
+
+/**
  * The timestamp of server request to avoid repeatedly generating value.
  */
 if (!defined('REQUEST_TIME')) {
