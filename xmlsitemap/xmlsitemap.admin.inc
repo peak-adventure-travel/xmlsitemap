@@ -31,6 +31,13 @@ function xmlsitemap_settings() {
     '#default_value' => variable_get('xmlsitemap_all_links_to_default_language', 0),
     '#description' => t('This option will be used only when the language negotiation uses a path prefix mechanism.'),
   );
+  $form['general']['xmlsitemap_cron_limit'] = array(
+    '#type' => 'select',
+    '#title' => t('Cron limit'),
+    '#description' => t('The number of links that are updated in each pass of a <a href="@cron">cron maintenance task</a>.', array('@cron' => url('admin/reports/status'))),
+    '#default_value' => variable_get('xmlsitemap_cron_limit', 100),
+    '#options' => xmlsitemap_cron_options(),
+  );
   $form['general']['xmlsitemap_cache_directory'] = array(
     '#type' => 'textfield',
     '#title' => t('Cache directory'),

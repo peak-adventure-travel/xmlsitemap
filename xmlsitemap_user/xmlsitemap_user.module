@@ -19,7 +19,7 @@
  * Implementation of hook_cron().
  */
 function xmlsitemap_user_cron() {
-  if (($limit = variable_get('xmlsitemap_user_cron_limit', 100)) != -1) {
+  if (($limit = variable_get('xmlsitemap_cron_limit', 100)) != -1) {
     $sql = "SELECT u.* FROM {users} u
       LEFT JOIN {xmlsitemap_user} xu ON xu.uid = u.uid
       WHERE xu.uid IS NULL
@@ -110,13 +110,6 @@ function xmlsitemap_user_form_xmlsitemap_settings_alter(&$form, &$from_state) {
     '#description' => t("This number will be added to the priority of the user who authored the highest number of comments; for the other users, the number is calculated proportionally to the number of authored comments. This doesn't apply if the maximum number of comments is one, nor for the users for which the priority is overriden."),
     '#default_value' => variable_get('xmlsitemap_user_comment_priority', 0.2),
     '#options' => xmlsitemap_priority_options(),
-  );
-  $form['xmlsitemap_user']['xmlsitemap_user_cron_limit'] = array(
-    '#type' => 'select',
-    '#title' => t('Cron limit'),
-    '#description' => t('The number of users that are updated in each pass of a <a href="@cron">cron maintenance task</a>.', array('@cron' => url('admin/reports/status'))),
-    '#default_value' => variable_get('xmlsitemap_user_cron_limit', 100),
-    '#options' => xmlsitemap_cron_options(),
   );
 }
 
