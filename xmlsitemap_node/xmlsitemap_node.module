@@ -294,7 +294,7 @@ function xmlsitemap_node_xmlsitemap_link_status($type, $id, $sid) {
  * Implementation of hook_xmlsitemap_links().
  */
 function xmlsitemap_node_xmlsitemap_links() {
-  $query = "SELECT n.nid, n.vid, n.type, n.language, n.uid, n.promote, xn.changed, xn.previously_changed, xn.priority_override, xn.comment_ratio
+  $query = "SELECT n.nid, n.vid, n.type, n.language, n.uid, n.created, n.promote, xn.changed, xn.previously_changed, xn.priority_override, xn.comment_ratio
     FROM {node} n
     INNER JOIN {xmlsitemap_node} xn ON n.nid = xn.nid
     WHERE n.status > 0";
@@ -308,19 +308,8 @@ function xmlsitemap_node_xmlsitemap_links() {
     $row->sid = $node->vid;
     $row->language = $node->language;
     $row->changed = $node->changed;
-    $row->changefreq = max(REQUEST_TIME - $node->changed, empty($node->previously_changed) ? 0 : $node->changed - $node->previously_changed);
-    if ($node->priority_override != -2.0) {
-      $priority = $node->priority_override;
-    }
-    elseif (($priority = variable_get('xmlsitemap_node_type_priority_'. $node->type, 0.5)) != -1.0) {
-      if ($node->promote) {
-        $priority += variable_get('xmlsitemap_node_promote_priority', 0.3);
-      }
-      $priority += $node->comment_ratio * variable_get('xmlsitemap_node_comment_priority', 0.2);
-    }
-    if (!isset($priority)) {
-      $priority = -1.0;
-    }
+    $row->changefreq = max(REQUEST_TIME - $node->changed, empty($node->previously_changed) ? $node->changed - $node->created : $node->changed - $node->previously_changed);
+    $priority = xmlsitemap_get_priority($node);
     $row->priority = ($priority == -1.0) ? $priority : min(max(round($priority, 1), 0.0), 1.0);
     $old_row = db_fetch_object(db_query("SELECT lid, type, priority FROM {xmlsitemap} WHERE loc = '%s'", $row->loc));
     if ($old_row === FALSE) {
@@ -347,6 +336,38 @@ function xmlsitemap_node_type_submit($form, &$form_state) {
 /*****************************************************************************
  * Public functions.
  ****************************************************************************/
+
+/**
+ * Get the node priority in the sitemap.
+ * @param $node
+ *   The node object.
+ * @param $load
+ *   TRUE if priority_override must be loaded from the module table.
+ * @return
+ *   The priority for the node.
+ * @see xmlsitemap_node_set_priority()
+ */
+function xmlsitemap_node_get_priority($node, $load = FALSE) {
+  if (!isset($node->priority_override) && $reload) {
+    $priority_override = db_result(db_query("SELECT xn.priority_override FROM {xmlsitemap_node} xn ON WHERE xn.nid = %d", $node->nid));
+    if ($priority_override !== FALSE) {
+      $node->priority_override = $priority_override;
+    }
+  }
+  if (isset($node->priority_override) && $node->priority_override != -2.0) {
+    $priority = $node->priority_override;
+  }
+  elseif (($priority = variable_get('xmlsitemap_node_type_priority_'. $node->type, 0.5)) != -1.0) {
+    if ($node->promote) {
+      $priority += variable_get('xmlsitemap_node_promote_priority', 0.3);
+    }
+    $priority += $node->comment_ratio * variable_get('xmlsitemap_node_comment_priority', 0.2);
+  }
+  if (!isset($priority)) {
+    $priority = -1.0;
+  }
+  return $priority;
+}
 
 /**
  * Set the node priority in the sitemap.
