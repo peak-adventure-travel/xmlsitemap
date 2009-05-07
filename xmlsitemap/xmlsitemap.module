@@ -101,6 +101,7 @@ function xmlsitemap_help($path, $arg) {
 function xmlsitemap_menu() {
   $items = array();
   $access_config = array('administer site configuration');
+  $access_content = array('access content');
   $items['admin/settings/xmlsitemap'] = array(
     'title' => 'XML sitemap',
     'description' => 'Configure the XML sitemap.',
@@ -128,7 +129,7 @@ function xmlsitemap_menu() {
   $items['sitemap.xml'] = array(
     'title' => 'Sitemap index',
     'page callback' => 'xmlsitemap_output',
-    'access callback' => '_xmlsitemap_anonymous_access',
+    'access arguments' => $access_content,
     'type' => MENU_CALLBACK,
     'file' => 'xmlsitemap.pages.inc',
   );
@@ -141,7 +142,7 @@ function xmlsitemap_menu() {
         'title arguments' => array('!number' => $chunk),
         'page callback' => 'xmlsitemap_output',
         'page arguments' => array((string) $chunk),
-        'access callback' => '_xmlsitemap_anonymous_access',
+        'access arguments' => $access_content,
         'type' => MENU_CALLBACK,
         'file' => 'xmlsitemap.pages.inc',
       );
