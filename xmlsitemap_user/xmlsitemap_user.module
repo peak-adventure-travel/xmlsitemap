@@ -317,6 +317,7 @@ function xmlsitemap_user_get_priority($user, $load = FALSE) {
   }
   return $priority;
 }
+
 /**
  * Set the user priority in the sitemap. It doesn't change the priority of a
  * blocked user.
