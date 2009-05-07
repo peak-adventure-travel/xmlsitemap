@@ -254,7 +254,7 @@ function xmlsitemap_user_xmlsitemap_links() {
       $row->changed = $user->changed;
       $row->changefreq = max(REQUEST_TIME - $user->changed, empty($user->previously_changed) ? 0 : $user->changed - $user->previously_changed);
       $priority = xmslitemap_user_get_priority($user);
-      $row->priority = $priority;
+      $row->priority = $priority == -1 ? $priority : min(max(round($priority, 1), 0.0), 1.0);
       $old_row = db_fetch_object(db_query("SELECT lid, type, priority FROM {xmlsitemap} WHERE loc = '%s'", $row->loc));
       if ($old_row === FALSE) {
         drupal_write_record('xmlsitemap', $row);
