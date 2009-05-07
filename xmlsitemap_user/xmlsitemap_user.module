@@ -253,33 +253,7 @@ function xmlsitemap_user_xmlsitemap_links() {
       $row->id = $user->uid;
       $row->changed = $user->changed;
       $row->changefreq = max(REQUEST_TIME - $user->changed, empty($user->previously_changed) ? 0 : $user->changed - $user->previously_changed);
-      if ($user->priority_override != -2.0) {
-        $priority = $user->priority_override;
-      }
-      else {
-        $default = db_fetch_object(
-          db_query("SELECT MIN(xur.priority) AS min, SUM(xur.priority) AS sum
-            FROM {users_roles} ur
-            INNER JOIN {xmlsitemap_user_role} xur ON xur.rid = ur.rid
-            WHERE ur.uid = %d", $user->uid
-          )
-        );
-        if (isset($default->min) && isset($default->sum)) {
-          $priority = $default->min < 0 ? -1.0 : round(min($default->sum, 1.0), 1);
-        }
-        else {
-          $priority = variable_get('xmlsitemap_user_default_priority', 0.5);
-        }
-        if (module_exists('comment')) {
-          $maxcomments = (integer) db_result(db_query("SELECT MAX(comments) FROM {xmlsitemap_user}"));
-          if ($maxcomments > 1) {
-            $priority += variable_get('xmlsitemap_user_comment_priority', 0.2) * $user->comments / $maxcomments;
-          }
-        }
-      }
-      if (!isset($priority)) {
-        $priority = -1.0;
-      }
+      $priority = xmslitemap_user_get_priority($user);
       $row->priority = $priority;
       $old_row = db_fetch_object(db_query("SELECT lid, type, priority FROM {xmlsitemap} WHERE loc = '%s'", $row->loc));
       if ($old_row === FALSE) {
@@ -297,6 +271,52 @@ function xmlsitemap_user_xmlsitemap_links() {
  * Public functions.
  ****************************************************************************/
 
+/**
+ * Get the user priority in the sitemap.
+ * @param $user
+ *   The user object.
+ * @param $load
+ *   TRUE, if priority_override must be loaded from the module table.
+ * @return
+ *   The priority for the user.
+ * @see xmlsitemap_user_set_priority()
+ */
+function xmlsitemap_user_get_priority($user, $load = FALSE) {
+  if (!isset($user->priority_override) && $reload && $user->uid) {
+    $priority_override = db_result(db_query("SELECT xu.priority_override FROM {xmlsitemap_user} xu ON WHERE xu.uid = %d", $user->uid));
+    if ($priority_override !== FALSE) {
+      $user->priority_override = $priority_override;
+    }
+  }
+  if (isset($user->priority_override) && $user->priority_override != -2.0) {
+    $priority = $user->priority_override;
+  }
+  else {
+    $default = db_fetch_object(
+      db_query("SELECT MIN(xur.priority) AS min, SUM(xur.priority) AS sum
+        FROM {users_roles} ur
+        INNER JOIN {xmlsitemap_user_role} xur ON xur.rid = ur.rid
+        WHERE ur.uid = %d", $user->uid
+      )
+    );
+    if (isset($default->min) && isset($default->sum)) {
+      $priority = $default->min < 0 ? -1.0 : round(min($default->sum, 1.0), 1);
+    }
+    else {
+      $priority = variable_get('xmlsitemap_user_default_priority', 0.5);
+    }
+    if (module_exists('comment')) {
+      $maxcomments = (integer) db_result(db_query("SELECT MAX(comments) FROM {xmlsitemap_user}"));
+      if ($maxcomments > 1) {
+        $priority += variable_get('xmlsitemap_user_comment_priority', 0.2) * $user->comments / $maxcomments;
+      }
+    }
+  }
+  if (!isset($priority)) {
+    $priority = -1.0;
+  }
+  return $priority;
+}
 /**
  * Set the user priority in the sitemap. It doesn't change the priority of a
  * blocked user.
