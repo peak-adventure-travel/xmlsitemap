@@ -282,7 +282,7 @@ function xmlsitemap_user_xmlsitemap_links() {
  * @see xmlsitemap_user_set_priority()
  */
 function xmlsitemap_user_get_priority($user, $load = FALSE) {
-  if (!isset($user->priority_override) && $reload && $user->uid) {
+  if (!isset($user->priority_override) && $load && $user->uid) {
     $priority_override = db_result(db_query("SELECT xu.priority_override FROM {xmlsitemap_user} xu ON WHERE xu.uid = %d", $user->uid));
     if ($priority_override !== FALSE) {
       $user->priority_override = $priority_override;

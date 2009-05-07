@@ -341,7 +341,7 @@ function xmlsitemap_node_type_submit($form, &$form_state) {
  * @see xmlsitemap_node_set_priority()
  */
 function xmlsitemap_node_get_priority($node, $load = FALSE) {
-  if (!isset($node->priority_override) && $reload) {
+  if (!isset($node->priority_override) && $load) {
     $priority_override = db_result(db_query("SELECT xn.priority_override FROM {xmlsitemap_node} xn ON WHERE xn.nid = %d", $node->nid));
     if ($priority_override !== FALSE) {
       $node->priority_override = $priority_override;
