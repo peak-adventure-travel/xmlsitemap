@@ -2,5 +2,6 @@
 name = XML sitemap menu
 description = Add specified menu item links to the sitemap.
 package = XML sitemap
+dependencies[] = menu
 dependencies[] = xmlsitemap
 core = "6.x"
