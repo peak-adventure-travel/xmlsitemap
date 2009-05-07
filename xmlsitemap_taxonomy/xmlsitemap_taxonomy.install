@@ -75,7 +75,9 @@ function xmlsitemap_taxonomy_schema() {
  * Implementation of hook_install().
  */
 function xmlsitemap_taxonomy_install() {
-  drupal_install_schema('xmlsitemap_taxonomy');
+  if (!db_table_exists('xmlsitemap_term')) {
+    drupal_install_schema('xmlsitemap_taxonomy');
+  }
   db_query("UPDATE {system} SET weight = 10 WHERE name = 'xmlsitemap_taxonomy'");
 }
 
