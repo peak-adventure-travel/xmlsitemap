@@ -2,11 +2,11 @@ $Id$
 
 XML Sitemap 6.x-1, 2009-05-07
 -----------------------------------
+#456288: xmlsitemap_get_priority() is not defined.
 #456720: Call to undefined function xmslitemap_user_get_priority().
 #456710: Missing uninstall.
 #456434: Some modules don't declare their dependency from Drupal optional modules.
 #456312: Code doesn't verify if the priority is inside the range.
-#456288: xmlsitemap_get_priority() is not defined.
 #455664: Description in INSTALL.txt should be changed.
 #456116: xmlsitemap_term table doesn't exist.
 
