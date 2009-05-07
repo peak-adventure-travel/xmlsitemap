@@ -182,6 +182,13 @@ function xmlsitemap_perm() {
   return array('override node settings', 'override profile settings');
 }
 
+/**
+ * Implementation of hook_robotstxt().
+ */
+function xmlsitemap_robotstxt() {
+  return array("Sitemap: ". xmlsitemap_url('sitemap.xml', drupal_lookup_path('alias', 'sitemap.xml') ? drupal_lookup_path('alias', 'sitemap.xml') : NULL, NULL, NULL, TRUE));
+}
+
 /*****************************************************************************
  * Menu callbacks / form builders, submit/validate functions.
  ****************************************************************************/
