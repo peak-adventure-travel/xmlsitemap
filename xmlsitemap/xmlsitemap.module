@@ -389,15 +389,6 @@ function xmlsitemap_user_form_fieldset() {
  ****************************************************************************/
 
 /**
- * Function used to determinate if the current user has logged in, and can
- * view the sitemap content (only the anonymous user is enabled).
- */
-function _xmlsitemap_anonymous_access() {
-  global $user;
-  return $user->uid == 0;
-}
-
-/**
  * Return the revision number as extracted from the CVS revision tag.
  */
 function _xmlsitemap_revision() {
