@@ -21,7 +21,7 @@
 function xmlsitemap_settings() {
   $form['general'] = array(
     '#type' => 'fieldset',
-    '#title' => t('General settings'),
+    '#title' => t('Settings'),
     '#collapsible' => TRUE,
     '#weight' => -1,
   );
