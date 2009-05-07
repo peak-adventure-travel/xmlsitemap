@@ -2,5 +2,6 @@
 name = XML sitemap taxonomy
 description = Add taxonomy term links to the sitemap.
 package = XML sitemap
-dependencies[] = xmlsitemap_node
+dependencies[] = taxonomy
+dependencies[] = xmlsitemap
 core = "6.x"
