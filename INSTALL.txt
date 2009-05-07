@@ -16,10 +16,10 @@ INSTALLATION INSTRUCTIONS
 
 4) For existing data to become presented in the sitemap report you must
    execute cron.php.  There are control settings at admin/settings/xmlsitemap
-   for the number of rows to execute in one cron 240 second execution.  Take
-   note that hook_cron implementations in all modules use the same 240 second
-   execution.  So if you are not seeing data populated you should increase the
-   number of times in the day cron.php executes.
+   for the number of rows to execute in one cron 240 second execution.
+   Take note that all the module tasks executed at cron time share the
+   same 240 seconds execution; if you are not seeing data populated you
+   should increase the number of times in the day cron.php executes.
 
 
 UPGRADING INSTRUCTIONS
