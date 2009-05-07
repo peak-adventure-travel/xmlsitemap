@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1, 2009-05-07
 -----------------------------------
+#456766: Blocked users are not removed from sitemap.
 #456288: xmlsitemap_get_priority() is not defined.
 #456720: Call to undefined function xmslitemap_user_get_priority().
 #456710: Missing uninstall.
