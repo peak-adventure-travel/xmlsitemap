@@ -31,7 +31,20 @@ function xmlsitemap_settings() {
     '#default_value' => variable_get('xmlsitemap_all_links_to_default_language', 0),
     '#description' => t('This option will be used only when the language negotiation uses a path prefix mechanism.'),
   );
-  $form['general']['xmlsitemap_front_page_changefreq'] = array(
+  $form['general']['xmlsitemap_cache_directory'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Cache directory'),
+    '#default_value' => variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap'),
+    '#size' => 60,
+    '#maxlength' => 150,
+    '#description' => t('The directory where the cache files are created; change it only if you are having problems with the default setting.'),
+  );
+  $form['frontpage'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Front page'),
+    '#collapsible' => TRUE,
+  );
+  $form['frontpage']['xmlsitemap_front_page_changefreq'] = array(
     '#type' => 'select',
     '#title' => t('Front page change frequency'),
     '#description' => t('The change frequency associated with the front page.'),
@@ -44,20 +57,7 @@ function xmlsitemap_settings() {
       '29030400' => 'Yearly',
     ),
   );
-  $form['general']['xmlsitemap_cache_directory'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Cache directory'),
-    '#default_value' => variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap'),
-    '#size' => 60,
-    '#maxlength' => 150,
-    '#description' => t('The directory where the cache files are created; change it only if you are having problems with the default setting.'),
-  );
-  $form['general']['priority'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Priority'),
-    '#collapsible' => TRUE,
-  );
-  $form['general']['priority']['xmlsitemap_front_page_priority'] = array(
+  $form['frontpage']['xmlsitemap_front_page_priority'] = array(
     '#type' => 'select',
     '#title' => t('Front page priority'),
     '#description' => t('The absolute priority for the front page.'),
