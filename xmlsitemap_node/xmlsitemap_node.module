@@ -406,9 +406,9 @@ function xmlsitemap_node_excludes() {
  * @return Number of seconds between updates
  */
 function xmlsitemap_node_frequency($node) {
-  $age = XMLSITEMAP_TIME - $node->changed;
+  $age = REQUEST_TIME - $node->changed;
   if (variable_get('xmlsitemap_node_count_comments', TRUE) && module_exists('comment')) {
-    $age = XMLSITEMAP_TIME - max($node->changed, $node->last_comment_timestamp);
+    $age = REQUEST_TIME - max($node->changed, $node->last_comment_timestamp);
     $interval = 0;
     if (!empty($node->previously_changed) && isset($node->previous_comment)) {
       $interval = min($node->changed, $node->last_comment_timestamp) - max($node->previously_changed, $node->previous_comment);

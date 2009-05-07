@@ -93,7 +93,7 @@ function xmlsitemap_term_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
     case 'delete':
       if (!empty($node->taxonomy)) {
         $terms = array_keys($node->taxonomy);
-        $query_args = array_merge(array(XMLSITEMAP_TIME), $terms);
+        $query_args = array_merge(array(REQUEST_TIME), $terms);
       }
       break;
   }
@@ -130,7 +130,7 @@ function xmlsitemap_term_taxonomy($op, $type, $array = NULL) {
       case 'insert':
         $priority = isset($array['xmlsitemap_term_priority']) ? $array['xmlsitemap_term_priority'] : 'NULL';
         db_query("INSERT INTO {xmlsitemap_term} (tid, last_changed, priority_override) VALUES (%d, %d, %s)",
-        $array['tid'], XMLSITEMAP_TIME, $priority);
+        $array['tid'], REQUEST_TIME, $priority);
         break;
       case 'update':
         if (!isset($array['xmlsitemap_term_priority'])) {
@@ -205,7 +205,7 @@ function xmlsitemap_term_xmlsitemap_links() {
       $alias = NULL;
     }
     $url = xmlsitemap_url($path, $alias, NULL, NULL, TRUE);
-    $age = XMLSITEMAP_TIME - $term->last_changed;
+    $age = REQUEST_TIME - $term->last_changed;
     $interval = empty($term->previously_changed) ? 0 : $term->last_changed - $term->previously_changed;
     if (isset($term->priority_override)) {
       $priority = $term->priority_override;
