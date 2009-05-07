@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 5.x-2, 2009-05-06
+-----------------------------------
+#359901: Re-implement hook_robotstxt().
+
 XML Sitemap 5.x-2, 2009-04-28
 -----------------------------------
 #446400: Module permissions are not declared.
