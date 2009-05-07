@@ -278,7 +278,7 @@ function xmlsitemap_taxonomy_xmlsitemap_links() {
     if (!isset($priority)) {
       $priority = -1.0;
     }
-    $row->priority = ($priority == -1) ? $priority : min(max(round($priority, 1), 0.0), 1.0);
+    $row->priority = ($priority == -1.0) ? $priority : min(max(round($priority, 1), 0.0), 1.0);
     $old_row = db_fetch_object(db_query("SELECT lid, type, priority FROM {xmlsitemap} WHERE loc = '%s'", $row->loc));
     if ($old_row === FALSE) {
       drupal_write_record('xmlsitemap', $row);
