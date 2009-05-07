@@ -6,3 +6,5 @@
  * Installation file for XML sitemap term.
  */
 
+function xmlsitemap_term_uninstall() {
+}
