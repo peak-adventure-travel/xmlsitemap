@@ -130,7 +130,7 @@ function xmlsitemap_menu($may_cache) {
   global $user;
   $items = array();
   $access_config = user_access('administer site configuration');
-  $access_sitemap = ($user->uid == 0);
+  $access_content = user_access('access content');
   if ($may_cache) {
     $items[] = array(
       'path' => 'admin/settings/xmlsitemap',
@@ -160,7 +160,7 @@ function xmlsitemap_menu($may_cache) {
       'title' => t('Site map index'),
       'callback' => 'xmlsitemap_output',
       'type' => MENU_CALLBACK,
-      'access' => $access_sitemap,
+      'access' => $access_content,
     );
   }
   else {
@@ -174,7 +174,7 @@ function xmlsitemap_menu($may_cache) {
           'callback' => 'xmlsitemap_output',
           'callback arguments' => array($chunk),
           'type' => MENU_CALLBACK,
-          'access' => $access_sitemap,
+          'access' => $access_content,
         );
       }
     }
@@ -208,7 +208,8 @@ function xmlsitemap_robotstxt() {
  * @return None
  */
 function xmlsitemap_output($chunk = NULL) {
-  if (variable_get('xmlsitemap_update', FALSE)) {
+  global $user;
+  if (!$user->uid && variable_get('xmlsitemap_update', FALSE)) {
     _xmlsitemap_update();
   }
   drupal_set_header('Content-type: text/xml; charset=utf-8');
