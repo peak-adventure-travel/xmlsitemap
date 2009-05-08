@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1, 2009-05-08
 -----------------------------------
+#456442: Remove unnecessary features from xmlsitemap_taxonomy.
 #455678: Remove unnecessary features from xmlsitemap_user.
 
 XML Sitemap 6.x-1, 2009-05-07

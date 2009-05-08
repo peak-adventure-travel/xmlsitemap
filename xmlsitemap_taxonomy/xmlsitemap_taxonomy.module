@@ -3,7 +3,7 @@
 
 /**
  * @file
- * Adds terms to the sitemap.
+ * Adds taxonomy terms to the sitemap.
  */
 
 /**
@@ -83,51 +83,6 @@ function xmlsitemap_taxonomy_form_taxonomy_form_vocabulary_alter(&$form, &$from_
   );
   $form['submit']['#weight'] = isset($form['submit']['#weight']) ? $form['submit']['#weight'] + 1 : 1;
   $form['delete']['#weight'] = isset($form['delete']['#weight']) ? $form['delete']['#weight'] + 1 : 1;
-}
-
-/**
- * Implementation of hook_form_FORM_ID_alter().
- */
-function xmlsitemap_taxonomy_form_xmlsitemap_settings_alter(&$form, &$from_state) {
-  $options = xmlsitemap_priority_options();
-  $form['xmlsitemap_taxonomy'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Taxonomy term settings'),
-    '#description' => t('The settings for the taxonomy terms to include in the sitemap.'),
-    '#collapsible' => TRUE,
-    '#weight' => 2,
-  );
-  $form['xmlsitemap_taxonomy']['xmlsitemap_taxonomy_node_priority'] = array(
-    '#type' => 'select',
-    '#title' => t('Terms use priority adjustment'),
-    '#description' => t("This number will be added to the priority of vocabulary term which is used by 100 nodes; for the other terms, the number is calculated proportionally to the number of nodes. This doesn't apply for terms that are used for just one node, nor for the vocabulary terms  for which the priority is overriden."),
-    '#default_value' => variable_get('xmlsitemap_taxonomy_node_priority', 0.2),
-    '#options' => $options,
-  );
-}
-
-/**
- * Implementation of hook_node_operations().
- */
-function xmlsitemap_taxonomy_node_operations() {
-  $operations = array(
-    'xmlsitemap_add_terms' => array(
-      'label' => t('Add the vocabulary terms of the selected posts to the XML sitemap'),
-      'callback' => '_xmlsitemap_taxonomy_priority_operations',
-      'callback arguments' => array('priority' => 0.5),
-    ),
-    'xmlsitemap_change_terms_priority' => array(
-      'label' => t('Change the XML sitemap priority of the selected posts vocabulary terms to default'),
-      'callback' => '_xmlsitemap_taxonomy_priority_operations',
-      'callback arguments' => array('priority' => -2.0),
-    ),
-    'xmlsitemap_remove_terms' => array(
-      'label' => t('Remove the vocabulary terms of the selected posts from the XML sitemap'),
-      'callback' => '_xmlsitemap_taxonomy_priority_operations',
-      'callback arguments' => array('priority' => -1.0),
-    ),
-  );
-  return $operations;
 }
 
 /**
@@ -262,14 +217,8 @@ function xmlsitemap_taxonomy_xmlsitemap_links() {
     if ($term->priority_override != -2.0) {
       $priority = $term->priority_override;
     }
-    elseif (($priority = variable_get('xmlsitemap_taxonomy_vocabulary_priority_'. $term->vid, 0.5)) != -1.0) {
-      $count = (integer) db_result(db_query("SELECT COUNT(vid) FROM {term_node} WHERE tid = %d", $term->tid));
-      if ($count > 1) {
-        $priority += variable_get('xmlsitemap_taxonomy_node_priority', 0.2) * $count / 100;
-      }
-    }
-    if (!isset($priority)) {
-      $priority = -1.0;
+    else {
+      $priority = variable_get('xmlsitemap_taxonomy_vocabulary_priority_'. $term->vid, 0.5);
     }
     $row->priority = ($priority == -1.0) ? $priority : min(max(round($priority, 1), 0.0), 1.0);
     $old_row = db_fetch_object(db_query("SELECT lid, type, priority FROM {xmlsitemap} WHERE loc = '%s'", $row->loc));
@@ -280,91 +229,6 @@ function xmlsitemap_taxonomy_xmlsitemap_links() {
       $row->lid = $old_row->lid;
       drupal_write_record('xmlsitemap', $row, 'lid');
     }
-  }
-}
-
-/*****************************************************************************
- * Private functions - node operation callbacks.
- ****************************************************************************/
-
-/**
- * Node operations callback.
- */
-function _xmlsitemap_taxonomy_priority_operations($nodes, $priority) {
-  if (count($nodes)) {
-    $batch = array(
-      'operations' => array(
-        array('_xmlsitemap_taxonomy_batch_process', array($nodes, $priority))
-      ),
-      'finished' => 'xmlsitemap_batch_operations_finished',
-      'title' => t('Processing'),
-      'progress_message' => '',
-      'error_message' => t('The update has encountered an error.'),
-    );
-    batch_set($batch);
-  }
-}
-
-/*****************************************************************************
- * Private functions - batch operation callbacks.
- ****************************************************************************/
-
-/**
- * Node operations batch process callback.
- */
-function _xmlsitemap_taxonomy_batch_process($nodes, $priority, &$context) {
-  if (!isset($context['sandbox']['progress'])) {
-    $context['sandbox']['progress'] = 0;
-    $context['sandbox']['max'] = count($nodes);
-    $context['sandbox']['nodes'] = $nodes;
-    $context['sandbox']['terms'] = array();
-  }
-  if (empty($context['sandbox']['terms'])) {
-    $nid = array_shift($context['sandbox']['nodes']);
-    if ($node = node_load($nid)) {
-      $context['sandbox']['terms'] = taxonomy_node_get_terms($node);
-      $context['sandbox']['node'] = $node;
-    }
-  }
-  $term = array_shift($context['sandbox']['terms']);
-  if (isset($term)) {
-    $node = $context['sandbox']['node'];
-    $result = db_fetch_object(db_query("SELECT tid, vid, changed, previously_changed, priority_override
-      FROM {xmlsitemap_term}
-      WHERE tid = %d", $term->tid)
-    );
-    if ($result === FALSE) {
-      $row = new stdClass();
-      $row->tid = $term->tid;
-      $row->vid = $term->vid;
-      $row->changed = $node->changed;
-      $row->previously_changed = $node->created;
-    }
-    else {
-      $row = $result;
-      if ($node->changed > $row->changed) {
-        $row->previously_changed = $row->changed;
-        $row->changed = $node->changed;
-      }
-    }
-    $row->priority_override = $priority;
-    drupal_write_record('xmlsitemap_term', $row, $result === FALSE ? NULL : 'tid');
-  }
-  if (empty($context['sandbox']['terms'])) {
-    $context['sandbox']['progress']++;
-    if (!empty($context['sandbox']['node'])) {
-      $node = $context['sandbox']['node'];
-      $context['results'][] = l($node->title, 'node/'. $node->nid);
-      if (count($context['results']) > 6) {
-        array_shift($context['results']);
-      }
-    }
-  }
-  if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
-    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
-  }
-  else {
-    xmlsitemap_flag_sitemap();
   }
 }
 
