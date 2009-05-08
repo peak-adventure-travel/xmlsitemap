@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1, 2009-05-08
 -----------------------------------
+#456430: Remove unnecessary features from xmlsitemap_node.
 #456736: Do we really need to keep a shell module?
 #453434: Rename the modules.
 #456442: Remove unnecessary features from xmlsitemap_taxonomy.
