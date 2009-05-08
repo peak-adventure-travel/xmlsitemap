@@ -31,9 +31,6 @@ function xmlsitemap_user_cron() {
       $row->uid = $account->uid;
       $row->changed = !empty($account->access) ? $account->access : REQUEST_TIME;
       $row->previously_changed = $account->created;
-      if (module_exists('comment')) {
-        $row->comments = (integer) db_result(db_query("SELECT COUNT(cid) FROM {comments} WHERE uid = %d", $account->uid));
-      }
       drupal_write_record('xmlsitemap_user', $row);
     }
   }
@@ -94,26 +91,6 @@ function xmlsitemap_user_form_user_admin_role_alter(&$form, &$from_state) {
 }
 
 /**
- * Implementation of hook_form_FORM_ID_alter().
- */
-function xmlsitemap_user_form_xmlsitemap_settings_alter(&$form, &$from_state) {
-  $form['xmlsitemap_user'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('User settings'),
-    '#description' => t('The settings for the users to include in the sitemap.'),
-    '#collapsible' => TRUE,
-    '#weight' => 3,
-  );
-  $form['xmlsitemap_user']['xmlsitemap_user_comment_priority'] = array(
-    '#type' => 'select',
-    '#title' => t('Comment ratio priority adjustment'),
-    '#description' => t("This number will be added to the priority of the user who authored the highest number of comments; for the other users, the number is calculated proportionally to the number of authored comments. This doesn't apply if the maximum number of comments is one, nor for the users for which the priority is overriden."),
-    '#default_value' => variable_get('xmlsitemap_user_comment_priority', 0.2),
-    '#options' => xmlsitemap_priority_options(),
-  );
-}
-
-/**
  * Implementation of hook_user().
  */
 function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
@@ -167,7 +144,7 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
       break;
     case 'update':
       if ($account->status) {
-        if (($result = db_fetch_object(db_query("SELECT uid, changed, previously_changed, comments, priority_override FROM {xmlsitemap_user} WHERE uid = %d", $account->uid))) === FALSE) {
+        if (($result = db_fetch_object(db_query("SELECT uid, changed, previously_changed, priority_override FROM {xmlsitemap_user} WHERE uid = %d", $account->uid))) === FALSE) {
           $row = new stdClass();
           $row->uid = $account->uid;
           $row->previously_changed = $account->created;
@@ -186,9 +163,6 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
             $row->changed = REQUEST_TIME;
           }
         }
-        if (module_exists('comment')) {
-          $row->comments = (integer) db_result(db_query("SELECT COUNT(cid) FROM {comments} WHERE uid = %d", $account->uid));
-        }
         if (isset($edit['xmlsitemap_user_priority'])) {
           $row->priority_override = $edit['xmlsitemap_user_priority'];
         }
@@ -201,30 +175,6 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
       xmlsitemap_flag_sitemap();
       break;
   }
-}
-
-/**
- * Implementation of hook_user_operations().
- */
-function xmlsitemap_user_user_operations() {
-  $operations = array(
-    'xmlsitemap_add_users' => array(
-      'label' => t('Add the selected users to the XML sitemap'),
-      'callback' => '_xmlsitemap_user_priority_operations',
-      'callback arguments' => array('priority' => 0.5),
-    ),
-    'xmlsitemap_change_users_priority' => array(
-      'label' => t('Change the XML sitemap priority of the selected users to default'),
-      'callback' => '_xmlsitemap_user_priority_operations',
-      'callback arguments' => array('priority' => -2.0),
-    ),
-    'xmlsitemap_remove_users' => array(
-      'label' => t('Remove the selected users from the XML sitemap'),
-      'callback' => '_xmlsitemap_user_priority_operations',
-      'callback arguments' => array('priority' => -1.0),
-    ),
-  );
-  return $operations;
 }
 
 /**
@@ -304,12 +254,6 @@ function xmlsitemap_user_get_priority($user, $load = FALSE) {
     else {
       $priority = variable_get('xmlsitemap_user_default_priority', 0.5);
     }
-    if (module_exists('comment')) {
-      $maxcomments = (integer) db_result(db_query("SELECT MAX(comments) FROM {xmlsitemap_user}"));
-      if ($maxcomments > 1) {
-        $priority += variable_get('xmlsitemap_user_comment_priority', 0.2) * $user->comments / $maxcomments;
-      }
-    }
   }
   if (!isset($priority) || !$user->status) {
     $priority = -1.0;
@@ -337,7 +281,7 @@ function xmlsitemap_user_set_priority($user, $priority) {
     $user = user_load($uid);
   }
   if ($user && $user->status) {
-    $result = db_fetch_object(db_query("SELECT uid, changed, previously_changed, comments, priority_override
+    $result = db_fetch_object(db_query("SELECT uid, changed, previously_changed, priority_override
       FROM {xmlsitemap_user}
       WHERE uid = %d", $uid)
     );
@@ -353,9 +297,6 @@ function xmlsitemap_user_set_priority($user, $priority) {
         $row->previously_changed = $row->changed;
         $row->changed = $user->access;
       }
-    }
-    if (module_exists('comment')) {
-      $row->comments = (integer) db_result(db_query("SELECT COUNT(cid) FROM {comments} WHERE uid = %d", $uid));
     }
     $row->priority_override = $priority;
     drupal_write_record('xmlsitemap_user', $row, $result === FALSE ? NULL : 'uid');
@@ -386,57 +327,6 @@ function xmlsitemap_user_admin_role_submit($form, &$form_state) {
  */
 function xmlsitemap_user_admin_settings_submit($form, &$form_state) {
   xmlsitemap_flag_sitemap();
-}
-
-/*****************************************************************************
- * Private functions - user operation callbacks.
- ****************************************************************************/
-
-/**
- * Node operations callback.
- */
-function _xmlsitemap_user_priority_operations($accounts, $priority) {
-  if (count($accounts)) {
-    $batch = array(
-      'operations' => array(
-        array('_xmlsitemap_user_batch_process', array($accounts, $priority))
-      ),
-      'finished' => 'xmlsitemap_batch_operations_finished',
-      'title' => t('Processing'),
-      'progress_message' => '',
-      'error_message' => t('The update has encountered an error.'),
-    );
-    batch_set($batch);
-  }
-}
-
-/*****************************************************************************
- * Private functions - batch operation callbacks.
- ****************************************************************************/
-
-/**
- * User operations batch process callback.
- */
-function _xmlsitemap_user_batch_process($accounts, $priority, &$context) {
-  if (!isset($context['sandbox']['progress'])) {
-    $context['sandbox']['progress'] = 0;
-    $context['sandbox']['max'] = count($accounts);
-    $context['sandbox']['accounts'] = $accounts;
-  }
-  $uid = array_shift($context['sandbox']['accounts']);
-  if ($user = xmlsitemap_user_set_priority($uid, $priority)) {
-    $context['results'][] = l($user->name, 'user/'. $user->uid);
-    if (count($context['results']) > 6) {
-      array_shift($context['results']);
-    }
-  }
-  $context['sandbox']['progress']++;
-  if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
-    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
-  }
-  else {
-    xmlsitemap_flag_sitemap();
-  }
 }
 
 /**
