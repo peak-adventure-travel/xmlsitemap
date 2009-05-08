@@ -362,10 +362,9 @@ function xmlsitemap_taxonomy_update_6113() {
  */
 function xmlsitemap_taxonomy_update_6114() {
   $result = db_query("SELECT name FROM {variable} WHERE name LIKE 'xmlsitemap\_term\_%'");
-  while ($row = db_fetch_object($result)) {
-    $old_name = $row->name;
-    $new_name = str_replace('_term_', '_taxonomy_', $old_name);
-    $ret[] = update_sql("UPDATE {variable} set name = '$new_name' WHERE name = '$old_name'");
+  while ($name = db_result($result)) {
+    $new_name = str_replace('_term_', '_taxonomy_', $name);
+    $ret[] = update_sql("UPDATE {variable} set name = '$new_name' WHERE name = '$name'");
   }
   $ret[] = update_sql("DELETE FROM {system} WHERE name = 'xmlsitemap_term'");
   return $ret;
