@@ -1,5 +1,0 @@
-; $Id$
-name = XML sitemap term
-description = This module has been deprecated in favor of XML sitemap taxonomy.
-package = XML sitemap
-core = "6.x"
