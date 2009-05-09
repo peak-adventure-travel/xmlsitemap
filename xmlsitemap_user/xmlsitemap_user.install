@@ -52,13 +52,6 @@ function xmlsitemap_user_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
-      'comments' => array(
-        'description' => 'The number of comments authored from the user.',
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'default' => 0,
-      ),
       'priority_override' => array(
         'description' => 'The priority of the term in the sitemap.',
         'type' => 'float',
@@ -164,17 +157,6 @@ function xmlsitemap_user_update_6000() {
         );
       }
     }
-    if (!db_column_exists('xmlsitemap_user', 'comments')) {
-      db_add_field($ret, 'xmlsitemap_user', 'comments',
-        array(
-          'description' => 'The number of comments authored from the user.',
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-          'default' => 0,
-        )
-      );
-    }
     $ret[] = update_sql("UPDATE {xmlsitemap_user}
       SET priority_override = -2.0
       WHERE priority_override IS NULL"
@@ -209,13 +191,6 @@ function xmlsitemap_user_update_6000() {
           ),
           'previously_changed' => array(
             'description' => 'The Unix timestamp of the previous change.',
-            'type' => 'int',
-            'unsigned' => TRUE,
-            'not null' => TRUE,
-            'default' => 0,
-          ),
-          'comments' => array(
-            'description' => 'The number of comments authored from the user.',
             'type' => 'int',
             'unsigned' => TRUE,
             'not null' => TRUE,
@@ -399,7 +374,6 @@ function xmlsitemap_user_update_6112() {
  *
  */
 function xmlsitemap_user_update_6113() {
-  $ret = xmlsitemap_user_update_6000();
   $ret[] = update_sql("UPDATE {system} SET weight = 10 WHERE name = 'xmlsitemap_user'");
   return $ret;
 }
@@ -410,6 +384,18 @@ function xmlsitemap_user_update_6113() {
  */
 function xmlsitemap_user_update_6114() {
   return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ *
+ */
+function xmlsitemap_user_update_6115() {
+  $ret = array();
+  if (db_column_exists('xmlsitemap_user', 'comments')) {
+    db_drop_field($ret, 'xmlsitemap_user', 'comments');
+  }
+  return $ret;
 }
 
 /**

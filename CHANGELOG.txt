@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 6.x-1, 2009-05-09
+-----------------------------------
+#455678: Remove unnecessary features from xmlsitemap_user.
+
 XML Sitemap 6.x-1, 2009-05-08
 -----------------------------------
 #456430: Remove unnecessary features from xmlsitemap_node.
