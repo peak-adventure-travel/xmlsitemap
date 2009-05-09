@@ -282,12 +282,12 @@ function xmlsitemap_flag_sitemap() {
 function xmlsitemap_link_count() {
   static $link_count;
   if (empty($link_count)) {
-		if (!db_table_exists('xmlsitemap')) {
-			$link_count = 0;
-		}
-		else {
-			$link_count = db_result(db_query("SELECT COUNT(xsm.loc)". xmlsitemap_sitemap_query()));
-		}
+    if (!db_table_exists('xmlsitemap')) {
+      $link_count = 0;
+    }
+    else {
+      $link_count = db_result(db_query("SELECT COUNT(xsm.loc)". xmlsitemap_sitemap_query()));
+    }
   }
   return $link_count;
 }
