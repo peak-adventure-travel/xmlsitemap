@@ -623,6 +623,7 @@ function xmlsitemap_update_6127() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_update_6128() {
+	return array();
 }
 
 /**

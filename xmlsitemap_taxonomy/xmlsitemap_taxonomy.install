@@ -14,6 +14,10 @@
  * Implementation of hook_enable().
  */
 function xmlsitemap_taxonomy_enable() {
+	if (db_table_exists('xmlsitemap_term')) {
+		db_query("UPDATE {system} SET schema_version = 0 WHERE name = 'xmlsitemap_taxonomy'");
+		db_query("DELETE FROM {system} WHERE name = 'xmlsitemap_term'");
+	}
   xmlsitemap_flag_sitemap();
 }
 
@@ -79,7 +83,6 @@ function xmlsitemap_taxonomy_install() {
     drupal_install_schema('xmlsitemap_taxonomy');
   }
   db_query("UPDATE {system} SET weight = 10 WHERE name = 'xmlsitemap_taxonomy'");
-  db_query("DELETE FROM {system} WHERE name = 'xmlsitemap_term'");
 }
 
 /**
@@ -308,7 +311,7 @@ function xmlsitemap_taxonomy_update_6106() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_taxonomy_update_6107() {
-  return xmlsitemap_term_update_6000();
+  return xmlsitemap_taxonomy_update_6000();
 }
 
 /**
