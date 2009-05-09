@@ -282,6 +282,9 @@ function xmlsitemap_flag_sitemap() {
  */
 function xmlsitemap_link_count() {
   static $link_count;
+  if (!db_table_exists('xmlsitemap')) {
+    return 0;
+  }
   if (!isset($link_count)) {
     $link_count = db_result(db_query("SELECT COUNT(xsm.loc)". xmlsitemap_sitemap_query()));
   }
