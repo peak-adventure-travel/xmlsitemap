@@ -39,15 +39,6 @@ function xmlsitemap_output($chunk = NULL) {
   if (!$user->uid) {
     if (variable_get('xmlsitemap_sitemap_needs_update', FALSE)) {
       variable_set('xmlsitemap_update_timestamp', REQUEST_TIME);
-      db_query("DELETE FROM {xmlsitemap} WHERE type ='frontpage'");
-      $row = new stdClass();
-      $row->module = 'xmlsitemap';
-      $row->type = 'frontpage';
-      $changefreq = variable_get('xmlsitemap_front_page_changefreq', 3600);
-      $row->changed = REQUEST_TIME - $changefreq;
-      $row->changefreq = $changefreq;
-      $row->priority = variable_get('xmlsitemap_front_page_priority', 1);
-      drupal_write_record('xmlsitemap', $row);
       module_invoke_all('xmlsitemap_links');
       variable_set('xmlsitemap_sitemap_needs_update', FALSE);
       $result = _xmlsitemap_create_cache_files();

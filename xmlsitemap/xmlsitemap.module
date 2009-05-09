@@ -181,6 +181,30 @@ function xmlsitemap_xmlsitemap_operations() {
   );
 }
 
+/**
+ * Implementation of hook_xmlsitemap_links().
+ */
+function xmlsitemap_xmlsitemap_links() {
+  $changefreq = variable_get('xmlsitemap_front_page_changefreq', 3600);
+  $row = db_fetch_object(db_query("SELECT * FROM {xmlsitemap} WHERE type = 'frontpage' AND module = 'xmlsitemap'"));
+  if ($row === FALSE) {
+    $row = new stdClass();
+    $row->module = 'xmlsitemap';
+    $row->type = 'frontpage';
+    $row->changed = REQUEST_TIME - $changefreq;
+    $row->changefreq = $changefreq;
+    $row->priority = variable_get('xmlsitemap_front_page_priority', 1);
+  }
+  else {
+    $update = TRUE;
+    if (REQUEST_TIME - $row->changed > $changefreq) {
+      $row->changed = REQUEST_TIME - $changefreq;
+      $row->changefreq = $changefreq;
+    }
+  }
+  drupal_write_record('xmlsitemap', $row, isset($update) ? 'lid' : NULL);
+}
+
 /*****************************************************************************
  * Public functions.
  ****************************************************************************/
