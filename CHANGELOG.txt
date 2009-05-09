@@ -2,7 +2,6 @@ $Id$
 
 XML Sitemap 6.x-1, 2009-05-09
 -----------------------------------
-#458106: Test for updating from 5.x-1.6 to 6.x-1.
 #458246: user warning: Table 'updatetest.xmlsitemap' doesn't exist.
 #458232: Removal of not used code.
 #458182: The module should implement hook_xmlsitemap_links().
