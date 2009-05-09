@@ -190,7 +190,7 @@ function xmlsitemap_user_xmlsitemap_description() {
  */
 function xmlsitemap_user_xmlsitemap_links() {
   if (user_access('access user profiles')) {
-    $result = db_query("SELECT u.uid, u.status, xu.changed, xu.previously_changed, xu.priority_override
+    $result = db_query("SELECT u.uid, u.access, u.status, xu.changed, xu.previously_changed, xu.priority_override
       FROM {xmlsitemap_user} xu
       INNER JOIN {users} u ON xu.uid = u.uid"
     );
@@ -255,7 +255,7 @@ function xmlsitemap_user_get_priority($user, $load = FALSE) {
       $priority = variable_get('xmlsitemap_user_default_priority', 0.5);
     }
   }
-  if (!isset($priority) || !$user->status) {
+  if (!isset($priority) || !($user->access && $user->status)) {
     $priority = -1.0;
   }
   return $priority;
