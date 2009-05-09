@@ -35,8 +35,8 @@ function xmlsitemap_output($chunk = NULL) {
     drupal_not_found();
     exit();
   }
+  $id = xmlsitemap_cache_id();
   if (!$user->uid) {
-    $id = xmlsitemap_cache_id();
     if (variable_get('xmlsitemap_sitemap_needs_update', FALSE)) {
       variable_set('xmlsitemap_update_timestamp', REQUEST_TIME);
       db_query("DELETE FROM {xmlsitemap} WHERE type ='frontpage'");
