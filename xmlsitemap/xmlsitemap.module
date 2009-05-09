@@ -134,8 +134,7 @@ function xmlsitemap_menu() {
     'file' => 'xmlsitemap.pages.inc',
   );
   $chunk_size = variable_get('xmlsitemap_chunk_size', 1000);
-  $link_count = xmlsitemap_link_count();
-  if ($link_count > $chunk_size) {
+  if (($link_count = xmlsitemap_link_count()) && $link_count > $chunk_size) {
     for ($chunk = 0; $chunk < $link_count / $chunk_size; ++$chunk) {
       $items["sitemap$chunk.xml"] = array(
         'title' => 'Sitemap !number',
@@ -283,9 +282,10 @@ function xmlsitemap_flag_sitemap() {
 function xmlsitemap_link_count() {
   static $link_count;
   if (!db_table_exists('xmlsitemap')) {
+    $link_count = 0;
     return 0;
   }
-  if (!isset($link_count)) {
+  if (empty($link_count)) {
     $link_count = db_result(db_query("SELECT COUNT(xsm.loc)". xmlsitemap_sitemap_query()));
   }
   return $link_count;
