@@ -219,23 +219,6 @@ function xmlsitemap_api() {
 }
 
 /**
- * Batch callback called when the batch operations are completed.
- */
-function xmlsitemap_batch_operations_finished($success, $results, $operations) {
-  if ($success) {
-    drupal_set_message(t('The update has been performed.'));
-  }
-  else {
-    drupal_set_message(t('An error occurred and processing did not complete.'), 'error');
-    $message = format_plural($count = count($results), '1 item successfully processed.', '@count items successfully processed.');
-    if ($count) {
-      $message .= theme('item_list', $results, t('Last items successfully processed:'));
-    }
-    drupal_set_message($message);
-  }
-}
-
-/**
  * Return the string used to identify the cache file for the sitemap content.
  */
 function xmlsitemap_cache_id() {

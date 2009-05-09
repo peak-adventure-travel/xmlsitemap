@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1, 2009-05-09
 -----------------------------------
+#458232: Removal of not used code.
 #458182: The module should implement hook_xmlsitemap_links().
 #458132: xmlsitemap_output() references a not initialized variables.
 #456430: Remove unnecessary features from xmlsitemap_node.
