@@ -257,7 +257,7 @@ function xmlsitemap_cron_options() {
 function xmlsitemap_delete_cache_files() {
   file_scan_directory(
     variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap'),
-    'xsm-.*\.xml', array('.', '..', 'CVS'), 'unlink', FALSE
+    'xsm-.*\.xml', array('.', '..', 'CVS'), 'file_delete', FALSE
   );
   xmlsitemap_flag_sitemap();
   watchdog('xmlsitemap', 'The sitemap cache files have been deleted.');

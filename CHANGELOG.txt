@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1, 2009-05-10
 -----------------------------------
+#458710: Change unlink() for file_delete().
 #458660: Add more calls to watchdog().
 
 XML Sitemap 6.x-1, 2009-05-09
