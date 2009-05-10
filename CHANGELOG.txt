@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1, 2009-05-09
 -----------------------------------
+#458530: XML sitemap taxonomy is still referred as XML sitemap term, in the module help page.
 #458398: Users who haven't logged in should be excluded.
 #458246: user warning: Table 'updatetest.xmlsitemap' doesn't exist.
 #458232: Removal of not used code.
