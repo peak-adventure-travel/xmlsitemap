@@ -2,7 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1, 2009-05-10
 -----------------------------------
-#458660: xmlsitemap_link_count() should log an error message when it doesn't find the database table.
+#458660: Add more calls to watchdog().
 
 XML Sitemap 6.x-1, 2009-05-09
 -----------------------------------

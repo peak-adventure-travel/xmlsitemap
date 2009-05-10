@@ -255,13 +255,12 @@ function xmlsitemap_cron_options() {
  * changed.
  */
 function xmlsitemap_delete_cache_files() {
-  $parent_directory = variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap');
-  if (!is_dir($parent_directory)) {
-    return;
-  }
-  file_scan_directory($parent_directory, 'xsm-.*\.xml', array('.', '..', 'CVS'), 'unlink', FALSE);
+  file_scan_directory(
+    variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap'),
+    'xsm-.*\.xml', array('.', '..', 'CVS'), 'unlink', FALSE
+  );
   xmlsitemap_flag_sitemap();
-  return;
+  watchdog('xmlsitemap', 'The sitemap cache files have been deleted.');
 }
 
 /**
@@ -274,17 +273,17 @@ function xmlsitemap_flag_sitemap() {
   if (!variable_get('xmlsitemap_sitemap_needs_update', FALSE)) {
     variable_set('xmlsitemap_sitemap_needs_update', TRUE);
   }
+  watchdog('xmlsitemap', 'The sitemap has been flagged as needing update.');
 }
 
 /**
  * Return the number of links present in xmlsitemap table.
  */
 function xmlsitemap_link_count() {
-  static $link_count;
-  if (empty($link_count)) {
+  static $link_count = 0;
+  if (!$link_count) {
     if (!db_table_exists('xmlsitemap')) {
-      $link_count = 0;
-      watchdog('xmlsitemap', 'The <em>xmlsitemap</em> database table does not exist; verify that you correctly installed <em>XML sitemap</em>.', array(), WATCHDOG_ERROR);
+      watchdog('xmlsitemap', 'The <em>xmlsitemap</em> database table does not exist.', array(), WATCHDOG_ERROR);
     }
     else {
       $link_count = db_result(db_query("SELECT COUNT(xsm.loc)". xmlsitemap_sitemap_query()));
