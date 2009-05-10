@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 6.x-1, 2009-05-10
+-----------------------------------
+#458660: xmlsitemap_link_count() should log an error message when it doesn't find the database table.
+
 XML Sitemap 6.x-1, 2009-05-09
 -----------------------------------
 #458530: XML sitemap taxonomy is still referred as XML sitemap term, in the module help page.

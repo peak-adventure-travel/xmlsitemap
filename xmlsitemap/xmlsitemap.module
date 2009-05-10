@@ -284,6 +284,7 @@ function xmlsitemap_link_count() {
   if (empty($link_count)) {
     if (!db_table_exists('xmlsitemap')) {
       $link_count = 0;
+      watchdog('xmlsitemap', 'The <em>xmlsitemap</em> database table does not exist; verify that you correctly installed <em>XML sitemap</em>.', array(), WATCHDOG_ERROR);
     }
     else {
       $link_count = db_result(db_query("SELECT COUNT(xsm.loc)". xmlsitemap_sitemap_query()));
