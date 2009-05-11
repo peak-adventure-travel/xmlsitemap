@@ -46,13 +46,13 @@ function xmlsitemap_output($chunk = NULL) {
     module_invoke_all('xmlsitemap_links');
     variable_set('xmlsitemap_sitemap_needs_update', FALSE);
     $result = _xmlsitemap_create_cache_files();
-    if (variable_get("xmlsitemap_create_cache_result_$id", TRUE) !== $result) {
+    if (variable_get("xmlsitemap_create_cache_result_$id", -1) !== $result) {
       variable_set("xmlsitemap_create_cache_result_$id", $result);
     }
   }
   elseif (_xmlsitemap_check_cache_files()) {
     $result = _xmlsitemap_create_cache_files();
-    if (variable_get("xmlsitemap_create_cache_result_$id", TRUE) !== $result) {
+    if (variable_get("xmlsitemap_create_cache_result_$id", -1) !== $result) {
       variable_set("xmlsitemap_create_cache_result_$id", $result);
     }
   }
@@ -112,7 +112,7 @@ function _xmlsitemap_check_cache_files() {
   $update_timestamp = variable_get('xmlsitemap_update_timestamp', REQUEST_TIME);
   // If the cache files creation has failed last time, the cache files must be
   // created.
-  if (variable_get("xmlsitemap_create_cache_result_$id", TRUE)) {
+  if (variable_get("xmlsitemap_create_cache_result_$id", -1) !== TRUE) {
     return TRUE;
   }
   // If the main cache file doesn't exist, then the cache files must be
