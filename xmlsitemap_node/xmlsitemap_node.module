@@ -31,6 +31,7 @@ function xmlsitemap_node_cron() {
       $row->changed = $node->changed;
       $row->previously_changed = $node->created;
       drupal_write_record('xmlsitemap_node', $row);
+      xmlsitemap_flag_sitemap();
     }
   }
 }

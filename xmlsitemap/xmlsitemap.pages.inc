@@ -23,7 +23,9 @@
  */
 function xmlsitemap_output($chunk = NULL) {
   global $user;
-  $old_user = $user;
+  $headers = array("Content-type: text/xml; charset=utf-8");
+  session_save_session(FALSE);
+  $original_user = $user;
   $user = drupal_anonymous_user();
   $chunk_size = variable_get('xmlsitemap_chunk_size', 1000);
   $link_count = xmlsitemap_link_count();
@@ -34,9 +36,9 @@ function xmlsitemap_output($chunk = NULL) {
     }
   }
   if (!$link_count || (isset($chunk) && !preg_match('/[0-9]+/', $chunk))) {
-    $user = $old_user;
-    drupal_not_found();
-    exit();
+    $user = $original_user;
+    session_save_session(TRUE);
+    _xmlsitemap_print_empty_sitemap();
   }
   $id = xmlsitemap_cache_id();
   if (variable_get('xmlsitemap_sitemap_needs_update', FALSE)) {
@@ -44,13 +46,13 @@ function xmlsitemap_output($chunk = NULL) {
     module_invoke_all('xmlsitemap_links');
     variable_set('xmlsitemap_sitemap_needs_update', FALSE);
     $result = _xmlsitemap_create_cache_files();
-    if (variable_get("xmlsitemap_create_cache_result_$id", -1) !== $result) {
+    if (variable_get("xmlsitemap_create_cache_result_$id", TRUE) !== $result) {
       variable_set("xmlsitemap_create_cache_result_$id", $result);
     }
   }
   elseif (_xmlsitemap_check_cache_files()) {
     $result = _xmlsitemap_create_cache_files();
-    if (variable_get("xmlsitemap_create_cache_result_$id", -1) !== $result) {
+    if (variable_get("xmlsitemap_create_cache_result_$id", TRUE) !== $result) {
       variable_set("xmlsitemap_create_cache_result_$id", $result);
     }
   }
@@ -62,21 +64,30 @@ function xmlsitemap_output($chunk = NULL) {
       }
     }
   }
-  $user = $old_user;
+  $user = $original_user;
+  session_save_session(TRUE);
   if (isset($result) && !$result) {
-    drupal_not_found();
-    exit();
+    _xmlsitemap_print_empty_sitemap();
   }
   $parent_directory = variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap');
-  $headers = array("Content-type: text/xml; charset=utf-8");
   if (isset($chunk)) {
     if ($chunk < $link_count / $chunk_size) {
-      file_transfer("$parent_directory/xsm-$id-$chunk.xml", $headers);
+      $file = "$parent_directory/xsm-$id-$chunk.xml";
+    }
+    else {
+      _xmlsitemap_print_empty_sitemap();
     }
   }
   else {
-    file_transfer("$parent_directory/xsm-$id.xml", $headers);
+    $file = "$parent_directory/xsm-$id.xml";
   }
+  if ($fd = fopen($file)) {
+    fclose($fp);
+  }
+  else {
+    _xmlsitemap_print_empty_sitemap();
+  }
+  file_transfer($file, $headers);
 }
 
 /*****************************************************************************
@@ -101,7 +112,7 @@ function _xmlsitemap_check_cache_files() {
   $update_timestamp = variable_get('xmlsitemap_update_timestamp', REQUEST_TIME);
   // If the cache files creation has failed last time, the cache files must be
   // created.
-  if (variable_get("xmlsitemap_create_cache_result_$id", -1) !== TRUE) {
+  if (variable_get("xmlsitemap_create_cache_result_$id", TRUE)) {
     return TRUE;
   }
   // If the main cache file doesn't exist, then the cache files must be
@@ -142,8 +153,7 @@ function _xmlsitemap_create_cache_chunk($fp, $chunk_size, $chunk = 0) {
   fwrite($fp, '<?xml version="1.0" encoding="UTF-8"?>'."\n");
   fwrite($fp, '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'."\n");
   fwrite($fp, '  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'."\n");
-  fwrite($fp, '  xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9'."\n");
-  fwrite($fp, '  http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">'."\n");
+  fwrite($fp, '  xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n");
   $start = $chunk * $chunk_size;
   $links = db_query_range("SELECT xsm.loc, xsm.module, xsm.type, xsm.id, xsm.sid, xsm.changed, xsm.changefreq, xsm.priority". xmlsitemap_sitemap_query() ."ORDER BY xsm.priority DESC, xsm.changed DESC, xsm.changefreq, xsm.loc", $start, $chunk_size);
   while ($link = db_fetch_object($links)) {
@@ -206,8 +216,7 @@ function _xmlsitemap_create_cache_files() {
     fwrite($fp, '<?xml version="1.0" encoding="UTF-8"?>'."\n");
     fwrite($fp, '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'."\n");
     fwrite($fp, '  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'."\n");
-    fwrite($fp, '  xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9'."\n");
-    fwrite($fp, '  http://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd">'."\n");
+    fwrite($fp, '  xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n");
     for ($chunk = 0; $chunk < $link_count / $chunk_size; ++$chunk) {
       fwrite($fp, '  <sitemap>'."\n");
       fwrite($fp, '    <loc>'. url("sitemap$chunk.xml", array('absolute' => TRUE)) .'</loc>'."\n");
@@ -232,7 +241,7 @@ function _xmlsitemap_create_cache_files() {
     }
   }
   else {
-    if (!$fp = fopen($parent_directory ."/xsm-$id.xml", 'wb')) {
+    if (!($fp = fopen($parent_directory ."/xsm-$id.xml", 'wb'))) {
       watchdog('xmlsitemap', 'Cannot create the cache file (@file)', array('@file' => $parent_directory ."/xsm-$id.xml"), WATCHDOG_ERROR);
       return FALSE;
     }
@@ -242,6 +251,17 @@ function _xmlsitemap_create_cache_files() {
     @chmod($parent_directory ."/xsm-$id.xml", 0664);
   }
   return TRUE;
+}
+
+
+function _xmlsitemap_print_empty_sitemap() {
+  drupal_set_header("Content-type: text/xml; charset=utf-8");
+  print('<?xml version="1.0" encoding="UTF-8"?>'."\n");
+  print('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'."\n");
+  print('  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'."\n");
+  print('  xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n");
+  print('</urlset>');
+  exit();
 }
 
 /**
