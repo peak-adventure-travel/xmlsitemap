@@ -256,11 +256,11 @@ function _xmlsitemap_create_cache_files() {
 
 function _xmlsitemap_print_empty_sitemap() {
   drupal_set_header("Content-type: text/xml; charset=utf-8");
-  print('<?xml version="1.0" encoding="UTF-8"?>'."\n");
-  print('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'."\n");
-  print('  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'."\n");
-  print('  xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n");
-  print('</urlset>');
+  print '<?xml version="1.0" encoding="UTF-8"?>'."\n";
+  print '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'."\n";
+  print '  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'."\n";
+  print '  xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n";
+  print '</urlset>';
   exit();
 }
 
