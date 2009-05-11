@@ -55,7 +55,7 @@ function xmlsitemap_engines_exit() {
       $write_log = TRUE;
     }
     if (isset($write_log)) {
-      watchdog('xmlsitemap', 'Sitemap downloaded by @user-agent at @address.',
+      watchdog('xmlsitemap', 'The sitemap has been downloaded by @user-agent at @address.',
         array(
           '@user-agent' => xmlsitemap_engines_search_engine_id(),
           '@address' => ip_address(),
@@ -225,12 +225,10 @@ function xmlsitemap_engines_submit_sitemap($engine, $url_var, $default_url) {
   );
   $result = drupal_http_request($url);
   if ($result->code == 200) {
-    watchdog('xmlsitemap', 'Sitemap successfully submitted to !engine.',
-      array('!engine' => $engine)
-    );
+    watchdog('xmlsitemap', 'The sitemap has been successfully submitted to !engine.', array('!engine' => $engine));
   }
   else {
-    watchdog('xmlsitemap', 'Error occurred submitting sitemap to !engine: !code',
+    watchdog('xmlsitemap', 'An error occurred while submitting the sitemap to !engine: !code.',
       array('!engine' => $engine, '!code' => 0 + $result->code), WATCHDOG_ERROR
     );
   }

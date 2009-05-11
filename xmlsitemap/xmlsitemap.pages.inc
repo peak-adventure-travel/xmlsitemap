@@ -204,13 +204,13 @@ function _xmlsitemap_create_cache_files() {
       @chmod($parent_directory, 0775);
     }
     else {
-      watchdog('xmlsitemap', 'Could not create the cache files directory (@directory)', array('@directory' => $parent_directory), WATCHDOG_ERROR);
+      watchdog('xmlsitemap', 'The cache files directory @directory ha not been created.', array('@directory' => $parent_directory), WATCHDOG_ERROR);
       return FALSE;
     }
   }
   if ($link_count > $chunk_size) {
     if (!$fp = fopen($parent_directory ."/xsm-$id.xml", 'wb')) {
-      watchdog('xmlsitemap', 'Cannot create the cache file (@file)', array('@file' => $parent_directory ."/xsm-$id.xml"), WATCHDOG_ERROR);
+      watchdog('xmlsitemap', 'The cache file @file has not been created.', array('@file' => $parent_directory ."/xsm-$id.xml"), WATCHDOG_ERROR);
       return FALSE;
     }
     fwrite($fp, '<?xml version="1.0" encoding="UTF-8"?>'."\n");
@@ -230,8 +230,8 @@ function _xmlsitemap_create_cache_files() {
     // Set standard file permissions for webserver-generated files.
     @chmod($parent_directory ."/xsm-$id.xml", 0664);
     for ($chunk = 0; $chunk < $link_count / $chunk_size; ++$chunk) {
-      if (!$fp = fopen($parent_directory ."/xsm-$id-$chunk.xml", 'wb')) {
-        watchdog('xmlsitemap', 'Cannot create the cache file (@file)', array('@file' => $parent_directory ."/xsm-$id-$chunk.xml"), WATCHDOG_ERROR);
+      if (!($fp = fopen($parent_directory ."/xsm-$id-$chunk.xml", 'wb'))) {
+        watchdog('xmlsitemap', 'The cache file @file has not been created.', array('@file' => $parent_directory ."/xsm-$id-$chunk.xml"), WATCHDOG_ERROR);
         return FALSE;
       }
       _xmlsitemap_create_cache_chunk($fp, $chunk_size, $chunk);
@@ -242,7 +242,7 @@ function _xmlsitemap_create_cache_files() {
   }
   else {
     if (!($fp = fopen($parent_directory ."/xsm-$id.xml", 'wb'))) {
-      watchdog('xmlsitemap', 'Cannot create the cache file (@file)', array('@file' => $parent_directory ."/xsm-$id.xml"), WATCHDOG_ERROR);
+      watchdog('xmlsitemap', 'The cache file @file has not been created.', array('@file' => $parent_directory ."/xsm-$id.xml"), WATCHDOG_ERROR);
       return FALSE;
     }
     _xmlsitemap_create_cache_chunk($fp, $chunk_size);
