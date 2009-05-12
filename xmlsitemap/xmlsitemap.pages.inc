@@ -81,7 +81,7 @@ function xmlsitemap_output($chunk = NULL) {
   else {
     $file = "$parent_directory/xsm-$id.xml";
   }
-  if ($fd = fopen($file, 'wb+')) {
+  if ($fp = fopen($file, 'wb+')) {
     fclose($fp);
   }
   else {
