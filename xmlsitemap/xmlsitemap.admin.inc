@@ -97,7 +97,7 @@ function xmlsitemap_settings_submit($form, &$form_state) {
 /**
  * Form builder; return the tools form.
  */
-function xmlsitemap_tools() {
+function xmlsitemap_tools_basic() {
   $form['options'] = array(
     '#type' => 'fieldset',
     '#title' => t('Operations'),
@@ -119,7 +119,7 @@ function xmlsitemap_tools() {
   $form['options']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Apply'),
-    '#submit' => array('xmlsitemap_tools_submit'),
+    '#submit' => array('xmlsitemap_tools_basic_submit'),
   );
   return $form;
 }
@@ -127,7 +127,7 @@ function xmlsitemap_tools() {
 /**
  * Submit the tools form.
  */
-function xmlsitemap_tools_submit($form, &$form_state) {
+function xmlsitemap_tools_basic_submit($form, &$form_state) {
   $operations = module_invoke_all('xmlsitemap_operations');
   $operation = $operations[$form_state['values']['operation']];
   $function = $operation['callback'];
@@ -138,6 +138,21 @@ function xmlsitemap_tools_submit($form, &$form_state) {
     call_user_func($function, NULL);
   }
   $form_state['redirect'] = 'admin/settings/xmlsitemap/tools';
+}
+
+/**
+ * Form builder; return the tools settings form.
+ */
+function xmlsitemap_tools_settings() {
+  $form['empty'] = array(
+    '#type' => 'fieldset',
+  );
+  $form['empty']['info'] = array(
+    '#value' => t('There are no settings currently defined.'),
+    '#prefix' => '<div>',
+    '#suffix' => '</div>',
+  );
+  return $form;
 }
 
 /**

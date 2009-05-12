@@ -21,7 +21,7 @@
 function xmlsitemap_engines_cron() {
   if (!variable_get('site_offline', 0) && variable_get('xmlsitemap_engines_cron_submit_frequency', 3600) > 0 && variable_get('xmlsitemap_sitemap_is_changed', FALSE)) {
     if ((REQUEST_TIME - variable_get('xmlsitemap_engines_cron_timestamp_submit', REQUEST_TIME)) >= variable_get('xmlsitemap_engines_cron_submit_frequency', 3600)) {
-      xmlsitemap_engines_ping_sitemap();
+      xmlsitemap_engines_ping_sitemap(NULL, TRUE);
       variable_set('xmlsitemap_sitemap_is_changed', FALSE);
       variable_set('xmlsitemap_engines_cron_timestamp_submit', REQUEST_TIME);
     }
@@ -33,7 +33,7 @@ function xmlsitemap_engines_cron() {
  */
 function xmlsitemap_engines_init() {
   if (!variable_get('site_offline', 0) && arg(0) != 'batch' && variable_get('xmlsitemap_engines_submit', FALSE) && variable_get('xmlsitemap_sitemap_is_changed', FALSE)) {
-    xmlsitemap_engines_ping_sitemap();
+    xmlsitemap_engines_ping_sitemap(NULL, TRUE);
     variable_set('xmlsitemap_sitemap_is_changed', FALSE);
   }
 }
@@ -86,38 +86,53 @@ function xmlsitemap_engines_menu() {
 }
 
 /**
+ * Implementation of hook_form_FORM_ID_alter().
+ */
+function xmlsitemap_engines_form_xmlsitemap_tools_settings_alter(&$form, &$from_state) {
+  $options = array(
+    'ask' => t('Ask.com'),
+    'google' => t('Google'),
+    'moreover' => t('Moreover.com'),
+    'live' => t('Microsoft Live'),
+    'yahoo' => t('Yahoo!'),
+  );
+  foreach ($options as $id => $title) {
+    if (!variable_get("xmlsitemap_engines_{$id}_submit", FALSE)) {
+      unset($options[$id]);
+    }
+  }
+  $form['submit_to_search_engines'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Submit to search engines'),
+    '#collapsible' => TRUE,
+  );
+  if (count($options)) {
+    $form['submit_to_search_engines']['xmlsitemap_engine_parameter_search_engines'] = array(
+      '#type' => 'checkboxes', 
+      '#title' => t('Search engines'), 
+      '#default_value' => variable_get('xmlsitemap_engine_parameter_search_engines', array()),
+      '#options' => $options,
+      '#checkall' => count($options) > 1 ? TRUE : FALSE,
+    );
+  }
+  else {
+    $form['submit_to_search_engines']['message'] = array(
+      '#value' => t('None of the supported search engines has been enabled. You can enable them in the <a href="@search_engines">search engines</a> settings page.', array('@search_engines' => url('admin/settings/xmlsitemap/engines'))),
+      '#prefix' => '<div>',
+      '#suffix' => '</div>',
+    );
+  }
+  xmlsitemap_tools_settings_form($form);
+}
+
+/**
  * Implementation of hook_xmlsitemap_operations().
  */
 function xmlsitemap_engines_xmlsitemap_operations() {
   return array(
-    'submit_to_all' => array(
-      'label' => t('Submit the sitemap to all the active search engines'),
-      'callback' => 'xmlsitemap_engines_ping_sitemap',
-    ),
-    'submit_to_askcom' => array(
-      'label' => t('Submit the sitemap to Ask.com'),
-      'callback' => 'xmlsitemap_engines_ping_sitemap',
-      'callback arguments' => array('engine' => 'ask'),
-    ),
-    'submit_to_google' => array(
-      'label' => t('Submit the sitemap to Google'),
-      'callback' => 'xmlsitemap_engines_ping_sitemap',
-      'callback arguments' => array('engine' => 'google'),
-    ),
-    'submit_to_moreovercom' => array(
-      'label' => t('Submit the sitemap to Moreover.com'),
-      'callback' => 'xmlsitemap_engines_ping_sitemap',
-      'callback arguments' => array('engine' => 'moreover'),
-    ),
-    'submit_to_live' => array(
-      'label' => t('Submit the sitemap to Microsoft Live'),
-      'callback' => 'xmlsitemap_engines_ping_sitemap',
-      'callback arguments' => array('engine' => 'live'),
-    ),
-    'submit_to_yahoo' => array(
-      'label' => t('Submit the sitemap to Yahoo!'),
-      'callback' => 'xmlsitemap_engines_ping_sitemap',
-      'callback arguments' => array('engine' => 'yahoo'),
+    'submit_to_search_engines' => array(
+      'label' => t('Submit the sitemap to the search engines'),
+      'callback' => '_xmlsitemap_engines_operation_ping_sitemap',
     ),
   );
 }
@@ -128,9 +143,14 @@ function xmlsitemap_engines_xmlsitemap_operations() {
 
 /**
  * Submit the sitemap to the selected engines.
+ * @param $engines
+ *   An array of search engine identifiers.
+ * @param $all
+ *   If $engines is an empty array, and $all is TRUE, the sitemap will be
+ *   submitted to all the enabled search engines.
  */
-function xmlsitemap_engines_ping_sitemap($engine = NULL) {
-  $engines = array(
+function xmlsitemap_engines_ping_sitemap($engines = array(), $all = FALSE) {
+  $engines_data = array(
     'ask' => array(
       'Ask.com',
       'http://submissions.ask.com/ping?sitemap=[sitemap]'
@@ -152,44 +172,41 @@ function xmlsitemap_engines_ping_sitemap($engine = NULL) {
       'http://search.yahooapis.com/SiteExplorerService/V1/ping?sitemap=[sitemap]'
     ),
   );
-  if (!isset($engine)) {
-    foreach ($engines as $id => $info) {
-      if (variable_get("xmlsitemap_engines_{$id}_submit", FALSE)) {
-        xmlsitemap_engines_submit_sitemap($info[0], "xmlsitemap_engines_{$id}_url", $info[1]);
+  if (empty($engines) && $all) {
+    $engines = array('ask', 'google', 'moreover', 'live', 'yahoo');
+  }
+  if (!empty($engines)) {
+    foreach ($engines_data as $id => $info) {
+      if (in_array($id, $engines) && variable_get("xmlsitemap_engines_{$id}_submit", FALSE)) {
+        $url = strtr(
+          variable_get("xmlsitemap_engines_{$id}_url", $info[1]),
+          array('[sitemap]' => url('sitemap.xml', array('absolute' => TRUE)))
+        );
+        $result = drupal_http_request($url);
+        if ($result->code == 200) {
+          watchdog('xmlsitemap', 'The sitemap has been successfully submitted to !engine.', array('!engine' => $info[0]));
+        }
+        else {
+          watchdog('xmlsitemap', 'An error occurred while submitting the sitemap to !engine: !code.',
+            array('!engine' => $info[0], '!code' => 0 + $result->code), WATCHDOG_ERROR
+          );
+        }
       }
     }
   }
-  elseif (isset($engines[$engine])) {
-    xmlsitemap_engines_submit_sitemap($engines[$engine][0], "xmlsitemap_engines_{$engine}_url", $engines[$engine][1]);
-  }
 }
 
-/**
- * Helper function for xmlsitemap_engines_ping_sitemap().
- * Submit the sitemap to the engine passed as argument, and write a message in
- * Drupal log.
- *
- * @param $engine
- *  The identifier for the search engine.
- * @param $url_var
- *  The variable name containing the submission URL used by the search engine.
- * @param $default_url
- *  The default submission URL.
- */
-function xmlsitemap_engines_submit_sitemap($engine, $url_var, $default_url) {
-  $url = strtr(
-    variable_get($url_var, $default_url),
-    array('[sitemap]' => url('sitemap.xml', array('absolute' => TRUE)))
+/*****************************************************************************
+ * Private functions - sitemap operations.
+ ****************************************************************************/
+
+function _xmlsitemap_engines_operation_ping_sitemap() {
+  xmlsitemap_engines_ping_sitemap(
+    array_filter(
+      variable_get('xmlsitemap_engine_parameter_search_engines', array())
+    )
   );
-  $result = drupal_http_request($url);
-  if ($result->code == 200) {
-    watchdog('xmlsitemap', 'The sitemap has been successfully submitted to !engine.', array('!engine' => $engine));
-  }
-  else {
-    watchdog('xmlsitemap', 'An error occurred while submitting the sitemap to !engine: !code.',
-      array('!engine' => $engine, '!code' => 0 + $result->code), WATCHDOG_ERROR
-    );
-  }
+  drupal_set_message(t('The sitemap has been submitted to the search engines'), 'status', FALSE);
 }
 
 /**

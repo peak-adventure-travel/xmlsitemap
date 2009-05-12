@@ -771,6 +771,13 @@ function xmlsitemap_update_6140() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_update_6141() {
+  return array();
+}
+
+/**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_6142() {
   $ret = array();
   if (!variable_get('menu_rebuild_needed', FALSE)) {
     variable_set('menu_rebuild_needed', TRUE);
