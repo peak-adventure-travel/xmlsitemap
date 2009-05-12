@@ -30,7 +30,6 @@ function xmlsitemap_taxonomy_cron() {
       $row->vid = $term->vid;
       $row->changed = REQUEST_TIME;
       drupal_write_record('xmlsitemap_term', $row);
-      xmlsitemap_flag_sitemap();
     }
   }
 }

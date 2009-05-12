@@ -32,7 +32,6 @@ function xmlsitemap_user_cron() {
       $row->changed = !empty($account->access) ? $account->access : REQUEST_TIME;
       $row->previously_changed = $account->created;
       drupal_write_record('xmlsitemap_user', $row);
-      xmlsitemap_flag_sitemap();
     }
   }
 }
