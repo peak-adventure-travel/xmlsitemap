@@ -2,7 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1, 2009-05-12
 -----------------------------------
-#460100: The variable is not initialized variable.
+#460100: The variable is not initialized.
 #460100: Wrong parameters for fopen().
 #460046: Use file_check_directory().
 #459366: Remove hook_boot() and hook_exit().
