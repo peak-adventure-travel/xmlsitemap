@@ -1,8 +1,11 @@
 $Id$
 
-XML Sitemap 6.x-1, 2009-05-11
+XML Sitemap 6.x-1, 2009-05-12
 -----------------------------------
 #459366: Remove hook_boot() and hook_exit().
+
+XML Sitemap 6.x-1, 2009-05-11
+-----------------------------------
 #459348: Upgrade fails under PostgreSQL.
 #458992: Code should call session_save_session() before to change the value of the global variable $user.
 #458546: Cache files are not created.
