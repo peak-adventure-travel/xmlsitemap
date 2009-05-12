@@ -106,7 +106,7 @@ function _xmlsitemap_check_cache_files() {
   $parent_directory = variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap');
   // If the directory that should contains the cache files doesn't exist, then
   // the cache files must be created.
-  if (!is_dir($parent_directory)) {
+  if (!file_check_directory($parent_directory, FILE_CREATE_DIRECTORY)) {
     return TRUE;
   }
   $update_timestamp = variable_get('xmlsitemap_update_timestamp', REQUEST_TIME);
@@ -198,15 +198,8 @@ function _xmlsitemap_create_cache_files() {
   $link_count = xmlsitemap_link_count();
   $id = xmlsitemap_cache_id();
   $parent_directory = variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap');
-  // If the directory doesn't exist, then create it.
-  if (!is_dir($parent_directory)) {
-    if (@mkdir($parent_directory)) {
-      @chmod($parent_directory, 0775);
-    }
-    else {
-      watchdog('xmlsitemap', 'The cache files directory @directory ha not been created.', array('@directory' => $parent_directory), WATCHDOG_ERROR);
-      return FALSE;
-    }
+  if (!file_check_directory($parent_directory, FILE_CREATE_DIRECTORY)) {
+    return TRUE;
   }
   if ($link_count > $chunk_size) {
     if (!$fp = fopen($parent_directory ."/xsm-$id.xml", 'w+')) {

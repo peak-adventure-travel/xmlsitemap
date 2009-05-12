@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1, 2009-05-12
 -----------------------------------
+#460046: Use file_check_directory().
 #460100: Wrong parameters for fopen().
 #459366: Remove hook_boot() and hook_exit().
 
