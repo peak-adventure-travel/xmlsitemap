@@ -81,7 +81,7 @@ function xmlsitemap_output($chunk = NULL) {
   else {
     $file = "$parent_directory/xsm-$id.xml";
   }
-  if ($fd = fopen($file)) {
+  if ($fd = fopen($file, 'w+')) {
     fclose($fp);
   }
   else {
@@ -209,7 +209,7 @@ function _xmlsitemap_create_cache_files() {
     }
   }
   if ($link_count > $chunk_size) {
-    if (!$fp = fopen($parent_directory ."/xsm-$id.xml", 'wb')) {
+    if (!$fp = fopen($parent_directory ."/xsm-$id.xml", 'w+')) {
       watchdog('xmlsitemap', 'The cache file @file has not been created.', array('@file' => $parent_directory ."/xsm-$id.xml"), WATCHDOG_ERROR);
       return FALSE;
     }
@@ -230,7 +230,7 @@ function _xmlsitemap_create_cache_files() {
     // Set standard file permissions for webserver-generated files.
     @chmod($parent_directory ."/xsm-$id.xml", 0664);
     for ($chunk = 0; $chunk < $link_count / $chunk_size; ++$chunk) {
-      if (!($fp = fopen($parent_directory ."/xsm-$id-$chunk.xml", 'wb'))) {
+      if (!($fp = fopen($parent_directory ."/xsm-$id-$chunk.xml", 'w+'))) {
         watchdog('xmlsitemap', 'The cache file @file has not been created.', array('@file' => $parent_directory ."/xsm-$id-$chunk.xml"), WATCHDOG_ERROR);
         return FALSE;
       }
@@ -241,7 +241,7 @@ function _xmlsitemap_create_cache_files() {
     }
   }
   else {
-    if (!($fp = fopen($parent_directory ."/xsm-$id.xml", 'wb'))) {
+    if (!($fp = fopen($parent_directory ."/xsm-$id.xml", 'w+'))) {
       watchdog('xmlsitemap', 'The cache file @file has not been created.', array('@file' => $parent_directory ."/xsm-$id.xml"), WATCHDOG_ERROR);
       return FALSE;
     }
