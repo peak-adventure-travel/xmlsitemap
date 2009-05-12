@@ -30,12 +30,6 @@ function xmlsitemap_engines_settings() {
     '#description' => t('If enabled, the search engines will be notified of changes to the sitemap each time it is updated.'),
     '#default_value' => variable_get('xmlsitemap_engines_submit', FALSE),
   );
-  $form['submission']['xmlsitemap_engines_log_access'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Log access'),
-    '#description' => t('If enabled, a watchdog entry will be made each time the sitemap is accessed, containing information about the requestor.'),
-    '#default_value' => variable_get('xmlsitemap_engines_log_access', FALSE),
-  );
   $form['submission']['xmlsitemap_engines_cron_submit_frequency'] = array(
     '#type' => 'select',
     '#title' => t('Frequency of sitemap submission'),

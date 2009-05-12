@@ -29,41 +29,10 @@ function xmlsitemap_engines_cron() {
 }
 
 /**
- * Implementation of hook_exit().
+ * Implementation of hook_init().
  */
-function xmlsitemap_engines_exit() {
-  drupal_bootstrap(DRUPAL_BOOTSTRAP_PATH);
-  if (variable_get('site_offline', 0) || arg(0) == 'batch') {
-    return;
-  }
-  if (variable_get('xmlsitemap_engines_log_access', FALSE)) {
-    $items = array();
-    $chunk_size = variable_get('xmlsitemap_chunk_size', 1000);
-    $link_count = xmlsitemap_link_count();
-    if ($link_count > $chunk_size) {
-      for ($chunk = 0; $chunk < $link_count / $chunk_size; ++$chunk) {
-        $items["sitemap$chunk.xml"] = $chunk;
-      }
-    }
-    if (isset($items[arg(0)]) && is_null(arg(1))) {
-      $chunk = $items[arg(0)];
-      if ($chunk < $link_count / $chunk_size) {
-        $write_log = TRUE;
-      }
-    }
-    elseif (arg(0) == 'sitemap.xml' && is_null(arg(1))) {
-      $write_log = TRUE;
-    }
-    if (isset($write_log)) {
-      watchdog('xmlsitemap', 'The sitemap has been downloaded by @user-agent at @address.',
-        array(
-          '@user-agent' => xmlsitemap_engines_search_engine_id(),
-          '@address' => ip_address(),
-        )
-      );
-    }
-  }
-  if (!isset($write_log) && variable_get('xmlsitemap_engines_submit', FALSE) && variable_get('xmlsitemap_sitemap_is_changed', FALSE)) {
+function xmlsitemap_engines_init() {
+  if (!variable_get('site_offline', 0) && arg(0) != 'batch' && variable_get('xmlsitemap_engines_submit', FALSE) && variable_get('xmlsitemap_sitemap_is_changed', FALSE)) {
     xmlsitemap_engines_ping_sitemap();
     variable_set('xmlsitemap_sitemap_is_changed', FALSE);
   }
@@ -193,17 +162,6 @@ function xmlsitemap_engines_ping_sitemap($engine = NULL) {
   elseif (isset($engines[$engine])) {
     xmlsitemap_engines_submit_sitemap($engines[$engine][0], "xmlsitemap_engines_{$engine}_url", $engines[$engine][1]);
   }
-}
-
-/**
- * Return the identifier for the search engine that accessed to the sitemap,
- * or the content of $_SERVER['HTTP_USER_AGENT'].
- */
-function xmlsitemap_engines_search_engine_id() {
-  if (strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot') !== FALSE) {
-    return 'Google';
-  }
-  return $_SERVER['HTTP_USER_AGENT'];
 }
 
 /**
