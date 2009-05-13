@@ -42,6 +42,7 @@ function xmlsitemap_output($chunk = NULL) {
     _xmlsitemap_print_empty_sitemap();
   }
   $id = xmlsitemap_cache_id();
+  $id = $id[0] .'-'. $id[1];
   if (variable_get('xmlsitemap_sitemap_needs_update', FALSE)) {
     @set_time_limit(240);
     module_invoke_all('xmlsitemap_links');
