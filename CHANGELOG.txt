@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1, 2009-05-13
 -----------------------------------
+#460310: Rearrange the settings page.
 #460772: xmlsitemap_delete_cache_files() could delete files that are associated to another domain.
 
 XML Sitemap 6.x-1, 2009-05-12
