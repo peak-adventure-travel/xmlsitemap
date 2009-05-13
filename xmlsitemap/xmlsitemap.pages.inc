@@ -84,7 +84,7 @@ function xmlsitemap_output($chunk = NULL) {
   else {
     $file = "$parent_directory/xsm-$id.xml";
   }
-  if (($fp = fopen($file, 'rb')) === FALSE) {
+  if (($fp = @fopen($file, 'rb')) === FALSE) {
     _xmlsitemap_print_empty_sitemap();
   }
   else {
@@ -104,6 +104,7 @@ function xmlsitemap_output($chunk = NULL) {
  */
 function _xmlsitemap_check_cache_files($chunk_size, $link_count) {
   $id = xmlsitemap_cache_id();
+  $id = $id[0] .'-'. $id[1];
   $parent_directory = variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap');
   // If the directory that should contains the cache files doesn't exist, then
   // the cache files must be created.
@@ -201,6 +202,7 @@ function _xmlsitemap_create_cache_chunk($fp, $chunk_size, $chunk = 0) {
  */
 function _xmlsitemap_create_cache_files($chunk_size, $link_count) {
   $id = xmlsitemap_cache_id();
+  $id = $id[0] .'-'. $id[1];
   $parent_directory = variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap');
   if (!file_check_directory($parent_directory, FILE_CREATE_DIRECTORY)) {
     return FALSE;
