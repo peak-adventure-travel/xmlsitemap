@@ -35,7 +35,6 @@ function xmlsitemap_menu_form_xmlsitemap_settings_alter(&$form, &$from_state) {
   $form['xmlsitemap_menu'] = array(
     '#type' => 'fieldset',
     '#title' => t('Menu settings'),
-    '#description' => t('The settings for the menus to include in the sitemap.'),
     '#collapsible' => TRUE,
     '#weight' => 0,
   );

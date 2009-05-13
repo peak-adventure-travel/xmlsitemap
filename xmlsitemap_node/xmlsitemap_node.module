@@ -95,7 +95,6 @@ function xmlsitemap_node_form_xmlsitemap_settings_alter(&$form, &$from_state) {
   $form['xmlsitemap_node'] = array(
     '#type' => 'fieldset',
     '#title' => t('Node settings'),
-    '#description' => t('The settings for the nodes to include in the sitemap.'),
     '#collapsible' => TRUE,
     '#weight' => 1,
   );
