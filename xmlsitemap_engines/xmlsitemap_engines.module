@@ -150,33 +150,11 @@ function xmlsitemap_engines_xmlsitemap_operations() {
  *   submitted to all the enabled search engines.
  */
 function xmlsitemap_engines_ping_sitemap($engines = array(), $all = FALSE) {
-  $engines_data = array(
-    'ask' => array(
-      'Ask.com',
-      'http://submissions.ask.com/ping?sitemap=[sitemap]'
-    ),
-    'google' => array(
-      'Google',
-      'http://www.google.com/webmasters/tools/ping?sitemap=[sitemap]'
-    ),
-    'moreover' => array(
-      'Moreover.com',
-      'http://api.moreover.com/ping?u=[sitemap]'
-    ),
-    'live' => array(
-      'Windows Live',
-      'http://webmaster.live.com/ping.aspx?siteMap=[sitemap]'
-    ),
-    'yahoo' => array(
-      'Yahoo!',
-      'http://search.yahooapis.com/SiteExplorerService/V1/ping?sitemap=[sitemap]'
-    ),
-  );
   if (empty($engines) && $all) {
     $engines = array('ask', 'google', 'moreover', 'live', 'yahoo');
   }
   if (!empty($engines)) {
-    foreach ($engines_data as $id => $info) {
+    foreach (_xmlsitemap_engines_get_engines_data() as $id => $info) {
       if (in_array($id, $engines) && variable_get("xmlsitemap_engines_{$id}_submit", FALSE)) {
         $url = strtr(
           variable_get("xmlsitemap_engines_{$id}_url", $info[1]),
@@ -184,11 +162,11 @@ function xmlsitemap_engines_ping_sitemap($engines = array(), $all = FALSE) {
         );
         $result = drupal_http_request($url);
         if ($result->code == 200) {
-          watchdog('xmlsitemap', 'The sitemap has been successfully submitted to !engine.', array('!engine' => $info[0]));
+          watchdog('xmlsitemap', 'The sitemap has been successfully submitted to %engine.', array('%engine' => $info[0]));
         }
         else {
-          watchdog('xmlsitemap', 'An error occurred while submitting the sitemap to !engine: !code.',
-            array('!engine' => $info[0], '!code' => 0 + $result->code), WATCHDOG_ERROR
+          watchdog('xmlsitemap', 'An error occurred while submitting the sitemap to %engine: !code.',
+            array('%engine' => $info[0], '!code' => 0 + $result->code), WATCHDOG_ERROR
           );
         }
       }
@@ -207,6 +185,35 @@ function _xmlsitemap_engines_operation_ping_sitemap() {
     )
   );
   drupal_set_message(t('The sitemap has been submitted to the search engines'), 'status', FALSE);
+}
+
+/*****************************************************************************
+ * Private functions.
+ ****************************************************************************/
+
+function _xmlsitemap_engines_get_engines_data() {
+  return array(
+    'ask' => array(
+      'Ask.com',
+      'http://submissions.ask.com/ping?sitemap=[sitemap]',
+    ),
+    'google' => array(
+      'Google',
+      'http://www.google.com/webmasters/tools/ping?sitemap=[sitemap]',
+    ),
+    'moreover' => array(
+      'Moreover.com',
+      'http://api.moreover.com/ping?u=[sitemap]',
+    ),
+    'live' => array(
+      'Windows Live',
+      'http://webmaster.live.com/ping.aspx?siteMap=[sitemap]',
+    ),
+    'yahoo' => array(
+      'Yahoo!',
+      'http://search.yahooapis.com/SiteExplorerService/V1/ping?sitemap=[sitemap]',
+    ),
+  );
 }
 
 /**
