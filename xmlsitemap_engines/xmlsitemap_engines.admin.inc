@@ -154,7 +154,7 @@ function _xmlsitemap_engines_add_submission_url_fields(&$form, $id, $default_url
   );
   $form[$id]['submission_url']['description'] = array(
     '#value' => t('The URL to submit the sitemap to; use %placeholder instead of the sitemap URL. Select the checkbox to enable the sitemap submission to this URL.', array('%placeholder' => '[sitemap]')),
-    '#prefix' => '<div class="submission-url-description">',
+    '#prefix' => '<div class="description">',
     '#suffix' => '</div>',
   );
   

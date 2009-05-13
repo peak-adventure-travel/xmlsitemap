@@ -32,7 +32,6 @@ function xmlsitemap_engines_cron() {
  * Implementation of hook_init().
  */
 function xmlsitemap_engines_init() {
-  drupal_add_css(drupal_get_path('module', 'xmlsitemap_engines') .'/files/pages.css');
   if (!variable_get('site_offline', 0) && arg(0) != 'batch' && variable_get('xmlsitemap_engines_submit', FALSE) && variable_get('xmlsitemap_sitemap_is_changed', FALSE)) {
     xmlsitemap_engines_ping_sitemap(NULL, TRUE);
     variable_set('xmlsitemap_sitemap_is_changed', FALSE);
