@@ -304,7 +304,7 @@ function xmlsitemap_link_count() {
       watchdog('xmlsitemap', 'The <em>xmlsitemap</em> database table does not exist.', array(), WATCHDOG_ERROR);
     }
     else {
-      $link_count = db_result(db_query("SELECT COUNT(xsm.loc)". xmlsitemap_sitemap_query()));
+      $link_count = db_result(db_query("SELECT COUNT(*)". xmlsitemap_sitemap_query()));
     }
   }
   return $link_count;
