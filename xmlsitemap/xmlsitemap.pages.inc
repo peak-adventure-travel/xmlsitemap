@@ -24,6 +24,8 @@
 function xmlsitemap_output($chunk = NULL) {
   global $user;
   $headers = array("Content-type: text/xml; charset=utf-8");
+  // Set the current user to the anonymous user to verify the links added in
+  // the sitemap are accessible from the anonymous user.
   session_save_session(FALSE);
   $original_user = $user;
   $user = drupal_anonymous_user();
@@ -37,6 +39,7 @@ function xmlsitemap_output($chunk = NULL) {
     }
   }
   if (!$link_count || (isset($chunk) && !preg_match('/[0-9]+/', $chunk))) {
+    // Set the current user to the original value.
     $user = $original_user;
     session_save_session(TRUE);
     _xmlsitemap_print_empty_sitemap();
@@ -67,6 +70,7 @@ function xmlsitemap_output($chunk = NULL) {
       }
     }
   }
+  // Set the current user to the original value.
   $user = $original_user;
   session_save_session(TRUE);
   if (isset($result) && !$result) {
@@ -160,20 +164,22 @@ function _xmlsitemap_create_cache_chunk($fp, $chunk_size, $chunk = 0) {
   $start = $chunk * $chunk_size;
   $links = db_query_range("SELECT xsm.loc, xsm.module, xsm.type, xsm.id, xsm.sid, xsm.changed, xsm.changefreq, xsm.priority". xmlsitemap_sitemap_query() ."ORDER BY xsm.priority DESC, xsm.changed DESC, xsm.changefreq, xsm.loc", $start, $chunk_size);
   while ($link = db_fetch_object($links)) {
+    $url = '';
     if ($link->type == 'frontpage') {
       $url = url(NULL, array('absolute' => TRUE));
     }
-    elseif ($link->module && function_exists($link->module .'_xmlsitemap_url')) {
-      $function = $link->module .'_xmlsitemap_url';
-      $url = $function($link->loc, $link->type, $link->id, $link->sid);
+    elseif ($link->module && module_hook($link->module,  'xmlsitemap_url')) {
+      $ret = module_invoke($link->module, 'xmlsitemap_url', $link->loc, $link->type, $link->id, $link->sid);
+      if (!empty($ret)) {
+        $url = $ret;
+      }
     }
-    else {
+    if (empty($url)) {
       $url = url($link->loc, array('absolute' => TRUE));
     }
     $link->url = $url;
-    if ($link->module && function_exists($link->module .'_xmlsitemap_link_status')) {
-      $function = $link->module .'_xmlsitemap_link_status';
-      $link->status = $function($link->type, $link->id, $link->sid);
+    if ($link->module && module_hook($link->module,  'xmlsitemap_link_status')) {
+      $link->status = module_invoke($link->module, 'xmlsitemap_link_status', $link->type, $link->id, $link->sid);
     }
     else {
       $link->status = 0;
