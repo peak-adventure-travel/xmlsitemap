@@ -16,6 +16,177 @@
  ****************************************************************************/
 
 /**
+ * Form builder; return the additional links form.
+ */
+function xmlsitemap_additional_links() {
+  $links = _xmlsitemap_additional_links_list();
+  $form = array('#tree' => TRUE);
+  foreach ($links as $id => $link) {
+    $form[$id]['#link'] = (array)$link;
+    $form[$id]['path'] = array(
+      '#value' => check_plain(truncate_utf8($link->path, 40, FALSE, TRUE))
+    );
+    $form[$id]['weight'] = array(
+      '#type' => 'weight',
+      '#delta' => 10,
+      '#default_value' => $link->weight
+    );
+    $form[$id]['edit'] = array(
+      '#value' => l(t('edit'), "admin/settings/xmlsitemap/additional/edit/{$id}")
+    );
+    $form[$id]['delete'] = array(
+      '#value' => l(t('delete'), "admin/settings/xmlsitemap/additional/delete/{$id}")
+    );
+  }
+  if (count($links) > 1) {
+    $form['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Save')
+    );
+  }
+  elseif (isset($link)) {
+    unset($form[$link->lid]['weight']);
+  }
+  return $form;
+}
+
+/**
+ * Submit function for the additional links list.
+ */
+function xmlsitemap_additional_links_submit($form, &$form_state) {
+  foreach ($form_state['values'] as $id => $link) {
+    if (is_numeric($id) && $form[$id]['#link']['weight'] != $form_state['values'][$id]['weight']) {
+      $form[$id]['#link']['weight'] = $form_state['values'][$id]['weight'];
+      drupal_write_record('xmlsitemap_additional', $form[$id]['#link'], 'lid');
+    }
+  }
+}
+
+/**
+ * Form builder; display the form to edit the additional links.
+ */
+function xmlsitemap_additional_links_edit($form_state, $link = NULL) {
+  if (!isset($link)) {
+    $link = (object) array(
+      'path' => '',
+      'weight' => 0,
+    );
+  }
+  else {
+    $form['#lid'] = $link->lid;
+  }
+  $form['path'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Relative path'),
+    '#description' => t('The path must be relative to the Drupal installation directory, and accessible from the anonymous user. If the path is a path alias, the original path will be used.'),
+    '#default_value' => $link->path,
+    '#size' => 40,
+    '#maxlength' => 128,
+    '#required' => TRUE,
+  );
+  $form['weight'] = array(
+    '#type' => 'weight',
+    '#title' => t('Weight'),
+    '#default_value' => $link->weight,
+    '#delta' => 10,
+    '#description' => t('The weight of a link determinates its sitemap priority; the links with a heavier weight will have a lower priority'),
+  );
+  $form['save'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save'),
+    '#weight' => 10,
+  );
+  return $form;
+}
+
+/**
+ * Validate function for the edit form.
+ */
+function xmlsitemap_additional_links_edit_validate($form, &$form_state) {
+  global $user;
+  $path = drupal_get_normal_path($form_state['values']['path']);
+  // Set the current user to the anonymous user to verify the links being
+  // added are accessible from the anonymous user.
+  session_save_session(FALSE);
+  $original_user = $user;
+  $user = drupal_anonymous_user();
+  $menu = menu_get_item($path);
+  // Set the current user to the original value.
+  $user = $original_user;
+  session_save_session(TRUE);
+  if (!$menu) {
+    form_set_error('path', t('The path is not valid.'));
+    return;
+  }
+  if (!isset($menu['access']) || !$menu['access']) {
+    form_set_error('path', t('The path is not accessible from the anonymous user.'));
+    return;
+  }
+  $lid = db_result(db_query("SELECT lid from {xmlsitemap_additional} WHERE path = '%s'", $path));
+  if ($lid !== FALSE) {
+    $error = t('The path has been already used.');
+    if (isset($form['#lid'])) {
+      if ($form['#lid'] != $lid) {
+        form_set_error('path', $error);
+      }
+    }
+    else {
+      form_set_error('path', $error);
+    }
+  }
+  else {
+    form_set_value($form['path'], $path, $form_state);
+  }
+}
+
+/**
+ * Submit function for the edit form.
+ */
+function xmlsitemap_additional_links_edit_submit($form, &$form_state) {
+  $form_values = $form_state['values'];
+  if (isset($form['#lid'])) {
+    $form_values['lid'] = $form['#lid'];
+    drupal_write_record('xmlsitemap_additional', $form_values, 'lid');
+    drupal_set_message(t('The %link link has been updated.', array('%link' => $form_values['path'])));
+    watchdog('xmlsitemap', 'The %link link has been updated.', array('%link' => $form_values['path']));
+  }
+  else {
+    drupal_write_record('xmlsitemap_additional', $form_values);
+    drupal_set_message(t('The %link link has been created.', array('%link' => $form_values['path'])));
+    watchdog('xmlsitemap', 'The %link link has been created.', array('%link' => $form_values['path']));
+  }
+  
+  $form_state['redirect'] = 'admin/settings/xmlsitemap/additional/list';
+}
+
+/**
+ * Form builder; display the form to delete an additional link.
+ */
+function xmlsitemap_additional_links_delete_confirm($form_state, $lid) {
+  $form['#lid'] = $lid;
+  
+  return confirm_form($form,
+    t('Are you sure you want to delete the link?'),
+    isset($_GET['destination']) ? $_GET['destination'] : 'admin/settings/xmlsitemap/additional/list',
+    t('This action cannot be undone.'),
+    t('Delete'),
+    t('Cancel')
+  );
+}
+
+/**
+ * Submission function for the delete form.
+ */
+function xmlsitemap_additional_links_delete_confirm_submit($form, &$form_state) {
+  if ($form_state['values']['confirm']) {
+    db_query('DELETE FROM {xmlsitemap_additional} WHERE lid = %d', $form['#lid']);
+    drupal_set_message(t('The link has been deleted'), 'status', FALSE);
+  }
+
+  $form_state['redirect'] = 'admin/settings/xmlsitemap/additional/list';
+}
+
+/**
  * Form builder; return the sitemap settings form.
  */
 function xmlsitemap_settings() {
@@ -153,6 +324,48 @@ function xmlsitemap_tools_settings() {
     '#suffix' => '</div>',
   );
   return $form;
+}
+
+/*****************************************************************************
+ * Theme functions.
+ ****************************************************************************/
+
+function theme_xmlsitemap_additional_links($form) {
+  $rows = array();
+  foreach (element_children($form) as $key) {
+    if (isset($form[$key]['path'])) {
+      $link = &$form[$key];
+      
+      $row = array();
+      $row[] = drupal_render($link['path']);
+      if (isset($link['weight'])) {
+        $link['weight']['#attributes']['class'] = 'link-weight';
+        $row[] = drupal_render($link['weight']);
+      }
+      $row[] = drupal_render($link['edit']);
+      $row[] = drupal_render($link['delete']);
+      
+      $rows[] = array(
+        'data' => $row,
+        'class' => 'draggable'
+      );
+    }
+  }
+  if (empty($rows)) {
+    $rows[] = array(
+      array(
+        'data' => t('No additional links have been created.'),
+        'colspan' => '3'
+      )
+    );
+  }
+  $header = array(t('Path'));
+  if (isset($form['submit'])) {
+    $header[] = t('Weight');
+    drupal_add_tabledrag('xmlsitemap-additional', 'order', 'sibling', 'link-weight');
+  }
+  $header[] = array('data' => t('Operations'), 'colspan' => '2');
+  return theme('table', $header, $rows, array('id' => 'xmlsitemap-additional')) . drupal_render($form);
 }
 
 /**

@@ -188,8 +188,12 @@ function _xmlsitemap_create_cache_chunk($fp, $chunk_size, $chunk = 0) {
     if (($link->status & XMLSITEMAP_LINK_DISABLED) != XMLSITEMAP_LINK_DISABLED) {
       fwrite($fp, '  <url>'."\n");
       fwrite($fp, '    <loc>'. check_url($link->url) .'</loc>'."\n");
-      fwrite($fp, '    <lastmod>'. gmdate(DATE_W3C, $link->changed) .'</lastmod>'."\n");
-      fwrite($fp, '    <changefreq>'. xmlsitemap_sitemap_frequency($link->changefreq) .'</changefreq>'."\n");
+      if ($link->changed) {
+        fwrite($fp, '    <lastmod>'. gmdate(DATE_W3C, $link->changed) .'</lastmod>'."\n");
+      }
+      if ($link->changefreq) {
+        fwrite($fp, '    <changefreq>'. xmlsitemap_sitemap_frequency($link->changefreq) .'</changefreq>'."\n");
+      }
       fwrite($fp, '    <priority>'. number_format($link->priority, 1) .'</priority>'."\n");
       fwrite($fp, '  </url>'."\n");
       fflush($fp);

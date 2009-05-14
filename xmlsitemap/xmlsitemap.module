@@ -64,6 +64,7 @@ function xmlsitemap_form_alter(&$form, &$form_state, $form_id) {
 function xmlsitemap_help($path, $arg) {
   switch ($path) {
     case 'admin/settings/xmlsitemap':
+    case 'admin/settings/xmlsitemap/additional':
     case 'admin/settings/xmlsitemap/engines':
       $output = t('The sitemap is located at @sitemap.', array('@sitemap' => url('sitemap.xml', array('absolute' => TRUE))));
       break;
@@ -73,8 +74,10 @@ function xmlsitemap_help($path, $arg) {
       $output .= '<p>'. t('By itself, the XML sitemap module adds only the front page of your site to the sitemap. Other types of links are handled by supporting modules.') .'</p>';
       $optional = '';
       foreach (module_implements('xmlsitemap_description', TRUE) as $module) {
-        $function = $module .'_xmlsitemap_description';
-        $optional .= $function();
+        $description = module_invoke($module, 'xmlsitemap_description');
+        if (!empty($description)) {
+          $optional .= $description;
+        }
       }
       if (!empty($optional)) {
         $output .= "<dl>$optional</dl>";
@@ -111,9 +114,47 @@ function xmlsitemap_menu() {
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'file' => 'xmlsitemap.admin.inc',
   );
+  $items['admin/settings/xmlsitemap/additional'] = array(
+    'title' => 'Additional links',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('xmlsitemap_additional_links'),
+    'access arguments' => $access_config,
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'xmlsitemap.admin.inc',
+  );
+  $items['admin/settings/xmlsitemap/additional/list'] = array(
+    'title' => 'List',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+  $items['admin/settings/xmlsitemap/additional/add'] = array(
+    'title' => 'Add link',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('xmlsitemap_additional_links_edit'),
+    'access arguments' => $access_config,
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'xmlsitemap.admin.inc',
+  );
+  $items['admin/settings/xmlsitemap/additional/delete/%'] = array(
+    'title' => 'Delete',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('xmlsitemap_additional_links_delete_confirm', 5),
+    'access arguments' => $access_config,
+    'parent' => 'admin/settings/xmlsitemap/additional/list',
+    'type' => MENU_CALLBACK,
+    'file' => 'xmlsitemap.admin.inc',
+  );
+  $items['admin/settings/xmlsitemap/additional/edit/%xmlsitemap_link'] = array(
+    'title' => 'Edit link',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('xmlsitemap_additional_links_edit', 5),
+    'access arguments' => $access_config,
+    'parent' => 'admin/settings/xmlsitemap/additional/list',
+    'type' => MENU_CALLBACK,
+    'file' => 'xmlsitemap.admin.inc',
+  );
   $items['admin/settings/xmlsitemap/tools'] = array(
     'title' => 'Tools',
-    'description' => 'Sitemap tools.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('xmlsitemap_tools_basic'),
     'access arguments' => $access_config,
@@ -174,6 +215,18 @@ function xmlsitemap_robotstxt() {
 }
 
 /**
+ * Implementation of hook_theme().
+ */
+function xmlsitemap_theme() {
+  return array(
+    'xmlsitemap_additional_links' => array(
+      'arguments' => array('form' => array()),
+      'file' => 'xmlsitemap.admin.inc',
+    )
+  );
+}
+
+/**
  * Implementation of hook_xmlsitemap_operations().
  */
 function xmlsitemap_xmlsitemap_operations() {
@@ -211,6 +264,27 @@ function xmlsitemap_xmlsitemap_links() {
     }
   }
   drupal_write_record('xmlsitemap', $row, isset($update) ? 'lid' : NULL);
+  $weight = db_fetch_object(db_query("SELECT MIN(weight) AS min, MAX(weight) AS max FROM {xmlsitemap_additional}"));
+  $row = new stdClass();
+  $row->module = 'xmlsitemap';
+  $row->type = 'additional_link';
+  foreach (_xmlsitemap_additional_links_list() as $id => $link) {
+    $row->loc = $link->path;
+    if (isset($weight->min) && isset($weight->max) && $weight->min != $link->weight && $weight->max != $link->weight) {
+      $row->priority = 1.0 - min(max(round(($link->weight - $weight->min) / $weight->max - $weight->min, 1), 0.0), 1.0);
+    }
+    else {
+      $row->priority = 0.5;
+    }
+    $old_row = db_fetch_object(db_query("SELECT lid, type, priority FROM {xmlsitemap} WHERE loc = '%s'", $row->loc));
+    if ($old_row === FALSE) {
+      drupal_write_record('xmlsitemap', $row);
+    }
+    elseif ($old_row->type == 'xmlsitemap' && $old_row->priority != $row->priority) {
+      $row->lid = $old_row->lid;
+      drupal_write_record('xmlsitemap', $row, 'lid');
+    }
+  }
 }
 
 /*****************************************************************************
@@ -311,6 +385,20 @@ function xmlsitemap_link_count() {
 }
 
 /**
+ * Load the additional link with the passed ID.
+ * @param $lid
+ *   The ID of the additional link to load from the database.
+ * @return
+ *   An additional link object, or FALSE.
+ */
+function xmlsitemap_link_load($lid) {
+  if (($link = db_fetch_object(db_query("SELECT lid, path, weight FROM {xmlsitemap_additional} WHERE lid = %d", $lid))) == FALSE) {
+    return FALSE;
+  }
+  return $link;
+}
+
+/**
  * Return an array of sitemap priority options.
  * @param $option
  *  If not given, the array will include priority values from 0.0 to 1.0.
@@ -406,8 +494,6 @@ function xmlsitemap_sitemap_query() {
     INNER JOIN {system} s ON s.name = xsm.module
     WHERE s.type = 'module'
       AND s.status = 1
-      AND xsm.changefreq <> 0
-      AND xsm.changed <> 0
       $language_query
       AND (xsm.priority >= 0 AND xsm.priority <= 1)
     ";
@@ -456,6 +542,21 @@ function _xmlsitemap_operation_flag_sitemap() {
 /*****************************************************************************
  * Private functions.
  ****************************************************************************/
+
+/**
+ * Return the list of all additional links created.
+ */
+function _xmlsitemap_additional_links_list() {
+  static $links;
+  if (!isset($links)) {
+    $links = array();
+    $result = db_query("SELECT lid, path, weight FROM {xmlsitemap_additional} ORDER BY weight ASC");
+    while ($link = db_fetch_object($result)) {
+      $links[$link->lid] = $link;
+    }
+  }
+  return $links;
+}
 
 /**
  * Return the revision number as extracted from the CVS revision tag.
