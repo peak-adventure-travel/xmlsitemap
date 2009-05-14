@@ -22,6 +22,7 @@ XML Sitemap 6.x-1, 2009-05-11
 
 XML Sitemap 6.x-1, 2009-05-10
 -----------------------------------
+#448110: The site map should be accessible from anybody.
 #458710: Change unlink() for file_delete().
 #458660: Add more calls to watchdog().
 
