@@ -1,5 +1,9 @@
 $Id$
 
+XML Sitemap 6.x-1, 2009-05-15
+-----------------------------------
+#463538: Rearrange and optimize the installation code.
+
 XML Sitemap 6.x-1, 2009-05-14
 -----------------------------------
 #454190: Remove xmlsitemap_menu.module.
