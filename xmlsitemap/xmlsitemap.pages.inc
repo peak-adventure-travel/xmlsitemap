@@ -189,7 +189,7 @@ function _xmlsitemap_create_cache_chunk($fp, $chunk_size, $chunk = 0) {
       fwrite($fp, '  <url>'."\n");
       fwrite($fp, '    <loc>'. check_url($link->url) .'</loc>'."\n");
       if ($link->changed) {
-        fwrite($fp, '    <lastmod>'. gmdate(DATE_W3C, $link->changed) .'</lastmod>'."\n");
+        fwrite($fp, '    <lastmod>'. gmdate(XMLSITEMAP_DATE_W3C, $link->changed) .'</lastmod>'."\n");
       }
       if ($link->changefreq) {
         fwrite($fp, '    <changefreq>'. xmlsitemap_sitemap_frequency($link->changefreq) .'</changefreq>'."\n");
@@ -232,7 +232,7 @@ function _xmlsitemap_create_cache_files($chunk_size, $link_count) {
       fwrite($fp, '    <loc>'. url("sitemap$chunk.xml", array('absolute' => TRUE)) .'</loc>'."\n");
       $from = $chunk * $chunk_size;
       $changed = db_result(db_query_range("SELECT xsm.changed". xmlsitemap_sitemap_query() ."ORDER BY xsm.priority DESC, xsm.changed DESC", $from, $chunk_size));
-      fwrite($fp, '    <lastmod>'. gmdate(DATE_W3C, $changed) .'</lastmod>'."\n");
+      fwrite($fp, '    <lastmod>'. gmdate(XMLSITEMAP_DATE_W3C, $changed) .'</lastmod>'."\n");
       fwrite($fp, '  </sitemap>'."\n");
       fflush($fp);
     }
