@@ -30,7 +30,7 @@ if (!defined('REQUEST_TIME')) {
 /**
  * The date format used in the sitemap.
  */
-define('XMLSITEMAP_DATE_W3C', 'Y-m-d\TH:i:sZ');
+define('XMLSITEMAP_DATE_W3C', 'Y-m-d\TH:i:s\Z');
 
 /**
  * The flag set when a sitemap link is not enabled.
