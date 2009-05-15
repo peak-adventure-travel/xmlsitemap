@@ -2,6 +2,7 @@ $Id$
 
 XML Sitemap 6.x-1, 2009-05-15
 -----------------------------------
+#451010: Add a status column to the module tables.
 #463824: Incompatible time format in sitemap.xml.
 #463538: Rearrange and optimize the installation code.
 

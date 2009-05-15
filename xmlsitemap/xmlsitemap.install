@@ -79,6 +79,12 @@ function xmlsitemap_schema() {
         'not null' => TRUE,
         'default' => '',
       ),
+      'status' => array(
+        'description' => 'Boolean indicating whether or not this link is enabled.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1
+      ),
       'previously_changed' => array(
         'description' => 'The Unix timestamp of the previous change.',
         'type' => 'int',
@@ -116,6 +122,7 @@ function xmlsitemap_schema() {
     'indexes' => array(
       'link_module' => array(array('module', 25)),
       'link_language' => array('language'),
+      'link_status' => array('status'),
       'link_changed' => array('changed'),
       'link_priority' => array('priority'),
     ),
