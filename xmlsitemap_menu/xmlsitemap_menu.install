@@ -3,7 +3,7 @@
 
 /**
  * @file
- * Install file for XML Sitemap: Menu
+ * Install file for XML sitemap menu
  */
 
 /*****************************************************************************
@@ -28,10 +28,10 @@ function xmlsitemap_menu_disable() {
  * Implementation of hook_install().
  */
 function xmlsitemap_menu_install() {
-  $mid = db_result(db_query("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", t('XML Sitemap')));
+  $mid = db_result(db_query("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", t('XML sitemap')));
   if ($mid === FALSE) {
     $mid = db_next_id('{menu}_mid');
-    db_query("INSERT INTO {menu} (mid, title, description, type) VALUES (%d, '%s', '%s', %d)", $mid, t('XML Sitemap'), t('Menu items to include in the site map.'), MENU_CUSTOM_MENU | MENU_MODIFIED_BY_ADMIN);
+    db_query("INSERT INTO {menu} (mid, title, description, type) VALUES (%d, '%s', '%s', %d)", $mid, t('XML sitemap'), t('Menu items to include in the sitemap.'), MENU_CUSTOM_MENU | MENU_MODIFIED_BY_ADMIN);
     menu_rebuild();
   }
   variable_set('xmlsitemap_menu_custom_menu', $mid);
@@ -42,8 +42,8 @@ function xmlsitemap_menu_install() {
  */
 function xmlsitemap_menu_update_1() {
   $ret = array();
-  $mid = db_result(db_query("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", t('XML Sitemap')));
-  if (($mid = db_result(db_query("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", t('XML Sitemap')))) !== FALSE) {
+  $mid = db_result(db_query("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", t('XML sitemap')));
+  if (($mid = db_result(db_query("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", t('XML sitemap')))) !== FALSE) {
     $result = db_query("SELECT * FROM {xmlsitemap_additional}");
     while ($link = db_fetch_object($result)) {
       $link->priority = isset($link->priority) ? $link->priority : variable_get('xmlsitemap_additional_links_priority', 0.5);
@@ -78,7 +78,7 @@ function xmlsitemap_menu_update_2() {
  * Implementation of hook_uninstall().
  */
 function xmlsitemap_menu_uninstall() {
-  $xid = db_result(db_query("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", t('XML Sitemap')));
+  $xid = db_result(db_query("SELECT mid FROM {menu} WHERE pid = 0 AND title = '%s'", t('XML sitemap')));
   if ($xid !== FALSE) {
     db_query('DELETE FROM {menu} WHERE pid = %d', $xid);
     db_query('DELETE FROM {menu} WHERE mid = %d', $xid);

@@ -1,61 +1,61 @@
 $Id$
 
-XML Sitemap 5.x-2, 2009-05-06
+XML sitemap 5.x-2, 2009-05-06
 -----------------------------------
 #359901: Re-implement hook_robotstxt().
 
-XML Sitemap 5.x-2, 2009-04-28
+XML sitemap 5.x-2, 2009-04-28
 -----------------------------------
 #446400: Module permissions are not declared.
 
-XML Sitemap 5.x-2, 2009-04-26
+XML sitemap 5.x-2, 2009-04-26
 -----------------------------------
 #444622: Remove xmlsitemap_file.module.
 
-XML Sitemap 5.x-2, 2009-04-24
+XML sitemap 5.x-2, 2009-04-24
 -----------------------------------
 #441564: Remove any not necessary calls to menu_rebuild().
 #442516: Chunk size should be calculated from the module.
 #429598: Remove xmlsitemap_helper.module, and move the code to xmlsitemap.module.
 
-XML Sitemap 5.x-2, 2009-04-17
+XML sitemap 5.x-2, 2009-04-17
 -----------------------------------
 #436874: The site map content is not ordered by priority.
 
-XML Sitemap 5.x-2, 2009-04-14
+XML sitemap 5.x-2, 2009-04-14
 -----------------------------------
 #428186: Invalid argument supplied for foreach().
 
-XML Sitemap 5.x-2, 2009-04-09
+XML sitemap 5.x-2, 2009-04-09
 -----------------------------------
 #347381: Check if anonymous user can view the links added to the site map.
 #428022: Incorrect field set title.
 
-XML Sitemap 5.x-2, 2009-03-18
+XML sitemap 5.x-2, 2009-03-18
 -----------------------------------
 #395488: Views sitemap uses -2.0 instead of default priority value.
 #395482: Node priority drop-down always displays 1.0.
 
-XML Sitemap 5.x-2, 2009-02-07
+XML sitemap 5.x-2, 2009-02-07
 -----------------------------------
 #345185: api.moreover.com.
 
-XML Sitemap 5.x-2, 2009-02-04
+XML sitemap 5.x-2, 2009-02-04
 -----------------------------------
 #368457: Wrong implementation of hook_exit().
 
-XML Sitemap 5.x-2, 2009-02-03
+XML sitemap 5.x-2, 2009-02-03
 -----------------------------------
 #368537: Implement the support for Checkall.
 
-XML Sitemap 5.x-2, 2009-01-28
+XML sitemap 5.x-2, 2009-01-28
 -----------------------------------
 #365616: SQL query error caused by wrong use of CAST().
 
-XML Sitemap 5.x-2, 2009-01-24
+XML sitemap 5.x-2, 2009-01-24
 -----------------------------------
 #303363: Illegal mix of collations.
 
-XML Sitemap 5.x-2, 2009-01-09
+XML sitemap 5.x-2, 2009-01-09
 -----------------------------------
 #356109: Undefined function.

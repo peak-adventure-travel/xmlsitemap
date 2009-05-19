@@ -3,7 +3,7 @@
 
 /**
  * @file
- * Adds nodes to the site map.
+ * Adds nodes to the sitemap.
  */
 
 /**
@@ -42,7 +42,7 @@ function xmlsitemap_node_form_alter($form_id, &$form) {
       if (isset($form['identity']['type'])) {
         $form['xmlsitemap_node'] = array(
           '#type' => 'fieldset',
-          '#title' => t('XML site map'),
+          '#title' => t('XML sitemap'),
           '#collapsible' => TRUE,
         );
         $form['xmlsitemap_node']['xmlsitemap_node_type_priority'] = array(
@@ -78,7 +78,7 @@ function xmlsitemap_node_form_alter($form_id, &$form) {
       $form['xmlsitemap_node'] = array(
         '#type' => 'fieldset',
         '#title' => t('Content settings'),
-        '#description' => t('The settings for the content to include in the site map.'),
+        '#description' => t('The settings for the content to include in the sitemap.'),
         '#collapsible' => TRUE,
       );
       $form['xmlsitemap_node']['xmlsitemap_node_count_comments'] = array(
@@ -95,7 +95,7 @@ function xmlsitemap_node_form_alter($form_id, &$form) {
         if (user_access('override node settings')) {
           $form['xmlsitemap_node'] = array(
             '#type' => 'fieldset',
-            '#title' => t('XML site map'),
+            '#title' => t('XML sitemap'),
             '#collapsible' => TRUE,
            '#weight' => 30,
           );
@@ -231,11 +231,11 @@ function xmlsitemap_node_views_query_alter(&$query, &$view, $summary = NULL, $le
 function xmlsitemap_node_views_style_plugins() {
   return array(
     'xmlsitemap_sitemap' => array(
-      'name' => t('XML Sitemap: Sitemap'),
+      'name' => t('XML sitemap: Sitemap'),
       'theme' => 'xmlsitemap_node_view_sitemap',
     ),
     'xmlsitemap_news' => array(
-      'name' => t('XML Sitemap: News'),
+      'name' => t('XML sitemap: News'),
       'theme' => 'xmlsitemap_node_view_news',
     ),
   );
@@ -245,8 +245,8 @@ function xmlsitemap_node_views_style_plugins() {
  * Implementation of hook_xmlsitemap_description().
  */
 function xmlsitemap_node_xmlsitemap_description() {
-  return '<dt>'. t('XML Sitemap: Node') .'</dt>'.
-    '<dd>'. t('It adds nodes to the site map. The default priority of a node is determined by a combination of its <a href="@content">content type</a> priority, whether it appears on the front page of your site, and the number of comments it has received. You can override the default priority for individual nodes when you add or edit a node.', array('@content' => url('admin/content/types'))) .'</dd>';
+  return '<dt>'. t('XML sitemap node') .'</dt>'.
+    '<dd>'. t('It adds nodes to the sitemap. The default priority of a node is determined by a combination of its <a href="@content">content type</a> priority, whether it appears on the front page of your site, and the number of comments it has received. You can override the default priority for individual nodes when you add or edit a node.', array('@content' => url('admin/content/types'))) .'</dd>';
 }
 
 /**
@@ -320,7 +320,7 @@ function _xmlsitemap_node_submit($form_id, $form_values) {
  ****************************************************************************/
 
 /**
- * Display the nodes of a view as a Google News site map.
+ * Display the nodes of a view as a Google News sitemap.
  */
 function theme_xmlsitemap_node_view_news($view, $nodes, $type) {
   drupal_set_header('Content-Type: text/xml; charset=utf-8');
@@ -347,7 +347,7 @@ function theme_xmlsitemap_node_view_news($view, $nodes, $type) {
 }
 
 /**
- * Display the nodes of a view as an XML site map.
+ * Display the nodes of a view as an XML sitemap.
  */
 function theme_xmlsitemap_node_view_sitemap($view, $nodes, $type) {
   drupal_set_header('Content-Type: text/xml; charset=utf-8');

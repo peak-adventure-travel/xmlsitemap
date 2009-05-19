@@ -3,7 +3,7 @@
 
 /**
  * @file
- * Adds menu items to the site map.
+ * Adds menu items to the sitemap.
  */
 
 /**
@@ -24,12 +24,12 @@ function xmlsitemap_menu_form_alter($form_id, &$form) {
       $form['xmlsitemap_menu'] = array(
         '#type' => 'fieldset',
         '#title' => t('Menu settings'),
-        '#description' => t('The settings for the menus to include in the site map.'),
+        '#description' => t('The settings for the menus to include in the sitemap.'),
         '#collapsible' => TRUE,
       );
       $form['xmlsitemap_menu']['xmlsitemap_menu_menus'] = array(
         '#type' => 'checkboxes',
-        '#title' => t('Menus to include in site map'),
+        '#title' => t('Menus to include in sitemap'),
         '#default_value' => variable_get('xmlsitemap_menu_menus', array()),
         '#options' => menu_get_root_menus(),
         '#checkall' => TRUE,
@@ -55,8 +55,8 @@ function xmlsitemap_menu_menu($may_cache) {
  * Implementation of hook_xmlsitemap_description().
  */
 function xmlsitemap_menu_xmlsitemap_description() {
-  return '<dt>'. t('XML Sitemap: Menu') .'</dt>'.
-    '<dd>'. t('It allows menu items to be added to the site map. You can choose the menus to include on the XML Sitemap administration page and can add and remove menu items on the <a href="@menu">menu administration</a> page. The priority of a menu item is determined by its weight.', array('@menu' => url('admin/build/menu'))) .'</dd>';
+  return '<dt>'. t('XML sitemap menu') .'</dt>'.
+    '<dd>'. t('It allows menu items to be added to the sitemap. You can choose the menus to include on the XML sitemap administration page and can add and remove menu items on the <a href="@menu">menu administration</a> page. The priority of a menu item is determined by its weight.', array('@menu' => url('admin/build/menu'))) .'</dd>';
 }
 
 /**
@@ -81,7 +81,7 @@ function xmlsitemap_menu_xmlsitemap_links() {
  ****************************************************************************/
 
 /**
- * Add links for a menu item and all its children to the site map.
+ * Add links for a menu item and all its children to the sitemap.
  * @param $mid: The ID of the menu to process
  * @param $menu: The full menu structure for a user
  * @return None

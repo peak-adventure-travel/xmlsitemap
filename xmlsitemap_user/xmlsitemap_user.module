@@ -3,7 +3,7 @@
 
 /**
  * @file
- * Adds user profiles to the site map.
+ * Adds user profiles to the sitemap.
  */
 
 /**
@@ -23,7 +23,7 @@ function xmlsitemap_user_form_alter($form_id, &$form) {
     case 'user_admin_settings':
       $form['xmlsitemap'] = array(
         '#type' => 'fieldset',
-        '#title' => t('Site map'),
+        '#title' => t('sitemap'),
       );
       $default = variable_get('xmlsitemap_user_default_priority', 0.5);
       $form['xmlsitemap']['xmlsitemap_user_old_default_priority'] = array(
@@ -46,7 +46,7 @@ function xmlsitemap_user_form_alter($form_id, &$form) {
       $priority = $priority === FALSE ? 'NULL' : $priority;
       $form['xmlsitemap_user_role_priority'] = array(
         '#type' => 'select',
-        '#title' => t('Default site map priority'),
+        '#title' => t('Default sitemap priority'),
         '#default_value' => $priority,
         '#options' => $options,
         '#description' => t("The priority of all a user's roles will be added together to set the user's default priority. If all role priorities are left at default, the user's default priority will be %priority.", array('%priority' => $options[variable_get('xmlsitemap_user_default_priority', '0.5')])),
@@ -88,7 +88,7 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
       if (user_access('override profile settings')) {
         $form['xmlsitemap_user'] = array(
           '#type' => 'fieldset',
-          '#title' => t('Site map settings'),
+          '#title' => t('sitemap settings'),
           '#collapsible' => TRUE,
           '#weight' => 7,
         );
@@ -103,7 +103,7 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
         );
         $form['xmlsitemap_user']['xmlsitemap_user_priority'] = array(
           '#type' => 'select',
-          '#title' => t('Site map priority'),
+          '#title' => t('sitemap priority'),
           '#default_value' => isset($priority) ? $priority : 'NULL',
           '#options' => $options,
           '#description' => t('The default priority is %priority.', array('%priority' => $options[$default])),
@@ -150,8 +150,8 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
  * Implementation of hook_xmlsitemap_description().
  */
 function xmlsitemap_user_xmlsitemap_description() {
-  return '<dt>'. t('XML Sitemap: User') .'</dt>'.
-    '<dd>'. t('It adds user profiles to the site map. The <em>anonymous user</em> role must have permission to access user profiles on the <a href="@access">access control page</a>. You can change the default user priority on the <a href="@user_settings">user settings</a> page. The <a href="@user">user role priority</a> will override the default user priority. You can override both the default priority and the role priority when you add or edit a user.', array('@access' => url('admin/user/access'), '@user_settings' => url('admin/user/settings'), '@user_role' => url('admin/user/roles'))) .'</dd>';
+  return '<dt>'. t('XML sitemap user') .'</dt>'.
+    '<dd>'. t('It adds user profiles to the sitemap. The <em>anonymous user</em> role must have permission to access user profiles on the <a href="@access">access control page</a>. You can change the default user priority on the <a href="@user_settings">user settings</a> page. The <a href="@user">user role priority</a> will override the default user priority. You can override both the default priority and the role priority when you add or edit a user.', array('@access' => url('admin/user/access'), '@user_settings' => url('admin/user/settings'), '@user_role' => url('admin/user/roles'))) .'</dd>';
 }
 /**
  * Implementation of hook_xmlsitemap_links().

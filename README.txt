@@ -3,9 +3,9 @@ $Id$
 DESCRIPTION
 -----------
 
-XML Sitemap automatically creates a site map that conforms to the sitemaps.org
+XML sitemap automatically creates a site map that conforms to the sitemaps.org
 specification. This helps search engines keep their search results up to date.
-XML Sitemap replaces the Google Sitemap module written by Matthew Loar as part
+XML sitemap replaces the Google Sitemap module written by Matthew Loar as part
 of Google Summer of Code 2005.
 
 You can view your site map at http://www.example.com/?q=sitemap.xml.
@@ -31,16 +31,16 @@ Links may be assigned a priority between 0.0 and 1.0. The default priority is
 
 Front page priority: This setting determines the priority of the front page.
 
-By itself, the XML Sitemap module adds only the front page of your site to the
+By itself, the XML sitemap module adds only the front page of your site to the
 site map. Other types of links are handled by supporting modules.
 
-XML Sitemap: Menu
+XML sitemap menu
 Allows menu items to be added to the site map. You can choose the menus to
 include at http://www.example.com/?q=admin/settings/xmlsitemap and can add and
 remove menu items at http://www.example.com/?q=admin/build/menu. The priority of
 a menu item is determined by its weight.
 
-XML Sitemap: Node
+XML sitemap node
 Adds nodes to the site map and provides Views style plugins for creating
 specialized site maps with Views. The default priority of a node is determined
 by a combination of its content type priority, whether it appears on the front
@@ -49,12 +49,12 @@ content type priorities at http://www.example.com/?q=admin/content/types, and
 you can override the default priority for individual nodes when you add or edit
 a node.
 
-XML Sitemap: Term
+XML sitemap term
 Adds taxonomy terms to the site map. You can change the default priority when
 you add or edit a vocabulary, and you can override the default priority when you
 add or edit individual terms.
 
-XML Sitemap: User
+XML sitemap user
 Adds user profiles to the site map. The anonymous user role must be given
 permission to access user profiles at
 http://www.example.com/?q=admin/user/access. You can change the default user
@@ -66,9 +66,9 @@ priority when you add or edit a user.
 SUBMITTING YOUR SITE MAP TO SEARCH ENGINES
 ------------------------------------------
 
-XML Sitemap can notify search engines when your site map changes. Which search
+XML sitemap can notify search engines when your site map changes. Which search
 engines you can notify depends on the optional modules you have enabled. The
-included "XML Sitemap: Engines" module supports Google, Yahoo!, Ask, and Windows
+included "XML sitemap: Engines" module supports Google, Yahoo!, Ask, and Windows
 Live.
 
 Go to http://www.example.com/?q=admin/settings/xmlsitemap and choose the Search
@@ -80,7 +80,7 @@ engines be notified of changes immediately or you cannot schedule notifications
 with cron.
 
 Submit site map on cron run: This is the preferred way to notify search engines
-of updates. XML Sitemap will wait until the next cron run to notify search
+of updates. XML sitemap will wait until the next cron run to notify search
 engines of updates.
 
 Log access: Record each time the site map is retrieved.
@@ -88,7 +88,7 @@ Log access: Record each time the site map is retrieved.
 MORE INFORMATION
 ----------------
 
-XML Sitemap documentation: http://drupal.org/handbook/modules/gsitemap
+XML sitemap documentation: http://drupal.org/handbook/modules/gsitemap
 
 The Sitemap protocol: http://sitemaps.org.
 

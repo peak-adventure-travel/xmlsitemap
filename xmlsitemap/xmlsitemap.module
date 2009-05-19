@@ -3,7 +3,7 @@
 
 /**
  * @file
- * Creates a site map compatible with the sitemaps.org schema.
+ * Creates a sitemap compatible with the sitemaps.org schema.
    */
 
 /**
@@ -96,15 +96,15 @@ function xmlsitemap_help($section) {
   switch ($section) {
     case 'admin/settings/xmlsitemap':
     case 'admin/settings/xmlsitemap/settings':
-      $output = t('Configure the site map.');
+      $output = t('Configure the sitemap.');
       break;
     case 'admin/settings/xmlsitemap/engines':
       $output = t('Configure the behavior for search engines.');
       break;
     case 'admin/help#xmlsitemap':
-      $output = '<p>'. t('XML Sitemap automatically creates a site map that conforms to the <a href="@sitemaps.org">sitemaps.org specification</a>. This helps search engines keep their search results up to date.', array('@sitemaps.org' => 'http://www.sitemaps.org')) .'</p>';
+      $output = '<p>'. t('XML sitemap automatically creates a sitemap that conforms to the <a href="@sitemaps.org">sitemaps.org specification</a>. This helps search engines keep their search results up to date.', array('@sitemaps.org' => 'http://www.sitemaps.org')) .'</p>';
       $output .= '<h3>'. t('Supporting modules') .'</h3>';
-      $output .= '<p>'. t('By itself, the XML Sitemap module adds only the front page of your site to the site map. Other types of links are handled by supporting modules.') .'</p>';
+      $output .= '<p>'. t('By itself, the XML sitemap module adds only the front page of your site to the sitemap. Other types of links are handled by supporting modules.') .'</p>';
       $optional = '';
       foreach (module_implements('xmlsitemap_description', TRUE) as $module) {
         $function = $module .'_xmlsitemap_description';
@@ -113,8 +113,8 @@ function xmlsitemap_help($section) {
       if (!empty($optional)) {
         $output .= "<dl>$optional</dl>";
       }
-      $output .= '<p>'. t('Links may be assigned a priority between 0.0 and 1.0. The default priority is 0.5. A priority of <em>Not in site map</em> excludes a link from the site map.') .'</p>';
-      $output .= '<p>'. t('More information is available in the <a href="@module_docs">XML Sitemap documentation</a>.', array('@module_docs' => 'http://drupal.org/handbook/modules/gsitemap')) .'</p>';
+      $output .= '<p>'. t('Links may be assigned a priority between 0.0 and 1.0. The default priority is 0.5. A priority of <em>Not in sitemap</em> excludes a link from the sitemap.') .'</p>';
+      $output .= '<p>'. t('More information is available in the <a href="@module_docs">XML sitemap documentation</a>.', array('@module_docs' => 'http://drupal.org/handbook/modules/gsitemap')) .'</p>';
       break;
     default:
       $output = '';
@@ -134,30 +134,30 @@ function xmlsitemap_menu($may_cache) {
   if ($may_cache) {
     $items[] = array(
       'path' => 'admin/settings/xmlsitemap',
-      'title' => t('XML Sitemap'),
-      'description' => t('Configure the XML site map.'),
+      'title' => t('XML sitemap'),
+      'description' => t('Configure the XML sitemap.'),
       'callback' => 'drupal_get_form',
       'callback arguments' => array('xmlsitemap_settings_sitemap'),
       'access' => $access_config,
     );
     $items[] = array(
       'path' => 'admin/settings/xmlsitemap/sitemap',
-      'title' => t('Site map'),
-      'description' => t('Configure the site map.'),
+      'title' => t('sitemap'),
+      'description' => t('Configure the sitemap.'),
       'type' => MENU_DEFAULT_LOCAL_TASK,
       'weight' => -1,
     );
     $items[] = array(
       'path' => 'admin/settings/xmlsitemap/engines',
       'title' => t('Search engines'),
-      'description' => t('Configure the submission settings for the XML site map to the search engines.'),
+      'description' => t('Configure the submission settings for the XML sitemap to the search engines.'),
       'callback' => 'drupal_get_form',
       'callback arguments' => array('xmlsitemap_settings_engines'),
       'type' => MENU_LOCAL_TASK,
     );
     $items[] = array(
       'path' => 'sitemap.xml',
-      'title' => t('Site map index'),
+      'title' => t('sitemap index'),
       'callback' => 'xmlsitemap_output',
       'type' => MENU_CALLBACK,
       'access' => $access_content,
@@ -170,7 +170,7 @@ function xmlsitemap_menu($may_cache) {
       for ($chunk = 0; $chunk < $link_count / $chunk_size; ++$chunk) {
         $items[] = array(
           'path' => "sitemap$chunk.xml",
-          'title' => t('Site map !number', array('!number' => $chunk)),
+          'title' => t('sitemap !number', array('!number' => $chunk)),
           'callback' => 'xmlsitemap_output',
           'callback arguments' => array($chunk),
           'type' => MENU_CALLBACK,
@@ -201,10 +201,10 @@ function xmlsitemap_robotstxt() {
  ****************************************************************************/
 
 /**
- * Menu callback; display the site map.
+ * Menu callback; display the sitemap.
  * @param $chunk:
- * An integer specifying which chunk of the site map is being requested. If not
- * set and there is more than one chunk, display the site map index.
+ * An integer specifying which chunk of the sitemap is being requested. If not
+ * set and there is more than one chunk, display the sitemap index.
  * @return None
  */
 function xmlsitemap_output($chunk = NULL) {
@@ -242,7 +242,7 @@ function xmlsitemap_output($chunk = NULL) {
 }
 
 /**
- * Menu callback; return site map settings form.
+ * Menu callback; return sitemap settings form.
  */
 function xmlsitemap_settings_sitemap() {
   $form['general'] = array(
@@ -266,7 +266,7 @@ function xmlsitemap_settings_sitemap() {
 }
 
 /**
- * Submit site map settings form.
+ * Submit sitemap settings form.
  */
 function xmlsitemap_settings_sitemap_submit($form_id, $form_values) {
   system_settings_form_submit($form_id, $form_values);
@@ -283,21 +283,21 @@ function xmlsitemap_settings_engines() {
   );
   $form['submission']['xmlsitemap_submit'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Submit the site map when updated'),
+    '#title' => t('Submit the sitemap when updated'),
     '#default_value' => variable_get('xmlsitemap_submit', FALSE),
-    '#description' => t('If enabled, the search engines will be notified of changes to the site map each time it is updated.'),
+    '#description' => t('If enabled, the search engines will be notified of changes to the sitemap each time it is updated.'),
   );
   $form['submission']['xmlsitemap_cron_submit'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Submit the site map on cron run'),
+    '#title' => t('Submit the sitemap on cron run'),
     '#default_value' => variable_get('xmlsitemap_cron_submit', FALSE),
-    '#description' => t('If enabled, the search engines will be notified of changes to the site map each time cron is run.'),
+    '#description' => t('If enabled, the search engines will be notified of changes to the sitemap each time cron is run.'),
   );
   $form['submission']['xmlsitemap_log_access'] = array(
     '#type' => 'checkbox',
     '#title' => t('Log access'),
     '#default_value' => variable_get('xmlsitemap_log_access', FALSE),
-    '#description' => t('If enabled, a watchdog entry will be made each time the site map is accessed, containing information about the requestor.'),
+    '#description' => t('If enabled, a watchdog entry will be made each time the sitemap is accessed, containing information about the requestor.'),
   );
   $form = array_merge($form, module_invoke_all('xmlsitemap_engines', 'form'));
   return system_settings_form($form);
@@ -334,7 +334,7 @@ function xmlsitemap_file_create_url($path, $alias = NULL) {
 }
 
 /**
- * Return the number of links in the site map.
+ * Return the number of links in the sitemap.
  */
 function xmlsitemap_link_count() {
   static $link_count;
@@ -394,10 +394,10 @@ function xmlsitemap_placeholder($type) {
 }
 
 /**
- * Get an array of site map priority options.
+ * Get an array of sitemap priority options.
  * @param $option:
  * If not given, the array will include priority values from 0.0 to 1.0.
- * - exclude: Add option to exclude item from site map.
+ * - exclude: Add option to exclude item from sitemap.
  * - default: Add option to use default priority. Only for cases where a default
  *   priority exists.
  * - both: Add both the default and exclude options.
@@ -418,7 +418,7 @@ function xmlsitemap_priority_options($option = '') {
     '0' => t('0.0')
   );
   if ($option == 'exclude' || $option == 'both') {
-    $options['-1'] = t('Not in site map');
+    $options['-1'] = t('Not in sitemap');
   }
   if ($option == 'default' || $option == 'both') {
     $options['-2'] = t('Default');
@@ -459,7 +459,7 @@ function xmlsitemap_sitemap_frequency($interval) {
 }
 
 /**
- * Mark the site map as changed and the cache as needing update.
+ * Mark the sitemap as changed and the cache as needing update.
  * @return None
  */
 function xmlsitemap_flag_sitemap() {
@@ -555,8 +555,8 @@ function _xmlsitemap_get_path_alias($path, $alias = NULL) {
 }
 
 /**
- * Display a chunk of the site map.
- * @param $chunk: An integer specifying which chunk of the site map to display
+ * Display a chunk of the sitemap.
+ * @param $chunk: An integer specifying which chunk of the sitemap to display
  * @return None
  */
 function _xmlsitemap_output_chunk($chunk = 0) {
@@ -586,8 +586,8 @@ function _xmlsitemap_output_chunk($chunk = 0) {
 }
 
 /**
- * Generate the site map index.
- * @return A string containing the site map index
+ * Generate the sitemap index.
+ * @return A string containing the sitemap index
  */
 function _xmlsitemap_output_index() {
   print '<?xml version="1.0" encoding="UTF-8"?>'."\n";
@@ -615,7 +615,7 @@ function _xmlsitemap_output_index() {
 }
 
 /**
- * Submit the site map to search engines.
+ * Submit the sitemap to search engines.
  * @return None
  */
 function _xmlsitemap_ping() {
@@ -635,7 +635,7 @@ function _xmlsitemap_submit_on_exit() {
 }
 
 /**
- * Update the site map if content has changed.
+ * Update the sitemap if content has changed.
  */
 function _xmlsitemap_update() {
   db_query("DELETE FROM {xmlsitemap}");
