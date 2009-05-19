@@ -283,9 +283,9 @@ function xmlsitemap_settings_engines() {
   );
   $form['submission']['xmlsitemap_submit'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Submit the sitemap when updated'),
+    '#title' => t('Submit the sitemap in content updates'),
     '#default_value' => variable_get('xmlsitemap_submit', FALSE),
-    '#description' => t('If enabled, the search engines will be notified of changes to the sitemap each time it is updated.'),
+    '#description' => t('If enabled, search engines will be notified of changes to the site map each time the site content is updated..'),
   );
   $form['submission']['xmlsitemap_cron_submit'] = array(
     '#type' => 'checkbox',

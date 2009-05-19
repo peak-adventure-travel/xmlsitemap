@@ -1,5 +1,9 @@
 $Id$
 
+XML sitemap 5.x-2, 2009-05-19
+-----------------------------------
+#466654: Change 'Submit site map when updated' in 'Submit site map on content updates'.
+
 XML sitemap 5.x-2, 2009-05-06
 -----------------------------------
 #359901: Re-implement hook_robotstxt().
