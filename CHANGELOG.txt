@@ -1,5 +1,9 @@
 $Id$
 
+XML sitemap 5.x-2, 2009-05-20
+-----------------------------------
+#467610: Nodes with default priority are excluded from sitemap.
+
 XML sitemap 5.x-2, 2009-05-19
 -----------------------------------
 #466654: Change 'Submit site map when updated' in 'Submit site map on content updates'.
