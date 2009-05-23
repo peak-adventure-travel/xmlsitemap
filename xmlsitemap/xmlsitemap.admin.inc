@@ -132,12 +132,8 @@ function xmlsitemap_additional_links_edit_validate($form, &$form_state) {
   // Set the current user to the original value.
   $user = $original_user;
   session_save_session(TRUE);
-  if (!$menu) {
-    form_set_error('path', t('The path is not valid.'));
-    return;
-  }
-  if (empty($menu['access'])) {
-    form_set_error('path', t('The path is not accessible from the anonymous user.'));
+  if (!$menu || empty($menu['access'])) {
+    form_set_error('path', t('The path is either invalid or is not accessible from the anonymous user.'));
     return;
   }
   $mid = db_result(db_query("SELECT mid from {xmlsitemap_additional} WHERE pdata = '%s'", $path));
