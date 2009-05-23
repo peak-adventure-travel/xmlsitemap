@@ -107,7 +107,7 @@ function xmlsitemap_additional_links_edit($form_state, $link = NULL) {
     '#title' => t('Priority'),
     '#default_value' => $link->priority,
     '#options' => xmlsitemap_priority_options(TRUE),
-    '#description' => t('The priority of a link determinates its position in the sitemap; the links with a higher priority will appear first in the sitemap.'),
+    '#description' => t('The priority of a link determinetes its position in the sitemap; the links with a higher priority will appear first in the sitemap.'),
   );
   $form['save'] = array(
     '#type' => 'submit',
