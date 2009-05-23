@@ -437,7 +437,7 @@ function xmlsitemap_output_link($fp, $link) {
   <url>
     <loc>%loc</loc>
     <lastmod>%lastmod</lastmod>
-    <changfreq>%changefreq</changefreq>
+    <changefreq>%changefreq</changefreq>
     <priority>%priority</priority>
   </url>
 
