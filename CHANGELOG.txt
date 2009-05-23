@@ -1,7 +1,14 @@
 $Id$
 
+XML sitemap 6.x-1, 2009-05-24
+-----------------------------------
+#470792: Translatable strings review.
+
 XML sitemap 6.x-1, 2009-05-23
 -----------------------------------
+#470670: drupal_unistall_schema() is not called from the uninstall functions.
+#465658: Add more options to "cron limit" on settings page.
+#466654: Change 'Submit the sitemap when updated' in 'Submit the sitemap on content updates'.
 #470534: Remove _xmlsitemap_revision().
 #465734: Use sitemap chunks per module to prevent the rebuilt of all the cached files.
 #470048: Unknown column issue in xmlsitemap_node.
