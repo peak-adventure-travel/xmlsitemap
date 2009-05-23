@@ -107,7 +107,7 @@ function xmlsitemap_additional_links_edit($form_state, $link = NULL) {
     '#title' => t('Priority'),
     '#default_value' => $link->priority,
     '#options' => xmlsitemap_priority_options(TRUE),
-    '#description' => t('The priority of a link determinetes its position in the sitemap; the links with a higher priority will appear first in the sitemap.'),
+    '#description' => t('The priority of a link determines its position in the sitemap; the links with a higher priority will appear first in the sitemap.'),
   );
   $form['save'] = array(
     '#type' => 'submit',
@@ -195,7 +195,7 @@ function xmlsitemap_additional_links_delete_confirm_submit($form, &$form_state) 
   if ($form_state['values']['confirm']) {
     $link = $form['#link'];
     db_query('DELETE FROM {xmlsitemap_additional} WHERE mid = %d', $link->mid);
-    drupal_set_message(t(''The link %link has been deleted.', array('%link' => $link->pdata)), 'status', FALSE);
+    drupal_set_message(t('The link %link has been deleted.', array('%link' => $link->pdata)), 'status', FALSE);
   }
 
   $form_state['redirect'] = 'admin/settings/xmlsitemap/additional/list';
