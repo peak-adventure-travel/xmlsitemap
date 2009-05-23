@@ -220,9 +220,9 @@ function xmlsitemap_settings() {
   $form['general']['xmlsitemap_cron_limit'] = array(
     '#type' => 'select',
     '#title' => t('Cron limit'),
-    '#description' => t('The number of links that are updated in each pass of a <a href="@cron">cron maintenance task</a>.', array('@cron' => url('admin/reports/status'))),
-    '#default_value' => variable_get('xmlsitemap_cron_limit', 100),
-    '#options' => xmlsitemap_cron_options(),
+    '#description' => t('The number of links that are updated in each pass of a <a href="@cron">cron maintenance task</a>. Choosing a number too high could cause the other module cron tasks to not be executed; use the higher numbers only when you are sure it will not cause any problems on your Drupal installation.', array('@cron' => url('admin/reports/status'))),
+    '#default_value' => variable_get('xmlsitemap_cron_limit', 200),
+    '#options' => drupal_map_assoc(array(2, 10, 50, 100, 200, 300, 400, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000)),
   );
   $form['general']['xmlsitemap_cache_directory'] = array(
     '#type' => 'textfield',
