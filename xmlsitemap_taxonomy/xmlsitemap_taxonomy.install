@@ -248,6 +248,7 @@ function xmlsitemap_taxonomy_update_6115() {
  * Implementation of hook_uninstall().
  */
 function xmlsitemap_taxonomy_uninstall() {
+  drupal_uninstall_schema('xmlsitemap_taxonomy');
   db_query("DELETE FROM {variable} WHERE name LIKE 'xmlsitemap\_taxonomy\_%'");
 }
 
