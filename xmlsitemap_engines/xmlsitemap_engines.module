@@ -184,7 +184,7 @@ function _xmlsitemap_engines_operation_ping_sitemap() {
       variable_get('xmlsitemap_engine_parameter_search_engines', array())
     )
   );
-  drupal_set_message(t('The sitemap has been submitted to the search engines'), 'status', FALSE);
+  drupal_set_message(t(''The sitemap has been submitted to the search engines.'), 'status', FALSE);
 }
 
 /*****************************************************************************

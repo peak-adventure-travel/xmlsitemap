@@ -97,7 +97,7 @@ function xmlsitemap_user_schema() {
         'default' => 0,
       ),
       'priority' => array(
-        'description' => t('The priority assigned to the role.'),
+        'description' => 'The priority assigned to the role.',
         'type' => 'float',
         'not null' => TRUE,
         'default' => 0.5,

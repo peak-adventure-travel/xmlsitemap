@@ -107,7 +107,7 @@ function xmlsitemap_additional_links_edit($form_state, $link = NULL) {
     '#title' => t('Priority'),
     '#default_value' => $link->priority,
     '#options' => xmlsitemap_priority_options(TRUE),
-    '#description' => t('The priority of a link determinates its position in the sitemap; the links with a higher priority will appear first in the sitemap'),
+    '#description' => t('The priority of a link determinates its position in the sitemap; the links with a higher priority will appear first in the sitemap.'),
   );
   $form['save'] = array(
     '#type' => 'submit',
@@ -164,8 +164,8 @@ function xmlsitemap_additional_links_edit_submit($form, &$form_state) {
   $form_state['values']['mid'] = $form['#mid'];
   $link = (object) (array() + $form_state['values']);
   if ($rc = xmlsitemap_write_link($link, 'xmlsitemap_additional', 'xmlsitemap')) {
-    drupal_set_message(t('The %link link has been updated.', array('%link' => $link->pdata)), 'status', FALSE);
-    watchdog('xmlsitemap', 'The %link link has been updated.', array('%link' => $link->pdata));
+    drupal_set_message(t('The link %link has been updated.', array('%link' => $link->pdata)), 'status', FALSE);
+    watchdog('xmlsitemap', 'The link %link has been updated.', array('%link' => $link->pdata));
   }
   if (!rc) {
     drupal_set_message(t('An error occurred while saving the link %link.', array('%link' => $link->pdata)), 'error', FALSE);
@@ -195,7 +195,7 @@ function xmlsitemap_additional_links_delete_confirm_submit($form, &$form_state) 
   if ($form_state['values']['confirm']) {
     $link = $form['#link'];
     db_query('DELETE FROM {xmlsitemap_additional} WHERE mid = %d', $link->mid);
-    drupal_set_message(t('The %link link has been deleted', array('%link' => $link->pdata)), 'status', FALSE);
+    drupal_set_message(t(''The link %link has been deleted.', array('%link' => $link->pdata)), 'status', FALSE);
   }
 
   $form_state['redirect'] = 'admin/settings/xmlsitemap/additional/list';
@@ -243,11 +243,11 @@ function xmlsitemap_settings() {
     '#description' => t('The change frequency associated with the front page.'),
     '#default_value' => variable_get('xmlsitemap_front_page_changefreq', 3600),
     '#options' => array(
-      '3600' => 'Hourly',
-      '86400' => 'Daily',
-      '604800' => 'Weekly',
-      '2419200' => 'Monthly',
-      '29030400' => 'Yearly',
+      '3600' => t('Hourly'),
+      '86400' => t('Daily'),
+      '604800' => t('Weekly'),
+      '2419200' => t('Monthly'),
+      '29030400' => t('Yearly'),
     ),
   );
   $form['frontpage']['xmlsitemap_front_page_priority'] = array(

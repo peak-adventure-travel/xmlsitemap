@@ -49,7 +49,7 @@ function xmlsitemap_engines_settings() {
   $form['submission']['submission_urls'] = array(
     '#type' => 'fieldset',
     '#title' => t('Submission URLs'),
-    '#description' => t('Use %placeholder instead of the sitemap URL. Select the checkbox to enable the submission for a specific search engine', array('%placeholder' => '[sitemap]')),
+    '#description' => t('Use %placeholder instead of the sitemap URL. Select the checkbox to enable the submission for a specific search engine.', array('%placeholder' => '[sitemap]')),
     '#collapsible' => TRUE,
   );
   foreach (_xmlsitemap_engines_get_engines_data() as $id => $info) {
