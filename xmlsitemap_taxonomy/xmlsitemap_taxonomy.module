@@ -19,17 +19,16 @@
  * Implementation of hook_cron().
  */
 function xmlsitemap_taxonomy_cron() {
-  if (($limit = variable_get('xmlsitemap_cron_limit', 100)) != -1) {
-    $sql = "SELECT t.*, v.module FROM {term_data} t INNER JOIN {vocabulary} v ON v.vid = t.vid LEFT JOIN {xmlsitemap_taxonomy} xt ON xt.pdata = t.tid WHERE xt.pdata IS NULL ORDER BY v.weight ASC, t.weight ASC";
-    $result = db_query_range($sql, 0, $limit);
-    $row = new stdClass();
-    while ($term = db_fetch_object($result)) {
-      $row->pdata = $term->tid;
-      $row->sdata = $term->vid;
-      $row->changed = REQUEST_TIME;
-      $row->priority = variable_get('xmlsitemap_taxonomy_vocabulary_priority_'. $row->sid, '0.5');
-      xmlsitemap_write_link($row, 'xmlsitemap_taxonomy');
-    }
+  $limit = variable_get('xmlsitemap_cron_limit', 200);
+  $sql = "SELECT t.*, v.module FROM {term_data} t INNER JOIN {vocabulary} v ON v.vid = t.vid LEFT JOIN {xmlsitemap_taxonomy} xt ON xt.pdata = t.tid WHERE xt.pdata IS NULL ORDER BY v.weight ASC, t.weight ASC";
+  $result = db_query_range($sql, 0, $limit);
+  $row = new stdClass();
+  while ($term = db_fetch_object($result)) {
+    $row->pdata = $term->tid;
+    $row->sdata = $term->vid;
+    $row->changed = REQUEST_TIME;
+    $row->priority = variable_get('xmlsitemap_taxonomy_vocabulary_priority_'. $row->sid, '0.5');
+    xmlsitemap_write_link($row, 'xmlsitemap_taxonomy');
   }
 }
 

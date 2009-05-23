@@ -541,6 +541,21 @@ function xmlsitemap_update_6147() {
 }
 
 /**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_6148() {
+  $ret = array();
+  if (variable_get('xmlsitemap_cron_limit', -1) == -1) {
+    variable_set('xmlsitemap_cron_limit', 200);
+    $ret[] = array(
+      'success' => TRUE,
+      'query' => 'UPDATE MODULE SETTINGS',
+    );
+  }
+  return $ret;
+}
+
+/**
  * Implementation of hook_uninstall().
  */
 function xmlsitemap_uninstall() {

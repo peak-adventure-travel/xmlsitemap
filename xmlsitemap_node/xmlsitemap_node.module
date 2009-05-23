@@ -20,7 +20,8 @@
  */
 function xmlsitemap_node_cron() {
   $anonymous_user = drupal_anonymous_user();
-  if (user_access('access content', $anonymous_user) && ($limit = variable_get('xmlsitemap_cron_limit', 100)) != -1) {
+  if (user_access('access content', $anonymous_user)) {
+    $limit = variable_get('xmlsitemap_cron_limit', 200);
     $sql = "SELECT n.nid FROM {node} n LEFT JOIN {xmlsitemap_node} xn ON xn.pdata = n.nid WHERE xn.pdata IS NULL ORDER BY n.changed DESC";
     $result = db_query_range($sql, 0, $limit);
     $row = new stdClass();

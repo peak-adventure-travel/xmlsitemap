@@ -19,7 +19,8 @@
  * Implementation of hook_cron().
  */
 function xmlsitemap_user_cron() {
-  if (user_access('access user profiles', drupal_anonymous_user()) && ($limit = variable_get('xmlsitemap_cron_limit', 100)) != -1) {
+  if (user_access('access user profiles', drupal_anonymous_user())) {
+    $limit = variable_get('xmlsitemap_cron_limit', 200);
     $sql = "SELECT u.uid FROM {users} u LEFT JOIN {xmlsitemap_user} xu ON xu.pdata = u.uid WHERE xu.pdata IS NULL AND u.uid <> 0 ORDER BY u.access DESC";
     $result = db_query_range($sql, 0, $limit);
     $row = new stdClass();
