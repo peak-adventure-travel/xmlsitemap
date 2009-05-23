@@ -19,17 +19,21 @@
  * Form builder; return the additional links form.
  */
 function xmlsitemap_additional_links() {
-  $links = _xmlsitemap_additional_links_list();
   $form = array('#tree' => TRUE);
+  $links = _xmlsitemap_additional_links_list();
   foreach ($links as $id => $link) {
     $form[$id]['#link'] = (array)$link;
-    $form[$id]['path'] = array(
-      '#value' => check_plain(truncate_utf8($link->path, 40, FALSE, TRUE))
+    $form[$id]['pdata'] = array(
+      '#value' => check_plain(truncate_utf8($link->pdata, 40, FALSE, TRUE))
     );
-    $form[$id]['weight'] = array(
-      '#type' => 'weight',
-      '#delta' => 10,
-      '#default_value' => $link->weight
+    $form[$id]['status'] = array(
+      '#type' => 'checkbox',
+      '#default_value' => $link->status,
+    );
+    $form[$id]['priority'] = array(
+      '#type' => 'select',
+      '#default_value' => $link->priority,
+      '#options' => xmlsitemap_priority_options(),
     );
     $form[$id]['edit'] = array(
       '#value' => l(t('edit'), "admin/settings/xmlsitemap/additional/edit/{$id}")
@@ -38,14 +42,11 @@ function xmlsitemap_additional_links() {
       '#value' => l(t('delete'), "admin/settings/xmlsitemap/additional/delete/{$id}")
     );
   }
-  if (count($links) > 1) {
+  if (count($links)) {
     $form['submit'] = array(
       '#type' => 'submit',
       '#value' => t('Save')
     );
-  }
-  elseif (isset($link)) {
-    unset($form[$link->lid]['weight']);
   }
   return $form;
 }
@@ -54,11 +55,21 @@ function xmlsitemap_additional_links() {
  * Submit function for the additional links list.
  */
 function xmlsitemap_additional_links_submit($form, &$form_state) {
+  $saved = TRUE;
   foreach ($form_state['values'] as $id => $link) {
-    if (is_numeric($id) && $form[$id]['#link']['weight'] != $form_state['values'][$id]['weight']) {
-      $form[$id]['#link']['weight'] = $form_state['values'][$id]['weight'];
-      drupal_write_record('xmlsitemap_additional', $form[$id]['#link'], 'lid');
+    if (is_numeric($id) && ($form[$id]['#link']['status'] != $form_state['values'][$id]['status'] || $form[$id]['#link']['priority'] != $form_state['values'][$id]['priority'])) {
+      $form[$id]['#link']['status'] = $form_state['values'][$id]['status'];
+      $form[$id]['#link']['priority'] = $form_state['values'][$id]['priority'];
+      $row = (object)(array() + $form[$id]['#link']);
+      $row->changed = REQUEST_TIME;
+      $saved = $saved && xmlsitemap_write_link($row, 'xmlsitemap_additional', 'xmlsitemap');
     }
+  }
+  if (!$saved) {
+    drupal_set_message(t('An error occurred while saving the links.'), 'error', FALSE);
+  }
+  else {
+    drupal_set_message(t('The links have been saved.'), 'status', FALSE);
   }
 }
 
@@ -68,28 +79,35 @@ function xmlsitemap_additional_links_submit($form, &$form_state) {
 function xmlsitemap_additional_links_edit($form_state, $link = NULL) {
   if (!isset($link)) {
     $link = (object) array(
-      'path' => '',
-      'weight' => 0,
+      'pdata' => '',
+      'status' => TRUE,
+      'priority' => 0.5,
     );
   }
   else {
-    $form['#lid'] = $link->lid;
+    $form['#mid'] = $link->mid;
   }
-  $form['path'] = array(
+  $form['pdata'] = array(
     '#type' => 'textfield',
     '#title' => t('Relative path'),
     '#description' => t('The path must be relative to the Drupal installation directory, and accessible from the anonymous user. If the path is a path alias, the original path will be used.'),
-    '#default_value' => $link->path,
+    '#default_value' => $link->pdata,
     '#size' => 40,
     '#maxlength' => 128,
     '#required' => TRUE,
   );
-  $form['weight'] = array(
-    '#type' => 'weight',
-    '#title' => t('Weight'),
-    '#default_value' => $link->weight,
-    '#delta' => 10,
-    '#description' => t('The weight of a link determinates its sitemap priority; the links with a heavier weight will have a lower priority'),
+  $form['status'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Enabled'),
+    '#default_value' => $link->status,
+    '#description' => t('If selected, the link will appear in the sitemap.'),
+  );
+  $form['priority'] = array(
+    '#type' => 'select',
+    '#title' => t('Priority'),
+    '#default_value' => $link->priority,
+    '#options' => xmlsitemap_priority_options(TRUE),
+    '#description' => t('The priority of a link determinates its position in the sitemap; the links with a higher priority will appear first in the sitemap'),
   );
   $form['save'] = array(
     '#type' => 'submit',
@@ -118,15 +136,15 @@ function xmlsitemap_additional_links_edit_validate($form, &$form_state) {
     form_set_error('path', t('The path is not valid.'));
     return;
   }
-  if (!isset($menu['access']) || !$menu['access']) {
+  if (empty($menu['access'])) {
     form_set_error('path', t('The path is not accessible from the anonymous user.'));
     return;
   }
-  $lid = db_result(db_query("SELECT lid from {xmlsitemap_additional} WHERE path = '%s'", $path));
-  if ($lid !== FALSE) {
+  $mid = db_result(db_query("SELECT mid from {xmlsitemap_additional} WHERE pdata = '%s'", $path));
+  if ($mid !== FALSE) {
     $error = t('The path has been already used.');
-    if (isset($form['#lid'])) {
-      if ($form['#lid'] != $lid) {
+    if (isset($form['#mid'])) {
+      if ($form['#mid'] != $mid) {
         form_set_error('path', $error);
       }
     }
@@ -143,28 +161,24 @@ function xmlsitemap_additional_links_edit_validate($form, &$form_state) {
  * Submit function for the edit form.
  */
 function xmlsitemap_additional_links_edit_submit($form, &$form_state) {
-  $form_values = $form_state['values'];
-  if (isset($form['#lid'])) {
-    $form_values['lid'] = $form['#lid'];
-    drupal_write_record('xmlsitemap_additional', $form_values, 'lid');
-    drupal_set_message(t('The %link link has been updated.', array('%link' => $form_values['path'])));
-    watchdog('xmlsitemap', 'The %link link has been updated.', array('%link' => $form_values['path']));
+  $form_state['values']['mid'] = $form['#mid'];
+  $link = (object) (array() + $form_state['values']);
+  if ($rc = xmlsitemap_write_link($link, 'xmlsitemap_additional', 'xmlsitemap')) {
+    drupal_set_message(t('The %link link has been updated.', array('%link' => $link->pdata)), 'status', FALSE);
+    watchdog('xmlsitemap', 'The %link link has been updated.', array('%link' => $link->pdata));
   }
-  else {
-    drupal_write_record('xmlsitemap_additional', $form_values);
-    drupal_set_message(t('The %link link has been created.', array('%link' => $form_values['path'])));
-    watchdog('xmlsitemap', 'The %link link has been created.', array('%link' => $form_values['path']));
+  if (!rc) {
+    drupal_set_message(t('An error occurred while saving the link %link.', array('%link' => $link->pdata)), 'error', FALSE);
+    watchdog('xmlsitemap', 'An error occurred while saving the link %link.', array('%link' => $link->pdata), WATCHDOG_ERROR);
   }
-  
   $form_state['redirect'] = 'admin/settings/xmlsitemap/additional/list';
 }
 
 /**
  * Form builder; display the form to delete an additional link.
  */
-function xmlsitemap_additional_links_delete_confirm($form_state, $lid) {
-  $form['#lid'] = $lid;
-  
+function xmlsitemap_additional_links_delete_confirm($form_state, $link) {
+  $form['#link'] = $link;
   return confirm_form($form,
     t('Are you sure you want to delete the link?'),
     isset($_GET['destination']) ? $_GET['destination'] : 'admin/settings/xmlsitemap/additional/list',
@@ -179,8 +193,9 @@ function xmlsitemap_additional_links_delete_confirm($form_state, $lid) {
  */
 function xmlsitemap_additional_links_delete_confirm_submit($form, &$form_state) {
   if ($form_state['values']['confirm']) {
-    db_query('DELETE FROM {xmlsitemap_additional} WHERE lid = %d', $form['#lid']);
-    drupal_set_message(t('The link has been deleted'), 'status', FALSE);
+    $link = $form['#link'];
+    db_query('DELETE FROM {xmlsitemap_additional} WHERE mid = %d', $link->mid);
+    drupal_set_message(t('The %link link has been deleted', array('%link' => $link->pdata)), 'status', FALSE);
   }
 
   $form_state['redirect'] = 'admin/settings/xmlsitemap/additional/list';
@@ -239,7 +254,7 @@ function xmlsitemap_settings() {
     '#type' => 'select',
     '#title' => t('Front page priority'),
     '#description' => t('The absolute priority for the front page.'),
-    '#default_value' => variable_get('xmlsitemap_front_page_priority', 1),
+    '#default_value' => variable_get('xmlsitemap_front_page_priority', 1.0),
     '#options' => xmlsitemap_priority_options(),
   );
   $form = system_settings_form($form);
@@ -262,7 +277,7 @@ function xmlsitemap_settings_validate($form, &$form_state) {
  * Submit the settings form.
  */
 function xmlsitemap_settings_submit($form, &$form_state) {
-  xmlsitemap_flag_sitemap();
+  xmlsitemap_flag_sitemap(TRUE);
 }
 
 /**
@@ -333,21 +348,18 @@ function xmlsitemap_tools_settings() {
 function theme_xmlsitemap_additional_links($form) {
   $rows = array();
   foreach (element_children($form) as $key) {
-    if (isset($form[$key]['path'])) {
+    if (isset($form[$key]['pdata'])) {
       $link = &$form[$key];
       
       $row = array();
-      $row[] = drupal_render($link['path']);
-      if (isset($link['weight'])) {
-        $link['weight']['#attributes']['class'] = 'link-weight';
-        $row[] = drupal_render($link['weight']);
-      }
+      $row[] = drupal_render($link['pdata']);
+      $row[] = drupal_render($link['status']);
+      $row[] = drupal_render($link['priority']);
       $row[] = drupal_render($link['edit']);
       $row[] = drupal_render($link['delete']);
       
       $rows[] = array(
         'data' => $row,
-        'class' => 'draggable'
       );
     }
   }
@@ -355,17 +367,15 @@ function theme_xmlsitemap_additional_links($form) {
     $rows[] = array(
       array(
         'data' => t('No additional links have been created.'),
-        'colspan' => '3'
+        'colspan' => '5'
       )
     );
   }
-  $header = array(t('Path'));
-  if (isset($form['submit'])) {
-    $header[] = t('Weight');
-    drupal_add_tabledrag('xmlsitemap-additional', 'order', 'sibling', 'link-weight');
-  }
+  $header[] = t('Path');
+  $header[] = t('Enabled');
+  $header[] = t('Priority');
   $header[] = array('data' => t('Operations'), 'colspan' => '2');
-  return theme('table', $header, $rows, array('id' => 'xmlsitemap-additional')) . drupal_render($form);
+  return theme('table', $header, $rows) . drupal_render($form);
 }
 
 /**

@@ -32,12 +32,6 @@ if (!defined('REQUEST_TIME')) {
  */
 define('XMLSITEMAP_DATE_W3C', 'Y-m-d\TH:i:s\Z');
 
-/**
- * The flag set when a sitemap link is not enabled.
- */
-define('XMLSITEMAP_LINK_DISABLED', 1);
-
-
 /*****************************************************************************
  * Drupal hooks.
  ****************************************************************************/
@@ -133,7 +127,7 @@ function xmlsitemap_menu() {
     'type' => MENU_LOCAL_TASK,
     'file' => 'xmlsitemap.admin.inc',
   );
-  $items['admin/settings/xmlsitemap/additional/delete/%'] = array(
+  $items['admin/settings/xmlsitemap/additional/delete/%xmlsitemap_additional'] = array(
     'title' => 'Delete',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('xmlsitemap_additional_links_delete_confirm', 5),
@@ -142,7 +136,7 @@ function xmlsitemap_menu() {
     'type' => MENU_CALLBACK,
     'file' => 'xmlsitemap.admin.inc',
   );
-  $items['admin/settings/xmlsitemap/additional/edit/%xmlsitemap_link'] = array(
+  $items['admin/settings/xmlsitemap/additional/edit/%xmlsitemap_additional'] = array(
     'title' => 'Edit link',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('xmlsitemap_additional_links_edit', 5),
@@ -176,24 +170,21 @@ function xmlsitemap_menu() {
   );
   $items['sitemap.xml'] = array(
     'title' => 'Sitemap index',
-    'page callback' => 'xmlsitemap_output',
+    'page callback' => 'xmlsitemap_output_index',
     'access arguments' => $access_content,
     'type' => MENU_CALLBACK,
     'file' => 'xmlsitemap.pages.inc',
   );
-  $chunk_size = variable_get('xmlsitemap_chunk_size', 1000);
-  if (($link_count = xmlsitemap_link_count()) && $link_count > $chunk_size) {
-    for ($chunk = 0; $chunk < $link_count / $chunk_size; ++$chunk) {
-      $items["sitemap$chunk.xml"] = array(
-        'title' => 'Sitemap !number',
-        'title arguments' => array('!number' => $chunk),
-        'page callback' => 'xmlsitemap_output',
-        'page arguments' => array((string) $chunk),
-        'access arguments' => $access_content,
-        'type' => MENU_CALLBACK,
-        'file' => 'xmlsitemap.pages.inc',
-      );
-    }
+  for ($chunk = 0; $chunk < xmlsitemap_chunk_count(); ++$chunk) {
+    $items["sitemap-$chunk.xml"] = array(
+      'title' => 'Sitemap !number',
+      'title arguments' => array('!number' => $chunk),
+      'page callback' => 'xmlsitemap_output_chunk',
+      'page arguments' => array((string) $chunk),
+      'access arguments' => $access_content,
+      'type' => MENU_CALLBACK,
+      'file' => 'xmlsitemap.pages.inc',
+    );
   }
   return $items;
 }
@@ -225,6 +216,46 @@ function xmlsitemap_theme() {
 }
 
 /**
+ * Implementation of hook_xmlsitemap_link_count().
+ */
+function xmlsitemap_xmlsitemap_link_count() {
+  $query = "SELECT COUNT(*) FROM {xmlsitemap_additional} WHERE status = %d";
+  return 1 + db_result(db_query($query, TRUE));
+}
+
+/**
+ * Implementation of hook_xmlsitemap_links().
+ */
+function xmlsitemap_xmlsitemap_links($fp, $from, $count = 0) {
+  $link = new stdClass();
+  $link->loc = url(NULL, array('absolute' => TRUE));
+  $changed = variable_get('xmlsitemap_front_page_changed', -1);
+  $changefreq = variable_get('xmlsitemap_front_page_changefreq', 3600);
+  if ($changed == -1 || REQUEST_TIME - $changed > $changefreq) {
+    $changed = REQUEST_TIME;
+    variable_set('xmlsitemap_front_page_changed', REQUEST_TIME);
+  }
+  $link->changed = $changed;
+  $link->changefreq = $changefreq;
+  $link->priority = variable_get('xmlsitemap_front_page_priority', 1.0);
+  xmlsitemap_output_link($fp, $link);
+  $query = "SELECT * FROM {xmlsitemap_additional} WHERE status = %d ORDER BY changed DESC, previously_changed DESC";
+  if ($count) {
+    $result = db_query_range($query, TRUE, $from, $count);
+  }
+  else {
+    $result = db_query($query, TRUE);
+  }
+  while (--$count > 0 && ($row = db_fetch_object($result))) {
+    $changefreq = max($row->changed - $row->previously_changed, REQUEST_TIME - $row->changed);
+    $link->loc = url($row->pdata, array('absolute' => TRUE));
+    $link->changed = $row->changed;
+    $link->changefreq = $changefreq;
+    xmlsitemap_output_link($fp, $link);
+  }
+}
+
+/**
  * Implementation of hook_xmlsitemap_operations().
  */
 function xmlsitemap_xmlsitemap_operations() {
@@ -240,81 +271,106 @@ function xmlsitemap_xmlsitemap_operations() {
   );
 }
 
-/**
- * Implementation of hook_xmlsitemap_links().
- */
-function xmlsitemap_xmlsitemap_links() {
-  $changefreq = variable_get('xmlsitemap_front_page_changefreq', 3600);
-  $row = db_fetch_object(db_query("SELECT * FROM {xmlsitemap} WHERE type = 'frontpage' AND module = 'xmlsitemap'"));
-  if ($row === FALSE) {
-    $row = new stdClass();
-    $row->module = 'xmlsitemap';
-    $row->type = 'frontpage';
-    $row->changed = REQUEST_TIME - $changefreq;
-    $row->changefreq = $changefreq;
-    $row->priority = variable_get('xmlsitemap_front_page_priority', 1);
-  }
-  else {
-    $update = TRUE;
-    if (REQUEST_TIME - $row->changed > $changefreq) {
-      $row->changed = REQUEST_TIME - $changefreq;
-      $row->changefreq = $changefreq;
-    }
-  }
-  drupal_write_record('xmlsitemap', $row, isset($update) ? 'lid' : NULL);
-  $weight = db_fetch_object(db_query("SELECT MIN(weight) AS min, MAX(weight) AS max FROM {xmlsitemap_additional}"));
-  $row = new stdClass();
-  $row->module = 'xmlsitemap';
-  $row->type = 'additional_link';
-  foreach (_xmlsitemap_additional_links_list() as $id => $link) {
-    $row->loc = $link->path;
-    if (isset($weight->min) && isset($weight->max) && $weight->min != $link->weight && $weight->max != $link->weight) {
-      $row->priority = 1.0 - min(max(round(($link->weight - $weight->min) / $weight->max - $weight->min, 1), 0.0), 1.0);
-    }
-    else {
-      $row->priority = 0.5;
-    }
-    $old_row = db_fetch_object(db_query("SELECT lid, type, priority FROM {xmlsitemap} WHERE loc = '%s'", $row->loc));
-    if ($old_row === FALSE) {
-      drupal_write_record('xmlsitemap', $row);
-    }
-    elseif ($old_row->type == 'xmlsitemap' && $old_row->priority != $row->priority) {
-      $row->lid = $old_row->lid;
-      drupal_write_record('xmlsitemap', $row, 'lid');
-    }
-  }
-}
-
 /*****************************************************************************
  * Public functions.
  ****************************************************************************/
 
 /**
- * Return the API identifier currently inplemented in the module.
+ * Load the additional link with the passed ID.
+ * @param $lid
+ *   The ID of the additional link to load from the database.
  * @return
- *   A string identifying the current API version.
+ *   An additional link object, or FALSE.
  */
-function xmlsitemap_api() {
-  return '1.0';
+function xmlsitemap_additional_load($mid) {
+  return db_fetch_object(db_query("SELECT * FROM {xmlsitemap_additional} WHERE mid = %d", $mid));
+}
+
+function xmlsitemap_cache_filename($chunk) {
+  global $base_url, $language;
+  $filename = '';
+  $chunks_info= variable_get('xmlsitemap_sitemap_chunks_info', array());
+  $md5 = substr(md5($base_url), 0, 8);
+  foreach ($chunks_info as $module => $info) {
+    // if first chunk is less than zero, the module is not enabled.
+    if ($info['first chunk'] < 0) {
+      continue;
+    }
+    if (empty($info['chunks'])) {
+      continue;
+    }
+    if ($chunk < $info['first chunk']) {
+      break;
+    }
+    if ($chunk >= $info['first chunk'] && $chunk <= $info['first chunk'] + $info['chunks'] - 1) {
+      $delta = $chunk - $info['first chunk'];
+      return 'sitemap-'. $md5 . $info['id'] . $delta . $language->language;
+    }
+  }
+  return '';
 }
 
 /**
- * Create the identifier that univocally identifies the sitemap cache files
- * for a specific domain, and for a specific language.
+ * Return the number of chunks that are present in the sitemap.
+ * @param $reset
+ *   TRUE, if the cached value must be recalculated.
  * @return
- *  An array of two item; the first item is related with the domain, the
- *  second item is related with the language.
+ *   The number of chunks the sitemap is made of.
  */
-function xmlsitemap_cache_id() {
-  static $id;
-  global $base_url, $language;
-  if (!isset($id)) {
-    $id[] = substr(md5($base_url), 0, 8);
-    $id[] = $language->language;
+function xmlsitemap_chunk_count($reset = FALSE) {
+  static $chunk_count;
+  if (!isset($chunk_count) || $reset) {
+    $chunk_size = variable_get('xmlsitemap_chunk_size', 1000);
+    $chunks_info = variable_get('xmlsitemap_sitemap_chunks_info', array());
+    $link_count = 0;
+    $module_count = 0;
+    foreach(module_implements('xmlsitemap_link_count') as $module) {
+      if (!isset($chunks_info[$module]['id'])) {
+        $chunks_info[$module]['id'] = substr(md5($module), 0, 8);
+      }
+      $result = module_invoke($module, 'xmlsitemap_link_count');
+      $count = empty($result) ? 0 : $result;
+      $chunks_info[$module]['links'] = $count;
+      $link_count += $count;
+      $module_count++;
+    }
+    $chunk_count = (integer) ($link_count / $chunk_size);
+    // Adjust the chunk count because each module will not share its own
+    // chunks with the other modules.
+    $chunk_count += $module_count;
+    if ($chunk_count > 1000) {
+      $new_size = (integer) ceil($link_count / 100000) * 100;
+      // Set which modules needs to update their cache files.
+      foreach ($chunks_info as $module => $info) {
+        if (!empty($info['links']) && $info['links'] > $old_size) {
+          $chunks_info[$module]['needs update'] = TRUE;
+        }
+      }
+      variable_set('xmlsitemap_chunk_size', $new_size);
+      $chunk_size = $new_size;
+    }
+    $chunk_count = 0;
+    foreach ($chunks_info as $module => $info) {
+      // If a module is not enabled, its links will not be added to the
+      // sitemap.
+      if (!module_exists($module)) {
+        $chunks_info[$module]['first chunk'] = -1;
+      }
+      else {
+        $chunks_info[$module]['chunks'] = $chunks = ceil($info['links'] / $chunk_size);
+        if ($chunks) {
+          $chunks_info[$module]['first chunk'] = $chunk_count;
+          $chunk_count += $chunks;
+        }
+        else {
+          $chunks_info[$module]['first chunk'] = -1;
+        }
+      }
+    }
+    variable_set('xmlsitemap_sitemap_chunks_info', $chunks_info);
   }
-  return $id;
+  return $chunk_count;
 }
-
 /**
  * Return the array for the cron limit options.
  */
@@ -340,60 +396,85 @@ function xmlsitemap_cron_options() {
  * Delete the cache file used for the sitemap content, and mark the sitemap as
  * changed.
  */
-function xmlsitemap_delete_cache_files() {
+function xmlsitemap_delete_cache_files($all = TRUE, $flag = TRUE) {
+  global $base_url, $language;
   $result = TRUE;
-  $id = xmlsitemap_cache_id();
+  $id = substr(md5($base_url), 0, 8);
+  $filename = 'sitemap-'. $id[0] . ($all ? '.*' : ".*{$language->language}.*") .'\.xml';
   $files = file_scan_directory(
     variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap'),
-    'xsm-'. $id[0] .'-.*\.xml', array('.', '..', 'CVS'), 0, FALSE
+    $filename, array('.', '..', 'CVS'), 0, FALSE
   );
   foreach ($files as $filename => $info) {
     $result = $result && file_delete($filename);
   }
-  xmlsitemap_flag_sitemap();
+  if ($flag) {
+    xmlsitemap_flag_sitemap(TRUE);
+  }
   return $result;
 }
 
 /**
  * Mark the sitemap as changed, and the cache as needing update.
+ * @param $value
+ *   The value to set the flag to.
+ * @param $module
+ *   The module that changed the sitemap.
  */
-function xmlsitemap_flag_sitemap() {
-  if (!variable_get('xmlsitemap_sitemap_is_changed', FALSE)) {
+function xmlsitemap_flag_sitemap($value = FALSE, $module = NULL) {
+  if (variable_get('xmlsitemap_sitemap_is_changed', FALSE) != $value) {
     variable_set('xmlsitemap_sitemap_is_changed', TRUE);
   }
-  if (!variable_get('xmlsitemap_sitemap_needs_update', FALSE)) {
-    variable_set('xmlsitemap_sitemap_needs_update', TRUE);
+  if (variable_get('xmlsitemap_ping_sitemap', FALSE) != $value) {
+    variable_set('xmlsitemap_ping_sitemap', TRUE);
+  }
+  // Update the informations about the sitemap chunks.
+  if (!empty($module)) {
+    $chunks_info = variable_get('xmlsitemap_sitemap_chunks_info', array());
+    $chunks_info[$module]['needs update'] = TRUE;
+    if (empty($chunks_info[$module]['id'])) {
+      $chunks_info[$module]['id'] = substr(md5($module), 0, 8);
+    }
+    if (!isset($chunks_info[$module]['chunks'])) {
+      $chunks_info[$module]['chunks'] = 0;
+    }
+  }
+  if ($value) {
+    xmlsitemap_chunk_count(TRUE);
   }
 }
 
 /**
- * Return the number of links present in xmlsitemap table.
+ * Output the sitemap XML data for the passed link.
+ * @param $fp
+ *   The file resource for the file to write, or = if the output is printed
+ *   on the screen.
+ * @param $link
+ *   The object containing the data to print.
  */
-function xmlsitemap_link_count() {
-  static $link_count = 0;
-  if (!$link_count) {
-    if (!db_table_exists('xmlsitemap')) {
-      watchdog('xmlsitemap', 'The <em>xmlsitemap</em> database table does not exist.', array(), WATCHDOG_ERROR);
-    }
-    else {
-      $link_count = db_result(db_query("SELECT COUNT(*)". xmlsitemap_sitemap_query()));
-    }
-  }
-  return $link_count;
-}
+function xmlsitemap_output_link($fp, $link) {
+  $template = <<<EOC
+  <url>
+    <loc>%loc</loc>
+    <lastmod>%lastmod</lastmod>
+    <changfreq>%changefreq</changefreq>
+    <priority>%priority</priority>
+  </url>
 
-/**
- * Load the additional link with the passed ID.
- * @param $lid
- *   The ID of the additional link to load from the database.
- * @return
- *   An additional link object, or FALSE.
- */
-function xmlsitemap_link_load($lid) {
-  if (($link = db_fetch_object(db_query("SELECT lid, path, weight FROM {xmlsitemap_additional} WHERE lid = %d", $lid))) == FALSE) {
-    return FALSE;
+EOC;
+  $trans = array(
+    '%loc' => check_url($link->loc),
+    '%lastmod' => gmdate(XMLSITEMAP_DATE_W3C, $link->changed),
+    '%changefreq' => xmlsitemap_sitemap_frequency($link->changefreq),
+    '%priority' => number_format($link->priority, 1),
+  );
+  $output = strtr($template, $trans);
+  if ($fp) {
+    fwrite($fp, $output);
   }
-  return $link;
+  else {
+    print $output;
+  }
 }
 
 /**
@@ -407,7 +488,7 @@ function xmlsitemap_link_load($lid) {
  * @return
  *  An array of priority options.
  */
-function xmlsitemap_priority_options($option = '') {
+function xmlsitemap_priority_options($exclude = FALSE, $default = FALSE) {
   $options = array(
     '1' => t('1.0'),
     '0.9' => t('0.9'),
@@ -421,10 +502,10 @@ function xmlsitemap_priority_options($option = '') {
     '0.1' => t('0.1'),
     '0' => t('0.0')
   );
-  if ($option == 'exclude' || $option == 'both') {
+  if ($exclude) {
     $options['-1'] = t('Not in sitemap');
   }
-  if ($option == 'default' || $option == 'both') {
+  if ($default) {
     $options['-2'] = t('Default');
   }
   return $options;
@@ -470,34 +551,6 @@ function xmlsitemap_sitemap_frequency($interval) {
 }
 
 /**
- * Complete the query used to select rows from the xmlsitemap table.
- */
-function xmlsitemap_sitemap_query() {
-  global $language;
-  $default = language_default();
-  $language_query = "AND xsm.language IN ('". $language->language ."', '')";
-  switch(variable_get('language_negotiation', LANGUAGE_NEGOTIATION_NONE)) {
-    case LANGUAGE_NEGOTIATION_NONE:
-      $language_query = '';
-      break;
-    case LANGUAGE_NEGOTIATION_PATH_DEFAULT:
-    case LANGUAGE_NEGOTIATION_PATH:
-      if (variable_get('xmlsitemap_all_links_to_default_language', 0) && $language->language == $default->language) {
-        $language_query = '';
-      }
-      break;
-  }
-  return "
-    FROM {xmlsitemap} xsm
-    INNER JOIN {system} s ON s.name = xsm.module
-    WHERE s.type = 'module'
-      AND s.status = 1
-      $language_query
-      AND (xsm.priority >= 0 AND xsm.priority <= 1)
-    ";
-}
-
-/**
  * Return an array used to add additional form fields in the user form.
  */
 function xmlsitemap_user_form_fieldset() {
@@ -508,12 +561,112 @@ function xmlsitemap_user_form_fieldset() {
       '#type' => 'fieldset',
       '#title' => t('XML sitemap'),
       '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
       '#access' => user_access('override profile settings') || user_access('administer users'),
       '#weight' => 7,
     );
     $done = TRUE;
   }
   return $form;
+}
+
+/**
+ * Write data in the sitemap table. This is an altered version of
+ * drupal_write_record() adapted for the specific case.
+ * @param $link
+ *   The object containing the data to be written in the database table.
+ * @return
+ *   FALSE, if the data have not be written in the database.
+ */
+function xmlsitemap_write_link(&$link, $table, $module = NULL) {
+  // If the module name is not given, use the table name.
+  if (empty($table)) {
+    return FALSE;
+  }
+  if (empty($module)) {
+    $module = $table;
+  }
+  // Retrieve the default values, and use them for the object properties that
+  // have not been set; serial type fields are ignored.
+  $schema = drupal_get_schema($table);
+  if (empty($schema)) {
+    return FALSE;
+  }
+  // Fill in defaults for fields that are not set.
+  foreach ($schema['fields'] as $field => $info) {
+    if (!isset($link->$field) && isset($info['default'])) {
+      $link->$field = $info['default'];
+    }
+  }
+  // Allow third-party modules to alter the data being saved.
+  drupal_alter('xmlsitemap_link', $link, $module);
+  // Verify if there is already a row that refers to the same link.
+  $condition = "pdata = ". db_type_placeholder($schema['fields']['pdata']['type']);
+  $row = db_fetch_object(db_query("SELECT * FROM {". $table ."} WHERE ". $condition, $link->pdata));
+  $update = ($row !== FALSE);
+  watchdog('xmlsitemap', '$update = %update', array('%update' => (int) $update), WATCHDOG_DEBUG);
+  watchdog('xmlsitemap', '$row = %row', array('%row' => print_r($row, TRUE)), WATCHDOG_DEBUG);
+  // Don't write a new row if status is FALSE.
+  if (!($update || $link->status)) {
+    return FALSE;
+  }
+  if ($update) {
+    $link->mid = $row->mid;
+    if ($link->changed > $row->changed) {
+      $link->previously_changed = $row->changed;
+    }
+    else {
+      $link->previously_changed = $row->previously_changed;
+      $link->changed = $row->changed;
+    }
+  }
+  $fields = $defs = $values = $serials = $placeholders = array();
+  foreach ($schema['fields'] as $field => $info) {
+    if ($info['type'] == 'serial') {
+      $serials[] = $field;
+      // Ignore values for serials when inserting data.
+      if (!$update) {
+        unset($link->$field);
+      }
+    }
+    if (isset($link->$field)) {
+      $fields[] = $field;
+      $placeholders[] = db_type_placeholder($info['type']);
+      $values[] = $link->$field;
+    }
+  }
+  $query = '';
+  if (!$update) {
+    $query = "INSERT INTO {". $table ."} (". implode(', ', $fields) .') VALUES ('. implode(', ', $placeholders) .')';
+    $return = SAVED_NEW;
+  }
+  else {
+    $query = '';
+    foreach ($fields as $id => $field) {
+      if ($query) {
+        $query .= ', ';
+      }
+      $query .= $field .' = '. $placeholders[$id];
+    }
+    $condition = "pdata = ". db_type_placeholder($schema['fields']['pdata']['type']);
+    $values[] = $link->pdata;
+    $query = "UPDATE {". $table ."} SET $query WHERE ". $condition;
+    $return = SAVED_UPDATED;
+  }
+  // Execute the SQL.
+  if (db_query($query, $values)) {
+    if ($serials) {
+      // Get last insert ids and fill them in.
+      foreach ($serials as $field) {
+        $link->$field = db_last_insert_id($table, $field);
+      }
+    }
+    xmlsitemap_flag_sitemap(TRUE, $module);
+  }
+  else {
+    $return = FALSE;
+  }
+  return $return;
 }
 
 /*****************************************************************************
@@ -532,7 +685,7 @@ function _xmlsitemap_operation_delete_cache_files() {
 }
 
 function _xmlsitemap_operation_flag_sitemap() {
-  xmlsitemap_flag_sitemap();
+  xmlsitemap_flag_sitemap(TRUE);
   drupal_set_message(t('The sitemap has been flagged as needing update.'), 'status', FALSE);
   watchdog('xmlsitemap', 'The sitemap has been flagged as needing update.');
 }
@@ -548,19 +701,12 @@ function _xmlsitemap_additional_links_list() {
   static $links;
   if (!isset($links)) {
     $links = array();
-    $result = db_query("SELECT lid, path, weight FROM {xmlsitemap_additional} ORDER BY weight ASC");
+    $result = db_query("SELECT * FROM {xmlsitemap_additional} ORDER BY priority ASC");
     while ($link = db_fetch_object($result)) {
-      $links[$link->lid] = $link;
+      $links[$link->mid] = $link;
     }
   }
   return $links;
-}
-
-/**
- * Return the revision number as extracted from the CVS revision tag.
- */
-function _xmlsitemap_revision() {
-  return preg_replace('/\$Rev[iI]sion:\s+(.*)\s+\$/iU', '$1', '$Revision$');
 }
 
 /**

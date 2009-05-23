@@ -14,36 +14,50 @@
  * Implementation of hook_enable().
  */
 function xmlsitemap_taxonomy_enable() {
-  if (db_table_exists('xmlsitemap_term')) {
-    db_query("UPDATE {system} SET schema_version = 0 WHERE name = 'xmlsitemap_taxonomy'");
-    db_query("DELETE FROM {system} WHERE name = 'xmlsitemap_term'");
-  }
-  xmlsitemap_flag_sitemap();
+  xmlsitemap_flag_sitemap(TRUE);
 }
 
 /**
  * Implementation of hook_disable().
  */
 function xmlsitemap_taxonomy_disable() {
-  xmlsitemap_flag_sitemap();
+  xmlsitemap_flag_sitemap(TRUE);
 }
 
 /**
  * Implementation of hook_schema().
  */
 function xmlsitemap_taxonomy_schema() {
-  $schema['xmlsitemap_term'] = array(
-    'description' => 'The base table for xmlsitemap_term.',
+  $schema['xmlsitemap_taxonomy'] = array(
+    'description' => 'The list of the taxonomy terms added to the sitemap.',
     'fields' => array(
-      'tid' => array(
-        'description' => 'The vocabulary term ID.',
+      'mid' => array(
+        'description' => 'The primary key.',
+        'type' => 'serial',
+        'not null' => TRUE,
+      ),
+      'pdata' => array(
+        'description' => 'The taxonomy term ID.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'default' => 0,
       ),
-      'vid' => array(
+      'sdata' => array(
         'description' => 'The vocabulary ID.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'status' => array(
+        'description' => 'Boolean indicating whether or not this node is enabled.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1,
+      ),
+      'previously_changed' => array(
+        'description' => 'The Unix timestamp of the previous change.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
@@ -56,21 +70,28 @@ function xmlsitemap_taxonomy_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
-      'previously_changed' => array(
-        'description' => 'The Unix timestamp of the previous change.',
-        'type' => 'int',
-        'unsigned' => TRUE,
+      'priority' => array(
+        'description' => 'The priority in the sitemap.',
+        'type' => 'float',
         'not null' => TRUE,
-        'default' => 0,
+        'default' => 0.5,
       ),
       'priority_override' => array(
-        'description' => 'The priority of the term in the sitemap.',
+        'description' => 'The value that override the normal priority.',
         'type' => 'float',
         'not null' => TRUE,
         'default' => -2.0,
       ),
     ),
-    'primary key' => array('tid'),
+    'indexes' => array(
+      'link_status' => array('status'),
+      'link_changed' => array('changed'),
+      'link_priority' => array('priority'),
+    ),
+    'unique keys' => array(
+      'link_pdata' => array('pdata'),
+    ),
+    'primary key' => array('mid'),
   );
   return $schema;
 }
@@ -79,9 +100,7 @@ function xmlsitemap_taxonomy_schema() {
  * Implementation of hook_install().
  */
 function xmlsitemap_taxonomy_install() {
-  if (!db_table_exists('xmlsitemap_term')) {
-    drupal_install_schema('xmlsitemap_taxonomy');
-  }
+  drupal_install_schema('xmlsitemap_node');
   db_query("UPDATE {system} SET weight = 10 WHERE name = 'xmlsitemap_taxonomy'");
 }
 
@@ -92,167 +111,13 @@ function xmlsitemap_taxonomy_install() {
 function xmlsitemap_taxonomy_update_6000() {
   $ret = array();
   if (db_table_exists('xmlsitemap_term')) {
-    if (db_column_exists('xmlsitemap_term', 'pid')) {
-      $result = array();
-      @db_drop_index($result, 'xmlsitemap_term', 'pid');
-      if ($result[0]['success']) {
-        $ret[] = $result[0];
-      }
-      db_drop_field($ret, 'xmlsitemap_term', 'pid');
-    }
-    $result = array();
-    @db_drop_primary_key($result, 'xmlsitemap_term');
-    if ($result[0]['success']) {
-      $ret[] = $result[0];
-    }
-    if (db_column_exists('xmlsitemap_term', 'tid')) {
-      db_change_field($ret, 'xmlsitemap_term', 'tid', 'tid',
-        array(
-          'description' => 'The vocabulary term ID.',
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-          'default' => 0,
-        ),
-        array('primary key' => array('tid'))
-      );
-    }
-    else {
-      db_add_field($ret, 'xmlsitemap_term', 'tid',
-        array(
-          'description' => 'The vocabulary term ID.',
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-          'default' => 0,
-        ),
-        array('primary key' => array('tid'))
-      );
-    }
-    if (!db_column_exists('xmlsitemap_term', 'vid')) {
-      db_add_field($ret, 'xmlsitemap_term', 'vid',
-        array(
-          'description' => 'The vocabulary ID.',
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-          'default' => 0,
-        )
-      );
-    }
-    if (db_column_exists('xmlsitemap_term', 'last_changed')) {
-      db_change_field($ret, 'xmlsitemap_term', 'last_changed', 'changed',
-        array(
-          'description' => 'The Unix timestamp of the last change.',
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-          'default' => 0,
-        )
-      );
-    }
-    else {
-      if (!db_column_exists('xmlsitemap_term', 'changed')) {
-        db_add_field($ret, 'xmlsitemap_term', 'changed',
-          array(
-            'description' => 'The Unix timestamp of the last change.',
-            'type' => 'int',
-            'unsigned' => TRUE,
-            'not null' => TRUE,
-            'default' => 0,
-          )
-        );
-      }
-      else {
-        db_change_field($ret, 'xmlsitemap_term', 'changed', 'changed',
-          array(
-            'description' => 'The Unix timestamp of the last change.',
-            'type' => 'int',
-            'unsigned' => TRUE,
-            'not null' => TRUE,
-            'default' => 0,
-          )
-        );
-      }
-    }
-    if (!db_column_exists('xmlsitemap_term', 'previously_changed')) {
-      db_add_field($ret, 'xmlsitemap_term', 'previously_changed',
-        array(
-          'description' => 'The Unix timestamp of the previous change.',
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-          'default' => 0,
-        )
-      );
-    }
-    else {
-      db_change_field($ret, 'xmlsitemap_term', 'previously_changed', 'previously_changed',
-        array(
-          'description' => 'The Unix timestamp of the previous change.',
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-          'default' => 0,
-        )
-      );
-    }
-    $ret[] = update_sql("UPDATE {xmlsitemap_term}
-      SET priority_override = -2.0
-      WHERE priority_override IS NULL"
-    );
-    db_change_field($ret, 'xmlsitemap_term', 'priority_override', 'priority_override',
-      array(
-        'description' => 'The priority of the term in the sitemap.',
-        'type' => 'float',
-        'not null' => TRUE,
-        'default' => -2.0,
-      )
-    );
+    db_drop_table($ret, 'xmlsitemap_term');
   }
-  else {
-    db_create_table($ret, 'xmlsitemap_term',
-      array(
-        'description' => 'The base table for xmlsitemap_term.',
-        'fields' => array(
-          'tid' => array(
-            'description' => 'The vocabulary term ID.',
-            'type' => 'int',
-            'unsigned' => TRUE,
-            'not null' => TRUE,
-            'default' => 0,
-          ),
-          'vid' => array(
-            'description' => 'The vocabulary ID.',
-            'type' => 'int',
-            'unsigned' => TRUE,
-            'not null' => TRUE,
-            'default' => 0,
-          ),
-          'changed' => array(
-            'description' => 'The Unix timestamp of the last change.',
-            'type' => 'int',
-            'unsigned' => TRUE,
-            'not null' => TRUE,
-            'default' => 0,
-          ),
-          'previously_changed' => array(
-            'description' => 'The Unix timestamp of the previous change.',
-            'type' => 'int',
-            'unsigned' => TRUE,
-            'not null' => TRUE,
-            'default' => 0,
-          ),
-          'priority_override' => array(
-            'description' => 'The priority of the term in the sitemap.',
-            'type' => 'float',
-            'not null' => TRUE,
-            'default' => -2.0,
-          ),
-        ),
-        'primary key' => array('tid'),
-      )
-    );
+  if (db_table_exists('xmlsitemap_taxonomy')) {
+    db_drop_table($ret, 'xmlsitemap_taxonomy');
+  }
+  foreach(xmlsitemap_taxonomy_schema() as $table => $definition) {
+    db_create_table($ret, $table, $definition);
   }
   return $ret;
 }
@@ -355,8 +220,7 @@ function xmlsitemap_taxonomy_update_6112() {
  *
  */
 function xmlsitemap_taxonomy_update_6113() {
-  $ret[] = update_sql("UPDATE {xmlsitemap} set module = 'xmlsitemap_taxonomy' WHERE module = 'xmlsitemap_term'");
-  return $ret;
+  return array();
 }
 
 /**
@@ -369,15 +233,21 @@ function xmlsitemap_taxonomy_update_6114() {
     $new_name = str_replace('_term_', '_taxonomy_', $name);
     $ret[] = update_sql("UPDATE {variable} set name = '$new_name' WHERE name = '$name'");
   }
-  $ret[] = update_sql("DELETE FROM {system} WHERE name = 'xmlsitemap_term'");
   return $ret;
+}
+
+/**
+ * Implementation of hook_update_N().
+ *
+ */
+function xmlsitemap_taxonomy_update_6115() {
+  return xmlsitemap_taxonomy_update_6000();
 }
 
 /**
  * Implementation of hook_uninstall().
  */
 function xmlsitemap_taxonomy_uninstall() {
-  drupal_uninstall_schema('xmlsitemap_taxonomy');
   db_query("DELETE FROM {variable} WHERE name LIKE 'xmlsitemap\_taxonomy\_%'");
 }
 

@@ -19,19 +19,22 @@
  * Implementation of hook_cron().
  */
 function xmlsitemap_node_cron() {
-  if (($limit = variable_get('xmlsitemap_cron_limit', 100)) != -1) {
-    $sql = "SELECT n.* FROM {node} n
-      LEFT JOIN {xmlsitemap_node} xn ON xn.nid = n.nid
-      WHERE xn.nid IS NULL
-        AND n.status <> 0";
+  $anonymous_user = drupal_anonymous_user();
+  if (user_access('access content', $anonymous_user) && ($limit = variable_get('xmlsitemap_cron_limit', 100)) != -1) {
+    $sql = "SELECT n.nid FROM {node} n LEFT JOIN {xmlsitemap_node} xn ON xn.pdata = n.nid WHERE xn.pdata IS NULL ORDER BY n.changed DESC";
     $result = db_query_range($sql, 0, $limit);
-    while ($node = db_fetch_object($result)) {
-      $row = new stdClass();
-      $row->nid = $node->nid;
-      $row->changed = $node->changed;
-      $row->previously_changed = $node->created;
-      drupal_write_record('xmlsitemap_node', $row);
-      xmlsitemap_flag_sitemap();
+    $row = new stdClass();
+    while ($nid = db_result($result)) {
+      if ($node = node_load($nid, NULL, TRUE)) {
+        $row->pdata = $node->nid;
+        $row->sdata = $node->vid;
+        $row->language = $node->language;
+        $row->status = $node->status && node_access('view', $node, $anonymous_user);
+        $row->previously_changed = $node->created;
+        $row->changed = $node->changed;
+        $row->priority = variable_get('xmlsitemap_node_type_priority_'. $node->type, 0.5);
+        xmlsitemap_write_link($row, 'xmlsitemap_node');
+      }
     }
   }
 }
@@ -47,11 +50,12 @@ function xmlsitemap_node_form_alter(&$form, &$form_state, $form_id) {
         '#type' => 'fieldset',
         '#title' => t('XML sitemap'),
         '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
         '#access' => user_access('override node priority') || user_access('administer nodes'),
         '#weight' => 30,
       );
     }
-    $options = xmlsitemap_priority_options('both');
+    $options = xmlsitemap_priority_options(TRUE, TRUE);
     $default = variable_get('xmlsitemap_node_type_priority_'. $node->type, '0.5');
     $form['xmlsitemap']['priority_override'] = array(
       '#type' => 'select',
@@ -74,6 +78,7 @@ function xmlsitemap_node_form_node_type_form_alter(&$form, &$from_state) {
         '#type' => 'fieldset',
         '#title' => t('XML sitemap'),
         '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
         '#weight' => 30,
       );
     }
@@ -82,7 +87,7 @@ function xmlsitemap_node_form_node_type_form_alter(&$form, &$from_state) {
       '#title' => t('Priority adjustment'),
       '#description' => t('This number will be added to the priority of this content type.'),
       '#default_value' => variable_get('xmlsitemap_node_type_priority_'. $form['#node_type']->type, 0.5),
-      '#options' => xmlsitemap_priority_options('exclude'),
+      '#options' => xmlsitemap_priority_options(TRUE),
     );
     $form['#submit'][] = 'xmlsitemap_node_type_submit';
   }
@@ -127,48 +132,26 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
   switch ($op) {
     case 'prepare':
       if (isset($node->nid)) {
-        $priority_override = db_result(db_query("SELECT priority_override
-          FROM {xmlsitemap_node} WHERE nid = %d",
-          $node->nid)
-        );
+        $priority_override = db_result(db_query("SELECT priority_override FROM {xmlsitemap_node} WHERE mid = %d", $node->nid));
         $node->priority_override = $priority_override !== FALSE ? $priority_override : -2.0;
       }
       break;
     case 'insert':
-      $row = new stdClass();
-      $row->nid = $node->nid;
-      $row->changed = $node->changed;
-      $row->previously_changed = $node->created;
-      $row->priority_override = isset($node->priority_override) ? $node->priority_override : -2.0;
-      drupal_write_record('xmlsitemap_node', $row);
-      if ($node->status) {
-        xmlsitemap_flag_sitemap();
-      }
-      break;
     case 'update':
-      if (($result = db_fetch_object(db_query("SELECT nid, changed, previously_changed, priority_override FROM {xmlsitemap_node} WHERE nid = %d", $node->nid))) === FALSE) {
-        $row = new stdClass();
-        $row->nid = $node->nid;
-        $row->changed = $node->changed;
-        $row->previously_changed =  $node->created;
-        $row->priority_override = isset($node->priority_override) ? $node->priority_override : -2.0;
-      }
-      else {
-        $row = $result;
-        $row->previously_changed = $row->changed;
-        $row->changed = $node->changed;
-        if (isset($node->priority_override)) {
-          $row->priority_override =  $node->priority_override;
-        }
-      }
-      drupal_write_record('xmlsitemap_node', $row, $result === FALSE ? NULL : 'nid');
-      xmlsitemap_flag_sitemap();
+      $row = new stdClass();
+      $row->pdata = $node->nid;
+      $row->sdata = $node->vid;
+      $row->status = $node->status && node_access('view', $node, drupal_anonymous_user());
+      $row->previously_changed = $node->created;
+      $row->changed = $node->changed;
+      $row->language = $node->language;
+      $row->priority = isset($node->type) ? variable_get('xmlsitemap_node_type_priority_'. $node->type, 0.5) : 0.5;
+      $row->priority_override = isset($node->priority_override) ? $node->priority_override : -2.0;
+      xmlsitemap_write_link($row, 'xmlsitemap_node');
       break;
     case 'delete':
-      db_query("DELETE FROM {xmlsitemap_node} WHERE nid = %d", $node->nid);
-      if ($node->status) {
-        xmlsitemap_flag_sitemap();
-      }
+      db_query("DELETE FROM {xmlsitemap_node} WHERE mid = %d", $node->nid);
+      xmlsitemap_flag_sitemap(TRUE);
       break;
   }
 }
@@ -182,47 +165,25 @@ function xmlsitemap_node_xmlsitemap_description() {
 }
 
 /**
- * Implementation of hook_xmlsitemap_link_status().
+ * Implementation of hook_xmlsitemap_link_count().
  */
-function xmlsitemap_node_xmlsitemap_link_status($type, $id, $sid) {
-  if (!($node = node_load($id))) {
-    return XMLSITEMAP_LINK_DISABLED;
-  }
-  if ($node->status) {
-    return 0;
-  }
-  return XMLSITEMAP_LINK_DISABLED;
+function xmlsitemap_node_xmlsitemap_link_count() {
+  return (integer) db_result(_xmlsitemap_node_build_query());
 }
 
 /**
  * Implementation of hook_xmlsitemap_links().
  */
-function xmlsitemap_node_xmlsitemap_links() {
-  $query = "SELECT n.nid, n.vid, n.type, n.language, n.uid, n.created, n.promote, xn.changed, xn.previously_changed, xn.priority_override
-    FROM {node} n
-    INNER JOIN {xmlsitemap_node} xn ON n.nid = xn.nid
-    WHERE n.status > 0";
-  $result = db_query(db_rewrite_sql($query));
-  $row = new stdClass();
-  $row->module = 'xmlsitemap_node';
-  $row->type = 'node';
-  while ($node = db_fetch_object($result)) {
-    $row->loc = 'node/'. $node->nid;
-    $row->id = $node->nid;
-    $row->sid = $node->vid;
-    $row->language = $node->language;
-    $row->changed = $node->changed;
-    $row->changefreq = max(REQUEST_TIME - $node->changed, empty($node->previously_changed) ? $node->changed - $node->created : $node->changed - $node->previously_changed);
-    $priority = xmlsitemap_node_get_priority($node);
-    $row->priority = ($priority == -1.0) ? $priority : min(max(round($priority, 1), 0.0), 1.0);
-    $old_row = db_fetch_object(db_query("SELECT lid, type, priority FROM {xmlsitemap} WHERE loc = '%s'", $row->loc));
-    if ($old_row === FALSE) {
-      drupal_write_record('xmlsitemap', $row);
-    }
-    elseif ($old_row->type == 'node' && $old_row->priority != $row->priority) {
-      $row->lid = $old_row->lid;
-      drupal_write_record('xmlsitemap', $row, 'lid');
-    }
+function xmlsitemap_node_xmlsitemap_links($fp, $from, $count = 0) {
+  $link = new stdClass();
+  $result = _xmlsitemap_node_build_query('*', $from, $count);
+  while ($row = db_fetch_object($result)) {
+    $changefreq = max($row->changed - $row->previously_changed, REQUEST_TIME - $row->changed);
+    $link->loc = url('node/'. $row->pdata, array('absolute' => TRUE));
+    $link->changed = $row->changed;
+    $link->changefreq = $changefreq;
+    $link->priority = $row->priority_override == -2.0 ? $row->priority : $row->priority_override;
+    xmlsitemap_output_link($fp, $link);
   }
 }
 
@@ -234,85 +195,44 @@ function xmlsitemap_node_xmlsitemap_links() {
  * Add submit actions to forms.
  */
 function xmlsitemap_node_type_submit($form, &$form_state) {
-  xmlsitemap_flag_sitemap();
+  xmlsitemap_flag_sitemap(TRUE);
 }
 
 /*****************************************************************************
- * Public functions.
+ * Private functions.
  ****************************************************************************/
 
 /**
- * Get the node priority in the sitemap.
- * @param $node
- *   The node object.
- * @param $load
- *   TRUE if priority_override must be loaded from the module table.
+ * Return the query to execute on xmlsitemap_node table.
+ * @param $what
+ *   The part of the query between 'SELECT' and 'FROM'.
  * @return
- *   The priority for the node.
- * @see xmlsitemap_node_set_priority()
+ *   A database query result resource, or FALSE if the query was not executed
+ *   correctly.
  */
-function xmlsitemap_node_get_priority($node, $load = FALSE) {
-  if (!isset($node->priority_override) && $load) {
-    $priority_override = db_result(db_query("SELECT xn.priority_override FROM {xmlsitemap_node} xn ON WHERE xn.nid = %d", $node->nid));
-    if ($priority_override !== FALSE) {
-      $node->priority_override = $priority_override;
-    }
-  }
-  if (isset($node->priority_override) && $node->priority_override != -2.0) {
-    $priority = $node->priority_override;
-  }
-  elseif (($priority = variable_get('xmlsitemap_node_type_priority_'. $node->type, 0.5)) != -1.0) {
-    if ($node->promote) {
-      $priority += variable_get('xmlsitemap_node_promote_priority', 0.3);
-    }
-  }
-  else {
-    $priority = -1.0;
-  }
-  return $priority;
-}
-
-/**
- * Set the node priority in the sitemap.
- * @param $node
- *   The node object, or the node ID.
- * @param $priority
- *   The priority for the node.
- * @return
- *   The node object, or FALSE.
- */
-function xmlsitemap_node_set_priority($node, $priority) {
-  if (!is_numeric($node)) {
-    $node = (object) $node;
-    $nid = $node->nid;
-  }
-  else {
-    $nid = $node;
-    $node = node_load($nid);
-  }
-  if ($node) {
-    $result = db_fetch_object(db_query("SELECT nid, changed, previously_changed, priority_override
-      FROM {xmlsitemap_node}
-      WHERE nid = %d", $nid)
-    );
-    if ($result === FALSE) {
-      $row = new stdClass();
-      $row->nid = $nid;
-      $row->changed = $node->changed;
-      $row->previously_changed = $node->created;
-    }
-    else {
-      $row = $result;
-      if ($node->changed > $row->changed) {
-        $row->previously_changed = $row->changed;
-        $row->changed = $node->changed;
+function _xmlsitemap_node_build_query($what = 'COUNT(*)', $from = 0, $count = 0) {
+  global $language;
+  $default = language_default();
+  $args = array($language->language, '');
+  $language_query = "AND language IN (". db_placeholders($args, 'varchar'). ")";
+  array_unshift($args, TRUE, -2.0, 0.0);
+  switch(variable_get('language_negotiation', LANGUAGE_NEGOTIATION_NONE)) {
+    case LANGUAGE_NEGOTIATION_NONE:
+      $language_query = '';
+      break;
+    case LANGUAGE_NEGOTIATION_PATH_DEFAULT:
+    case LANGUAGE_NEGOTIATION_PATH:
+      if (variable_get('xmlsitemap_all_links_to_default_language', 0) && $language->language == $default->language) {
+        $language_query = '';
       }
-    }
-    $row->priority_override = $priority;
-    drupal_write_record('xmlsitemap_node', $row, $result === FALSE ? NULL : 'nid');
-    return $node;
+      break;
   }
-  return FALSE;
+  $order = $what == 'COUNT(*)' ? '' : ' ORDER BY changed DESC, previously_changed DESC';
+  $query = "SELECT ". $what ." FROM {xmlsitemap_node} WHERE status = %d AND (priority_override = %f OR priority_override >= %f)". $language_query . $order;
+  if ($count) {
+    return db_query_range($query, $args, $from, $count);
+  }
+  return db_query($query, $args);
 }
 
 /**
