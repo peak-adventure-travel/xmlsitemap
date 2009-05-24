@@ -66,7 +66,7 @@ else {
         $from = $delta * $count;
         $filename = $parent_dir .'/sitemap-'. $md5 . $info['id'] . $delta . $language->language;
         @unlink($filename);
-        if (!($fp = @fopen($filename, 'wb+'))) {
+        if ($fp = @fopen($filename, 'wb+')) {
           fwrite($fp, '<?xml version="1.0" encoding="UTF-8"?>'."\n");
           fwrite($fp, '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9>"'."\n");
           module_invoke($module, 'xmlsitemap_links', 0, $from, $count);
