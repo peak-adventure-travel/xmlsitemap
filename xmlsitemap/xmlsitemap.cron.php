@@ -11,6 +11,7 @@
  * currently containing it.
  */
 include_once '../../../../../includes/bootstrap.inc';
+
 drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
 
 // Allow execution to continue even if the request gets canceled.
@@ -53,14 +54,15 @@ else {
   $md5 = substr(md5($base_url), 0, 8);
   $parent_dir = variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap');
   foreach($chunk_info as $module => $info) {
+    $first_chunk = $info['first chunk'];
     // if first chunk is less than zero, the module is not enabled.
-    if ($info['first chunk'] < 0 || $info['chunks'] == 0) {
+    if ($first_chunk < 0 || $info['chunks'] == 0) {
       continue;
     }
     if ($info['needs update']) {
-      for ($chunk = $info['first chunk']; $chunk <= $info['first chunk'] + $info['chunks'] - 1; $chunk++) {
+      for ($chunk = $first_chunk; $chunk <= $first_chunk + $info['chunks'] - 1; $chunk++) {
         $count = variable_get('xmlsitemap_chunk_size', 1000);
-        $delta = $chunk - $info['first chunk'];
+        $delta = $chunk - $first_chunk;
         $from = $delta * $count;
         $filename = $parent_dir .'/sitemap-'. $md5 . $info['id'] . $delta . $language->language;
         @unlink($filename);
