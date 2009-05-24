@@ -59,6 +59,7 @@ else {
     if ($first_chunk < 0 || $info['chunks'] == 0) {
       continue;
     }
+    
     if ($info['needs update']) {
       for ($chunk = $first_chunk; $chunk <= $first_chunk + $info['chunks'] - 1; $chunk++) {
         $chunk_size = variable_get('xmlsitemap_chunk_size', 1000);
@@ -74,8 +75,8 @@ else {
           fwrite($fp, '</urlset>');
           fclose($fp);
         }
-        $chunk_info[$module]['needs update'] = FALSE;
       }
+      $chunk_info[$module]['needs update'] = FALSE;
     }
      
     // Release cron semaphore
