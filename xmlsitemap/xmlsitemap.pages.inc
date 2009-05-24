@@ -87,9 +87,6 @@ function _xmlsitemap_output_chunk_links($chunk) {
 EOL;
   foreach ($chunks_info as $module => $info) {
     $first_chunk = $info['first chunk'];
-    if ($chunk < $first_chunk) {
-      break;
-    }
     if ($chunk >= $first_chunk && $chunk <= $first_chunk + $info['chunks'] - 1) {
       $count = variable_get('xmlsitemap_chunk_size', 1000);
       $from = ($chunk - $first_chunk) * $count;
