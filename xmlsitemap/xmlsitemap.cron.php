@@ -61,9 +61,10 @@ else {
     }
     if ($info['needs update']) {
       for ($chunk = $first_chunk; $chunk <= $first_chunk + $info['chunks'] - 1; $chunk++) {
-        $count = variable_get('xmlsitemap_chunk_size', 1000);
+        $chunk_size = variable_get('xmlsitemap_chunk_size', 1000);
         $delta = $chunk - $first_chunk;
-        $from = $delta * $count;
+        $from = $delta * $chunk_size;
+        $count = min($info['links'] - $from, $chunk_size);
         $filename = $parent_dir .'/sitemap-'. $md5 . $info['id'] . $delta . $language->language;
         @unlink($filename);
         if ($fp = @fopen($filename, 'wb+')) {
