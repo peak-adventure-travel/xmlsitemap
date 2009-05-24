@@ -1,11 +1,11 @@
 $Id$
 
-XML sitemap 6.x-1, 2009-05-24
------------------------------------
-#470792: Translatable strings review.
-
 XML sitemap 6.x-1, 2009-05-23
 -----------------------------------
+#471400: The opening tag misses the '>' character.
+#470974: Sitemap contains a wrong tag.
+#470778: Constant floating numbers shown in the user interface must the translatable.
+#470792: Translatable strings review.
 #470670: drupal_unistall_schema() is not called from the uninstall functions.
 #465658: Add more options to "cron limit" on settings page.
 #466654: Change 'Submit the sitemap when updated' in 'Submit the sitemap on content updates'.
