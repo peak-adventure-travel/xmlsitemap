@@ -29,19 +29,19 @@ if ($semaphore) {
   if (REQUEST_TIME - $semaphore > 3600) {
     // Either the task has been running for more than an hour or the semaphore
     // was not reset due to a database error.
-    watchdog('xmlsitemap', 'The task to build the cache files has been running for more than an hour and is most likely stuck.', array(), WATCHDOG_ERROR);
+    watchdog('xmlsitemap', 'Cache files building task has been running for more than an hour and is most likely stuck.', array(), WATCHDOG_ERROR);
     
    // Release cron semaphore
-    variable_del('cron_semaphore');
+    variable_del('xmlsitemap_cron_semaphore');
   }
   else {
     // The task is still running normally.
-    watchdog('xmlsitemap', 'Attempting to re-run the task to build the cache files while it is already running.', array(), WATCHDOG_WARNING);
+    watchdog('xmlsitemap', 'Attempting to re-run the cache files building task while it is already running.', array(), WATCHDOG_WARNING);
   }
 }
 else {
   // Register shutdown callback
-  register_shutdown_function('xmlsitemap_cron_cleanup');
+  register_shutdown_function('_xmlsitemap_cron_cleanup');
   
   // Lock cron semaphore
   variable_set('xmlsitemap_cron_semaphore', REQUEST_TIME);
