@@ -55,6 +55,7 @@ function xmlsitemap_output_index() {
     if (!variable_get('menu_rebuild_needed', FALSE)) {
       variable_set('menu_rebuild_needed', TRUE);
     }
+    variable_set('xmlsitemap_previous_chunk_count', $chunks);
   }
   print <<< EOL
 <?xml version="1.0" encoding="UTF-8"?>
@@ -85,12 +86,13 @@ function _xmlsitemap_output_chunk_links($chunk) {
 
 EOL;
   foreach ($chunks_info as $module => $info) {
-    if ($chunk < $info['first chunk']) {
+    $first_chunk = $info['first chunk'];
+    if ($chunk < $first_chunk) {
       break;
     }
-    if ($chunk >= $info['first chunk'] && $chunk <= $info['first chunk'] + $info['chunks'] - 1) {
-      $from = ($chunk - $info['first chunk']) * variable_get('xmlsitemap_chunk_size', 1000);
-      $count = 100;
+    if ($chunk >= $first_chunk && $chunk <= $first_chunk + $info['chunks'] - 1) {
+      $count = variable_get('xmlsitemap_chunk_size', 1000);
+      $from = ($chunk - $first_chunk) * $count;
       module_invoke($module, 'xmlsitemap_links', 0, $from, $count);
       break;
     }
