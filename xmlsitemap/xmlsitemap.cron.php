@@ -73,6 +73,7 @@ else {
           fwrite($fp, '</urlset>');
           fclose($fp);
         }
+        $chunk_info[$module]['needs update'] = FALSE;
       }
     }
      
