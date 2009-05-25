@@ -280,6 +280,11 @@ function xmlsitemap_settings_submit($form, &$form_state) {
  * Form builder; return the tools form.
  */
 function xmlsitemap_tools() {
+  $form['xmlsitemap_update_cache_files'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Update the cache files'),
+    '#collapsible' => TRUE,
+  );
   $form['xmlsitemap_update_cache_files']['update_cache'] = array(
     '#type' => 'submit',
     '#value' => t('Update cache'),

@@ -99,6 +99,7 @@ function xmlsitemap_engines_form_xmlsitemap_tools_alter(&$form, &$from_state) {
   $form['xmlsitemap_engine_submit_to_search_engines'] = array(
     '#type' => 'fieldset',
     '#title' => t('Submit to search engines'),
+    '#collapsible' => TRUE,
   );
   $form['xmlsitemap_engine_submit_to_search_engines']['search_engines'] = array(
     '#type' => 'checkboxes',
