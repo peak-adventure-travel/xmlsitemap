@@ -228,6 +228,7 @@ function xmlsitemap_taxonomy_update_6113() {
  *
  */
 function xmlsitemap_taxonomy_update_6114() {
+  $ret = array();
   $result = db_query("SELECT name FROM {variable} WHERE name LIKE 'xmlsitemap\_term\_%'");
   while ($name = db_result($result)) {
     $new_name = str_replace('_term_', '_taxonomy_', $name);
