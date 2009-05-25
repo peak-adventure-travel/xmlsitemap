@@ -76,6 +76,7 @@ else {
         }
       }
       $chunks_info[$module]['needs update'] = FALSE;
+      variable_set('xmlsitemap_sitemap_chunks_info', $chunks_info);
     }
      
     // Release cron semaphore
