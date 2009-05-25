@@ -58,7 +58,8 @@ function xmlsitemap_help($path, $arg) {
     case 'admin/settings/xmlsitemap':
     case 'admin/settings/xmlsitemap/additional':
     case 'admin/settings/xmlsitemap/engines':
-      $output = t('The sitemap is located at @sitemap.', array('@sitemap' => url('sitemap.xml', array('absolute' => TRUE))));
+    case 'admin/settings/xmlsitemap/tools':
+      $output = t('The sitemap is located at <a href="@sitemap">@sitemap</a>.', array('@sitemap' => url('sitemap.xml', array('absolute' => TRUE))));
       break;
     case 'admin/help#xmlsitemap':
       $output = '<p>'. t('XML sitemap automatically creates a sitemap that conforms to the <a href="@sitemaps.org">sitemaps.org specification</a>. This helps search engines keep their search results up to date.', array('@sitemaps.org' => 'http://www.sitemaps.org')) .'</p>';
@@ -127,6 +128,14 @@ function xmlsitemap_menu() {
     'type' => MENU_LOCAL_TASK,
     'file' => 'xmlsitemap.admin.inc',
   );
+  $items['admin/settings/xmlsitemap/tools'] = array(
+    'title' => 'Tools',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('xmlsitemap_tools'),
+    'access arguments' => $access_config,
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'xmlsitemap.admin.inc',
+  );
   $items['admin/settings/xmlsitemap/additional/delete/%xmlsitemap_additional'] = array(
     'title' => 'Delete',
     'page callback' => 'drupal_get_form',
@@ -143,29 +152,6 @@ function xmlsitemap_menu() {
     'access arguments' => $access_config,
     'parent' => 'admin/settings/xmlsitemap/additional/list',
     'type' => MENU_CALLBACK,
-    'file' => 'xmlsitemap.admin.inc',
-  );
-  $items['admin/settings/xmlsitemap/tools'] = array(
-    'title' => 'Tools',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('xmlsitemap_tools_basic'),
-    'access arguments' => $access_config,
-    'type' => MENU_LOCAL_TASK,
-    'file' => 'xmlsitemap.admin.inc',
-  );
-  $items['admin/settings/xmlsitemap/tools/basic'] = array(
-    'title' => 'Basic',
-    'description' => 'Sitemap tools.',
-    'type' => MENU_DEFAULT_LOCAL_TASK,
-    'file' => 'xmlsitemap.admin.inc',
-  );
-  $items['admin/settings/xmlsitemap/tools/settings'] = array(
-    'title' => 'Settings',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('xmlsitemap_tools_settings'),
-    'access arguments' => $access_config,
-    'weight' => 5,
-    'type' => MENU_LOCAL_TASK,
     'file' => 'xmlsitemap.admin.inc',
   );
   $items['sitemap.xml'] = array(
@@ -255,22 +241,6 @@ function xmlsitemap_xmlsitemap_links($fp, $from, $count = 0) {
   }
 }
 
-/**
- * Implementation of hook_xmlsitemap_operations().
- */
-function xmlsitemap_xmlsitemap_operations() {
-  return array(
-    'delete_cache_files' => array(
-      'label' => t('Delete the sitemap cache files'),
-      'callback' => '_xmlsitemap_operation_delete_cache_files',
-    ),
-    'flag_sitemap' => array(
-      'label' => t('Flag the sitemap as requiring update'),
-      'callback' => '_xmlsitemap_operation_flag_sitemap',
-    ),
-  );
-}
-
 /*****************************************************************************
  * Public functions.
  ****************************************************************************/
@@ -330,6 +300,12 @@ function xmlsitemap_chunk_count($reset = FALSE) {
       }
       $result = module_invoke($module, 'xmlsitemap_link_count');
       $count = empty($result) ? 0 : $result;
+      if (!isset($info['links']) && $info['links'] != $count) {
+        $chunks_info[$module]['needs update'] = TRUE;
+      }
+      elseif (!isset($chunks_info[$module]['needs update'])) {
+        $chunks_info[$module]['needs update'] = FALSE;
+      }
       $chunks_info[$module]['links'] = $count;
       $link_count += $count;
       $module_count++;
@@ -344,6 +320,9 @@ function xmlsitemap_chunk_count($reset = FALSE) {
       foreach ($chunks_info as $module => $info) {
         if (!empty($info['links']) && $info['links'] > $old_size) {
           $chunks_info[$module]['needs update'] = TRUE;
+        }
+        elseif (!isset($chunks_info[$module]['needs update'])) {
+          $chunks_info[$module]['needs update'] = FALSE;
         }
       }
       variable_set('xmlsitemap_chunk_size', $new_size);
@@ -373,28 +352,6 @@ function xmlsitemap_chunk_count($reset = FALSE) {
 }
 
 /**
- * Delete the cache file used for the sitemap content, and mark the sitemap as
- * changed.
- */
-function xmlsitemap_delete_cache_files($all = TRUE, $flag = TRUE) {
-  global $base_url, $language;
-  $result = TRUE;
-  $id = substr(md5($base_url), 0, 8);
-  $filename = 'sitemap-'. $id[0] . ($all ? '.*' : ".*{$language->language}.*") .'\.xml';
-  $files = file_scan_directory(
-    variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap'),
-    $filename, array('.', '..', 'CVS'), 0, FALSE
-  );
-  foreach ($files as $filename => $info) {
-    $result = $result && file_delete($filename);
-  }
-  if ($flag) {
-    xmlsitemap_flag_sitemap(TRUE);
-  }
-  return $result;
-}
-
-/**
  * Mark the sitemap as changed, and the cache as needing update.
  * @param $value
  *   The value to set the flag to.
@@ -402,22 +359,8 @@ function xmlsitemap_delete_cache_files($all = TRUE, $flag = TRUE) {
  *   The module that changed the sitemap.
  */
 function xmlsitemap_flag_sitemap($value = FALSE, $module = NULL) {
-  if (variable_get('xmlsitemap_sitemap_is_changed', FALSE) != $value) {
-    variable_set('xmlsitemap_sitemap_is_changed', TRUE);
-  }
   if (variable_get('xmlsitemap_ping_sitemap', FALSE) != $value) {
     variable_set('xmlsitemap_ping_sitemap', TRUE);
-  }
-  // Update the informations about the sitemap chunks.
-  if (!empty($module)) {
-    $chunks_info = variable_get('xmlsitemap_sitemap_chunks_info', array());
-    $chunks_info[$module]['needs update'] = TRUE;
-    if (empty($chunks_info[$module]['id'])) {
-      $chunks_info[$module]['id'] = substr(md5($module), 0, 8);
-    }
-    if (!isset($chunks_info[$module]['chunks'])) {
-      $chunks_info[$module]['chunks'] = 0;
-    }
   }
   if ($value) {
     xmlsitemap_chunk_count(TRUE);
@@ -489,16 +432,6 @@ function xmlsitemap_priority_options($exclude = FALSE, $default = FALSE) {
     $options['-2'] = t('Default');
   }
   return $options;
-}
-
-/**
- * Change the tools settings form, and remove the placeholder item.
- */
-function xmlsitemap_tools_settings_form(&$form) {
-  if (isset($form['empty'])) {
-    unset($form['empty']);
-    $form = system_settings_form($form);
-  }
 }
 
 /**
@@ -650,27 +583,6 @@ function xmlsitemap_write_link(&$link, $table, $module = NULL) {
 }
 
 /*****************************************************************************
- * Private functions - sitemap operations.
- ****************************************************************************/
-
-function _xmlsitemap_operation_delete_cache_files() {
-  if (xmlsitemap_delete_cache_files()) {
-    drupal_set_message(t('The sitemap cache files have been deleted.'), 'status', FALSE);
-    watchdog('xmlsitemap', 'The sitemap cache files have been deleted.');
-  }
-  else {
-    drupal_set_message(t('Some of the sitemap cache files have not been deleted.'), 'warning', FALSE);
-    watchdog('xmlsitemap', 'Some of the sitemap cache files have not been deleted.', WATCHDOG_WARNING);
-  }
-}
-
-function _xmlsitemap_operation_flag_sitemap() {
-  xmlsitemap_flag_sitemap(TRUE);
-  drupal_set_message(t('The sitemap has been flagged as needing update.'), 'status', FALSE);
-  watchdog('xmlsitemap', 'The sitemap has been flagged as needing update.');
-}
-
-/*****************************************************************************
  * Private functions.
  ****************************************************************************/
 
@@ -687,6 +599,37 @@ function _xmlsitemap_additional_links_list() {
     }
   }
   return $links;
+}
+
+/**
+ * Shutdown function for cron cleanup.
+ * @see drupal_cron_cleanup().
+ */
+function _xmlsitemap_cron_cleanup() {
+  // See if the semaphore is still locked.
+  if (variable_get('xmlsitemap_cron_semaphore', FALSE)) {
+    watchdog('xmlsitemap', 'Cache files building task exceeded the time limit and was aborted.', array(), WATCHDOG_WARNING);
+    // Release cron semaphore
+    variable_del('xmlsitemap_cron_semaphore');
+  }
+}
+
+function _xmlsitemap_cron_semaphore() {
+  if ($semaphore = variable_get('xmlsitemap_cron_semaphore', FALSE)) {
+    if (REQUEST_TIME - $semaphore > 3600) {
+      // Either the task has been running for more than an hour or the semaphore
+      // was not reset due to a database error.
+      watchdog('xmlsitemap', 'The cache files building task has been running for more than an hour and is most likely stuck.', array(), WATCHDOG_ERROR);
+      // Release cron semaphore
+      variable_del('xmlsitemap_cron_semaphore');
+    }
+    else {
+      // The task is still running normally.
+      watchdog('xmlsitemap', 'Attempting to re-run the cache files building task while it is already running.', array(), WATCHDOG_WARNING);
+    }
+    return $semaphore;
+  }
+  return FALSE;
 }
 
 /**

@@ -53,7 +53,7 @@ else {
   $chunks_info = variable_get('xmlsitemap_sitemap_chunks_info', array());
   $md5 = substr(md5($base_url), 0, 8);
   $parent_dir = variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap');
-  foreach($chunk_info as $module => $info) {
+  foreach($chunks_info as $module => $info) {
     $first_chunk = $info['first chunk'];
     // if first chunk is less than zero, the module is not enabled.
     if ($first_chunk < 0 || $info['chunks'] == 0) {
@@ -66,8 +66,7 @@ else {
         $delta = $chunk - $first_chunk;
         $from = $delta * $chunk_size;
         $count = min($info['links'] - $from, $chunk_size);
-        $filename = $parent_dir .'/sitemap-'. $md5 . $info['id'] . $delta . $language->language;
-        @unlink($filename);
+        $filename = $parent_dir .'/'. $md5 . $info['id'] . $delta . $language->language .'.xml';
         if ($fp = @fopen($filename, 'wb+')) {
           fwrite($fp, '<?xml version="1.0" encoding="UTF-8"?>'."\n");
           fwrite($fp, '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n");
@@ -76,7 +75,7 @@ else {
           fclose($fp);
         }
       }
-      $chunk_info[$module]['needs update'] = FALSE;
+      $chunks_info[$module]['needs update'] = FALSE;
     }
      
     // Release cron semaphore

@@ -88,7 +88,7 @@ function xmlsitemap_engines_menu() {
 /**
  * Implementation of hook_form_FORM_ID_alter().
  */
-function xmlsitemap_engines_form_xmlsitemap_tools_settings_alter(&$form, &$from_state) {
+function xmlsitemap_engines_form_xmlsitemap_tools_alter(&$form, &$from_state) {
   $options = array(
     'ask' => t('Ask.com'),
     'google' => t('Google'),
@@ -96,45 +96,34 @@ function xmlsitemap_engines_form_xmlsitemap_tools_settings_alter(&$form, &$from_
     'live' => t('Microsoft Live'),
     'yahoo' => t('Yahoo!'),
   );
-  foreach ($options as $id => $title) {
-    if (!variable_get("xmlsitemap_engines_{$id}_submit", FALSE)) {
-      unset($options[$id]);
-    }
-  }
-  $form['submit_to_search_engines'] = array(
+  $form['xmlsitemap_engine_submit_to_search_engines'] = array(
     '#type' => 'fieldset',
     '#title' => t('Submit to search engines'),
-    '#collapsible' => TRUE,
   );
-  if (count($options)) {
-    $form['submit_to_search_engines']['xmlsitemap_engine_parameter_search_engines'] = array(
-      '#type' => 'checkboxes', 
-      '#title' => t('Search engines'), 
-      '#default_value' => variable_get('xmlsitemap_engine_parameter_search_engines', array()),
-      '#options' => $options,
-      '#checkall' => count($options) > 1 ? TRUE : FALSE,
-    );
-  }
-  else {
-    $form['submit_to_search_engines']['message'] = array(
-      '#value' => t('None of the supported search engines has been enabled. You can enable them in the <a href="@search_engines">search engines</a> settings page.', array('@search_engines' => url('admin/settings/xmlsitemap/engines'))),
-      '#prefix' => '<div>',
-      '#suffix' => '</div>',
-    );
-  }
-  xmlsitemap_tools_settings_form($form);
+  $form['xmlsitemap_engine_submit_to_search_engines']['search_engines'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Search engines'), 
+    '#default_value' => array(),
+    '#options' => $options,
+    '#checkall' => TRUE,
+  );
+  $form['xmlsitemap_engine_submit_to_search_engines']['submit_to_search_engines'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit sitemap'),
+    '#submit' => array('xmlsitemap_engines_submit_to_search_engines_submit'),
+  );
 }
 
+/*****************************************************************************
+ * Menu callbacks / form builders, submit/validate functions.
+ ****************************************************************************/
+
 /**
- * Implementation of hook_xmlsitemap_operations().
+ * Submit function for the 'Submit the sitemap to the search engines' operation.
  */
-function xmlsitemap_engines_xmlsitemap_operations() {
-  return array(
-    'submit_to_search_engines' => array(
-      'label' => t('Submit the sitemap to the search engines'),
-      'callback' => '_xmlsitemap_engines_operation_ping_sitemap',
-    ),
-  );
+function xmlsitemap_engines_submit_to_search_engines_submit($form, &$form_state) {
+  xmlsitemap_engines_ping_sitemap(array_filter($form_state['values']['search_engines']));
+  drupal_set_message(t('The sitemap has been submitted to the search engines.'));
 }
 
 /*****************************************************************************
@@ -184,7 +173,7 @@ function _xmlsitemap_engines_operation_ping_sitemap() {
       variable_get('xmlsitemap_engine_parameter_search_engines', array())
     )
   );
-  drupal_set_message(t('The sitemap has been submitted to the search engines.'), 'status', FALSE);
+  drupal_set_message(t('The sitemap has been submitted to the search engines.'));
 }
 
 /*****************************************************************************

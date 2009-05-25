@@ -449,7 +449,7 @@ function xmlsitemap_update_6140() {
   $ret = array();
   if (module_exists('xmlsitemap_term')) {
     module_disable(array('xmlsitemap_term'));
-    drupal_set_message(t('XML sitemap term has been deprecated in favor of XML sitemap taxonomy; enable it in the <a href="@modules">modules page.', array('@modules' => url('admin/build/modules'))), 'status', FALSE);
+    drupal_set_message(t('XML sitemap term has been deprecated in favor of XML sitemap taxonomy; enable it in the <a href="@modules">modules page.', array('@modules' => url('admin/build/modules'))));
     $ret[] = array(
       'success' => TRUE,
       'query' => 'DISABLE XMLSITEMAP_TERM',
@@ -508,7 +508,7 @@ function xmlsitemap_update_6144() {
 function xmlsitemap_update_6145() {
   if (module_exists('xmlsitemap_menu')) {
     module_disable(array('xmlsitemap_menu'));
-    drupal_set_message(t('XML sitemap menu has been deprecated, and it is not anymore included in <em>XML sitemap</em>. It seems you have not correctly copied the new files, or you have two different sets of files in two different directories. Verify that you correctly copied the new files, before to proceed.'), 'error', FALSE);
+    drupal_set_message(t('XML sitemap menu has been deprecated, and it is not anymore included in <em>XML sitemap</em>. It seems you have not correctly copied the new files, or you have two different sets of files in two different directories. Verify that you correctly copied the new files, before to proceed.'), 'error');
     $ret[] = array(
       'success' => TRUE,
       'query' => 'DISABLE XMLSITEMAP_MENU',

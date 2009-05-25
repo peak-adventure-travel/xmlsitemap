@@ -66,10 +66,10 @@ function xmlsitemap_additional_links_submit($form, &$form_state) {
     }
   }
   if (!$saved) {
-    drupal_set_message(t('An error occurred while saving the links.'), 'error', FALSE);
+    drupal_set_message(t('An error occurred while saving the links.'), 'error');
   }
   else {
-    drupal_set_message(t('The links have been saved.'), 'status', FALSE);
+    drupal_set_message(t('The links have been saved.'));
   }
 }
 
@@ -160,11 +160,11 @@ function xmlsitemap_additional_links_edit_submit($form, &$form_state) {
   $form_state['values']['mid'] = $form['#mid'];
   $link = (object) (array() + $form_state['values']);
   if ($rc = xmlsitemap_write_link($link, 'xmlsitemap_additional', 'xmlsitemap')) {
-    drupal_set_message(t('The link %link has been updated.', array('%link' => $link->pdata)), 'status', FALSE);
+    drupal_set_message(t('The link %link has been updated.', array('%link' => $link->pdata)));
     watchdog('xmlsitemap', 'The link %link has been updated.', array('%link' => $link->pdata));
   }
   if (!rc) {
-    drupal_set_message(t('An error occurred while saving the link %link.', array('%link' => $link->pdata)), 'error', FALSE);
+    drupal_set_message(t('An error occurred while saving the link %link.', array('%link' => $link->pdata)), 'error');
     watchdog('xmlsitemap', 'An error occurred while saving the link %link.', array('%link' => $link->pdata), WATCHDOG_ERROR);
   }
   $form_state['redirect'] = 'admin/settings/xmlsitemap/additional/list';
@@ -191,7 +191,7 @@ function xmlsitemap_additional_links_delete_confirm_submit($form, &$form_state) 
   if ($form_state['values']['confirm']) {
     $link = $form['#link'];
     db_query('DELETE FROM {xmlsitemap_additional} WHERE mid = %d', $link->mid);
-    drupal_set_message(t('The link %link has been deleted.', array('%link' => $link->pdata)), 'status', FALSE);
+    drupal_set_message(t('The link %link has been deleted.', array('%link' => $link->pdata)));
   }
 
   $form_state['redirect'] = 'admin/settings/xmlsitemap/additional/list';
@@ -216,7 +216,7 @@ function xmlsitemap_settings() {
   $form['general']['xmlsitemap_cron_limit'] = array(
     '#type' => 'select',
     '#title' => t('Cron limit'),
-    '#description' => t('The number of links that are updated in each pass of a <a href="@cron">cron maintenance task</a>. Choosing a number too high could cause the other module cron tasks to not be executed; use the higher numbers only when you are sure it will not cause any problems on your Drupal installation.', array('@cron' => url('admin/reports/status'))),
+    '#description' => t('The number of links that are updated in each pass of a <a href="@cron">cron maintenance task</a>. Choosing a number too high could cause the other modules cron tasks to not be executed; use the higher numbers only when you are sure it will not cause any problems on your Drupal installation.', array('@cron' => url('admin/reports/status'))),
     '#default_value' => variable_get('xmlsitemap_cron_limit', 200),
     '#options' => drupal_map_assoc(array(2, 10, 50, 100, 200, 300, 400, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000)),
   );
@@ -279,62 +279,72 @@ function xmlsitemap_settings_submit($form, &$form_state) {
 /**
  * Form builder; return the tools form.
  */
-function xmlsitemap_tools_basic() {
-  $form['options'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Operations'),
-    '#collapsible' => FALSE, 
-    '#collapsed' => FALSE,
-    '#prefix' => '<div class="container-inline">',
-    '#suffix' => '</div>',
-  );
-  $options = array();
-  foreach (module_invoke_all('xmlsitemap_operations') as $operation => $info) {
-    $options[$operation] = $info['label'];
-  }
-  reset($options);
-  $form['options']['operation'] = array(
-    '#type' => 'select',
-    '#options' => $options,
-    '#default_value' => key($options),
-  );
-  $form['options']['submit'] = array(
+function xmlsitemap_tools() {
+  $form['xmlsitemap_update_cache_files']['update_cache'] = array(
     '#type' => 'submit',
-    '#value' => t('Apply'),
-    '#submit' => array('xmlsitemap_tools_basic_submit'),
+    '#value' => t('Update cache'),
+    '#submit' => array('xmlsitemap_update_cache_files_submit'),
   );
   return $form;
 }
 
 /**
- * Submit the tools form.
+ * Submit function for the 'Update the sitemap cache files' operation.
  */
-function xmlsitemap_tools_basic_submit($form, &$form_state) {
-  $operations = module_invoke_all('xmlsitemap_operations');
-  $operation = $operations[$form_state['values']['operation']];
-  $function = $operation['callback'];
-  if (isset($operation['callback arguments'])) {
-    call_user_func_array($function, $operation['callback arguments']);
+function xmlsitemap_update_cache_files_submit($form, &$form_state) {
+  // Try to increase the maximum execution time if it is too low.
+  if (ini_get('max_execution_time') < 240) {
+    @set_time_limit(240);
   }
-  else {
-    call_user_func($function, NULL);
+  // Fetch the cron semaphore
+  if (!_xmlsitemap_cron_semaphore() && xmlsitemap_chunk_count(TRUE)) {
+    // Register shutdown callback
+    variable_set('xmlsitemap_cron_semaphore', REQUEST_TIME);
+    register_shutdown_function('_xmlsitemap_cron_cleanup');
+    // Lock cron semaphore
+    // Update the information about the sitemap chunks.
+    // Build the cache files for the sitemap chunks.
+    $batch = array(
+      'operations' => array(),
+      'finished' => '_xmlsitemap_update_cache_batch_finished',
+      'title' => t('Updating the cache files'),
+      'file' => drupal_get_path('module', 'xmlsitemap') . '/xmlsitemap.admin.inc',
+    );
+    $batch_count = 0;
+    $chunk_size = variable_get('xmlsitemap_chunk_size', 1000);
+    $chunks_info = variable_get('xmlsitemap_sitemap_chunks_info', array());
+    $md5 = substr(md5($base_url), 0, 8);
+    $parent_dir = variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap');
+    foreach($chunks_info as $module => $info) {
+      $first_chunk = $info['first chunk'];
+      // if first chunk is less than zero, the module is not enabled.
+      if ($first_chunk < 0 || $info['chunks'] == 0) {
+        continue;
+      }
+      if ($info['needs update']) {
+        for ($chunk = $first_chunk; $chunk <= $first_chunk + $info['chunks'] - 1; $chunk++) {
+          $delta = $chunk - $first_chunk;
+          $from = $delta * $chunk_size;
+          $count = min($info['links'] - $from, $chunk_size);
+          $filename = $parent_dir .'/'. $md5 . $info['id'] . $delta . $language->language .'.xml';
+          if ($fp = @fopen($filename, 'wb+')) {
+            $batch['operations'][] = array('_xmlsitemap_update_cache_batch', array($module, $filename, $from, $count));
+            $batch_count++;
+            fclose($fp);
+          }
+        }
+      }
+      $chunks_info[$module]['needs update'] = FALSE;
+    }
+    variable_set('xmlsitemap_sitemap_chunks_info', $chunks_info);
+    if ($batch_count) {
+      batch_set($batch);
+    }
+    else {
+      
+      variable_del('xmlsitemap_cron_semaphore');
+    }
   }
-  $form_state['redirect'] = 'admin/settings/xmlsitemap/tools';
-}
-
-/**
- * Form builder; return the tools settings form.
- */
-function xmlsitemap_tools_settings() {
-  $form['empty'] = array(
-    '#type' => 'fieldset',
-  );
-  $form['empty']['info'] = array(
-    '#value' => t('There are no settings currently defined.'),
-    '#prefix' => '<div>',
-    '#suffix' => '</div>',
-  );
-  return $form;
 }
 
 /*****************************************************************************
@@ -346,7 +356,6 @@ function theme_xmlsitemap_additional_links($form) {
   foreach (element_children($form) as $key) {
     if (isset($form[$key]['pdata'])) {
       $link = &$form[$key];
-      
       $row = array();
       $row[] = drupal_render($link['pdata']);
       $row[] = drupal_render($link['status']);
@@ -372,6 +381,50 @@ function theme_xmlsitemap_additional_links($form) {
   $header[] = t('Priority');
   $header[] = array('data' => t('Operations'), 'colspan' => '2');
   return theme('table', $header, $rows) . drupal_render($form);
+}
+
+/*****************************************************************************
+ * Private functions - batch operations.
+ ****************************************************************************/
+
+function _xmlsitemap_update_cache_batch($module, $filename, $from, $count, &$context) {
+  if (!isset($context['sandbox']['progress'])) {
+    $context['sandbox']['fp'] = @fopen($filename, 'wb+');
+    $context['sandbox']['max'] = $count;
+    $context['sandbox']['progress'] = 0;
+  }
+  if ($fp = $context['sandbox']['fp']) {
+    if (!$context['sandbox']['progress']) {
+      fwrite($fp, '<?xml version="1.0" encoding="UTF-8"?>'."\n");
+      fwrite($fp, '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n");
+    }
+    $step = min($count - $context['sandbox']['progress'], 10);
+    module_invoke($module, 'xmlsitemap_links', $fp, $from + $context['sandbox']['progress'], $step);
+    $context['sandbox']['progress'] += $step;
+    $context['message'] = t('Updating %module cache files (@count links of @max).', array('%module' => $module, '@count' => $context['sandbox']['progress'], '@max' => $count));
+    if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
+      $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+    }
+    else {
+      fwrite($fp, '</urlset>');
+      fclose($fp);
+      $context['sandbox']['fp'] = 0;
+    }
+  }
+}
+
+/*****************************************************************************
+ * Private functions.
+ ****************************************************************************/
+
+function _xmlsitemap_update_cache_batch_finished($success, $results, $operations) {
+  variable_del('xmlsitemap_cron_semaphore');
+  if ($success) {
+    drupal_set_message(t('The cache files have been updated.'));
+  }
+  else {
+    drupal_set_message(t('The cache file have not been sucessfully updated.'), 'error');
+  }
 }
 
 /**
