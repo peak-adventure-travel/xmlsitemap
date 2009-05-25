@@ -137,132 +137,6 @@ function xmlsitemap_update_6000() {
 /**
  * Implementation of hook_update_N().
  */
-function xmlsitemap_update_6100() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6101() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6102() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6103() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6104() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6105() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6106() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6107() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6108() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6109() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6110() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6111() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6112() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6113() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6114() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6115() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6116() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6117() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
 function xmlsitemap_update_6118() {
   variable_set('xmlsitemap_cron_submit_frequency', variable_get('xmlsitemap_cron_submit', FALSE) ? 1 : -1);
   $ret[] = array(
@@ -270,55 +144,6 @@ function xmlsitemap_update_6118() {
     'query' => 'UPDATE MODULE SETTINGS'
   );
   return $ret;
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6119() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6120() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6121() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6122() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6123() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6124() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6125() {
-  return array();
 }
 
 /**
@@ -332,65 +157,9 @@ function xmlsitemap_update_6126() {
 /**
  * Implementation of hook_update_N().
  */
-function xmlsitemap_update_6127() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6128() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6129() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6130() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6131() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6132() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
 function xmlsitemap_update_6133() {
   $ret[] = update_sql("UPDATE {system} SET weight = 5 WHERE name = 'xmlsitemap'");
   return $ret;
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6134() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6135() {
-  return array();
 }
 
 /**
@@ -409,13 +178,6 @@ function xmlsitemap_update_6136() {
     'query' => 'UPDATE XMLSITEMAP_CHUNK_SIZE'
   );
   return $ret;
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6137() {
-  return array();
 }
 
 /**
@@ -468,13 +230,6 @@ function xmlsitemap_update_6140() {
 /**
  * Implementation of hook_update_N().
  */
-function xmlsitemap_update_6141() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
 function xmlsitemap_update_6142() {
   $ret = array();
   if (!variable_get('menu_rebuild_needed', FALSE)) {
@@ -496,10 +251,6 @@ function xmlsitemap_update_6143() {
     'success' => TRUE,
     'query' => 'UPDATE DRUPAL CACHE',
   );
-}
-
-function xmlsitemap_update_6144() {
-  return array();
 }
 
 /**
@@ -524,13 +275,6 @@ function xmlsitemap_update_6145() {
     'query' => 'UPDATE MODULES LIST',
   );
   return $ret;
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6146() {
-  return array();
 }
 
 /**

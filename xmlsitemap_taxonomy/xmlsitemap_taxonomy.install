@@ -125,48 +125,6 @@ function xmlsitemap_taxonomy_update_6000() {
 /**
  * Implementation of hook_update_N().
  */
-function xmlsitemap_taxonomy_update_6100() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_taxonomy_update_6101() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_taxonomy_update_6102() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_taxonomy_update_6103() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_taxonomy_update_6104() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_taxonomy_update_6105() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
 function xmlsitemap_taxonomy_update_6106() {
   $ret[] = update_sql("UPDATE {system} SET weight = 10 WHERE name = 'xmlsitemap_taxonomy'");
   return $ret;
@@ -177,50 +135,6 @@ function xmlsitemap_taxonomy_update_6106() {
  */
 function xmlsitemap_taxonomy_update_6107() {
   return xmlsitemap_taxonomy_update_6000();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_taxonomy_update_6108() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_taxonomy_update_6109() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_taxonomy_update_6110() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_taxonomy_update_6111() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- *
- */
-function xmlsitemap_taxonomy_update_6112() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- *
- */
-function xmlsitemap_taxonomy_update_6113() {
-  return array();
 }
 
 /**
@@ -252,4 +166,3 @@ function xmlsitemap_taxonomy_uninstall() {
   drupal_uninstall_schema('xmlsitemap_taxonomy');
   db_query("DELETE FROM {variable} WHERE name LIKE 'xmlsitemap\_taxonomy\_%'");
 }
-

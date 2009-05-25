@@ -2,6 +2,7 @@ $Id$
 
 XML sitemap 6.x-1, 2009-05-25
 -----------------------------------
+#470790: Remove empty update functions.
 #461570: Rearrange the tools page.
 
 XML sitemap 6.x-1, 2009-05-23
