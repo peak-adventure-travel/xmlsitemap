@@ -274,7 +274,7 @@ function xmlsitemap_cache_filename($chunk) {
     }
     if ($chunk >= $info['first chunk'] && $chunk <= $info['first chunk'] + $info['chunks'] - 1) {
       $delta = $chunk - $info['first chunk'];
-      return 'sitemap-'. $md5 . $info['id'] . $delta . $language->language;
+      return $md5 . $info['id'] . $delta . $language->language .'.xml';
     }
   }
   return '';
@@ -517,8 +517,6 @@ function xmlsitemap_write_link(&$link, $table, $module = NULL) {
   $condition = "pdata = ". db_type_placeholder($schema['fields']['pdata']['type']);
   $row = db_fetch_object(db_query("SELECT * FROM {". $table ."} WHERE ". $condition, $link->pdata));
   $update = ($row !== FALSE);
-  watchdog('xmlsitemap', '$update = %update', array('%update' => (int) $update), WATCHDOG_DEBUG);
-  watchdog('xmlsitemap', '$row = %row', array('%row' => print_r($row, TRUE)), WATCHDOG_DEBUG);
   // Don't write a new row if status is FALSE.
   if (!($update || $link->status)) {
     return FALSE;
