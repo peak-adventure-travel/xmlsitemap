@@ -1,5 +1,9 @@
 $Id$
 
+XML sitemap 6.x-1, 2009-05-25
+-----------------------------------
+#461570: Rearrange the tools page.
+
 XML sitemap 6.x-1, 2009-05-23
 -----------------------------------
 #471400: The opening tag misses the '>' character.
