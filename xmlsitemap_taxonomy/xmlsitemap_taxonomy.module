@@ -250,7 +250,7 @@ function _xmlsitemap_taxonomy_get_path($tid) {
   if (!$term) {
     return 'taxonomy/term/'. $tid;
   }
-  if ($term->module = 'forum') {
+  if ($term->module == 'forum') {
     return 'forum/'. $term->tid;
   }
   if ($vocabulary->module != 'taxonomy' && $loc = module_invoke($vocabulary->module, 'term_path', $term)) {
