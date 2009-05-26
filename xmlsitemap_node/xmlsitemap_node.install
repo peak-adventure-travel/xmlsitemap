@@ -137,6 +137,14 @@ function xmlsitemap_node_update_6106() {
 }
 
 /**
+ * Implementation of hook_update_N().
+ *
+ */
+function xmlsitemap_node_update_6121() {
+  return xmlsitemap_node_update_6000();
+}
+
+/**
  * Implementation of hook_uninstall().
  */
 function xmlsitemap_node_uninstall() {
