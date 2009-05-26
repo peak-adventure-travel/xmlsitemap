@@ -1,5 +1,9 @@
 $Id$
 
+XML sitemap 6.x-1, 2009-05-26
+-----------------------------------
+#472850: Install error on clean installation.
+
 XML sitemap 6.x-1, 2009-05-25
 -----------------------------------
 #470790: Remove empty update functions.
