@@ -183,22 +183,21 @@ function xmlsitemap_taxonomy_xmlsitemap_description() {
  * Implementation of hook_xmlsitemap_link_count().
  */
 function xmlsitemap_taxonomy_xmlsitemap_link_count() {
-  $query = "SELECT COUNT(*) FROM {xmlsitemap_taxonomy} WHERE status = %d AND (priority_override = %f OR priority_override >= %f)";
-  return (integer) db_result(db_query($query, TRUE, -2.0, 0.0));
+  $query = "SELECT COUNT(*) FROM {xmlsitemap_taxonomy} WHERE status = 1  AND ((priority >= 0.0 AND priority <= 1.0 AND priority_override = -2.0) OR (priority_override >= 1.0 AND priority_override <= 1.0))";
+  return (integer) db_result(db_query($query));
 }
 
 /**
  * Implementation of hook_xmlsitemap_links().
  */
 function xmlsitemap_taxonomy_xmlsitemap_links($fp, $from, $count = 0) {
-  $args = array(TRUE, -2.0, 0.0);
   $link = new stdClass();
-  $query = "SELECT * FROM {xmlsitemap_taxonomy} WHERE status = %d AND (priority_override = %f OR priority_override >= %f) ORDER BY changed DESC, previously_changed DESC";
+  $query = "SELECT * FROM {xmlsitemap_taxonomy} WHERE status = 1  AND ((priority >= 0.0 AND priority <= 1.0 AND priority_override = -2.0) OR (priority_override >= 1.0 AND priority_override <= 1.0)) ORDER BY changed DESC, previously_changed DESC";
   if ($count) {
-    $result = db_query_range($query, $args, $from, $count);
+    $result = db_query_range($query, $from, $count);
   }
   else {
-    $result = db_query($query, $args);
+    $result = db_query($query);
   }
   while ($row = db_fetch_object($result)) {
     $changefreq = max($row->changed - $row->previously_changed, REQUEST_TIME - $row->changed);

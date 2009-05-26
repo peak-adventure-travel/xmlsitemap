@@ -216,7 +216,6 @@ function _xmlsitemap_node_build_query($what = 'COUNT(*)', $from = 0, $count = 0)
   $default = language_default();
   $args = array($language->language, '');
   $language_query = "AND language IN (". db_placeholders($args, 'varchar'). ")";
-  array_unshift($args, TRUE, -2.0, 0.0);
   switch(variable_get('language_negotiation', LANGUAGE_NEGOTIATION_NONE)) {
     case LANGUAGE_NEGOTIATION_NONE:
       $language_query = '';
@@ -229,9 +228,9 @@ function _xmlsitemap_node_build_query($what = 'COUNT(*)', $from = 0, $count = 0)
       break;
   }
   $order = $what == 'COUNT(*)' ? '' : ' ORDER BY changed DESC, previously_changed DESC';
-  $query = "SELECT ". $what ." FROM {xmlsitemap_node} WHERE status = %d AND (priority_override = %f OR priority_override >= %f)". $language_query . $order;
+  $query = "SELECT ". $what ." FROM {xmlsitemap_node} WHERE status = 1 AND ((priority >= 0.0 AND priority <= 1.0 AND priority_override = -2.0) OR (priority_override >= 1.0 AND priority_override <= 1.0))". $language_query . $order;
   if ($count) {
-    return db_query_range($query, $args, $from, $count);
+    return db_query_range($query, $from, $count);
   }
   return db_query($query, $args);
 }
