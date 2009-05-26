@@ -69,7 +69,7 @@ function xmlsitemap_menu_xmlsitemap_links() {
   foreach ($menu['items'][0]['children'] as $mid) {
     $root_menus[$mid] = $menu['items'][$mid]['title'];
   }
-  foreach (variable_get('xmlsitemap_menu_menus', array()) as $mid) {
+  foreach (array_filter(variable_get('xmlsitemap_menu_menus', array())) as $mid) {
     if (isset($root_menus[$mid])) {
       _xmlsitemap_menu_process_link($mid, $menu);
     }
