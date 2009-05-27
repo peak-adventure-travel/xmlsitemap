@@ -251,6 +251,7 @@ function xmlsitemap_update_6143() {
     'success' => TRUE,
     'query' => 'UPDATE DRUPAL CACHE',
   );
+  return $ret;
 }
 
 /**
