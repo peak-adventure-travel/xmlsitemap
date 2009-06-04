@@ -31,18 +31,16 @@ function xmlsitemap_output_chunk($chunk) {
     drupal_not_found();
     exit();
   }
-  $headers = array("Content-type: text/xml; charset=utf-8");
   $file = xmlsitemap_cache_filename($chunk);
   // If the cache file doesn't exist, try to get the first 100 links directly
   // from the database tables.
-  if (($fp = @fopen($file, 'rb')) === FALSE) {
+  if (!file_exists($file)) {
     _xmlsitemap_output_chunk_links($chunk);
     exit();
   }
   else {
-    fclose($fp);
+    $headers = array('Content-type: text/xml; charset=utf-8');
     file_transfer($file, $headers);
-    exit();
   }
 }
 
@@ -80,6 +78,7 @@ EOL;
  ****************************************************************************/
 
 function _xmlsitemap_output_chunk_links($chunk) {
+  drupal_set_header('Content-type: text/xml; charset=utf-8');
   $chunks_info = variable_get('xmlsitemap_sitemap_chunks_info', array());
   print <<<EOL
 <?xml version="1.0" encoding="UTF-8"?>
