@@ -201,8 +201,8 @@ function xmlsitemap_taxonomy_xmlsitemap_links($fp, $from, $count = 0) {
   }
   while ($row = db_fetch_object($result)) {
     $changefreq = max($row->changed - $row->previously_changed, REQUEST_TIME - $row->changed);
-    $loc = _xmlsitemap_taxonomy_get_path($row->pdata);
-    $link->loc = url($loc, array('absolute' => TRUE));
+    $term = db_fetch_object(db_query('SELECT * FROM {term_data} WHERE tid = %d', $row->pdata));
+    $link->loc = url(taxonomy_term_path($term), array('absolute' => TRUE));
     $link->changed = $row->changed;
     $link->changefreq = $changefreq;
     $link->priority = $row->priority_override == -2.0 ? $row->priority : $row->priority_override;
@@ -236,27 +236,6 @@ function _xmlsitemap_taxonomy_add_term($node, $tid, $priority_override = -2.0) {
   $row->priority = variable_get('xmlsitemap_taxonomy_vocabulary_priority_'. $row->sdata, '0.5');
   $row->priority_override = $priority_override;
   xmlsitemap_write_link($row, 'xmlsitemap_taxonomy');
-}
-
-/**
- * Return the path associated with a taxonomy term.
- * @param $tid
- *   The term ID.
- * @return
- *   The path associated with the taxonomy term.
- */
-function _xmlsitemap_taxonomy_get_path($tid) {
-  $term = db_fetch_object(db_query("SELECT t.*, v.module FROM {term_data} t INNER JOIN {vocabulary} v ON v.vid = t.vid WHERE t.tid = %d", $tid ));
-  if (!$term) {
-    return 'taxonomy/term/'. $tid;
-  }
-  if ($term->module == 'forum') {
-    return 'forum/'. $term->tid;
-  }
-  if ($vocabulary->module != 'taxonomy' && $loc = module_invoke($vocabulary->module, 'term_path', $term)) {
-    return $path;
-  }
-  return 'taxonomy/term/'. $term->tid;
 }
 
 /**
