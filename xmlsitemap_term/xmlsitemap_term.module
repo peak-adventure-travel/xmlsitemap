@@ -191,15 +191,7 @@ function xmlsitemap_term_xmlsitemap_links() {
     GROUP BY t.tid, t.vid, v.module, xt.last_changed, xt.previously_changed, xt.priority_override", 't', 'tid'), $query_args
   );
   while ($term = db_fetch_object($result)) {
-    if ($term->module == 'forum') {
-      $path = "forum/$term->tid";
-    }
-    elseif ($term->module != 'taxonomy' && $term_path = module_invoke($term->module, 'term_path', $term)) {
-      $path = $term_path;
-    }
-    else {
-      $path = 'taxonomy/term/'. $term->tid;
-    }
+    $path = taxonomy_term_path($term);
     $alias = drupal_lookup_path('alias', $path);
     if ($alias === FALSE) {
       $alias = NULL;
