@@ -50,6 +50,7 @@ function xmlsitemap_output_chunk($chunk) {
  * Menu callback; display the sitemap index.
  */
 function xmlsitemap_output_index() {
+  drupal_set_header('Content-type: text/xml; charset=utf-8');
   $chunks = xmlsitemap_chunk_count();
   if ($chunks != variable_get('xmlsitemap_previous_chunk_count', -1)) {
     if (!variable_get('menu_rebuild_needed', FALSE)) {
