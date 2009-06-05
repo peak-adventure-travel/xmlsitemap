@@ -1,0 +1,225 @@
+# $Id$
+#
+# LANGUAGE translation of Drupal (gsitemap.module)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  gsitemap.module,v 1.56.2.7 2007/03/18 21:55:39 darrenoh
+#  gsitemap.info,v 1.3.2.3 2007/02/13 15:57:06 darrenoh
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: German translation of xmlsitemap\n"
+"POT-Creation-Date: 2009-04-26 00:49+0200\n"
+"PO-Revision-Date: 2009-06-06 00:36+0100\n"
+"Last-Translator: Alexander Haß\n"
+"Language-Team: Alexander Hass\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Language: German\n"
+"X-Poedit-Country: GERMANY\n"
+"X-Poedit-SourceCharset: utf-8\n"
+
+#: xmlsitemap.module:53
+#, fuzzy
+msgid "Configure the site map."
+msgstr "Die Sitemap konfigurieren."
+
+#: xmlsitemap.module:56
+msgid "Configure the behavior for search engines."
+msgstr "Das Verhalten für Suchmaschinen konfigurieren."
+
+#: xmlsitemap.module:59
+msgid "XML Sitemap automatically creates a site map that conforms to the <a href=\"@sitemaps.org\">sitemaps.org specification</a>. This helps search engines keep their search results up to date."
+msgstr ""
+
+#: xmlsitemap.module:60
+msgid "Supporting modules"
+msgstr ""
+
+#: xmlsitemap.module:61
+msgid "By itself, the XML Sitemap module adds only the front page of your site to the site map. Other types of links are handled by supporting modules."
+msgstr ""
+
+#: xmlsitemap.module:70
+msgid "Links may be assigned a priority between 0.0 and 1.0. The default priority is 0.5. A priority of <em>Not in site map</em> excludes a link from the site map."
+msgstr ""
+
+#: xmlsitemap.module:71
+msgid "More information is available in the <a href=\"@module_docs\">XML Sitemap documentation</a>."
+msgstr ""
+
+#: xmlsitemap.module:206
+msgid "General settings"
+msgstr "Allgemeine Einstellungen"
+
+#: xmlsitemap.module:212
+msgid "Add all the links to the default language site map"
+msgstr ""
+
+#: xmlsitemap.module:214
+msgid "This option will be used only when the language negotiation uses a path prefix mechanism."
+msgstr ""
+
+#: xmlsitemap.module:218
+msgid "Front page change frequency"
+msgstr "Änderungsfrequenz der Startseite"
+
+#: xmlsitemap.module:219
+msgid "The change frequency associated with the front page."
+msgstr ""
+
+#: xmlsitemap.module:231
+msgid "Cache directory"
+msgstr "Cache-Verzeichnis"
+
+#: xmlsitemap.module:235
+msgid "The directory where the cache files are created; change it only if you are having problems with the default setting."
+msgstr ""
+
+#: xmlsitemap.module:239
+msgid "Priority"
+msgstr "Priorität"
+
+#: xmlsitemap.module:247
+msgid "Front page priority"
+msgstr "Priorität der Startseite"
+
+#: xmlsitemap.module:248
+msgid "The absolute priority for the front page."
+msgstr "Die absolute Priorität für die Startseite."
+
+#: xmlsitemap.module:283
+msgid "The update has been performed."
+msgstr "Die Aktualisierung wurde durchgeführt."
+
+#: xmlsitemap.module:286
+msgid "An error occurred and processing did not complete."
+msgstr "Ein Fehler ist aufgetreten und die Verarbeitung konnte nicht abgeschlossen werden."
+
+#: xmlsitemap.module:289
+msgid "Last items successfully processed:"
+msgstr "Der letzte Eintrag wurde erfolgreich verarbeitet:"
+
+#: xmlsitemap.module:343
+msgid "1.0"
+msgstr "1,0"
+
+#: xmlsitemap.module:344
+msgid "0.9"
+msgstr "0,9"
+
+#: xmlsitemap.module:345
+msgid "0.8"
+msgstr "0,8"
+
+#: xmlsitemap.module:346
+msgid "0.7"
+msgstr "0,7"
+
+#: xmlsitemap.module:347
+msgid "0.6"
+msgstr "0,6"
+
+#: xmlsitemap.module:348
+msgid "0.5"
+msgstr "0,5"
+
+#: xmlsitemap.module:349
+msgid "0.4"
+msgstr "0,4"
+
+#: xmlsitemap.module:350
+msgid "0.3"
+msgstr "0,3"
+
+#: xmlsitemap.module:351
+msgid "0.2"
+msgstr "0,2"
+
+#: xmlsitemap.module:352
+msgid "0.1"
+msgstr "0,1"
+
+#: xmlsitemap.module:353
+msgid "0.0"
+msgstr "0,0"
+
+#: xmlsitemap.module:356
+msgid "Not in site map"
+msgstr "Nicht in der Sitemap"
+
+#: xmlsitemap.module:359
+msgid "Default"
+msgstr "Standard"
+
+#: xmlsitemap.module:432
+msgid "XML site map"
+msgstr "XML-Sitemap"
+
+#: xmlsitemap.module:566;572;594;605;0
+msgid "xmlsitemap"
+msgstr "xmlsitemap"
+
+#: xmlsitemap.module:566
+#, fuzzy
+msgid "Could not create the cache files directory (@directory)"
+msgstr "Das Verzeichnis (@directory) zum Dateicaching konnte nicht erstellt werden."
+
+#: xmlsitemap.module:572;594;605
+#, fuzzy
+msgid "Cannot create the cache file (@file)"
+msgstr "Die gecachte Datei (@file) konnte nicht erstellt werden."
+
+#: xmlsitemap.module:287
+msgid "1 item successfully processed."
+msgid_plural "@count items successfully processed."
+msgstr[0] "1 Element wurde erfolgreich verarbeitet."
+msgstr[1] "@count Elemente wurden erfolgreich verarbeitet."
+
+#: xmlsitemap.module:126
+msgid "by-pass the authored nodes check"
+msgstr ""
+
+#: xmlsitemap.module:126
+#, fuzzy
+msgid "override node settings"
+msgstr "Beitragseinstellungen übersteuern"
+
+#: xmlsitemap.module:126
+#, fuzzy
+msgid "override profile settings"
+msgstr "Profileinstellungen übersteuern"
+
+#: xmlsitemap.module:87
+#: xmlsitemap.install:20
+#: xmlsitemap.info:0;0
+msgid "XML Sitemap"
+msgstr "XML-Sitemap"
+
+#: xmlsitemap.module:88;95
+#, fuzzy
+msgid "Configure the XML site map."
+msgstr "Die XML-Sitemap konfigurieren."
+
+#: xmlsitemap.module:94
+msgid "Site map"
+msgstr "Sitemap"
+
+#: xmlsitemap.module:100
+msgid "Site map index"
+msgstr "Sitemap Index"
+
+#: xmlsitemap.module:110
+msgid "Site map !number"
+msgstr "Sitemap !number"
+
+#: xmlsitemap.install:21
+msgid "!module_file/!module_revision !install_file/!install_revision"
+msgstr "!module_file/!module_revision !install_file/!install_revision"
+
+#: xmlsitemap.info:0
+msgid "Creates an XML site map in accordance with sitemaps.org specifications."
+msgstr "Erzeugt eine XML-Sitemap in Übereinstimmung mit den sitemap.org Spezifikationen."
+
