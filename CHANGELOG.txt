@@ -2,6 +2,10 @@ $Id$
 
 XML sitemap 6.x-1, 2009-05-26
 -----------------------------------
+#483844 Restore code to beta0.
+
+XML sitemap 6.x-1, 2009-05-26
+-----------------------------------
 #473790 by Dave Reid: Fixed missing return value in xmlsitemap_update_6143().
 #472850: Install error on clean installation.
 

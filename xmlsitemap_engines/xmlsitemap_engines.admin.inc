@@ -26,9 +26,15 @@ function xmlsitemap_engines_settings() {
   );
   $form['submission']['xmlsitemap_engines_submit'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Submit the sitemap on content updates'),
-    '#description' => t('If enabled, search engines will be notified of changes to the sitemap each time the site content is updated.'),
+    '#title' => t('Submit the sitemap when updated'),
+    '#description' => t('If enabled, the search engines will be notified of changes to the sitemap each time it is updated.'),
     '#default_value' => variable_get('xmlsitemap_engines_submit', FALSE),
+  );
+  $form['submission']['xmlsitemap_engines_log_access'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Log access'),
+    '#description' => t('If enabled, a watchdog entry will be made each time the sitemap is accessed, containing information about the requestor.'),
+    '#default_value' => variable_get('xmlsitemap_engines_log_access', FALSE),
   );
   $form['submission']['xmlsitemap_engines_cron_submit_frequency'] = array(
     '#type' => 'select',
@@ -46,62 +52,123 @@ function xmlsitemap_engines_settings() {
       '-1' => t('Never'),
     ),
   );
-  $form['submission']['submission_urls'] = array(
+  // Ask.com fields.
+  $form['ask'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Submission URLs'),
-    '#description' => t('Use %placeholder instead of the sitemap URL. Select the checkbox to enable the submission for a specific search engine.', array('%placeholder' => '[sitemap]')),
+    '#title' => t('Ask.com'),
     '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
   );
-  foreach (_xmlsitemap_engines_get_engines_data() as $id => $info) {
-    $form['submission']['submission_urls'][$id]['inline'] = array(
-      '#prefix' => '<div class="container-inline">',
-      '#suffix' => '</div>'
-    );
-    $form['submission']['submission_urls'][$id]['inline']["xmlsitemap_engines_{$id}_submit"] = array(
-      '#type' => 'checkbox',
-      '#title' => '',
-      '#default_value' => variable_get("xmlsitemap_engines_{$id}_submit", FALSE),
-    );
-    $form['submission']['submission_urls'][$id]['inline']["xmlsitemap_engines_{$id}_url"] = array(
-      '#type' => 'textfield',
-      '#title' => '',
-      '#default_value' => variable_get("xmlsitemap_engines_{$id}_url", $info[1]),
-      '#size' => 40,
-      '#field_suffix' => '<span class="description">'. $info[0] .'</span>',
-    );
-  }
-  $form['verification'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Verification settings'),
-    '#collapsible' => TRUE,
+  $form['ask']['xmlsitemap_engines_ask_submit'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Submit the sitemap to Ask.com'),
+    '#default_value' => variable_get('xmlsitemap_engines_ask_submit', FALSE),
   );
-  $form['verification']['google']['xmlsitemap_engines_google_verify'] = array(
+  $form['ask']['xmlsitemap_engines_ask_url'] = array(
     '#type' => 'textfield',
-    '#title' => t('Google verification link'),
+    '#title' => t('Submission URL'),
+    '#description' => t('The URL to submit the sitemap to. Use %placeholder like placeholder for the sitemap URL.', array('%placeholder' => '[sitemap]')),
+    '#default_value' => variable_get('xmlsitemap_engines_ask_url', 'http://submissions.ask.com/ping?sitemap=[sitemap]'),
+  );
+  // Google fields.
+  $form['google'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Google'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
+  $form['google']['xmlsitemap_engines_google_submit'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Submit the sitemap to Google'),
+    '#default_value' => variable_get('xmlsitemap_engines_google_submit', FALSE),
+  );
+  $form['google']['xmlsitemap_engines_google_url'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Submission URL'),
+    '#description' => t('The URL to submit the sitemap to. Use %placeholder like placeholder for the sitemap URL.', array('%placeholder' => '[sitemap]')),
+    '#default_value' => variable_get('xmlsitemap_engines_google_url', 'http://www.google.com/webmasters/tools/ping?sitemap=[sitemap]'),
+  );
+  $form['google']['xmlsitemap_engines_google_verify'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Verification link'),
     '#description' => t('In order to show statistics, Google will ask you to verify that you control this site by creating a file with a certain name. Enter that name here and the XML sitemap module will create a path to that file name. This will only work if you have clean URLs enabled.'),
     '#default_value' => variable_get('xmlsitemap_engines_google_verify', ''),
   );
-  $form['verification']['live']['xmlsitemap_engines_live_verify'] = array(
+  // Moreover.com fields.
+  $form['moreover'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Moreover.com'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
+  $form['moreover']['xmlsitemap_engines_moreover_submit'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Submit the sitemap to Moreover.com'),
+    '#default_value' => variable_get('xmlsitemap_engines_moreover_submit', FALSE),
+  );
+  $form['moreover']['xmlsitemap_engines_moreover_url'] = array(
     '#type' => 'textfield',
-    '#title' => t('Windows Live authentication file'),
+    '#title' => t('Submission URL'),
+    '#description' => t('The URL to submit the sitemap to. Use %placeholder like placeholder for the sitemap URL.', array('%placeholder' => '[sitemap]')),
+    '#default_value' => variable_get('xmlsitemap_engines_moreover_url', 'http://api.moreover.com/ping?u=[sitemap]'),
+  );
+  // Windows Live fields.
+  $form['live'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Windows Live'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
+  $form['live']['xmlsitemap_engines_live_submit'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Submit the sitemap to Windows Live'),
+    '#default_value' => variable_get('xmlsitemap_engines_live_submit', FALSE),
+  );
+  $form['live']['xmlsitemap_engines_live_url'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Submission URL'),
+    '#description' => t('The URL to submit the sitemap to. Use %placeholder like placeholder for the sitemap URL.', array('%placeholder' => '[sitemap]')),
+    '#default_value' => variable_get('xmlsitemap_engines_live_url', 'http://webmaster.live.com/ping.aspx?siteMap=[sitemap]'),
+  );
+  $form['live']['xmlsitemap_engines_live_verify'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Authentication file'),
     '#description' => t('Before allowing you to view additional information, Windows Live will ask you to verify that you control this site by creating a file with a certain name. Enter that name here, and XML sitemap will create a path to that file name. This will only work if you have clean URLs enabled.'),
     '#default_value' => variable_get('xmlsitemap_engines_live_verify', 'LiveSearchSiteAuth.xml'),
   );
-  $form['verification']['live']['xmlsitemap_engines_live_verify_string'] = array(
+  $form['live']['xmlsitemap_engines_live_verify_string'] = array(
     '#type' => 'textfield',
-    '#title' => t('Windows Live authentication tag'),
+    '#title' => t('Authentication tag'),
     '#description' => t('Windows Live will give you an authentication tag.'),
     '#default_value' => variable_get('xmlsitemap_engines_live_verify_string', ''),
   );
-  $form['verification']['yahoo']['xmlsitemap_engines_yahoo_verify'] = array(
+  // Yahoo! fields.
+  $form['yahoo'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Yahoo!'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
+  $form['yahoo']['xmlsitemap_engines_yahoo_submit'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Submit the sitemap to Yahoo!'),
+    '#default_value' => variable_get('xmlsitemap_engines_yahoo_submit', FALSE),
+  );
+  $form['yahoo']['xmlsitemap_engines_yahoo_url'] = array(
     '#type' => 'textfield',
-    '#title' => t('Yahoo! verification link'),
+    '#title' => t('Submission URL'),
+    '#description' => t('The URL to submit the sitemap to. Use %placeholder like placeholder for the sitemap URL.', array('%placeholder' => '[sitemap]')),
+    '#default_value' => variable_get('xmlsitemap_engines_yahoo_url', 'http://search.yahooapis.com/SiteExplorerService/V1/ping?sitemap=[sitemap]'),
+  );
+  $form['yahoo']['xmlsitemap_engines_yahoo_verify'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Verification link'),
     '#description' => t('Before allowing you to view additional information, Yahoo! will ask you to verify that you control this site by creating a file with a certain name. Enter that name here, and XML sitemap will create a path to that file name. This will only work if you have clean URLs enabled.'),
     '#default_value' => variable_get('xmlsitemap_engines_yahoo_verify', ''),
   );
-  $form['verification']['yahoo']['xmlsitemap_engines_yahoo_verify_string'] = array(
+  $form['yahoo']['xmlsitemap_engines_yahoo_verify_string'] = array(
     '#type' => 'textfield',
-    '#title' => t('Yahoo! authentication key'),
+    '#title' => t('Authentication key'),
     '#description' => t('Yahoo! will ask you to put an authentication key in the verification file.'),
     '#default_value' => variable_get('xmlsitemap_engines_yahoo_verify_string', ''),
   );
