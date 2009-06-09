@@ -11,21 +11,6 @@
  ****************************************************************************/
 
 /**
- * Implementation of hook_requirements().
- */
-function xmlsitemap_requirements($phase) {
-  $requirements = array();
-  if ($phase == 'runtime') {
-    $requirements['xmlsitemap'] = array(
-      'title' => t('XML sitemap'),
-      'value' => t("!module_file/!module_revision !install_file/!install_revision", array('!module_file' => 'xmlsitemap.module', '!module_revision' =>_xmlsitemap_revision(), '!install_file' => 'xmlsitemap.install', '!install_revision' => preg_replace('/\$Rev[iI]sion:\s+(.*)\s+\$/iU', '$1', '$Revision$'))),
-      'severity' => REQUIREMENT_OK,
-    );
-  }
-  return $requirements;
-}
-
-/**
  * Implementation of hook_schema().
  */
 function xmlsitemap_schema() {

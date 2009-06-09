@@ -1,6 +1,10 @@
 $Id$
 
-XML sitemap 6.x-1, 2009-05-26
+XML sitemap 6.x-1, 2009-06-09
+-----------------------------------
+#470534 Remove _xmlsitemap_revision().
+
+XML sitemap 6.x-1, 2009-06-06
 -----------------------------------
 #483844 Restore code to beta0.
 

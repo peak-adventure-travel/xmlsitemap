@@ -393,17 +393,6 @@ function xmlsitemap_user_form_fieldset() {
   return $form;
 }
 
-/*****************************************************************************
- * Private functions.
- ****************************************************************************/
-
-/**
- * Return the revision number as extracted from the CVS revision tag.
- */
-function _xmlsitemap_revision() {
-  return preg_replace('/\$Rev[iI]sion:\s+(.*)\s+\$/iU', '$1', '$Revision$');
-}
-
 /**
  * @} End of "addtogroup xmlsitemap".
  */
