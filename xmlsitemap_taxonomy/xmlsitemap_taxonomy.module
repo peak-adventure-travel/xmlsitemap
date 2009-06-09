@@ -205,12 +205,7 @@ function xmlsitemap_taxonomy_xmlsitemap_links() {
   $row->module = 'xmlsitemap_taxonomy';
   $row->type = 'taxonomy';
   while ($term = db_fetch_object($result)) {
-    if ($term->module == 'forum') {
-      $row->loc = 'forum/'. $term->tid;
-    }
-    else {
-      $row->loc = taxonomy_term_path($term);
-    }
+    $row->loc = taxonomy_term_path($term);
     $row->id = $term->tid;
     $row->changed = $term->changed;
     $row->changefreq = max(REQUEST_TIME - $term->changed, empty($term->previously_changed) ? 0 : $term->changed - $term->previously_changed);
