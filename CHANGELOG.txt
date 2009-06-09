@@ -4,6 +4,7 @@ XML sitemap 6.x-1, 2009-06-09
 -----------------------------------
 #470534 Remove _xmlsitemap_revision().
 #484454 Bug in PHP 5.1.2 with DATE_W3C.
+#486450 Remove the check and call for hook_xmlsitemap_url().
 
 XML sitemap 6.x-1, 2009-06-06
 -----------------------------------

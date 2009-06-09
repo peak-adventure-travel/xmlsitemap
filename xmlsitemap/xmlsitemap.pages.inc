@@ -157,10 +157,6 @@ function _xmlsitemap_create_cache_chunk($fp, $chunk_size, $chunk = 0) {
     if ($link->type == 'frontpage') {
       $url = url(NULL, array('absolute' => TRUE));
     }
-    elseif ($link->module && function_exists($link->module .'_xmlsitemap_url')) {
-      $function = $link->module .'_xmlsitemap_url';
-      $url = $function($link->loc, $link->type, $link->id, $link->sid);
-    }
     else {
       $url = url($link->loc, array('absolute' => TRUE));
     }
