@@ -15,12 +15,7 @@ See INSTALL.txt in this directory.
 
 KNOWN ISSUES
 ------------
-Users who have not enabled clean URLs have reported receiving an
-"Unsupported file format" error from Google. The solution is to replace
-"?q=sitemap.xml" at the end of the submission URL with
-"index.php?q=sitemap.xml", or to enable the clean URLs.
-Submission URLs for each search engine can be
-configured at http://www.example.com/?q=admin/settings/xmlsitemap/engines.
+See http://drupal.org/node/482550 for a list of the current known issues.
 
 MORE INFORMATION
 ----------------
