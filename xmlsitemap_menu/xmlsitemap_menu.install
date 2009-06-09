@@ -67,30 +67,9 @@ function xmlsitemap_menu_update_6000() {
 /**
  * Implementation of hook_update_N().
  */
-function xmlsitemap_menu_update_6100() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_menu_update_6101() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
 function xmlsitemap_menu_update_6102() {
   $ret[] = update_sql("DELETE FROM {menu_custom} WHERE menu_name = '1'");
   return $ret;
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_menu_update_6103() {
-  return array();
 }
 
 /**
@@ -103,30 +82,9 @@ function xmlsitemap_menu_update_6104() {
 /**
  * Implementation of hook_update_N().
  */
-function xmlsitemap_menu_update_6105() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
 function xmlsitemap_menu_update_6106() {
   $ret[] = update_sql("UPDATE {system} SET weight = 10 WHERE name = 'xmlsitemap_menu'");
   return $ret;
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_menu_update_6107() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_menu_update_6108() {
-  return array();
 }
 
 /**

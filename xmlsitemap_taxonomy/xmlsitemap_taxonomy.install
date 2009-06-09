@@ -257,48 +257,6 @@ function xmlsitemap_taxonomy_update_6000() {
 /**
  * Implementation of hook_update_N().
  */
-function xmlsitemap_taxonomy_update_6100() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_taxonomy_update_6101() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_taxonomy_update_6102() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_taxonomy_update_6103() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_taxonomy_update_6104() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_taxonomy_update_6105() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
 function xmlsitemap_taxonomy_update_6106() {
   $ret[] = update_sql("UPDATE {system} SET weight = 10 WHERE name = 'xmlsitemap_taxonomy'");
   return $ret;
@@ -306,45 +264,11 @@ function xmlsitemap_taxonomy_update_6106() {
 
 /**
  * Implementation of hook_update_N().
+ *
+ * @TODO: Why is this calling a previous update?
  */
 function xmlsitemap_taxonomy_update_6107() {
-  return xmlsitemap_term_update_6000();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_taxonomy_update_6108() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_taxonomy_update_6109() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_taxonomy_update_6110() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_taxonomy_update_6111() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- *
- */
-function xmlsitemap_taxonomy_update_6112() {
-  return array();
+  return xmlsitemap_taxonomy_update_6000();
 }
 
 /**

@@ -11,6 +11,20 @@
  ****************************************************************************/
 
 /**
+ * Implementation of hook_enable().
+ */
+function xmlsitemap_enable() {
+  xmlsitemap_flag_sitemap();
+}
+
+/**
+ * Implementation of hook_disable().
+ */
+function xmlsitemap_disable() {
+  xmlsitemap_flag_sitemap();
+}
+
+/**
  * Implementation of hook_schema().
  */
 function xmlsitemap_schema() {
@@ -405,132 +419,6 @@ function xmlsitemap_update_6000() {
 /**
  * Implementation of hook_update_N().
  */
-function xmlsitemap_update_6100() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6101() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6102() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6103() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6104() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6105() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6106() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6107() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6108() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6109() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6110() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6111() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6112() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6113() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6114() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6115() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6116() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6117() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
 function xmlsitemap_update_6118() {
   variable_set('xmlsitemap_cron_submit_frequency', variable_get('xmlsitemap_cron_submit', FALSE) ? 1 : -1);
   $ret[] = array(
@@ -542,93 +430,12 @@ function xmlsitemap_update_6118() {
 
 /**
  * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6119() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6120() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6121() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6122() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6123() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6124() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6125() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
+ *
+ * @TODO: Why are we deleting all rows from xmlsitemap?
  */
 function xmlsitemap_update_6126() {
   $ret[] = update_sql("DELETE FROM {xmlsitemap}");
   return $ret;
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6127() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6128() {
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6129() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6130() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6131() {
-  return array();
 }
 
 /**
@@ -656,26 +463,7 @@ function xmlsitemap_update_6133() {
 /**
  * Implementation of hook_update_N().
  */
-function xmlsitemap_update_6134() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6135() {
-  return array();
-}
-
-/**
- * Implementation of hook_update_N().
- */
 function xmlsitemap_update_6136() {
-  xmlsitemap_flag_sitemap();
-  $ret[] = array(
-    'success' => TRUE,
-    'query' => 'UPDATE SITEMAP',
-  );
   $ret[] = update_sql("DELETE FROM {variable} WHERE name = 'xmlsitemap_update_sitemap_request'");
   variable_set('xmlsitemap_chunk_size', 1000);
   $ret[] = array(
@@ -683,13 +471,6 @@ function xmlsitemap_update_6136() {
     'query' => 'UPDATE XMLSITEMAP_CHUNK_SIZE'
   );
   return $ret;
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6137() {
-  return array();
 }
 
 /**
