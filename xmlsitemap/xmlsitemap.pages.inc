@@ -1,6 +1,7 @@
 <?php
 // $Id$
 
+
 /**
  * @file
  * XML sitemap page callbacks.
@@ -17,6 +18,7 @@
 
 /**
  * Menu callback; display the sitemap.
+ *
  * @param $chunk
  *  An integer specifying which chunk of the sitemap is being requested.
  *  If not set and there is more than one chunk, display the sitemap index.
@@ -40,13 +42,13 @@ function xmlsitemap_output($chunk = NULL) {
     if (variable_get('xmlsitemap_sitemap_needs_update', FALSE)) {
       variable_set('xmlsitemap_update_timestamp', REQUEST_TIME);
       db_query("DELETE FROM {xmlsitemap} WHERE type ='frontpage'");
-      $row = new stdClass();
-      $row->module = 'xmlsitemap';
-      $row->type = 'frontpage';
-      $changefreq = variable_get('xmlsitemap_front_page_changefreq', 3600);
-      $row->changed = REQUEST_TIME - $changefreq;
+      $row             = new stdClass();
+      $row->module     = 'xmlsitemap';
+      $row->type       = 'frontpage';
+      $changefreq      = variable_get('xmlsitemap_front_page_changefreq', 3600);
+      $row->changed    = REQUEST_TIME - $changefreq;
       $row->changefreq = $changefreq;
-      $row->priority = variable_get('xmlsitemap_front_page_priority', 1);
+      $row->priority   = variable_get('xmlsitemap_front_page_priority', 1);
       drupal_write_record('xmlsitemap', $row);
       module_invoke_all('xmlsitemap_links');
       variable_set('xmlsitemap_sitemap_needs_update', FALSE);
@@ -92,13 +94,14 @@ function xmlsitemap_output($chunk = NULL) {
 
 /**
  * Check the cache files.
+ *
  * @return
  *   TRUE if the cache files must be updated / created, FALSE otherwise.
  */
 function _xmlsitemap_check_cache_files() {
-  $chunk_size = variable_get('xmlsitemap_chunk_size', 1000);
-  $link_count = xmlsitemap_link_count();
-  $id = xmlsitemap_cache_id();
+  $chunk_size       = variable_get('xmlsitemap_chunk_size', 1000);
+  $link_count       = xmlsitemap_link_count();
+  $id               = xmlsitemap_cache_id();
   $parent_directory = variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap');
   // If the directory that should contains the cache files doesn't exist, then
   // the cache files must be created.
@@ -137,6 +140,7 @@ function _xmlsitemap_check_cache_files() {
 
 /**
  * Create a sitemap chunk cache file.
+ *
  * @param $fp
  *  A file resource used to write in.
  * @param $chunk_size
@@ -146,11 +150,11 @@ function _xmlsitemap_check_cache_files() {
  *  0).
  */
 function _xmlsitemap_create_cache_chunk($fp, $chunk_size, $chunk = 0) {
-  fwrite($fp, '<?xml version="1.0" encoding="UTF-8"?>'."\n");
-  fwrite($fp, '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'."\n");
-  fwrite($fp, '  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'."\n");
-  fwrite($fp, '  xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9'."\n");
-  fwrite($fp, '  http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">'."\n");
+  fwrite($fp, '<?xml version="1.0" encoding="UTF-8"?>' . "\n");
+  fwrite($fp, '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' . "\n");
+  fwrite($fp, '  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' . "\n");
+  fwrite($fp, '  xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9' . "\n");
+  fwrite($fp, '  http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">' . "\n");
   $start = $chunk * $chunk_size;
   $links = db_query_range("SELECT xsm.loc, xsm.module, xsm.type, xsm.id, xsm.sid, xsm.changed, xsm.changefreq, xsm.priority". xmlsitemap_sitemap_query() ."ORDER BY xsm.priority DESC, xsm.changed DESC, xsm.changefreq, xsm.loc", $start, $chunk_size);
   while ($link = db_fetch_object($links)) {
@@ -170,12 +174,12 @@ function _xmlsitemap_create_cache_chunk($fp, $chunk_size, $chunk = 0) {
     }
     drupal_alter('xmlsitemap_data', $link);
     if (($link->status & XMLSITEMAP_LINK_DISABLED) != XMLSITEMAP_LINK_DISABLED) {
-      fwrite($fp, '  <url>'."\n");
-      fwrite($fp, '    <loc>'. check_url($link->url) .'</loc>'."\n");
-      fwrite($fp, '    <lastmod>'. gmdate(DATE_W3C, $link->changed) .'</lastmod>'."\n");
-      fwrite($fp, '    <changefreq>'. xmlsitemap_sitemap_frequency($link->changefreq) .'</changefreq>'."\n");
-      fwrite($fp, '    <priority>'. number_format($link->priority, 1) .'</priority>'."\n");
-      fwrite($fp, '  </url>'."\n");
+      fwrite($fp, '  <url>' . "\n");
+      fwrite($fp, '    <loc>'. check_url($link->url) .'</loc>' . "\n");
+      fwrite($fp, '    <lastmod>'. gmdate(DATE_W3C, $link->changed) .'</lastmod>' . "\n");
+      fwrite($fp, '    <changefreq>'. xmlsitemap_sitemap_frequency($link->changefreq) .'</changefreq>' . "\n");
+      fwrite($fp, '    <priority>'. number_format($link->priority, 1) .'</priority>' . "\n");
+      fwrite($fp, '  </url>' . "\n");
     }
   }
   fwrite($fp, '</urlset>');
@@ -183,13 +187,14 @@ function _xmlsitemap_create_cache_chunk($fp, $chunk_size, $chunk = 0) {
 
 /**
  * Create the cache files containing the sitemap.
+ *
  * @return
  *  TRUE if the operation has been successfull, FALSE otherwise.
  */
 function _xmlsitemap_create_cache_files() {
-  $chunk_size = variable_get('xmlsitemap_chunk_size', 1000);
-  $link_count = xmlsitemap_link_count();
-  $id = xmlsitemap_cache_id();
+  $chunk_size       = variable_get('xmlsitemap_chunk_size', 1000);
+  $link_count       = xmlsitemap_link_count();
+  $id               = xmlsitemap_cache_id();
   $parent_directory = variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap');
   // If the directory doesn't exist, then create it.
   if (!is_dir($parent_directory)) {
@@ -206,18 +211,18 @@ function _xmlsitemap_create_cache_files() {
       watchdog('xmlsitemap', 'Cannot create the cache file (@file)', array('@file' => $parent_directory ."/xsm-$id.xml"), WATCHDOG_ERROR);
       return FALSE;
     }
-    fwrite($fp, '<?xml version="1.0" encoding="UTF-8"?>'."\n");
-    fwrite($fp, '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'."\n");
-    fwrite($fp, '  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'."\n");
-    fwrite($fp, '  xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9'."\n");
-    fwrite($fp, '  http://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd">'."\n");
+    fwrite($fp, '<?xml version="1.0" encoding="UTF-8"?>' . "\n");
+    fwrite($fp, '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' . "\n");
+    fwrite($fp, '  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' . "\n");
+    fwrite($fp, '  xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9' . "\n");
+    fwrite($fp, '  http://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd">' . "\n");
     for ($chunk = 0; $chunk < $link_count / $chunk_size; ++$chunk) {
-      fwrite($fp, '  <sitemap>'."\n");
-      fwrite($fp, '    <loc>'. url("sitemap$chunk.xml", array('absolute' => TRUE)) .'</loc>'."\n");
+      fwrite($fp, '  <sitemap>' . "\n");
+      fwrite($fp, '    <loc>'. url("sitemap$chunk.xml", array('absolute' => TRUE)) .'</loc>' . "\n");
       $from = $chunk * $chunk_size;
       $changed = db_result(db_query_range("SELECT xsm.changed". xmlsitemap_sitemap_query() ."ORDER BY xsm.priority DESC, xsm.changed DESC", $from, $chunk_size));
-      fwrite($fp, '    <lastmod>'. gmdate(DATE_W3C, $changed) .'</lastmod>'."\n");
-      fwrite($fp, '  </sitemap>'."\n");
+      fwrite($fp, '    <lastmod>'. gmdate(DATE_W3C, $changed) .'</lastmod>' . "\n");
+      fwrite($fp, '  </sitemap>' . "\n");
     }
     fwrite($fp, '</sitemapindex>');
     fclose($fp);
@@ -250,3 +255,4 @@ function _xmlsitemap_create_cache_files() {
 /**
  * @} End of "addtogroup xmlsitemap".
  */
+

@@ -1,6 +1,7 @@
 <?php
 // $Id$
 
+
 /**
  * @file
  * Creates a sitemap compatible with the sitemaps.org schema.
@@ -39,7 +40,6 @@ if (!defined('REQUEST_TIME')) {
  */
 define('XMLSITEMAP_LINK_DISABLED', 1);
 
-
 /*****************************************************************************
  * Drupal hooks.
  ****************************************************************************/
@@ -67,6 +67,7 @@ function xmlsitemap_help($path, $arg) {
     case 'admin/settings/xmlsitemap/engines':
       $output = t('The sitemap is located at @sitemap.', array('@sitemap' => url('sitemap.xml', array('absolute' => TRUE))));
       break;
+
     case 'admin/help#xmlsitemap':
       $output = '<p>'. t('XML sitemap automatically creates a sitemap that conforms to the <a href="@sitemaps.org">sitemaps.org specification</a>. This helps search engines keep their search results up to date.', array('@sitemaps.org' => 'http://www.sitemaps.org')) .'</p>';
       $output .= '<h3>'. t('Supporting modules') .'</h3>';
@@ -82,6 +83,7 @@ function xmlsitemap_help($path, $arg) {
       $output .= '<p>'. t('Links may be assigned a priority between 0.0 and 1.0. The default priority is 0.5. A priority of <em>Not in sitemap</em> excludes a link from the sitemap.') .'</p>';
       $output .= '<p>'. t('More information is available in the <a href="@module_docs">XML sitemap documentation</a>.', array('@module_docs' => 'http://drupal.org/handbook/modules/gsitemap')) .'</p>';
       break;
+
     default:
       $output = '';
       break;
@@ -268,12 +270,14 @@ function xmlsitemap_link_count() {
 
 /**
  * Return an array of sitemap priority options.
+ *
  * @param $option
  *  If not given, the array will include priority values from 0.0 to 1.0.
  * - exclude: Add option to exclude item from sitemap.
  * - default: Add option to use default priority. Only for cases where a
  *   default priority exists.
  * - both: Add both the default and exclude options.
+ *
  * @return
  *  An array of priority options.
  */
@@ -289,7 +293,7 @@ function xmlsitemap_priority_options($option = '') {
     '0.3' => t('0.3'),
     '0.2' => t('0.2'),
     '0.1' => t('0.1'),
-    '0' => t('0.0')
+    '0' => t('0.0'),
   );
   if ($option == 'exclude' || $option == 'both') {
     $options['-1'] = t('Not in sitemap');
@@ -302,9 +306,11 @@ function xmlsitemap_priority_options($option = '') {
 
 /**
  * Determine the frequency of updates to a link.
+ *
  * @param $interval
  *  The number of seconds since the last change, or the number of seconds
  *  between the last change, and the previous change.
+ *
  * @return
  *  A string representing the update frequency according to the sitemaps.org
  *  protocol.
@@ -336,10 +342,11 @@ function xmlsitemap_sitemap_query() {
   global $language;
   $default = language_default();
   $language_query = "AND xsm.language IN ('". $language->language ."', '')";
-  switch(variable_get('language_negotiation', LANGUAGE_NEGOTIATION_NONE)) {
+  switch (variable_get('language_negotiation', LANGUAGE_NEGOTIATION_NONE)) {
     case LANGUAGE_NEGOTIATION_NONE:
       $language_query = '';
       break;
+
     case LANGUAGE_NEGOTIATION_PATH_DEFAULT:
     case LANGUAGE_NEGOTIATION_PATH:
       if (variable_get('xmlsitemap_all_links_to_default_language', 0) && $language->language == $default->language) {
@@ -381,3 +388,4 @@ function xmlsitemap_user_form_fieldset() {
 /**
  * @} End of "addtogroup xmlsitemap".
  */
+

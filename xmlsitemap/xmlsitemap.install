@@ -1,6 +1,7 @@
 <?php
 // $Id$
 
+
 /**
  * @file
  * Installation file for XML sitemap.
@@ -180,7 +181,7 @@ function xmlsitemap_update_6100() {
       )
     );
     if (db_column_exists('xmlsitemap', 'module')) {
-      db_change_field($ret, 'xmlsitemap', 'module', 'module', 
+      db_change_field($ret, 'xmlsitemap', 'module', 'module',
         array(
           'description' => 'The module handling this link.',
           'type' => 'varchar',
@@ -423,7 +424,7 @@ function xmlsitemap_update_6118() {
   variable_set('xmlsitemap_cron_submit_frequency', variable_get('xmlsitemap_cron_submit', FALSE) ? 1 : -1);
   $ret[] = array(
     'success' => TRUE,
-    'query' => 'UPDATE MODULE SETTINGS'
+    'query' => 'UPDATE MODULE SETTINGS',
   );
   return $ret;
 }
@@ -461,7 +462,7 @@ function xmlsitemap_update_6136() {
   variable_set('xmlsitemap_chunk_size', 1000);
   $ret[] = array(
     'success' => TRUE,
-    'query' => 'UPDATE XMLSITEMAP_CHUNK_SIZE'
+    'query' => 'UPDATE XMLSITEMAP_CHUNK_SIZE',
   );
   return $ret;
 }
@@ -540,3 +541,4 @@ function xmlsitemap_uninstall() {
   drupal_uninstall_schema('xmlsitemap');
   db_query("DELETE FROM {variable} WHERE name LIKE 'xmlsitemap\_%'");
 }
+

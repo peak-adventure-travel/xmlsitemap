@@ -1,6 +1,7 @@
 <?php
 // $Id$
 
+
 /**
  * @file
  * Installation file for XML sitemap engines.
@@ -29,13 +30,13 @@ function xmlsitemap_engines_update_6100() {
     'live_url' => 'http://webmaster.live.com/ping.aspx?siteMap=[sitemap]',
     'yahoo_url' => 'http://search.yahooapis.com/SiteExplorerService/V1/ping?sitemap=[sitemap]',
   );
-  foreach($variables as $variable => $value) {
+  foreach ($variables as $variable => $value) {
     variable_set('xmlsitemap_engines_'. $variable, $value);
   }
   variable_set('xmlsitemap_engines_cron_submit_frequency', 3600);
   $ret[] = array(
     'success' => TRUE,
-    'query' => 'UPDATE MODULE SETTINGS'
+    'query' => 'UPDATE MODULE SETTINGS',
   );
   return $ret;
 }
@@ -48,7 +49,7 @@ function xmlsitemap_engines_update_6106() {
     'submit',
     'log_access',
     'cron_submit_frequency',
-    'cron_submit_delay'
+    'cron_submit_delay',
   );
   foreach ($variables as $variable) {
     $ret[] = @update_sql("UPDATE {variable} SET name = 'xmlsitemap_engines_{$variable}' WHERE name = 'xmlsitemap_{$variable}'");
@@ -64,3 +65,4 @@ function xmlsitemap_engines_update_6106() {
 function xmlsitemap_engines_uninstall() {
   db_query("DELETE FROM {variable} WHERE name LIKE 'xmlsitemap\_engines\_'");
 }
+

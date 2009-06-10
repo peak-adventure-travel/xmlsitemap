@@ -1,6 +1,7 @@
 <?php
 // $Id$
 
+
 /**
  * @file
  * XML sitemap settings UI.
@@ -101,7 +102,7 @@ function xmlsitemap_tools() {
   $form['options'] = array(
     '#type' => 'fieldset',
     '#title' => t('Operations'),
-    '#collapsible' => FALSE, 
+    '#collapsible' => FALSE,
     '#collapsed' => FALSE,
     '#prefix' => '<div class="container-inline">',
     '#suffix' => '</div>',
@@ -129,8 +130,8 @@ function xmlsitemap_tools() {
  */
 function xmlsitemap_tools_submit($form, &$form_state) {
   $operations = module_invoke_all('xmlsitemap_operations');
-  $operation = $operations[$form_state['values']['operation']];
-  $function = $operation['callback'];
+  $operation  = $operations[$form_state['values']['operation']];
+  $function   = $operation['callback'];
   if (isset($operation['callback arguments'])) {
     call_user_func_array($function, $operation['callback arguments']);
   }
@@ -143,3 +144,4 @@ function xmlsitemap_tools_submit($form, &$form_state) {
 /**
  * @} End of "addtogroup xmlsitemap".
  */
+
