@@ -274,7 +274,7 @@ function xmlsitemap_node_xmlsitemap_description() {
  * Implementation of hook_xmlsitemap_link_status().
  */
 function xmlsitemap_node_xmlsitemap_link_status($type, $id, $sid) {
-  if (!($node = node_load($id))) {
+  if (!($node = node_load($id, NULL, TRUE))) {
     return XMLSITEMAP_LINK_DISABLED;
   }
   if ($node->status) {

@@ -7,6 +7,7 @@ XML sitemap 6.x-1, 2009-06-10
 #458132 xmlsitemap_output() references a not initialized variable.
 #485596 Database table is wrongly described as a xmlsitemap_term base table.
 #484488 preg_match() versus is_numeric().
+#484478 node_load($id) versus node_load($id, NULL, TRUE).
 
 XML sitemap 6.x-1, 2009-06-09
 -----------------------------------
