@@ -186,15 +186,6 @@ function xmlsitemap_xmlsitemap_operations() {
  ****************************************************************************/
 
 /**
- * Return the API identifier currently inplemented in the module.
- * @return
- *   A string identifying the current API version.
- */
-function xmlsitemap_api() {
-  return '1.0';
-}
-
-/**
  * Batch callback called when the batch operations are completed.
  */
 function xmlsitemap_batch_operations_finished($success, $results, $operations) {
