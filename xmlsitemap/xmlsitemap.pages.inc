@@ -31,7 +31,7 @@ function xmlsitemap_output($chunk = NULL) {
       variable_set('xmlsitemap_chunk_size', $chunk_size);
     }
   }
-  if (isset($chunk) && !preg_match('/[0-9]+/', $chunk)) {
+  if (isset($chunk) && !is_numeric($chunk)) {
     drupal_not_found();
     exit();
   }
