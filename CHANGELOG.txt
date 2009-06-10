@@ -14,6 +14,7 @@ XML sitemap 6.x-1, 2009-06-10
 #459366 Remove hook_boot() and hook_exit().
 #486230 Rename the hook_update_N _6000 to _6100 and remove the implementations
 calling the _6000 implementation.
+#487650 Indentation of the code is not correct.
 
 XML sitemap 6.x-1, 2009-06-09
 -----------------------------------

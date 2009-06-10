@@ -35,7 +35,7 @@ function xmlsitemap_output($chunk = NULL) {
     drupal_not_found();
     exit();
   }
-	$id = xmlsitemap_cache_id();
+  $id = xmlsitemap_cache_id();
   if (!$user->uid) {
     if (variable_get('xmlsitemap_sitemap_needs_update', FALSE)) {
       variable_set('xmlsitemap_update_timestamp', REQUEST_TIME);
