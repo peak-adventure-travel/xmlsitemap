@@ -5,6 +5,7 @@ XML sitemap 6.x-1, 2009-06-10
 #454190 Remove xmlsitemap_menu.module.
 #458530 Module help page still referrs to XML sitemap term.
 #458132 xmlsitemap_output() references a not initialized variable.
+#485596 Database table is wrongly described as a xmlsitemap_term base table.
 
 XML sitemap 6.x-1, 2009-06-09
 -----------------------------------
