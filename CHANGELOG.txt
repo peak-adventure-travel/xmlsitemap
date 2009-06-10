@@ -1,5 +1,9 @@
 $Id$
 
+XML sitemap 6.x-1, 2009-06-10
+-----------------------------------
+#454190 Remove xmlsitemap_menu.module.
+
 XML sitemap 6.x-1, 2009-06-09
 -----------------------------------
 #470534 Remove _xmlsitemap_revision().
