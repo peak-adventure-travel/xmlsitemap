@@ -86,7 +86,7 @@ function xmlsitemap_taxonomy_install() {
  * Implementation of hook_update_N().
  * Updates the SQL tables.
  */
-function xmlsitemap_taxonomy_update_6000() {
+function xmlsitemap_taxonomy_update_6100() {
   $ret = array();
   if (db_table_exists('xmlsitemap_taxonomy')) {
     if (db_column_exists('xmlsitemap_taxonomy', 'pid')) {
@@ -260,15 +260,6 @@ function xmlsitemap_taxonomy_update_6000() {
 function xmlsitemap_taxonomy_update_6106() {
   $ret[] = update_sql("UPDATE {system} SET weight = 10 WHERE name = 'xmlsitemap_taxonomy'");
   return $ret;
-}
-
-/**
- * Implementation of hook_update_N().
- *
- * @TODO: Why is this calling a previous update?
- */
-function xmlsitemap_taxonomy_update_6107() {
-  return xmlsitemap_taxonomy_update_6000();
 }
 
 /**

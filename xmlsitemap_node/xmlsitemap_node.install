@@ -83,7 +83,7 @@ function xmlsitemap_node_install() {
  * Implementation of hook_update_N().
  *
  */
-function xmlsitemap_node_update_6000() {
+function xmlsitemap_node_update_6100() {
   $ret = array();
   if (db_table_exists('xmlsitemap_node')) {
     if (db_column_exists('xmlsitemap_node', 'pid')) {
@@ -260,14 +260,6 @@ function xmlsitemap_node_update_6000() {
 function xmlsitemap_node_update_6106() {
   $ret[] = update_sql("UPDATE {system} SET weight = 5 WHERE name = 'xmlsitemap_node'");
   return $ret;
-}
-
-/**
- * Implementation of hook_update_N().
- *
- */
-function xmlsitemap_node_update_6112() {
-  return xmlsitemap_node_update_6000();
 }
 
 /**

@@ -122,7 +122,7 @@ function xmlsitemap_install() {
 /**
  * Implementation of hook_update_N().
  */
-function xmlsitemap_update_6000() {
+function xmlsitemap_update_6100() {
   $ret = array();
   if ($GLOBALS['db_type'] == 'pgsql') {
     $ret[] = update_sql('DROP FUNCTION IF EXISTS first(anyelement, anyelement);');
@@ -436,13 +436,6 @@ function xmlsitemap_update_6118() {
 function xmlsitemap_update_6126() {
   $ret[] = update_sql("DELETE FROM {xmlsitemap}");
   return $ret;
-}
-
-/**
- * Implementation of hook_update_N().
- */
-function xmlsitemap_update_6132() {
-  return xmlsitemap_update_6000();
 }
 
 /**

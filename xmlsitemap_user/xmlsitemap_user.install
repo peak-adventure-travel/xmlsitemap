@@ -101,7 +101,7 @@ function xmlsitemap_user_install() {
 /**
  * Implementation of hook_update_N().
  */
-function xmlsitemap_user_update_6000() {
+function xmlsitemap_user_update_6100() {
   $ret = array();
   if (db_table_exists('xmlsitemap_user')) {
     if (db_column_exists('xmlsitemap_user', 'pid')) {
@@ -308,7 +308,6 @@ function xmlsitemap_user_update_6000() {
  *
  */
 function xmlsitemap_user_update_6113() {
-  $ret = xmlsitemap_user_update_6000();
   $ret[] = update_sql("UPDATE {system} SET weight = 10 WHERE name = 'xmlsitemap_user'");
   return $ret;
 }
