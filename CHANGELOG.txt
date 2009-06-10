@@ -11,6 +11,7 @@ XML sitemap 6.x-1, 2009-06-10
 #484456 Remove xmlsitemap_api().
 #466654 Change 'Submit the sitemap when updated' title and description.
 #458710 Change unlink() for file_delete().
+#459366 Remove hook_boot() and hook_exit().
 
 XML sitemap 6.x-1, 2009-06-09
 -----------------------------------
