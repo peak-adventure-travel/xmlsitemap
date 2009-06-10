@@ -244,7 +244,7 @@ function xmlsitemap_delete_cache_files() {
   if (!is_dir($parent_directory)) {
     return;
   }
-  file_scan_directory($parent_directory, 'xsm-.*\.xml', array('.', '..', 'CVS'), 'unlink', FALSE);
+  file_scan_directory($parent_directory, 'xsm-.*\.xml', array('.', '..', 'CVS'), 'file_delete', FALSE);
   xmlsitemap_flag_sitemap();
   return;
 }
