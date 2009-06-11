@@ -89,6 +89,9 @@ function xmlsitemap_node_cron() {
       }
       drupal_write_record('xmlsitemap_node', $row);
     }
+    if ($result) {
+      xmlsitemap_flag_sitemap();
+    }
   }
 }
 

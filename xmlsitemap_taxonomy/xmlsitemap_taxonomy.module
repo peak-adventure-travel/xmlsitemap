@@ -31,6 +31,9 @@ function xmlsitemap_taxonomy_cron() {
       $row->changed = REQUEST_TIME;
       drupal_write_record('xmlsitemap_taxonomy', $row);
     }
+    if ($result) {
+      xmlsitemap_flag_sitemap();
+    }
   }
 }
 
