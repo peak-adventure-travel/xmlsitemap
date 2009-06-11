@@ -47,6 +47,12 @@ function xmlsitemap_settings() {
     '#maxlength' => 150,
     '#description' => t('The directory where the cache files are created; change it only if you are having problems with the default setting.'),
   );
+  $form['general']['xmlsitemap_use_stylesheet'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Use stylesheet'),
+    '#default_value' => variable_get('xmlsitemap_use_stylesheet', FALSE),
+    '#description' => t('Specify a xml stylesheet for the sitemap?'),
+  );
   $form['frontpage'] = array(
     '#type' => 'fieldset',
     '#title' => t('Front page'),

@@ -151,6 +151,9 @@ function _xmlsitemap_check_cache_files() {
  */
 function _xmlsitemap_create_cache_chunk($fp, $chunk_size, $chunk = 0) {
   fwrite($fp, '<?xml version="1.0" encoding="UTF-8"?>' . "\n");
+  if ($xsl = _xmlsitemap_xsl()) {
+    fwrite($fp, '<?xml-stylesheet type="text/xsl" href="' . $xsl . '" ?>' . "\n");
+  }
   fwrite($fp, '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' . "\n");
   fwrite($fp, '  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' . "\n");
   fwrite($fp, '  xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9' . "\n");
@@ -186,6 +189,24 @@ function _xmlsitemap_create_cache_chunk($fp, $chunk_size, $chunk = 0) {
 }
 
 /**
+ * Determine path for a xml stylesheet.
+ *
+ * @return
+ * - The stylesheet path or FALSE.
+ */
+function _xmlsitemap_xsl() {
+  global $bash_path;
+  if (variable_get('xmlsitemap_use_stylesheet', FALSE)) {
+    $path = variable_get('xmlsitemap_cache_directory', file_directory_path() . '/xmlsitemap') . '/gss.xsl';
+    $path = file_exists($path) ? $path : $base_path . drupal_get_path('module', 'xmlsitemap') . '/../gss/gss.xsl';
+    if (file_exists($path)) {
+      return $path;
+    }
+  }
+  return FALSE;
+}
+
+/**
  * Create the cache files containing the sitemap.
  *
  * @return
@@ -212,6 +233,9 @@ function _xmlsitemap_create_cache_files() {
       return FALSE;
     }
     fwrite($fp, '<?xml version="1.0" encoding="UTF-8"?>' . "\n");
+    if ($xsl = _xmlsitemap_xsl()) {
+      fwrite($fp, '<?xml-stylesheet type="text/xsl" href="' . $xsl . '" ?>' . "\n");
+    }
     fwrite($fp, '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' . "\n");
     fwrite($fp, '  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' . "\n");
     fwrite($fp, '  xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9' . "\n");
