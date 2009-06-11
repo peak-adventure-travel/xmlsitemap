@@ -5,6 +5,7 @@ XML sitemap 6.x-1, 2009-06-11
 #487734 Add XSL stylesheet data.
 #487546 hook_cron() implementations needs to notify xmlsitemap_output() of
 changes.
+#465658 Add more options to "cron limit" on settings page.
 
 XML sitemap 6.x-1, 2009-06-10
 -----------------------------------
