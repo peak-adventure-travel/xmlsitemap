@@ -216,7 +216,7 @@ function xmlsitemap_cache_id() {
 function xmlsitemap_cron_options() {
   return array(
     '2000' => t('2000 rows'),
-    '1500' => t('1500 rows')
+    '1500' => t('1500 rows'),
     '1000' => t('1000 rows'),
     '500' => t('500 rows'),
     '250' => t('250 rows'),
