@@ -1,5 +1,9 @@
 $Id$
 
+XML sitemap 6.x-1, 2009-06-12
+-----------------------------------
+#487734 by Dave Reid: Add XSL stylesheet data.
+
 XML sitemap 6.x-1, 2009-06-11
 -----------------------------------
 #487734 Add XSL stylesheet data.
