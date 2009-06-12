@@ -290,11 +290,12 @@ function xmlsitemap_node_xmlsitemap_link_status($type, $id, $sid) {
  * Implementation of hook_xmlsitemap_links().
  */
 function xmlsitemap_node_xmlsitemap_links() {
+  $anon_account = drupal_anonymous_user();
   $query = "SELECT n.nid, n.vid, n.type, n.language, n.uid, n.created, n.promote, xn.changed, xn.previously_changed, xn.priority_override, xn.comment_ratio
     FROM {node} n
     INNER JOIN {xmlsitemap_node} xn ON n.nid = xn.nid
     WHERE n.status > 0";
-  $result = db_query(db_rewrite_sql($query));
+  $result = db_query($query);
   $row = new stdClass();
   $row->module = 'xmlsitemap_node';
   $row->type = 'node';
@@ -308,6 +309,8 @@ function xmlsitemap_node_xmlsitemap_links() {
     $priority = xmlsitemap_node_get_priority($node);
     $row->priority = ($priority == -1.0) ? $priority : min(max(round($priority, 1), 0.0), 1.0);
     $old_row = db_fetch_object(db_query("SELECT lid, type, priority FROM {xmlsitemap} WHERE loc = '%s'", $row->loc));
+    $node_access = node_access('view', node_load(array('nid' => $node->nid), NULL, TRUE), $anon_account);
+    $row->priority = $node_access ? $row->priority : -1;
     if ($old_row === FALSE) {
       drupal_write_record('xmlsitemap', $row);
     }

@@ -3,6 +3,7 @@ $Id$
 XML sitemap 6.x-1, 2009-06-12
 -----------------------------------
 #487734 by Dave Reid: Add XSL stylesheet data.
+#485562 Node links are added to sitemap.xml without checking anonymous access.
 
 XML sitemap 6.x-1, 2009-06-11
 -----------------------------------
