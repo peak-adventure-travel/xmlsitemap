@@ -223,7 +223,7 @@ function _xmlsitemap_create_cache_files() {
   }
   if ($link_count > $chunk_size) {
     if (!$fp = fopen($parent_directory ."/xsm-$id.xml", 'wb')) {
-      watchdog('xmlsitemap', 'Cannot create the cache file (@file)', array('@file' => $parent_directory ."/xsm-$id.xml"), WATCHDOG_ERROR);
+      watchdog('xmlsitemap', 'Cannot create the cache file (@file).', array('@file' => $parent_directory ."/xsm-$id.xml"), WATCHDOG_ERROR);
       return FALSE;
     }
     fwrite($fp, '<?xml version="1.0" encoding="UTF-8"?>' . "\n");
@@ -259,7 +259,7 @@ function _xmlsitemap_create_cache_files() {
   }
   else {
     if (!$fp = fopen($parent_directory ."/xsm-$id.xml", 'wb')) {
-      watchdog('xmlsitemap', 'Cannot create the cache file (@file)', array('@file' => $parent_directory ."/xsm-$id.xml"), WATCHDOG_ERROR);
+      watchdog('xmlsitemap', 'Cannot create the cache file (@file).', array('@file' => $parent_directory ."/xsm-$id.xml"), WATCHDOG_ERROR);
       return FALSE;
     }
     _xmlsitemap_create_cache_chunk($fp, $chunk_size);

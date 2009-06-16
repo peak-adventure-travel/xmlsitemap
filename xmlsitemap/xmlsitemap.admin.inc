@@ -64,11 +64,11 @@ function xmlsitemap_settings() {
     '#description' => t('The change frequency associated with the front page.'),
     '#default_value' => variable_get('xmlsitemap_front_page_changefreq', 3600),
     '#options' => array(
-      '3600' => 'Hourly',
-      '86400' => 'Daily',
-      '604800' => 'Weekly',
-      '2419200' => 'Monthly',
-      '29030400' => 'Yearly',
+      '3600' => t('Hourly'),
+      '86400' => t('Daily'),
+      '604800' => t('Weekly'),
+      '2419200' => t('Monthly'),
+      '29030400' => t('Yearly'),
     ),
   );
   $form['frontpage']['xmlsitemap_front_page_priority'] = array(

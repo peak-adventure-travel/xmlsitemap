@@ -84,7 +84,7 @@ function xmlsitemap_user_form_user_admin_role_alter(&$form, &$from_state) {
   $form['xmlsitemap']['xmlsitemap_user_role_priority'] = array(
     '#type' => 'select',
     '#title' => t('Default priority'),
-    '#description' => t("The priority of all a user's roles will be added together to set the user's default priority. If all role priorities are left at default, the user's default priority will be %priority.", array('%priority' => $options[variable_get('xmlsitemap_user_default_priority', '0.5')])),
+    '#description' => t("The priority of all user roles will be added together to set the user's default priority. If all role priorities are left at default, the user's default priority will be %priority.", array('%priority' => $options[variable_get('xmlsitemap_user_default_priority', '0.5')])),
     '#default_value' => $priority,
     '#options' => $options,
   );
@@ -185,7 +185,7 @@ function xmlsitemap_user_user($op, &$edit, &$account, $category = NULL) {
  */
 function xmlsitemap_user_xmlsitemap_description() {
   return '<dt>'. t('XML sitemap user') .'</dt>'.
-    '<dd>'. t('The module adds user profiles to the sitemap. The <em>anonymous user</em> role must have permission to access user profiles on the <a href="@access">access control page</a>. You can change the default user priority on the <a href="@user_settings">user settings</a> page. The <a href="@user">user role priority</a> will override the default user priority. You can override both the default priority and the role priority when you add or edit a user.', array('@access' => url('admin/user/access'), '@user_settings' => url('admin/user/settings'), '@user_role' => url('admin/user/roles'))) .'</dd>';
+    '<dd>'. t('The module adds user profiles to the sitemap. The <em>anonymous user</em> role must have permission to access user profiles on the <a href="@access">access control page</a>. You can change the default user priority on the <a href="@user_settings">user settings</a> page. The <a href="@user">user role priority</a> will override the default user priority. You can override both the default priority and the role priority if you add or edit a user.', array('@access' => url('admin/user/access'), '@user_settings' => url('admin/user/settings'), '@user_role' => url('admin/user/roles'))) .'</dd>';
 }
 
 /**

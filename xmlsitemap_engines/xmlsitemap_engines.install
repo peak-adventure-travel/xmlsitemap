@@ -36,7 +36,7 @@ function xmlsitemap_engines_update_6100() {
   variable_set('xmlsitemap_engines_cron_submit_frequency', 3600);
   $ret[] = array(
     'success' => TRUE,
-    'query' => 'UPDATE MODULE SETTINGS',
+    'query' => 'Updated the module settings successfully.',
   );
   return $ret;
 }

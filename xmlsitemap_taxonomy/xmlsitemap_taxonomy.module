@@ -188,7 +188,7 @@ function xmlsitemap_taxonomy_taxonomy($op, $type, $array = NULL) {
  */
 function xmlsitemap_taxonomy_xmlsitemap_description() {
   return '<dt>'. t('XML sitemap taxonomy') .'</dt>'.
-    '<dd>'. t('The module adds <a href="@terms">taxonomy terms</a> (categories) to the sitemap. You can change the default priority when you add or edit a vocabulary, and you can override the default priority when you add or edit individual terms.', array('@terms' => url('admin/content/taxonomy'))) .'</dd>';
+    '<dd>'. t('The module adds <a href="@terms">taxonomy terms</a> (categories) to the sitemap. The term default priority may be changed while adding or editing vocabularies and the term default priority can be overridden while adding or editing terms.', array('@terms' => url('admin/content/taxonomy'))) .'</dd>';
 }
 
 /**

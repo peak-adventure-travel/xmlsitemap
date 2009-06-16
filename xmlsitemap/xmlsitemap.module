@@ -81,7 +81,7 @@ function xmlsitemap_help($path, $arg) {
         $output .= "<dl>$optional</dl>";
       }
       $output .= '<p>'. t('Links may be assigned a priority between 0.0 and 1.0. The default priority is 0.5. A priority of <em>Not in sitemap</em> excludes a link from the sitemap.') .'</p>';
-      $output .= '<p>'. t('More information is available in the <a href="@module_docs">XML sitemap documentation</a>.', array('@module_docs' => 'http://drupal.org/handbook/modules/gsitemap')) .'</p>';
+      $output .= '<p>'. t('For more information, see the online handbook entry for <a href="@xmlsitemap">XML sitemap module</a>.', array('@xmlsitemap' => 'http://drupal.org/handbook/modules/gsitemap')) .'</p>';
       break;
 
     default:
@@ -227,7 +227,7 @@ function xmlsitemap_cron_options() {
     '15' => t('15 rows'),
     '10' => t('10 rows'),
     '5' => t('5 rows'),
-    '-1' => t('Do not process in cron'),
+    '-1' => t('Do not process via cron'),
   );
 }
 

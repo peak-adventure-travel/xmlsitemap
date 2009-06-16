@@ -3,6 +3,7 @@ $Id$
 XML sitemap 6.x-1, 2009-06-16
 -----------------------------------
 #479892 Switch from Live Search to Bing.
+#470792 Translatable strings review.
 
 XML sitemap 6.x-1, 2009-06-12
 -----------------------------------
