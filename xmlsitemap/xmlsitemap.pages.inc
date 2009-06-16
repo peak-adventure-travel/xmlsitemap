@@ -38,43 +38,41 @@ function xmlsitemap_output($chunk = NULL) {
     exit();
   }
   $id = xmlsitemap_cache_id();
-  if (!$user->uid) {
-    if (variable_get('xmlsitemap_sitemap_needs_update', FALSE)) {
-      variable_set('xmlsitemap_update_timestamp', REQUEST_TIME);
-      db_query("DELETE FROM {xmlsitemap} WHERE type ='frontpage'");
-      $row             = new stdClass();
-      $row->module     = 'xmlsitemap';
-      $row->type       = 'frontpage';
-      $changefreq      = variable_get('xmlsitemap_front_page_changefreq', 3600);
-      $row->changed    = REQUEST_TIME - $changefreq;
-      $row->changefreq = $changefreq;
-      $row->priority   = variable_get('xmlsitemap_front_page_priority', 1);
-      drupal_write_record('xmlsitemap', $row);
-      module_invoke_all('xmlsitemap_links');
-      variable_set('xmlsitemap_sitemap_needs_update', FALSE);
-      $result = _xmlsitemap_create_cache_files();
-      if (variable_get("xmlsitemap_create_cache_result_$id", -1) !== $result) {
-        variable_set("xmlsitemap_create_cache_result_$id", $result);
+  if (variable_get('xmlsitemap_sitemap_needs_update', FALSE)) {
+    variable_set('xmlsitemap_update_timestamp', REQUEST_TIME);
+    db_query("DELETE FROM {xmlsitemap} WHERE type ='frontpage'");
+    $row             = new stdClass();
+    $row->module     = 'xmlsitemap';
+    $row->type       = 'frontpage';
+    $changefreq      = variable_get('xmlsitemap_front_page_changefreq', 3600);
+    $row->changed    = REQUEST_TIME - $changefreq;
+    $row->changefreq = $changefreq;
+    $row->priority   = variable_get('xmlsitemap_front_page_priority', 1);
+    drupal_write_record('xmlsitemap', $row);
+    module_invoke_all('xmlsitemap_links');
+    variable_set('xmlsitemap_sitemap_needs_update', FALSE);
+    $result = _xmlsitemap_create_cache_files();
+    if (variable_get("xmlsitemap_create_cache_result_$id", -1) !== $result) {
+      variable_set("xmlsitemap_create_cache_result_$id", $result);
+    }
+  }
+  elseif (_xmlsitemap_check_cache_files()) {
+    $result = _xmlsitemap_create_cache_files();
+    if (variable_get("xmlsitemap_create_cache_result_$id", -1) !== $result) {
+      variable_set("xmlsitemap_create_cache_result_$id", $result);
+    }
+  }
+  if (!isset($chunk)) {
+    if (($chunks = (integer) $link_count / $chunk_size) != variable_get('xmlsitemap_previous_chunks_count', -1)) {
+      variable_set('xmlsitemap_previous_chunks_count', $chunks);
+      if (!variable_get('menu_rebuild_needed', FALSE)) {
+        variable_set('menu_rebuild_needed', TRUE);
       }
     }
-    elseif (_xmlsitemap_check_cache_files()) {
-      $result = _xmlsitemap_create_cache_files();
-      if (variable_get("xmlsitemap_create_cache_result_$id", -1) !== $result) {
-        variable_set("xmlsitemap_create_cache_result_$id", $result);
-      }
-    }
-    if (!isset($chunk)) {
-      if (($chunks = (integer) $link_count / $chunk_size) != variable_get('xmlsitemap_previous_chunks_count', -1)) {
-        variable_set('xmlsitemap_previous_chunks_count', $chunks);
-        if (!variable_get('menu_rebuild_needed', FALSE)) {
-          variable_set('menu_rebuild_needed', TRUE);
-        }
-      }
-    }
-    if (isset($result) && !$result) {
-      drupal_not_found();
-      exit();
-    }
+  }
+  if (isset($result) && !$result) {
+    drupal_not_found();
+    exit();
   }
   $parent_directory = variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap');
   $headers = array("Content-type: text/xml; charset=utf-8");

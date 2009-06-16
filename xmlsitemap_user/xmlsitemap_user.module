@@ -192,29 +192,31 @@ function xmlsitemap_user_xmlsitemap_description() {
  * Implementation of hook_xmlsitemap_links().
  */
 function xmlsitemap_user_xmlsitemap_links() {
-  if (user_access('access user profiles')) {
-    $result = db_query("SELECT u.uid, u.status, xu.changed, xu.previously_changed, xu.priority_override
-      FROM {xmlsitemap_user} xu
-      INNER JOIN {users} u ON xu.uid = u.uid"
-    );
-    $row = new stdClass();
-    $row->module = 'xmlsitemap_user';
-    $row->type = 'user';
-    while ($user = db_fetch_object($result)) {
-      $row->loc = 'user/'. $user->uid;
-      $row->id = $user->uid;
-      $row->changed = $user->changed;
-      $row->changefreq = max(REQUEST_TIME - $user->changed, empty($user->previously_changed) ? 0 : $user->changed - $user->previously_changed);
-      $priority = xmlsitemap_user_get_priority($user);
-      $row->priority = $priority == -1 ? $priority : min(max(round($priority, 1), 0.0), 1.0);
-      $old_row = db_fetch_object(db_query("SELECT lid, type, priority FROM {xmlsitemap} WHERE loc = '%s'", $row->loc));
-      if ($old_row === FALSE) {
-        drupal_write_record('xmlsitemap', $row);
-      }
-      elseif ($old_row->type == 'user' && $old_row->priority != $priority) {
-        $row->lid = $old_row->lid;
-        drupal_write_record('xmlsitemap', $row, 'lid');
-      }
+  $anon_account = drupal_anonymous_user();
+  $user_access = user_access('access user profiles', $anon_account);
+
+  $result = db_query("SELECT u.uid, u.status, xu.changed, xu.previously_changed, xu.priority_override
+    FROM {xmlsitemap_user} xu
+    INNER JOIN {users} u ON xu.uid = u.uid"
+  );
+  $row = new stdClass();
+  $row->module = 'xmlsitemap_user';
+  $row->type = 'user';
+  while ($user = db_fetch_object($result)) {
+    $row->loc = 'user/'. $user->uid;
+    $row->id = $user->uid;
+    $row->changed = $user->changed;
+    $row->changefreq = max(REQUEST_TIME - $user->changed, empty($user->previously_changed) ? 0 : $user->changed - $user->previously_changed);
+    $priority = xmlsitemap_user_get_priority($user);
+    $row->priority = $priority == -1 ? $priority : min(max(round($priority, 1), 0.0), 1.0);
+    $row->priority = $user_access ? $row->priority : -1;
+    $old_row = db_fetch_object(db_query("SELECT lid, type, priority FROM {xmlsitemap} WHERE loc = '%s'", $row->loc));
+    if ($old_row === FALSE) {
+      drupal_write_record('xmlsitemap', $row);
+    }
+    elseif ($old_row->type == 'user' && $old_row->priority != $row->priority) {
+      $row->lid = $old_row->lid;
+      drupal_write_record('xmlsitemap', $row, 'lid');
     }
   }
 }

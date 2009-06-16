@@ -4,6 +4,8 @@ XML sitemap 6.x-1, 2009-06-16
 -----------------------------------
 #479892 Switch from Live Search to Bing.
 #470792 Translatable strings review.
+#488388 Sitemap is not updated when the user viewing it is not the anonymous
+user.
 
 XML sitemap 6.x-1, 2009-06-12
 -----------------------------------

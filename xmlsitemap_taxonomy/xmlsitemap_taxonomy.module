@@ -195,6 +195,9 @@ function xmlsitemap_taxonomy_xmlsitemap_description() {
  * Implementation of hook_xmlsitemap_links().
  */
 function xmlsitemap_taxonomy_xmlsitemap_links() {
+  $anon_account = drupal_anonymous_user();
+  $user_access = user_access('access content', $anon_account);
+
   $result = db_query(
     db_rewrite_sql(
       "SELECT t.tid, t.vid, v.module, xt.changed, xt.previously_changed, xt.priority_override
@@ -218,7 +221,7 @@ function xmlsitemap_taxonomy_xmlsitemap_links() {
     else {
       $priority = variable_get('xmlsitemap_taxonomy_vocabulary_priority_'. $term->vid, 0.5);
     }
-    $row->priority = ($priority == -1.0) ? $priority : min(max(round($priority, 1), 0.0), 1.0);
+    $row->priority = $user_access ? $priority == -1.0 ? $priority : min(max(round($priority, 1), 0.0), 1.0) : -1;
     $old_row = db_fetch_object(db_query("SELECT lid, type, priority FROM {xmlsitemap} WHERE loc = '%s'", $row->loc));
     if ($old_row === FALSE) {
       drupal_write_record('xmlsitemap', $row);
