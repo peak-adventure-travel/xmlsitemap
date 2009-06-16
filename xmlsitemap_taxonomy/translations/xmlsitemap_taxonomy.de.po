@@ -9,8 +9,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: German translation of xmlsitemap_taxonomy\n"
-"POT-Creation-Date: 2009-06-06 01:06+0200\n"
-"PO-Revision-Date: 2009-06-06 01:19+0100\n"
+"POT-Creation-Date: 2009-06-16 18:08+0200\n"
+"PO-Revision-Date: 2009-06-16 18:42+0100\n"
 "Last-Translator: Alexander Haß\n"
 "Language-Team: Alexander Hass\n"
 "MIME-Version: 1.0\n"
@@ -21,17 +21,17 @@ msgstr ""
 "X-Poedit-Country: GERMANY\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: xmlsitemap_taxonomy/xmlsitemap_taxonomy.module:77
+#: xmlsitemap_taxonomy/xmlsitemap_taxonomy.module:83
 msgid "This will be the default priority of terms in this vocabulary."
 msgstr "Dies wird die Standardpriorität von Begriffen in diesem Vokabular."
 
-#: xmlsitemap_taxonomy/xmlsitemap_taxonomy.module:178
+#: xmlsitemap_taxonomy/xmlsitemap_taxonomy.module:190
 #: xmlsitemap_taxonomy/xmlsitemap_taxonomy.info:0
 msgid "XML sitemap taxonomy"
 msgstr "XML-Sitemap - Taxonomie"
 
-#: xmlsitemap_taxonomy/xmlsitemap_taxonomy.module:179
-msgid "The module adds <a href=\"@terms\">taxonomy terms</a> (categories) to the sitemap. You can change the default priority when you add or edit a vocabulary, and you can override the default priority when you add or edit individual terms."
+#: xmlsitemap_taxonomy/xmlsitemap_taxonomy.module:191
+msgid "The module adds <a href=\"@terms\">taxonomy terms</a> (categories) to the sitemap. The term default priority may be changed while adding or editing vocabularies and the term default priority can be overridden while adding or editing terms."
 msgstr ""
 
 #: xmlsitemap_taxonomy/xmlsitemap_taxonomy.module:0

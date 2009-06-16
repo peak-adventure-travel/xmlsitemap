@@ -9,8 +9,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: German translation of xmlsitemap\n"
-"POT-Creation-Date: 2009-06-06 01:06+0200\n"
-"PO-Revision-Date: 2009-06-06 01:11+0100\n"
+"POT-Creation-Date: 2009-06-16 18:08+0200\n"
+"PO-Revision-Date: 2009-06-16 18:17+0100\n"
 "Last-Translator: Alexander Haß\n"
 "Language-Team: Alexander Hass\n"
 "MIME-Version: 1.0\n"
@@ -21,47 +21,45 @@ msgstr ""
 "X-Poedit-Country: GERMANY\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: xmlsitemap/xmlsitemap.cron.php:32;39
-#: xmlsitemap/xmlsitemap.admin.inc:164;168
-#: xmlsitemap/xmlsitemap.module:609;620;626;0
-#: xmlsitemap_engines/xmlsitemap_engines.module:155;158
-msgid "xmlsitemap"
-msgstr "xmlsitemap"
-
-#: xmlsitemap/xmlsitemap.admin.inc:107;386
-#: xmlsitemap_node/xmlsitemap_node.module:63
-#: xmlsitemap_taxonomy/xmlsitemap_taxonomy.module:55;76
-msgid "Priority"
-msgstr "Priorität"
-
-#: xmlsitemap/xmlsitemap.admin.inc:242
-#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:45
+#: xmlsitemap/xmlsitemap.admin.inc:67
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:46
 msgid "Hourly"
 msgstr "Stündlich"
 
-#: xmlsitemap/xmlsitemap.admin.inc:243
-#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:44
+#: xmlsitemap/xmlsitemap.admin.inc:68
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:45
 msgid "Daily"
 msgstr "Täglich"
 
-#: xmlsitemap/xmlsitemap.admin.inc:244
-#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:43
+#: xmlsitemap/xmlsitemap.admin.inc:69
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:44
 msgid "Weekly"
 msgstr "Wöchentlich"
 
-#: xmlsitemap/xmlsitemap.admin.inc:245
-#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:41
+#: xmlsitemap/xmlsitemap.admin.inc:70
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:42
 msgid "Monthly"
 msgstr "Monatlich"
 
-#: xmlsitemap/xmlsitemap.admin.inc:246
-#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:39
+#: xmlsitemap/xmlsitemap.admin.inc:71
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:40
 msgid "Yearly"
 msgstr "Jährlich"
 
-#: xmlsitemap_node/xmlsitemap_node.module:64
-#: xmlsitemap_taxonomy/xmlsitemap_taxonomy.module:56
-#: xmlsitemap_user/xmlsitemap_user.module:108
+#: xmlsitemap/xmlsitemap.pages.inc:224;249;260
+#: xmlsitemap/xmlsitemap.module:0
+#: xmlsitemap_engines/xmlsitemap_engines.module:189;194
+msgid "xmlsitemap"
+msgstr "xmlsitemap"
+
+#: xmlsitemap_node/xmlsitemap_node.module:117
+#: xmlsitemap_taxonomy/xmlsitemap_taxonomy.module:62;82
+msgid "Priority"
+msgstr "Priorität"
+
+#: xmlsitemap_node/xmlsitemap_node.module:118
+#: xmlsitemap_taxonomy/xmlsitemap_taxonomy.module:63
+#: xmlsitemap_user/xmlsitemap_user.module:131
 msgid "The default priority is %priority."
 msgstr "Die Standardpriorität ist %priority."
 
