@@ -1,16 +1,17 @@
 # $Id$
 #
-# LANGUAGE translation of Drupal (general)
+# LANGUAGE translation of Drupal (xmlsitemap_engines)
 # Copyright YEAR NAME <EMAIL@ADDRESS>
 # Generated from files:
-#  xmlsitemap_engines.module,v 1.5.2.24 2009/04/25 23:13:45 kiam
-#  xmlsitemap_engines.info,v 1.2.2.2 2009/04/24 18:33:54 kiam
+#  xmlsitemap_engines.admin.inc,v 1.1.2.14 2009/06/16 13:46:19 earnie
+#  xmlsitemap_engines.module,v 1.5.2.46 2009/06/16 13:46:19 earnie
+#  xmlsitemap_engines.info,v 1.2.2.3 2009/05/05 21:53:44 earnie
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2009-04-26 01:19+0200\n"
+"POT-Creation-Date: 2009-06-16 18:08+0200\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -19,199 +20,163 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: xmlsitemap_engines.module:136
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:25
 msgid "Submission settings"
 msgstr ""
 
-#: xmlsitemap_engines.module:141
-msgid "Submit the site map when updated"
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:30
+msgid "Submit the sitemap when content changes"
 msgstr ""
 
-#: xmlsitemap_engines.module:142
-msgid "If enabled, the search engines will be notified of changes to the site map each time it is updated."
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:31
+msgid "If enabled, the search engines will be notified of changes to the sitemap each time the sitemap content is changed."
 msgstr ""
 
-#: xmlsitemap_engines.module:147
-msgid "Log access"
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:36
+msgid "Frequency of sitemap submission"
 msgstr ""
 
-#: xmlsitemap_engines.module:148
-msgid "If enabled, a watchdog entry will be made each time the site map is accessed, containing information about the requestor."
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:37
+msgid "The rate at which the sitemap is submitted to the search engines."
 msgstr ""
 
-#: xmlsitemap_engines.module:153
-msgid "Frequency of site map submission"
-msgstr ""
-
-#: xmlsitemap_engines.module:154
-msgid "The rate at which the site map is submitted to the search engines."
-msgstr ""
-
-#: xmlsitemap_engines.module:157
-msgid "Yearly"
-msgstr ""
-
-#: xmlsitemap_engines.module:158
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:41
 msgid "Every 6 months"
 msgstr ""
 
-#: xmlsitemap_engines.module:159
-msgid "Monthly"
-msgstr ""
-
-#: xmlsitemap_engines.module:160
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:43
 msgid "Every 15 days"
 msgstr ""
 
-#: xmlsitemap_engines.module:161
-msgid "Weekly"
-msgstr ""
-
-#: xmlsitemap_engines.module:162
-msgid "Daily"
-msgstr ""
-
-#: xmlsitemap_engines.module:163
-msgid "Hourly"
-msgstr ""
-
-#: xmlsitemap_engines.module:164
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:47
 msgid "Never"
 msgstr ""
 
-#: xmlsitemap_engines.module:170
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:53
 msgid "Ask.com"
 msgstr ""
 
-#: xmlsitemap_engines.module:176
-msgid "Submit the site map to Ask.com"
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:59 xmlsitemap_engines/xmlsitemap_engines.module:101
+msgid "Submit the sitemap to Ask.com"
 msgstr ""
 
-#: xmlsitemap_engines.module:181;199;223;241;271
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:64;82;106;124;154
 msgid "Submission URL"
 msgstr ""
 
-#: xmlsitemap_engines.module:182;200;224;242;272
-msgid "The URL to submit the site map to. Use %placeholder like placeholder for the site map URL."
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:65;83;107;125;155
+msgid "The URL to submit the sitemap to. Use %placeholder like placeholder for the sitemap URL."
 msgstr ""
 
-#: xmlsitemap_engines.module:188
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:71
 msgid "Google"
 msgstr ""
 
-#: xmlsitemap_engines.module:194
-msgid "Submit the site map to Google"
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:77 xmlsitemap_engines/xmlsitemap_engines.module:111
+msgid "Submit the sitemap to Google"
 msgstr ""
 
-#: xmlsitemap_engines.module:205;277
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:88;160
 msgid "Verification link"
 msgstr ""
 
-#: xmlsitemap_engines.module:206
-msgid "In order to show statistics, Google will ask you to verify that you control this site by creating a file with a certain name. Enter that name here and the XML Sitemap module will create a path to that file name. This will only work if you have clean URLs enabled."
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:89
+msgid "In order to show statistics, Google will ask you to verify that you control this site by creating a file with a certain name. Enter that name here and the XML sitemap module will create a path to that file name. This will only work if you have clean URLs enabled."
 msgstr ""
 
-#: xmlsitemap_engines.module:212
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:95
 msgid "Moreover.com"
 msgstr ""
 
-#: xmlsitemap_engines.module:218
-msgid "Submit the site map to Moreover.com"
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:101 xmlsitemap_engines/xmlsitemap_engines.module:116
+msgid "Submit the sitemap to Moreover.com"
 msgstr ""
 
-#: xmlsitemap_engines.module:230
-msgid "Windows Live"
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:113
+msgid "Bing (formerly Live Search)"
 msgstr ""
 
-#: xmlsitemap_engines.module:236
-msgid "Submit the site map to Windows Live"
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:119 xmlsitemap_engines/xmlsitemap_engines.module:106
+msgid "Submit the sitemap to Bing"
 msgstr ""
 
-#: xmlsitemap_engines.module:247
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:130
 msgid "Authentication file"
 msgstr ""
 
-#: xmlsitemap_engines.module:248
-msgid "Before allowing you to view additional information, Windows Live will ask you to verify that you control this site by creating a file with a certain name. Enter that name here, and XML Sitemap will create a path to that file name. This will only work if you have clean URLs enabled."
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:131
+msgid "Before allowing you to view additional information, Bing will ask you to verify that you control this site by creating a file with a certain name. Enter that name here, and XML sitemap will create a path to that file name. This will only work if you have clean URLs enabled."
 msgstr ""
 
-#: xmlsitemap_engines.module:253
-msgid "Authentication tag"
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:136
+msgid "Bing authentication tag"
 msgstr ""
 
-#: xmlsitemap_engines.module:254
-msgid "Windows Live will give you an authentication tag."
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:137
+msgid "Bing will give you an authentication tag."
 msgstr ""
 
-#: xmlsitemap_engines.module:260
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:143
 msgid "Yahoo!"
 msgstr ""
 
-#: xmlsitemap_engines.module:266
-msgid "Submit the site map to Yahoo!"
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:149 xmlsitemap_engines/xmlsitemap_engines.module:121
+msgid "Submit the sitemap to Yahoo!"
 msgstr ""
 
-#: xmlsitemap_engines.module:278
-msgid "Before allowing you to view additional information, Yahoo! will ask you to verify that you control this site by creating a file with a certain name. Enter that name here, and XML Sitemap will create a path to that file name. This will only work if you have clean URLs enabled."
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:161
+msgid "Before allowing you to view additional information, Yahoo! will ask you to verify that you control this site by creating a file with a certain name. Enter that name here, and XML sitemap will create a path to that file name. This will only work if you have clean URLs enabled."
 msgstr ""
 
-#: xmlsitemap_engines.module:283
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:166
 msgid "Authentication key"
 msgstr ""
 
-#: xmlsitemap_engines.module:284
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:167
 msgid "Yahoo! will ask you to put an authentication key in the verification file."
 msgstr ""
 
-#: xmlsitemap_engines.module:58;370;375
-msgid "xmlsitemap"
+#: xmlsitemap_engines/xmlsitemap_engines.module:97
+msgid "Submit the sitemap to all the active search engines"
 msgstr ""
 
-#: xmlsitemap_engines.module:58
-msgid "Sitemap downloaded by @user-agent at @address."
-msgstr ""
-
-#: xmlsitemap_engines.module:370
+#: xmlsitemap_engines/xmlsitemap_engines.module:189
 msgid "Sitemap successfully submitted to !engine."
 msgstr ""
 
-#: xmlsitemap_engines.module:375
+#: xmlsitemap_engines/xmlsitemap_engines.module:194
 msgid "Error occurred submitting sitemap to !engine: !code"
 msgstr ""
 
-#: xmlsitemap_engines.module:78
+#: xmlsitemap_engines/xmlsitemap_engines.module:50
 msgid "Search engines"
 msgstr ""
 
-#: xmlsitemap_engines.module:79
-msgid "Configure the submission settings of the XML site map to the search engines."
+#: xmlsitemap_engines/xmlsitemap_engines.module:51
+msgid "Configure the submission settings of the XML sitemap to the search engines."
 msgstr ""
 
-#: xmlsitemap_engines.module:87
+#: xmlsitemap_engines/xmlsitemap_engines.module:60
 msgid "Google verification page"
 msgstr ""
 
-#: xmlsitemap_engines.module:96
+#: xmlsitemap_engines/xmlsitemap_engines.module:70
 msgid "Yahoo! verification page"
 msgstr ""
 
-#: xmlsitemap_engines.module:105
-msgid "Windows Live verification page"
+#: xmlsitemap_engines/xmlsitemap_engines.module:80
+msgid "Bing verification page"
 msgstr ""
 
-#: xmlsitemap_engines.module:0
+#: xmlsitemap_engines/xmlsitemap_engines.module:0
 msgid "xmlsitemap_engines"
 msgstr ""
 
-#: xmlsitemap_engines.info:0
-msgid "XML Sitemap: Engines"
+#: xmlsitemap_engines/xmlsitemap_engines.info:0
+msgid "XML sitemap engines"
 msgstr ""
 
-#: xmlsitemap_engines.info:0
-msgid "Submits site map to search engines."
-msgstr ""
-
-#: xmlsitemap_engines.info:0
-msgid "XML Sitemap"
+#: xmlsitemap_engines/xmlsitemap_engines.info:0
+msgid "Submit the sitemap to search engines."
 msgstr ""
 
