@@ -3,7 +3,7 @@
 
 /**
  * @file
- * Define actions for Google, Yahoo!, Ask, and Windows Live.
+ * Define actions for Google, Yahoo!, Ask, and Bing.
  */
 
 /**
@@ -75,11 +75,11 @@ function xmlsitemap_engines_menu() {
       'file' => 'xmlsitemap_engines.pages.inc',
     );
   }
-  if ($verify = variable_get("xmlsitemap_engines_live_verify", '')) {
+  if ($verify = variable_get("xmlsitemap_engines_bing_verify", '')) {
     $items[$verify] = array(
-      'title' => 'Windows Live verification page',
+      'title' => 'Bing verification page',
       'page callback' => 'xmlsitemap_engines_verify',
-      'page arguments' => array('live'),
+      'page arguments' => array('bing'),
       'access arguments' => array('access content'),
       'type' => MENU_CALLBACK,
       'file' => 'xmlsitemap_engines.pages.inc',
@@ -102,6 +102,11 @@ function xmlsitemap_engines_xmlsitemap_operations() {
       'callback' => 'xmlsitemap_engines_ping_sitemap',
       'callback arguments' => array('engine' => 'ask'),
     ),
+    'submit_to_bing' => array(
+      'label' => t('Submit the sitemap to Bing'),
+      'callback' => 'xmlsitemap_engines_ping_sitemap',
+      'callback arguments' => array('engine' => 'bing'),
+    ),
     'submit_to_google' => array(
       'label' => t('Submit the sitemap to Google'),
       'callback' => 'xmlsitemap_engines_ping_sitemap',
@@ -111,11 +116,6 @@ function xmlsitemap_engines_xmlsitemap_operations() {
       'label' => t('Submit the sitemap to Moreover.com'),
       'callback' => 'xmlsitemap_engines_ping_sitemap',
       'callback arguments' => array('engine' => 'moreover'),
-    ),
-    'submit_to_live' => array(
-      'label' => t('Submit the sitemap to Microsoft Live'),
-      'callback' => 'xmlsitemap_engines_ping_sitemap',
-      'callback arguments' => array('engine' => 'live'),
     ),
     'submit_to_yahoo' => array(
       'label' => t('Submit the sitemap to Yahoo!'),
@@ -138,6 +138,10 @@ function xmlsitemap_engines_ping_sitemap($engine = NULL) {
       'Ask.com',
       'http://submissions.ask.com/ping?sitemap=[sitemap]',
     ),
+    'bing' => array(
+      'Bing (formerly Live Search)',
+      'http://www.bing.com/webmaster/ping.aspx?siteMap=[sitemap]',
+    ),
     'google' => array(
       'Google',
       'http://www.google.com/webmasters/tools/ping?sitemap=[sitemap]'
@@ -145,10 +149,6 @@ function xmlsitemap_engines_ping_sitemap($engine = NULL) {
     'moreover' => array(
       'Moreover.com',
       'http://api.moreover.com/ping?u=[sitemap]'
-    ),
-    'live' => array(
-      'Windows Live',
-      'http://webmaster.live.com/ping.aspx?siteMap=[sitemap]'
     ),
     'yahoo' => array(
       'Yahoo!',

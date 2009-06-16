@@ -107,35 +107,35 @@ function xmlsitemap_engines_settings() {
     '#description' => t('The URL to submit the sitemap to. Use %placeholder like placeholder for the sitemap URL.', array('%placeholder' => '[sitemap]')),
     '#default_value' => variable_get('xmlsitemap_engines_moreover_url', 'http://api.moreover.com/ping?u=[sitemap]'),
   );
-  // Windows Live fields.
-  $form['live'] = array(
+  // Bing fields.
+  $form['bing'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Windows Live'),
+    '#title' => t('Bing (formerly Live Search)'),
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   );
-  $form['live']['xmlsitemap_engines_live_submit'] = array(
+  $form['bing']['xmlsitemap_engines_bing_submit'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Submit the sitemap to Windows Live'),
-    '#default_value' => variable_get('xmlsitemap_engines_live_submit', FALSE),
+    '#title' => t('Submit the sitemap to Bing'),
+    '#default_value' => variable_get('xmlsitemap_engines_bing_submit', FALSE),
   );
-  $form['live']['xmlsitemap_engines_live_url'] = array(
+  $form['bing']['xmlsitemap_engines_bing_url'] = array(
     '#type' => 'textfield',
     '#title' => t('Submission URL'),
     '#description' => t('The URL to submit the sitemap to. Use %placeholder like placeholder for the sitemap URL.', array('%placeholder' => '[sitemap]')),
-    '#default_value' => variable_get('xmlsitemap_engines_live_url', 'http://webmaster.live.com/ping.aspx?siteMap=[sitemap]'),
+    '#default_value' => variable_get('xmlsitemap_engines_bing_url', 'http://www.bing.com/webmaster/ping.aspx?siteMap=[sitemap]'),
   );
-  $form['live']['xmlsitemap_engines_live_verify'] = array(
+  $form['bing']['xmlsitemap_engines_bing_verify'] = array(
     '#type' => 'textfield',
     '#title' => t('Authentication file'),
-    '#description' => t('Before allowing you to view additional information, Windows Live will ask you to verify that you control this site by creating a file with a certain name. Enter that name here, and XML sitemap will create a path to that file name. This will only work if you have clean URLs enabled.'),
-    '#default_value' => variable_get('xmlsitemap_engines_live_verify', 'LiveSearchSiteAuth.xml'),
+    '#description' => t('Before allowing you to view additional information, Bing will ask you to verify that you control this site by creating a file with a certain name. Enter that name here, and XML sitemap will create a path to that file name. This will only work if you have clean URLs enabled.'),
+    '#default_value' => variable_get('xmlsitemap_engines_bing_verify', ''),
   );
-  $form['live']['xmlsitemap_engines_live_verify_string'] = array(
+  $form['bing']['xmlsitemap_engines_bing_verify_string'] = array(
     '#type' => 'textfield',
-    '#title' => t('Authentication tag'),
-    '#description' => t('Windows Live will give you an authentication tag.'),
-    '#default_value' => variable_get('xmlsitemap_engines_live_verify_string', ''),
+    '#title' => t('Bing authentication tag'),
+    '#description' => t('Bing will give you an authentication tag.'),
+    '#default_value' => variable_get('xmlsitemap_engines_bing_verify_string', ''),
   );
   // Yahoo! fields.
   $form['yahoo'] = array(

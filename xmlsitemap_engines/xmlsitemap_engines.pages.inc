@@ -33,10 +33,10 @@ function xmlsitemap_engines_verify($engine) {
     case 'yahoo':
       print variable_get('xmlsitemap_engines_yahoo_verify_string', '');
       break;
-    case 'live':
+    case 'bing':
       print '<?xml version="1.0"?>'."\n";
       print "<users>\n";
-      print '    <user>'. variable_get('xmlsitemap_engines_live_verify_string', '') ."</user>\n";
+      print '    <user>'. variable_get('xmlsitemap_engines_bing_verify_string', '') ."</user>\n";
       print "</users>\n";
       break;
   }
