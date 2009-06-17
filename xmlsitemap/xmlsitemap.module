@@ -65,7 +65,7 @@ function xmlsitemap_help($path, $arg) {
   switch ($path) {
     case 'admin/settings/xmlsitemap':
     case 'admin/settings/xmlsitemap/engines':
-      $output = t('The sitemap is located at @sitemap.', array('@sitemap' => url('sitemap.xml', array('absolute' => TRUE))));
+      $output = t('The sitemap is located at <a href=\"@sitemap\">@sitemap</a>.', array('@sitemap' => url('sitemap.xml', array('absolute' => TRUE))));
       break;
 
     case 'admin/help#xmlsitemap':

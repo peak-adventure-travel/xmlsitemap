@@ -246,7 +246,7 @@ function _xmlsitemap_create_cache_files() {
     @chmod($parent_directory ."/xsm-$id.xml", 0664);
     for ($chunk = 0; $chunk < $link_count / $chunk_size; ++$chunk) {
       if (!$fp = fopen($parent_directory ."/xsm-$id-$chunk.xml", 'wb')) {
-        watchdog('xmlsitemap', 'Cannot create the cache file (@file)', array('@file' => $parent_directory ."/xsm-$id-$chunk.xml"), WATCHDOG_ERROR);
+        watchdog('xmlsitemap', 'Cannot create the cache file (@file).', array('@file' => $parent_directory ."/xsm-$id-$chunk.xml"), WATCHDOG_ERROR);
         return FALSE;
       }
       _xmlsitemap_create_cache_chunk($fp, $chunk_size, $chunk);

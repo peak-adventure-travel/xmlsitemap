@@ -3,6 +3,7 @@ $Id$
 XML sitemap 6.x-1, 2009-06-17
 -----------------------------------
 #458398 Users who haven't logged in should be excluded.
+#470792 Translatable strings review.
 
 XML sitemap 6.x-1, 2009-06-16
 -----------------------------------

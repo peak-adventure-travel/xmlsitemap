@@ -62,7 +62,7 @@ function xmlsitemap_engines_settings() {
   $form['ask']['xmlsitemap_engines_ask_url'] = array(
     '#type' => 'textfield',
     '#title' => t('Submission URL'),
-    '#description' => t('The URL to submit the sitemap to. Use %placeholder like placeholder for the sitemap URL.', array('%placeholder' => '[sitemap]')),
+    '#description' => t('The URL to submit the sitemap to. Use %placeholder as placeholder for the sitemap URL.', array('%placeholder' => '[sitemap]')),
     '#default_value' => variable_get('xmlsitemap_engines_ask_url', 'http://submissions.ask.com/ping?sitemap=[sitemap]'),
   );
   // Google fields.

@@ -191,7 +191,7 @@ function xmlsitemap_engines_submit_sitemap($engine, $url_var, $default_url) {
     );
   }
   else {
-    watchdog('xmlsitemap', 'Error occurred submitting sitemap to !engine: !code',
+    watchdog('xmlsitemap', 'Error occurred submitting sitemap to !engine: !code.',
       array('!engine' => $engine, '!code' => 0 + $result->code), WATCHDOG_ERROR
     );
   }
