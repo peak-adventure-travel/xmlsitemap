@@ -155,15 +155,22 @@ function xmlsitemap_engines_ping_sitemap($engine = NULL) {
       'http://search.yahooapis.com/SiteExplorerService/V1/ping?sitemap=[sitemap]'
     ),
   );
-  if (!isset($engine)) {
-    foreach ($engines as $id => $info) {
-      if (variable_get("xmlsitemap_engines_{$id}_submit", FALSE)) {
-        xmlsitemap_engines_submit_sitemap($info[0], "xmlsitemap_engines_{$id}_url", $info[1]);
+
+  // Get a list of enabled languages.
+  $languages = language_list('enabled');
+  $languages = $languages[1];
+
+  foreach ($languages as $language) {
+    if (!isset($engine)) {
+      foreach ($engines as $id => $info) {
+        if (variable_get("xmlsitemap_engines_{$id}_submit", FALSE)) {
+          xmlsitemap_engines_submit_sitemap($info[0], "xmlsitemap_engines_{$id}_url", $info[1], $language);
+        }
       }
     }
-  }
-  elseif (isset($engines[$engine])) {
-    xmlsitemap_engines_submit_sitemap($engines[$engine][0], "xmlsitemap_engines_{$engine}_url", $engines[$engine][1]);
+    elseif (isset($engines[$engine])) {
+      xmlsitemap_engines_submit_sitemap($engines[$engine][0], "xmlsitemap_engines_{$engine}_url", $engines[$engine][1], $language);
+    }
   }
 }
 
@@ -179,11 +186,15 @@ function xmlsitemap_engines_ping_sitemap($engine = NULL) {
  * @param $default_url
  *  The default submission URL.
  */
-function xmlsitemap_engines_submit_sitemap($engine, $url_var, $default_url) {
-  $url = strtr(
-    variable_get($url_var, $default_url),
-    array('[sitemap]' => url('sitemap.xml', array('absolute' => TRUE)))
-  );
+function xmlsitemap_engines_submit_sitemap($engine, $url_var, $default_url, $language = null) {
+  $url_options = array ('absolute' => TRUE);
+  if (!is_null($language)) {
+    $url_options['language'] = $language;
+  }
+  
+  $url = url('sitemap.xml', $url_options);
+  $url = strtr(variable_get($url_var, $default_url), array('[sitemap]' => $url));
+  
   $result = drupal_http_request($url);
   if ($result->code == 200) {
     watchdog('xmlsitemap', 'Sitemap successfully submitted to !engine.',
