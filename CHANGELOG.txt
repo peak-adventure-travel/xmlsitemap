@@ -1,5 +1,9 @@
 $Id$
 
+XML sitemap 6.x-1, 2009-06-19
+-----------------------------------
+#485632 The code to automatically calculate the sitemap chunk size is wrong.
+
 XML sitemap 6.x-1, 2009-06-17
 -----------------------------------
 #458398 Users who haven't logged in should be excluded.

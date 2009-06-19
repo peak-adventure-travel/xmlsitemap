@@ -25,13 +25,31 @@
  */
 function xmlsitemap_output($chunk = NULL) {
   global $user;
-  $chunk_size = variable_get('xmlsitemap_chunk_size', 1000);
+  $chunk_size = variable_get('xmlsitemap_chunk_size', XMLSITEMAP_DEFAULT_SITEMAP_LINKS);
   $link_count = xmlsitemap_link_count();
-  if (($link_count / $chunk_size) > 1000) {
-    $chunk_size = (integer) $link_count / 1000;
-    if ($chunk_size != variable_get('xmlsitemap_chunk_size', 1000)) {
-      variable_set('xmlsitemap_chunk_size', $chunk_size);
+  $chunk_count = xmlsitemap_chunk_count();
+  // A sitemap may only have a set number of index links (links to other sitemap
+  // files) and a set number of site links in each of the "other" sitemap files.
+  // This code adjusts the number of site links specified by the user if the
+  // set number of index links has been reached but will not set that number
+  // greater than the set number of site links in a file.
+  if ($chunk_count > XMLSITEMAP_MAX_SITEMAP_INDEX_LINKS &&
+    $chunk_size < XMLSITEMAP_MAX_SITEMAP_LINKS) {
+    // Determine the number of chunks we are over the maximum index links.
+    $chunk_adjust = $chunk_count - XMLSITEMAP_MAX_SITEMAP_INDEX_LINKS;
+    // Determine the number of links to adjust the chunk size.
+    $chunk_adjust = $chunk_adjust * $chunk_size;
+    if (($chunk_size + $chunk_adjust) <= XMLSITEMAP_MAX_SITEMAP_LINKS) {
+      $chunk_size += $chunk_adjust;
     }
+    else {
+      $chunk_size = XMLSITEMAP_MAX_SITEMAP_LINKS;
+    }
+    variable_set('xmlsitemap_chunk_size', $chunk_size);
+    watchdog('xmlsitemap', t('Chunk size has been updated to %d.', $chunk_size));
+  }
+  elseif($chunk_count > XMLSITEMAP_MAX_SITEMAP_INDEX_LINKS) {
+    watchdog('xmlsitemap', t('The maximum number of allowed links has been reached.'), WATCHDOG_ERROR);
   }
   if (isset($chunk) && !is_numeric($chunk)) {
     drupal_not_found();

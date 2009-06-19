@@ -40,6 +40,26 @@ if (!defined('REQUEST_TIME')) {
  */
 define('XMLSITEMAP_LINK_DISABLED', 1);
 
+/**
+ * The maximum number of links in one sitemap chunk file.
+ */
+define('XMLSITEMAP_MAX_SITEMAP_LINKS', 50000);
+
+/**
+ * The maximum filesize of a sitemap chunk file.
+ */
+define('XMLSITEMAP_MAX_SITEMAP_FILESIZE', 10485760);
+
+/**
+ * The maximum number of links in one sitemap index file.
+ */
+define('XMLSITEMAP_MAX_SITEMAP_INDEX_LINKS', 1000);
+
+/**
+ * The default number of links in one sitemap chunk file.
+ */
+define('XMLSITEMAP_DEFAULT_SITEMAP_LINKS', 1000);
+
 /*****************************************************************************
  * Drupal hooks.
  ****************************************************************************/
@@ -129,7 +149,7 @@ function xmlsitemap_menu() {
     'type' => MENU_CALLBACK,
     'file' => 'xmlsitemap.pages.inc',
   );
-  $chunk_size = variable_get('xmlsitemap_chunk_size', 1000);
+  $chunk_size = variable_get('xmlsitemap_chunk_size', XMLSITEMAP_DEFAULT_SITEMAP_LINKS);
   $link_count = xmlsitemap_link_count();
   if ($link_count > $chunk_size) {
     for ($chunk = 0; $chunk < $link_count / $chunk_size; ++$chunk) {
@@ -266,6 +286,15 @@ function xmlsitemap_link_count() {
     $link_count = db_result(db_query("SELECT COUNT(xsm.loc)". xmlsitemap_sitemap_query()));
   }
   return $link_count;
+}
+
+/**
+ * Return the number of chunk files.
+ */
+function xmlsitemap_chunk_count() {
+  $link_count = xmlsitemap_link_count();
+  $chunk_size = variable_get('xmlsitemap_chunk_size', XMLSITEMAP_DEFAULT_SITEMAP_LINKS);
+  return ceil($link_count / $chunk_size);
 }
 
 /**
