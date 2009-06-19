@@ -55,7 +55,7 @@ function xmlsitemap_output($chunk = NULL) {
     drupal_not_found();
     exit();
   }
-  $id = xmlsitemap_cache_id();
+  $id = xmlsitemap_language_id();
   if (variable_get('xmlsitemap_sitemap_needs_update', FALSE)) {
     variable_set('xmlsitemap_update_timestamp', REQUEST_TIME);
     db_query("DELETE FROM {xmlsitemap} WHERE type ='frontpage'");
@@ -117,7 +117,7 @@ function xmlsitemap_output($chunk = NULL) {
 function _xmlsitemap_check_cache_files() {
   $chunk_size       = variable_get('xmlsitemap_chunk_size', 1000);
   $link_count       = xmlsitemap_link_count();
-  $id               = xmlsitemap_cache_id();
+  $id               = xmlsitemap_language_id();
   $parent_directory = variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap');
   // If the directory that should contains the cache files doesn't exist, then
   // the cache files must be created.
@@ -231,7 +231,7 @@ function _xmlsitemap_xsl() {
 function _xmlsitemap_create_cache_files() {
   $chunk_size       = variable_get('xmlsitemap_chunk_size', 1000);
   $link_count       = xmlsitemap_link_count();
-  $id               = xmlsitemap_cache_id();
+  $id               = xmlsitemap_language_id();
   $parent_directory = variable_get('xmlsitemap_cache_directory', file_directory_path() .'/xmlsitemap');
   // If the directory doesn't exist, then create it.
   if (!file_check_directory($parent_directory, FILE_CREATE_DIRECTORY)) {

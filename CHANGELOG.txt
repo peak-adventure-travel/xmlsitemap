@@ -3,6 +3,7 @@ $Id$
 XML sitemap 6.x-1, 2009-06-19
 -----------------------------------
 #485632 The code to automatically calculate the sitemap chunk size is wrong.
+#490104 Use the language as the generated sitemap file id.
 
 XML sitemap 6.x-1, 2009-06-17
 -----------------------------------
