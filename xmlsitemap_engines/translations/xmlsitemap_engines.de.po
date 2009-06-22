@@ -9,8 +9,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: German translation of xmlsitemap_engines\n"
-"POT-Creation-Date: 2009-06-16 18:08+0200\n"
-"PO-Revision-Date: 2009-06-16 18:35+0100\n"
+"POT-Creation-Date: 2009-06-22 22:16+0200\n"
+"PO-Revision-Date: 2009-06-23 00:00+0100\n"
 "Last-Translator: Alexander Haß\n"
 "Language-Team: Alexander Hass\n"
 "MIME-Version: 1.0\n"
@@ -68,9 +68,8 @@ msgstr "Die Sitemap an Ask.com übermitteln"
 msgid "Submission URL"
 msgstr "Eintragungs-URL"
 
-# English: like  -> as
-#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:65;83;107;125;155
-msgid "The URL to submit the sitemap to. Use %placeholder like placeholder for the sitemap URL."
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:65
+msgid "The URL to submit the sitemap to. Use %placeholder as placeholder for the sitemap URL."
 msgstr "Die URL an welche die Sitemap geschickt wird. Der Platzhalter %placeholder sollte für die Sitemap-URL verwendet werden."
 
 #: xmlsitemap_engines/xmlsitemap_engines.admin.inc:71
@@ -81,6 +80,11 @@ msgstr "Google"
 #: xmlsitemap_engines/xmlsitemap_engines.module:111
 msgid "Submit the sitemap to Google"
 msgstr "Die Sitemap an Google übermitteln"
+
+# English: like  -> as
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:83;107;125;155
+msgid "The URL to submit the sitemap to. Use %placeholder like placeholder for the sitemap URL."
+msgstr "Die URL an welche die Sitemap geschickt wird. Der Platzhalter %placeholder sollte für die Sitemap-URL verwendet werden."
 
 #: xmlsitemap_engines/xmlsitemap_engines.admin.inc:88;160
 msgid "Verification link"
@@ -152,13 +156,13 @@ msgstr "Der von Yahoo! für die Kontrolldatei zur Verfügung gestellte Authentif
 msgid "Submit the sitemap to all the active search engines"
 msgstr "Sitemap an alle aktiven Suchmaschinen übermitteln"
 
-#: xmlsitemap_engines/xmlsitemap_engines.module:189
+#: xmlsitemap_engines/xmlsitemap_engines.module:200
 msgid "Sitemap successfully submitted to !engine."
 msgstr "Die Sitemap wurde erfolgreich an !engine übertragen."
 
 # missing period in English
-#: xmlsitemap_engines/xmlsitemap_engines.module:194
-msgid "Error occurred submitting sitemap to !engine: !code"
+#: xmlsitemap_engines/xmlsitemap_engines.module:205
+msgid "Error occurred submitting sitemap to !engine: !code."
 msgstr "Fehler beim Übertragen der Sitemap an !engine: !code."
 
 #: xmlsitemap_engines/xmlsitemap_engines.module:50
