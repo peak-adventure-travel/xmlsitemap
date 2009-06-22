@@ -3,6 +3,7 @@ $Id$
 XML sitemap 6.x-1, 2009-06-22
 -----------------------------------
 #483840 Directory structure prevents successful translation file import.
+#496626 Beta6 installation instructions.
 
 XML sitemap 6.x-1, 2009-06-19
 -----------------------------------

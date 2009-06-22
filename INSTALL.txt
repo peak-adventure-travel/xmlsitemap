@@ -25,7 +25,24 @@ INSTALLATION INSTRUCTIONS
 UPGRADING INSTRUCTIONS
 ----------------------
 
--- xmlsitemap-5.x-2.x to xmlsitemap-6.x-1.x:
+-- xmlsitemap-5.x-1.6 to xmlsitemap-6.x-1.x-dev:
+-- xmlsitemap-5.x-1.6 to xmlsitemap-6.x-1.0-beta6:
+
+1) Deactivate all the xmlsitemap modules at admin/build/modules.
+
+2) Completly remove the xmlsitemap module directory.
+
+3) Install the new source package to your modules directory.
+
+4) Reactivate the xmlsitemap modules at admin/build/modules you use.
+
+5) Make sure you are logged in as UID 1.
+
+6) Execute update.php.
+
+
+-- xmlsitemap-5.x-2.x-dev to xmlsitemap-6.x-1.x-dev:
+-- xmlsitemap-5.x-2.x-dev to xmlsitemap-6.x-1.0-beta6:
 
 1) Deactive all the xmlsitemap modules at admin/build/modules.
 
@@ -33,11 +50,15 @@ UPGRADING INSTRUCTIONS
 
 3) Install the new source package to your modules directory.
 
-4) Make sure you are logged in as UID 1.
+4) Reactivate the xmlsitemap modules at admin/build/modules you use.
 
-5) Execute update.php.
+5) Make sure you are logged in as UID 1.
 
--- xmlsitemap-6.x-1.x-dev to xmlsitemap-6.x-1.0:
+6) Execute update.php.
+
+
+-- xmlsitemap-6.x-1.x-dev to xmlsitemap-6.x-1.0-beta6:
+-- xmlsitemap-6.x-1.x-beta[012345] to xmlsitemap-6.x-1.0-beta6:
 
 1) Deactive all the xmlsitemap modules at admin/build/modules.
 
@@ -46,8 +67,17 @@ UPGRADING INSTRUCTIONS
 
 3) Completly remove the xmlsitemap module directory.
 
-4) Install the new source package to your modules directory.
+4) Make sure that the xmlsitemap tables are no longer available in the
+   database.
 
-5) Reset your xmlsitemap settings including those for specific links.
+5) Make sure there are no variables left in the variable table WHERE name LIKE
+   'xmlsitemap%'.
 
-6) See item 4 in the INSTALL INSTRUCTIONS.
+6) Make sure there are no rows left in the system table WHERE name LIKE
+   'xmlsitemap%'.
+
+7) Install the new source package to your modules directory.
+
+8) Follow the "INSTALLATION INSTRUCTIONS" above.
+
+9) Reset your xmlsitemap settings including those for specific links.
