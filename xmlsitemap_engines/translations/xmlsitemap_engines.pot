@@ -3,15 +3,15 @@
 # LANGUAGE translation of Drupal (xmlsitemap_engines)
 # Copyright YEAR NAME <EMAIL@ADDRESS>
 # Generated from files:
-#  xmlsitemap_engines.admin.inc,v 1.1.2.14 2009/06/16 13:46:19 earnie
-#  xmlsitemap_engines.module,v 1.5.2.46 2009/06/16 13:46:19 earnie
+#  xmlsitemap_engines.admin.inc,v 1.1.2.15 2009/06/17 14:52:41 earnie
+#  xmlsitemap_engines.module,v 1.5.2.48 2009/06/19 14:35:05 earnie
 #  xmlsitemap_engines.info,v 1.2.2.3 2009/05/05 21:53:44 earnie
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2009-06-16 18:08+0200\n"
+"POT-Creation-Date: 2009-06-22 22:16+0200\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -64,8 +64,8 @@ msgstr ""
 msgid "Submission URL"
 msgstr ""
 
-#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:65;83;107;125;155
-msgid "The URL to submit the sitemap to. Use %placeholder like placeholder for the sitemap URL."
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:65
+msgid "The URL to submit the sitemap to. Use %placeholder as placeholder for the sitemap URL."
 msgstr ""
 
 #: xmlsitemap_engines/xmlsitemap_engines.admin.inc:71
@@ -74,6 +74,10 @@ msgstr ""
 
 #: xmlsitemap_engines/xmlsitemap_engines.admin.inc:77 xmlsitemap_engines/xmlsitemap_engines.module:111
 msgid "Submit the sitemap to Google"
+msgstr ""
+
+#: xmlsitemap_engines/xmlsitemap_engines.admin.inc:83;107;125;155
+msgid "The URL to submit the sitemap to. Use %placeholder like placeholder for the sitemap URL."
 msgstr ""
 
 #: xmlsitemap_engines/xmlsitemap_engines.admin.inc:88;160
@@ -140,12 +144,12 @@ msgstr ""
 msgid "Submit the sitemap to all the active search engines"
 msgstr ""
 
-#: xmlsitemap_engines/xmlsitemap_engines.module:189
+#: xmlsitemap_engines/xmlsitemap_engines.module:200
 msgid "Sitemap successfully submitted to !engine."
 msgstr ""
 
-#: xmlsitemap_engines/xmlsitemap_engines.module:194
-msgid "Error occurred submitting sitemap to !engine: !code"
+#: xmlsitemap_engines/xmlsitemap_engines.module:205
+msgid "Error occurred submitting sitemap to !engine: !code."
 msgstr ""
 
 #: xmlsitemap_engines/xmlsitemap_engines.module:50

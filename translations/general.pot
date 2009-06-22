@@ -3,20 +3,21 @@
 # LANGUAGE translation of Drupal (general)
 # Copyright YEAR NAME <EMAIL@ADDRESS>
 # Generated from files:
-#  xmlsitemap.admin.inc,v 1.1.2.21 2009/06/16 14:10:43 earnie
-#  xmlsitemap_engines.admin.inc,v 1.1.2.14 2009/06/16 13:46:19 earnie
-#  xmlsitemap.pages.inc,v 1.1.2.40 2009/06/16 14:20:17 earnie
-#  xmlsitemap.module,v 1.1.2.137 2009/06/16 14:10:43 earnie
-#  xmlsitemap_engines.module,v 1.5.2.46 2009/06/16 13:46:19 earnie
+#  xmlsitemap.admin.inc,v 1.1.4.2 2009/06/22 15:06:06 earnie
+#  xmlsitemap_engines.admin.inc,v 1.1.2.15 2009/06/17 14:52:41 earnie
+#  xmlsitemap.pages.inc,v 1.1.4.2 2009/06/22 15:06:07 earnie
+#  xmlsitemap.module,v 1.20.2.65 2009/06/22 15:06:07 earnie
+#  xmlsitemap.install,v 1.5.2.47 2009/06/22 15:06:06 earnie
+#  xmlsitemap_engines.module,v 1.5.2.48 2009/06/19 14:35:05 earnie
 #  xmlsitemap_node.module,v 1.19.2.126 2009/06/12 15:32:26 earnie
 #  xmlsitemap_taxonomy.module,v 1.1.2.18 2009/06/16 14:20:17 earnie
-#  xmlsitemap_user.module,v 1.12.2.104 2009/06/16 14:20:18 earnie
+#  xmlsitemap_user.module,v 1.12.2.105 2009/06/17 13:46:06 earnie
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2009-06-16 18:08+0200\n"
+"POT-Creation-Date: 2009-06-22 22:16+0200\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -25,27 +26,27 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: xmlsitemap/xmlsitemap.admin.inc:67 xmlsitemap_engines/xmlsitemap_engines.admin.inc:46
+#: xmlsitemap.admin.inc:67 xmlsitemap_engines/xmlsitemap_engines.admin.inc:46
 msgid "Hourly"
 msgstr ""
 
-#: xmlsitemap/xmlsitemap.admin.inc:68 xmlsitemap_engines/xmlsitemap_engines.admin.inc:45
+#: xmlsitemap.admin.inc:68 xmlsitemap_engines/xmlsitemap_engines.admin.inc:45
 msgid "Daily"
 msgstr ""
 
-#: xmlsitemap/xmlsitemap.admin.inc:69 xmlsitemap_engines/xmlsitemap_engines.admin.inc:44
+#: xmlsitemap.admin.inc:69 xmlsitemap_engines/xmlsitemap_engines.admin.inc:44
 msgid "Weekly"
 msgstr ""
 
-#: xmlsitemap/xmlsitemap.admin.inc:70 xmlsitemap_engines/xmlsitemap_engines.admin.inc:42
+#: xmlsitemap.admin.inc:70 xmlsitemap_engines/xmlsitemap_engines.admin.inc:42
 msgid "Monthly"
 msgstr ""
 
-#: xmlsitemap/xmlsitemap.admin.inc:71 xmlsitemap_engines/xmlsitemap_engines.admin.inc:40
+#: xmlsitemap.admin.inc:71 xmlsitemap_engines/xmlsitemap_engines.admin.inc:40
 msgid "Yearly"
 msgstr ""
 
-#: xmlsitemap/xmlsitemap.pages.inc:224;249;260 xmlsitemap/xmlsitemap.module:0 xmlsitemap_engines/xmlsitemap_engines.module:189;194
+#: (duplicate) xmlsitemap.pages.inc:242;267;278 xmlsitemap.module:0 xmlsitemap.install:567  xmlsitemap_engines/xmlsitemap_engines.module:200;205
 msgid "xmlsitemap"
 msgstr ""
 

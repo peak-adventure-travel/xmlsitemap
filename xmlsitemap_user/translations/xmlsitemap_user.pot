@@ -3,7 +3,7 @@
 # LANGUAGE translation of Drupal (xmlsitemap_user)
 # Copyright YEAR NAME <EMAIL@ADDRESS>
 # Generated from files:
-#  xmlsitemap_user.module,v 1.12.2.104 2009/06/16 14:20:18 earnie
+#  xmlsitemap_user.module,v 1.12.2.105 2009/06/17 13:46:06 earnie
 #  xmlsitemap_user.info,v 1.2.2.4 2009/05/05 21:53:44 earnie
 #  xmlsitemap_user.install,v 1.6.2.61 2009/06/16 14:10:43 earnie
 #
@@ -11,7 +11,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2009-06-16 18:08+0200\n"
+"POT-Creation-Date: 2009-06-22 22:16+0200\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
