@@ -535,6 +535,45 @@ function xmlsitemap_update_6141() {
 }
 
 /**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_6150() {
+  // Used 6150 since beta5 contained 6148.
+  // Make sure that the xmlsitemap directory is removed.
+  $ret = array();
+  $path = drupal_get_path('module', 'xmlsitemap');
+  if (is_dir($path . '/xmlsitemap')) {
+    $msg = 'You have not correctly followed the installation instructions for this module.  You must make certain that the old xmlsitemap/xmlsitemap diretory is removed.  The xmlsitemap/xmlsitemap/xmlsitemap.* files have been moved back to the modules root directory.  The install instructions were to remove the modules/xmlsitemap directory completely before extracting the update.  If you had followed that step you would have prevented this message.';
+    watchdog('xmlsitemap', $msg, array(), WATCHDOG_ERROR);
+    $ret['#abort'] = array(
+      'success' => FALSE,
+      'query' => $msg,
+    );
+  }
+  return $ret;
+}
+
+/**
+ * Implementation of hook_requirements().
+ */
+function xmlsmitemap_requirements($phase) {
+  $requirements = array();
+  $path = drupal_get_path('module', 'xmlsitemap');
+  if (is_dir($path . '/xmlsitemap')) {
+    $t = get_t();
+    $msg = 'You have not correctly followed the installation instructions for this module.  You must make certain that the old xmlsitemap/xmlsitemap diretory is removed.  The xmlsitemap/xmlsitemap/xmlsitemap.* files have been moved back to the modules root directory.  The install instructions were to removed the modules/xmlsitemap directory completely before extracting the update.  If you had followed that step you would have prevented this message.';
+    watchdog('xmlsitemap', $msg, array(), WATCHDOG_ERROR);
+    $requirements['xmlsitemap'] = array(
+      'title' => $t('xmlsitemap'),
+      'value' => $t('Installation issue'),
+      'description' => $t($msg),
+      'severity' => REQUIREMENT_ERROR,
+    );
+  }
+  return $requirements;
+}
+
+/**
  * Implementation of hook_uninstall().
  */
 function xmlsitemap_uninstall() {
