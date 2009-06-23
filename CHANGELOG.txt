@@ -3,6 +3,7 @@ $Id$
 XML sitemap 6.x-1, 2009-06-23
 -----------------------------------
 #470792 Translatable strings review.
+#496626 Beta6 installation instructions.
 
 XML sitemap 6.x-1, 2009-06-22
 -----------------------------------

@@ -29,7 +29,7 @@ See http://drupal.org/getting-started/5/install-contrib for instructions on
 how to install or upgrade Drupal modules. See INSTALL.txt in this directory
 for specific detailed instructions to upgrading this module.
 
-Once XML Sitemap is installed and enabled, you can adjus the settings for your
+Once XML Sitemap is installed and enabled, you can adjust the settings for your
 site's sitemap at admin/settings/xmlsitemap. Your can view your site's sitemap
 at http://yoursite.com/sitemap.xml.
 
