@@ -1,5 +1,9 @@
 $Id$
 
+XML sitemap 6.x-1, 2009-06-23
+-----------------------------------
+#470792 Translatable strings review.
+
 XML sitemap 6.x-1, 2009-06-22
 -----------------------------------
 #483840 Directory structure prevents successful translation file import.
