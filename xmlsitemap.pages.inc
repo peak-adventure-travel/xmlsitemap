@@ -211,12 +211,15 @@ function _xmlsitemap_create_cache_chunk($fp, $chunk_size, $chunk = 0) {
  * - The stylesheet path or FALSE.
  */
 function _xmlsitemap_xsl() {
-  global $bash_path;
   if (variable_get('xmlsitemap_use_stylesheet', FALSE)) {
-    $path = variable_get('xmlsitemap_cache_directory', file_directory_path() . '/xmlsitemap') . '/gss.xsl';
-    $path = file_exists($path) ? $path : $base_path . drupal_get_path('module', 'xmlsitemap') . '/../gss/gss.xsl';
-    if (file_exists($path)) {
-      return $path;
+    $paths = array(
+      variable_get('xmlsitemap_cache_directory', file_directory_path() . '/xmlsitemap') . '/gss.xsl',
+      drupal_get_path('module', 'xmlsitemap') . '/gss/gss.xsl',
+    );
+    foreach ($paths as $path) {
+      if (file_exists($path)) {
+        return base_path() . $path;
+      }
     }
   }
   return FALSE;
