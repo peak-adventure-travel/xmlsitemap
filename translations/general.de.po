@@ -9,8 +9,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: German translation of xmlsitemap\n"
-"POT-Creation-Date: 2009-06-16 18:08+0200\n"
-"PO-Revision-Date: 2009-06-16 18:17+0100\n"
+"POT-Creation-Date: 2009-07-01 23:26+0200\n"
+"PO-Revision-Date: 2009-07-01 23:36+0100\n"
 "Last-Translator: Alexander Haß\n"
 "Language-Team: Alexander Hass\n"
 "MIME-Version: 1.0\n"
@@ -21,34 +21,35 @@ msgstr ""
 "X-Poedit-Country: GERMANY\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: xmlsitemap/xmlsitemap.admin.inc:67
+#: xmlsitemap.admin.inc:67
 #: xmlsitemap_engines/xmlsitemap_engines.admin.inc:46
 msgid "Hourly"
 msgstr "Stündlich"
 
-#: xmlsitemap/xmlsitemap.admin.inc:68
+#: xmlsitemap.admin.inc:68
 #: xmlsitemap_engines/xmlsitemap_engines.admin.inc:45
 msgid "Daily"
 msgstr "Täglich"
 
-#: xmlsitemap/xmlsitemap.admin.inc:69
+#: xmlsitemap.admin.inc:69
 #: xmlsitemap_engines/xmlsitemap_engines.admin.inc:44
 msgid "Weekly"
 msgstr "Wöchentlich"
 
-#: xmlsitemap/xmlsitemap.admin.inc:70
+#: xmlsitemap.admin.inc:70
 #: xmlsitemap_engines/xmlsitemap_engines.admin.inc:42
 msgid "Monthly"
 msgstr "Monatlich"
 
-#: xmlsitemap/xmlsitemap.admin.inc:71
+#: xmlsitemap.admin.inc:71
 #: xmlsitemap_engines/xmlsitemap_engines.admin.inc:40
 msgid "Yearly"
 msgstr "Jährlich"
 
-#: xmlsitemap/xmlsitemap.pages.inc:224;249;260
-#: xmlsitemap/xmlsitemap.module:0
-#: xmlsitemap_engines/xmlsitemap_engines.module:189;194
+#: (duplicate) xmlsitemap.pages.inc:245;270;281
+#: xmlsitemap.module:0
+#: xmlsitemap.install:567
+#: xmlsitemap_engines/xmlsitemap_engines.module:200;205
 msgid "xmlsitemap"
 msgstr "xmlsitemap"
 
