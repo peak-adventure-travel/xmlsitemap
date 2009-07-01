@@ -81,3 +81,16 @@ UPGRADING INSTRUCTIONS
 8) Follow the "INSTALLATION INSTRUCTIONS" above.
 
 9) Reset your xmlsitemap settings including those for specific links.
+
+
+-- xmlsitemap-6.x-1.0-beta6 to xmlsitemap-6.x-1.0-rc1:
+
+1) Deactive all the xmlsitemap modules at admin/build/modules.
+
+2) Completly remove the xmlsitemap module directory.
+
+3) Install the new source package to your modules directory.
+
+4) Activate the xmlsitemap modules you use at admin/build/modules.
+
+5) Execute update.php logged in as UID 1.
