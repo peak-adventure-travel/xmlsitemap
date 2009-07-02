@@ -27,6 +27,7 @@ UPGRADING INSTRUCTIONS
 
 -- xmlsitemap-5.x-1.6 to xmlsitemap-6.x-1.x-dev:
 -- xmlsitemap-5.x-1.6 to xmlsitemap-6.x-1.0-beta6:
+-- xmlsitemap-5.x-1.6 to xmlsitemap-6.x-1.0-rc1:
 
 1) Deactivate all the xmlsitemap modules at admin/build/modules.
 
@@ -43,6 +44,7 @@ UPGRADING INSTRUCTIONS
 
 -- xmlsitemap-5.x-2.x-dev to xmlsitemap-6.x-1.x-dev:
 -- xmlsitemap-5.x-2.x-dev to xmlsitemap-6.x-1.0-beta6:
+-- xmlsitemap-5.x-2.x-dev to xmlsitemap-6.x-1.0-rc1:
 
 1) Deactive all the xmlsitemap modules at admin/build/modules.
 
@@ -59,6 +61,7 @@ UPGRADING INSTRUCTIONS
 
 -- xmlsitemap-6.x-1.x-dev to xmlsitemap-6.x-1.0-beta6:
 -- xmlsitemap-6.x-1.x-beta[012345] to xmlsitemap-6.x-1.0-beta6:
+-- xmlsitemap-6.x-1.x-beta[012345] to xmlsitemap-6.x-1.0-rc1:
 
 1) Deactive all the xmlsitemap modules at admin/build/modules.
 
