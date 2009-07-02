@@ -9,8 +9,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: German translation of xmlsitemap\n"
-"POT-Creation-Date: 2009-07-01 23:26+0200\n"
-"PO-Revision-Date: 2009-07-01 23:36+0100\n"
+"POT-Creation-Date: 2009-07-02 19:50+0200\n"
+"PO-Revision-Date: 2009-07-02 19:52+0100\n"
 "Last-Translator: Alexander Haß\n"
 "Language-Team: Alexander Hass\n"
 "MIME-Version: 1.0\n"
@@ -46,9 +46,10 @@ msgstr "Monatlich"
 msgid "Yearly"
 msgstr "Jährlich"
 
-#: (duplicate) xmlsitemap.pages.inc:245;270;281
+#: (duplicate) xmlsitemap.pages.inc:49;52;245;270;281
 #: xmlsitemap.module:0
-#: xmlsitemap.install:567
+#: xmlsitemap.install:566
+#: ;547;564
 #: xmlsitemap_engines/xmlsitemap_engines.module:200;205
 msgid "xmlsitemap"
 msgstr "xmlsitemap"
