@@ -105,6 +105,7 @@ function xmlsitemap_schema() {
       'link_language' => array('language'),
       'link_changed' => array('changed'),
       'link_priority' => array('priority'),
+      'type_id' => array('type', 'id'),
     ),
     'primary key' => array('lid'),
   );
