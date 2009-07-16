@@ -554,6 +554,15 @@ function xmlsitemap_update_6150() {
 }
 
 /**
+ * Implementation of hook_update_N().
+ */
+function xmlsitemap_update_6151() {
+  $ret = array();
+  db_add_index($ret, 'xmlsitemap', 'type_id', array('type', 'id'));
+  return $ret;  
+}
+
+/**
  * Implementation of hook_requirements().
  */
 function xmlsmitemap_requirements($phase) {

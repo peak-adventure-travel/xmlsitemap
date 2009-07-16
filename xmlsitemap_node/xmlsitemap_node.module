@@ -258,6 +258,7 @@ function xmlsitemap_node_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
       break;
     case 'delete':
       db_query("DELETE FROM {xmlsitemap_node} WHERE nid = %d", $node->nid);
+      db_query("DELETE FROM {xmlsitemap} WHERE type = 'node' AND id = %d", $node->nid);
       if ($node->status) {
         xmlsitemap_flag_sitemap();
       }
