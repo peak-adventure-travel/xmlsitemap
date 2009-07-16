@@ -3,6 +3,7 @@ $Id$
 XML sitemap 6.x-1, 2009-07-16
 -----------------------------------
 #516876 Deleted items not removed from sitemap. 
+#510076 The sitemap is not being submitted.
 
 XML sitemap 6.x-1, 2009-07-01
 -----------------------------------
