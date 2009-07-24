@@ -3,6 +3,7 @@ $Id$
 XML sitemap 6.x-1, 2009-07-24
 -----------------------------------
 #510076 The sitemap is not being submitted.
+#529850 Node language is not updated.
 
 XML sitemap 6.x-1, 2009-07-16
 -----------------------------------
