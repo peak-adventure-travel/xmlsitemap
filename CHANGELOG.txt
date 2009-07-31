@@ -2,6 +2,10 @@ $Id$
 
 XML sitemap 6.x-1, 2009-07-24
 -----------------------------------
+#535192 Override node settings permission is not checked properly in xmlsitemap_node_form_alter().
+
+XML sitemap 6.x-1, 2009-07-24
+-----------------------------------
 #510076 The sitemap is not being submitted.
 #529850 Node language is not updated.
 #530136 Update INSTALL.txt for the rc2 release.
