@@ -1,5 +1,9 @@
 $Id$
 
+XML sitemap 6.x-1, 2009-08-10
+-----------------------------------
+#544774 Slow queries - add index to loc column.
+
 XML sitemap 6.x-1, 2009-07-24
 -----------------------------------
 #535192 Override node settings permission is not checked properly in xmlsitemap_node_form_alter().
