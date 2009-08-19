@@ -1,5 +1,9 @@
 $Id$
 
+XML sitemap 6.x-1, 2009-08-19
+-----------------------------------
+#550702 by hass: Moreover: Submission URL is not updated with placeholder.
+
 XML sitemap 6.x-1, 2009-08-10
 -----------------------------------
 #544774 Slow queries - add index to loc column.

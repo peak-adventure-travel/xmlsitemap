@@ -27,7 +27,7 @@ function xmlsitemap_engines_update_6100() {
   $variables = array(
     'ask_url' => 'http://submissions.ask.com/ping?sitemap=[sitemap]',
     'google_url' => 'http://www.google.com/webmasters/tools/ping?sitemap=[sitemap]',
-    'morover_url' => 'http://api.moreover.com/ping?u=[sitemap]',
+    'moreover_url' => 'http://api.moreover.com/ping?u=[sitemap]',
     'live_url' => 'http://webmaster.live.com/ping.aspx?siteMap=[sitemap]',
     'yahoo_url' => 'http://search.yahooapis.com/SiteExplorerService/V1/ping?sitemap=[sitemap]',
   );
@@ -95,6 +95,16 @@ function xmlsitemap_engines_update_6108() {
       'query' => $t('Variable "xmlsitemap_engines_cron_timestamp_submit" has been created.'),
     );
   }
+  return $ret;
+}
+
+/**
+ * Delete wrongly named variable xmlsitemap_engines_morover_url.
+ */
+function xmlsitemap_engines_update_6109() {
+  $ret = array();
+  variable_del('xmlsitemap_engines_morover_url');
+  variable_set('xmlsitemap_engines_moreover_url', 'http://api.moreover.com/ping?u=[sitemap]');
   return $ret;
 }
 
