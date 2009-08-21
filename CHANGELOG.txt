@@ -3,6 +3,8 @@ $Id$
 XML sitemap 6.x-1, 2009-08-21
 -----------------------------------
 #550578 Update #6106: Update in {variable} table failed.
+#548064 Sitemap is submitted on every cron run with "update when new content"
+and no new content is added.
 
 XML sitemap 6.x-1, 2009-08-19
 -----------------------------------

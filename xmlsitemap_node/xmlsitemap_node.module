@@ -69,6 +69,7 @@ function xmlsitemap_node_cron() {
       WHERE xn.nid IS NULL
         AND n.status <> 0";
     $result = db_query_range($sql, 0, $limit);
+    $sitemap_changed = FALSE;
     while ($node = db_fetch_object($result)) {
       if (module_exists('comment')) {
         $maxcomments = (integer) db_result(db_query('SELECT MAX(comment_count) FROM {node_comment_statistics}'));
@@ -88,8 +89,9 @@ function xmlsitemap_node_cron() {
         $row->comment_ratio = $comments / $maxcomments;
       }
       drupal_write_record('xmlsitemap_node', $row);
+      $sitemap_changed = TRUE;
     }
-    if ($result) {
+    if ($sitemap_changed) {
       xmlsitemap_flag_sitemap();
     }
   }
