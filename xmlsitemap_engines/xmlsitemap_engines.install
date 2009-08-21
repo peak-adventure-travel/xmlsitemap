@@ -53,8 +53,17 @@ function xmlsitemap_engines_update_6106() {
     'cron_submit_delay',
   );
   foreach ($variables as $variable) {
-    $ret[] = @update_sql("UPDATE {variable} SET name = 'xmlsitemap_engines_{$variable}' WHERE name = 'xmlsitemap_{$variable}'");
-    $ret[] = update_sql("DELETE FROM {variable} WHERE name = 'xmlsitemap_{$variable}'");
+    $oldname = "xmlsitemap_${variable}";
+    $newname = "xmlsitemap_engines_{$variable}";
+    $value = variable_get($oldname, FALSE);
+    if ($value !== FALSE) {
+      variable_set($newname, $value);
+      variable_del($oldname);
+      $ret[] = array(
+        'success' => TRUE,
+        'query' => "Variable name changed from ${oldname} to ${newname}.",
+      );
+    }
   }
   $ret[] = update_sql("UPDATE {system} SET weight = 15 WHERE name = 'xmlsitemap_engines'");
   return $ret;
