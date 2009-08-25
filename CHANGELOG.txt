@@ -2,6 +2,10 @@ $Id$
 
 XML sitemap 6.x-1, 2009-08-24
 -----------------------------------
+#558358 Failure to submit sitemaps.
+
+XML sitemap 6.x-1, 2009-08-24
+-----------------------------------
 #557926 Update INSTALL.txt for official release.
 
 XML sitemap 6.x-1, 2009-08-21
