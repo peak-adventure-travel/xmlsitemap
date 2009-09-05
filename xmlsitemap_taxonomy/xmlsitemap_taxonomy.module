@@ -20,7 +20,7 @@
  */
 function xmlsitemap_taxonomy_cron() {
   if (($limit = variable_get('xmlsitemap_cron_limit', 100)) != -1) {
-    $sql = "SELECT t.* FROM {term_data} t
+    $sql = "SELECT t.tid, t.vid FROM {term_data} t
       LEFT JOIN {xmlsitemap_taxonomy} xt ON xt.tid = t.tid
       WHERE xt.tid IS NULL";
     $result = db_query_range($sql, 0, $limit);
@@ -203,9 +203,8 @@ function xmlsitemap_taxonomy_xmlsitemap_links() {
 
   $result = db_query(
     db_rewrite_sql(
-      "SELECT t.tid, t.vid, v.module, xt.changed, xt.previously_changed, xt.priority_override
+      "SELECT t.tid, t.vid, t.name, xt.changed, xt.previously_changed, xt.priority_override
         FROM {term_data} t
-        LEFT JOIN {vocabulary} v ON t.vid = v.vid
         LEFT JOIN {xmlsitemap_taxonomy} xt ON t.tid = xt.tid",
       't', 'tid'
     )
