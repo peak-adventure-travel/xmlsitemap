@@ -185,19 +185,19 @@ function xmlsitemap_engines_submit_sitemap($engine, $url_var, $default_url, $lan
   if (!is_null($language)) {
     $url_options['language'] = $language;
   }
-  
+
   $url = url('sitemap.xml', $url_options);
   $url = strtr(variable_get($url_var, $default_url), array('[sitemap]' => $url));
-  
+
   $result = drupal_http_request($url);
   if ($result->code == 200) {
-    watchdog('xmlsitemap', 'Sitemap successfully submitted to !engine.',
-      array('!engine' => $engine)
+    watchdog('xmlsitemap', 'Sitemap successfully submitted to @engine.<br />Request: @url',
+      array('@engine' => $engine, '@url' => $url)
     );
   }
   else {
-    watchdog('xmlsitemap', 'Error occurred submitting sitemap to !engine: !code.',
-      array('!engine' => $engine, '!code' => 0 + $result->code), WATCHDOG_ERROR
+    watchdog('xmlsitemap', 'Error occurred submitting sitemap to @engine: @code.<br />Request: @url',
+      array('@engine' => $engine, '@code' => 0 + $result->code, '@url' => $url), WATCHDOG_ERROR
     );
   }
 }
