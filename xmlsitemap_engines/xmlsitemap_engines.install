@@ -144,7 +144,7 @@ function xmlsitemap_engines_update_6111() {
     site_verify_import_xmlsitemap($ret);
     if ($ret) {
       // Only show the success message if there were any settings migrated.
-      drupal_set_message('XML sitemap search engine verification settings successfully migrated to the Site Verification module.');
+      drupal_set_message('XML sitemap search engine verification settings were successfully migrated to the Site Verification module.');
     }
   }
   else {
