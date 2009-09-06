@@ -136,9 +136,28 @@ function xmlsitemap_engines_update_6110() {
 }
 
 /**
+ * Deprecate verification functionality in favor of the site_verify.module.
+ */
+function xmlsitemap_engines_update_6111() {
+  $ret = array();
+  if (function_exists('site_verify_import_xmlsitemap')) {
+    site_verify_import_xmlsitemap($ret);
+    if ($ret) {
+      // Only show the success message if there were any settings migrated.
+      drupal_set_message('XML sitemap search engine verification settings successfully migrated to the Site Verification module.');
+    }
+  }
+  else {
+    drupal_set_message('The search engine verification settings in XML sitemap have been deprecated in favor of the <a href="http://drupal.org/project/site_verify">Site verification module</a>. Your settings will be migrated when you install and enable the Site verification module.', 'warning');
+  }
+  // Set the menu rebuild flag to remove the XML sitemap engine paths.
+  variable_set('menu_rebuild_needed', TRUE);
+  return $ret;
+}
+
+/**
  * Implementation of hook_uninstall().
  */
 function xmlsitemap_engines_uninstall() {
   db_query("DELETE FROM {variable} WHERE name LIKE 'xmlsitemap\_engines\_'");
 }
-

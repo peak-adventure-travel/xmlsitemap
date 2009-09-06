@@ -39,7 +39,6 @@ function xmlsitemap_engines_cron() {
  * Implementation of hook_menu().
  */
 function xmlsitemap_engines_menu() {
-  $items = array();
   $items['admin/settings/xmlsitemap/engines'] = array(
     'title' => 'Search engines',
     'description' => 'Configure the submission settings of the XML sitemap to the search engines.',
@@ -49,36 +48,6 @@ function xmlsitemap_engines_menu() {
     'type' => MENU_LOCAL_TASK,
     'file' => 'xmlsitemap_engines.admin.inc',
   );
-  if ($verify = variable_get("xmlsitemap_engines_google_verify", '')) {
-    $items[$verify] = array(
-      'title' => 'Google verification page',
-      'page callback' => 'xmlsitemap_engines_verify',
-      'page arguments' => array('google'),
-      'access arguments' => array('access content'),
-      'type' => MENU_CALLBACK,
-      'file' => 'xmlsitemap_engines.pages.inc',
-    );
-  }
-  if ($verify = variable_get("xmlsitemap_engines_yahoo_verify", '')) {
-    $items[$verify] = array(
-      'title' => 'Yahoo! verification page',
-      'page callback' => 'xmlsitemap_engines_verify',
-      'page arguments' => array('yahoo'),
-      'access arguments' => array('access content'),
-      'type' => MENU_CALLBACK,
-      'file' => 'xmlsitemap_engines.pages.inc',
-    );
-  }
-  if ($verify = variable_get("xmlsitemap_engines_bing_verify", '')) {
-    $items[$verify] = array(
-      'title' => 'Bing verification page',
-      'page callback' => 'xmlsitemap_engines_verify',
-      'page arguments' => array('bing'),
-      'access arguments' => array('access content'),
-      'type' => MENU_CALLBACK,
-      'file' => 'xmlsitemap_engines.pages.inc',
-    );
-  }
   return $items;
 }
 
