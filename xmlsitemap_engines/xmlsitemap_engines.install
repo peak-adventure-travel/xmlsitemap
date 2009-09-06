@@ -98,10 +98,9 @@ function xmlsitemap_engines_update_6108() {
   $submitted = variable_get('xmlsitemap_engines_cron_timestamp_submit', FALSE);
   if (!$submitted) {
     variable_set('xmlsitemap_engines_cron_timestamp_submit', 0);
-    $t = get_t();
     $ret[] = array(
       'success' => TRUE,
-      'query' => $t('Variable "xmlsitemap_engines_cron_timestamp_submit" has been created.'),
+      'query' => 'Variable "xmlsitemap_engines_cron_timestamp_submit" has been created.',
     );
   }
   return $ret;

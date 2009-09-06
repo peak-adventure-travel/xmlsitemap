@@ -545,11 +545,10 @@ function xmlsitemap_update_6150() {
   $ret = array();
   $path = drupal_get_path('module', 'xmlsitemap');
   if (is_dir($path . '/xmlsitemap')) {
-    $t = get_t();
     watchdog('xmlsitemap', 'You have not correctly followed the installation instructions for this module. You must make certain that the old xmlsitemap/xmlsitemap diretory is removed. The xmlsitemap/xmlsitemap/xmlsitemap.* files have been moved back to the modules root directory. The install instructions were to remove the modules/xmlsitemap directory completely before extracting the update. If you had followed that step you would have prevented this message.', NULL, WATCHDOG_ERROR);
     $ret['#abort'] = array(
       'success' => FALSE,
-      'query' => $t('You have not correctly followed the installation instructions for this module. You must make certain that the old xmlsitemap/xmlsitemap diretory is removed. The xmlsitemap/xmlsitemap/xmlsitemap.* files have been moved back to the modules root directory. The install instructions were to remove the modules/xmlsitemap directory completely before extracting the update. If you had followed that step you would have prevented this message.'),
+      'query' => 'You have not correctly followed the installation instructions for this module. You must make certain that the old xmlsitemap/xmlsitemap diretory is removed. The xmlsitemap/xmlsitemap/xmlsitemap.* files have been moved back to the modules root directory. The install instructions were to remove the modules/xmlsitemap directory completely before extracting the update. If you had followed that step you would have prevented this message.',
     );
   }
   return $ret;
