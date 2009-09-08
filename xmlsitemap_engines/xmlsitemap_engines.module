@@ -119,9 +119,15 @@ function xmlsitemap_engines_ping_sitemap($engine = NULL) {
     ),
   );
 
-  // Get a list of enabled languages.
-  $languages = language_list('enabled');
-  $languages = $languages[1];
+  if (variable_get('xmlsitemap_all_links_to_default_language', 0)) {
+    // Only submit the default language sitemap since it contains every link.
+    $languages = array(language_default());
+  }
+  else {
+    // Get a list of enabled languages.
+    $languages = language_list('enabled');
+    $languages = $languages[1];
+  }
 
   foreach ($languages as $language) {
     if (!isset($engine)) {
