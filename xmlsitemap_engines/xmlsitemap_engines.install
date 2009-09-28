@@ -45,8 +45,6 @@ function xmlsitemap_engines_uninstall() {
 }
 
 /**
- * Implementation of hook_update_N().
- * 
  * Replace Moreover with Windows Live.
  */
 function xmlsitemap_engines_update_1() {
@@ -62,3 +60,23 @@ function xmlsitemap_engines_update_1() {
   return $ret;
 }
 
+/**
+ * Update variables from Live Search to Bing.
+ */
+function xmlsitemap_engines_update_5100() {
+  $variables = array(
+    'submit' => FALSE,
+    'url' => 'http://www.bing.com/webmaster/ping.aspx?siteMap='. url('sitemap.xml', NULL, NULL, TRUE),
+    'verify' => '',
+    'verify_string' => '',
+  );
+  foreach ($variables as $variable => $default) {
+    $value = variable_get('xmlsitemap_engines_live_' . $variable, $default);
+    if ($variable == 'url' && $value == $default) {
+      $value = 'http://www.bing.com/webmaster/ping.aspx?siteMap='. url('sitemap.xml', NULL, NULL, TRUE);
+    }
+    variable_set('xmlsitemap_engines_bing_' . $variable, $value);
+    variable_del('xmlsitemap_engines_live_' . $variable);
+  }
+  return array();
+}
