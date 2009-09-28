@@ -594,10 +594,12 @@ function _xmlsitemap_frequency($interval) {
     'never' => 0,
   );
   $frequency = 'never';
-  if (array_key_exists($interval, $frequencies)) {
-    $frequency = $interval;
+  if (!is_numeric($interval)) {
+    if (isset($frequencies[$interval])) {
+      $frequency = $interval;
+    }
   }
-  elseif (is_numeric($interval)) {
+  else {
     foreach ($frequencies as $frequency => $value) {
       if ($interval < $value) {
         break;
@@ -835,4 +837,3 @@ function _xmlsitemap_ping() {
 /**
  * @} End of "addtogroup xmlsitemap".
  */
-
