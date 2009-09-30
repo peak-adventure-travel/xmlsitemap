@@ -30,8 +30,6 @@ function xmlsitemap_help($section) {
  */
 function xmlsitemap_menu($may_cache) {
   $items = array();
-  $access_config = user_access('administer site configuration');
-  $access_content = user_access('access content');
   if ($may_cache) {
     $items[] = array(
       'path' => 'admin/settings/xmlsitemap',
@@ -39,7 +37,7 @@ function xmlsitemap_menu($may_cache) {
       'description' => t('Configure site map.'),
       'callback' => 'drupal_get_form',
       'callback arguments' => array('xmlsitemap_settings_sitemap'),
-      'access' => $access_config,
+      'access' => user_access('administer site configuration'),
     );
     $items[] = array(
       'path' => 'admin/settings/xmlsitemap/settings',
@@ -55,6 +53,7 @@ function xmlsitemap_menu($may_cache) {
       'callback' => 'drupal_get_form',
       'callback arguments' => array('xmlsitemap_settings_engines'),
       'type' => MENU_LOCAL_TASK,
+      'access' => user_access('administer site configuration'),
     );
     $items[] = array(
       'path' => 'admin/settings/xmlsitemap/additional',
@@ -63,6 +62,7 @@ function xmlsitemap_menu($may_cache) {
       'callback' => 'drupal_get_form',
       'callback arguments' => array('xmlsitemap_settings_additional'),
       'type' => MENU_LOCAL_TASK,
+      'access' => user_access('administer site configuration'),
       'weight' => 1,
     );
     $items[] = array(
@@ -70,7 +70,7 @@ function xmlsitemap_menu($may_cache) {
       'title' => t('Site map index'),
       'callback' => '_xmlsitemap_output',
       'type' => MENU_CALLBACK,
-      'access' => $access_content,
+      'access' => user_access('access content'),
     );
   }
   else {
@@ -82,7 +82,7 @@ function xmlsitemap_menu($may_cache) {
         'callback' => '_xmlsitemap_output',
         'callback arguments' => array($chunk),
         'type' => MENU_CALLBACK,
-        'access' => $access_content,
+        'access' => user_access('access content'),
       );
     }
   }
