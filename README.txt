@@ -25,7 +25,7 @@ specification. This helps search engines keep their search results up to date.
 INSTALLATION
 ------------
 
-See http://drupal.org/getting-started/5/install-contrib for instructions on
+See http://drupal.org/getting-started/install-contrib for instructions on
 how to install or upgrade Drupal modules. See INSTALL.txt in this directory
 for specific detailed instructions to upgrading this module.
 
