@@ -23,7 +23,7 @@ function xmlsitemap_engines_install() {
  * Implementation of hook_update_N().
  */
 function xmlsitemap_engines_update_6100() {
-  $ret[] = update_sql("DELETE FROM {variable} WHERE name = 'xmlsitemap_engines_cron_submit_delay'");
+	variable_del('xmlsitemap_engines_cron_submit_delay');
   $variables = array(
     'ask_url' => 'http://submissions.ask.com/ping?sitemap=[sitemap]',
     'google_url' => 'http://www.google.com/webmasters/tools/ping?sitemap=[sitemap]',
@@ -139,7 +139,7 @@ function xmlsitemap_engines_update_6110() {
  */
 function xmlsitemap_engines_update_6111() {
   $ret = array();
-  if (function_exists('site_verify_import_xmlsitemap')) {
+  if (module_exists('site_verify') && function_exists('site_verify_import_xmlsitemap')) {
     site_verify_import_xmlsitemap($ret);
     if ($ret) {
       // Only show the success message if there were any settings migrated.
