@@ -28,7 +28,7 @@ function xmlsitemap_engines_settings() {
   $form['submission']['xmlsitemap_engines_submit'] = array(
     '#type' => 'checkbox',
     '#title' => t('Submit the sitemap when content changes'),
-    '#description' => t('If enabled, the search engines will be notified of changes to the sitemap each time the sitemap content is changed.'),
+    '#description' => t('If enabled, the search engines will only be notified of changes to the sitemap whenever the sitemap content is changed.'),
     '#default_value' => variable_get('xmlsitemap_engines_submit', FALSE),
   );
   $form['submission']['xmlsitemap_engines_cron_submit_frequency'] = array(

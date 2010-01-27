@@ -26,7 +26,7 @@ function xmlsitemap_engines_cron() {
   $last_ping = variable_get('xmlsitemap_engines_cron_timestamp_submit', 0);
   $submit_on_change = variable_get('xmlsitemap_engines_submit', FALSE);
   $content_changed = variable_get('xmlsitemap_sitemap_is_changed', FALSE);
-  $ping_engines = ($submit_on_change && $content_changed) ||
+  $ping_engines = (!$submit_on_change || $content_changed) &&
     ((REQUEST_TIME - $last_ping) >= $frequency);
   if ($ping_engines) {
     xmlsitemap_engines_ping_sitemap();
