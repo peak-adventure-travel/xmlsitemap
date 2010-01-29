@@ -167,8 +167,8 @@ function _xmlsitemap_check_cache_files() {
  */
 function _xmlsitemap_create_cache_chunk($fp, $chunk_size, $chunk = 0) {
   fwrite($fp, '<?xml version="1.0" encoding="UTF-8"?>' . "\n");
-  if ($xsl = _xmlsitemap_xsl()) {
-    fwrite($fp, '<?xml-stylesheet type="text/xsl" href="' . $xsl . '" ?>' . "\n");
+  if (variable_get('xmlsitemap_use_stylesheet', FALSE)) {
+    fwrite($fp, '<?xml-stylesheet type="text/xsl" href="' . url('sitemap.xsl') . '" ?>' . "\n");
   }
   fwrite($fp, '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' . "\n");
   fwrite($fp, '  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' . "\n");
@@ -206,27 +206,6 @@ function _xmlsitemap_create_cache_chunk($fp, $chunk_size, $chunk = 0) {
 }
 
 /**
- * Determine path for a xml stylesheet.
- *
- * @return
- * - The stylesheet path or FALSE.
- */
-function _xmlsitemap_xsl() {
-  if (variable_get('xmlsitemap_use_stylesheet', FALSE)) {
-    $paths = array(
-      variable_get('xmlsitemap_cache_directory', file_directory_path() . '/xmlsitemap') . '/gss.xsl',
-      drupal_get_path('module', 'xmlsitemap') . '/gss/gss.xsl',
-    );
-    foreach ($paths as $path) {
-      if (file_exists($path)) {
-        return base_path() . $path;
-      }
-    }
-  }
-  return FALSE;
-}
-
-/**
  * Create the cache files containing the sitemap.
  *
  * @return
@@ -247,8 +226,8 @@ function _xmlsitemap_create_cache_files() {
       return FALSE;
     }
     fwrite($fp, '<?xml version="1.0" encoding="UTF-8"?>' . "\n");
-    if ($xsl = _xmlsitemap_xsl()) {
-      fwrite($fp, '<?xml-stylesheet type="text/xsl" href="' . $xsl . '" ?>' . "\n");
+    if (variable_get('xmlsitemap_use_stylesheet', FALSE)) {
+      fwrite($fp, '<?xml-stylesheet type="text/xsl" href="' . url('sitemap.xsl') . '" ?>' . "\n");
     }
     fwrite($fp, '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' . "\n");
     fwrite($fp, '  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' . "\n");
@@ -288,6 +267,36 @@ function _xmlsitemap_create_cache_files() {
     @chmod($parent_directory ."/xsm-$id.xml", 0664);
   }
   return TRUE;
+}
+
+/**
+ * Output an XML transformation file for the sitemap XML.
+ */
+function xmlsitemap_output_xsl() {
+  // Read the XSL content from the file.
+  $module_path = drupal_get_path('module', 'xmlsitemap');
+  $xsl_content = file_get_contents($module_path . '/gss/gss.xsl');
+
+  // Make sure the strings in the XSL content are translated properly.
+  $replacements = array(
+    'Sitemap file' => t('Sitemap file'),
+    'Number of sitemaps in this index' => t('Number of sitemaps in this index'),
+    'Click on the table headers to change sorting.' => t('Click on the table headers to change sorting.'),
+    'Sitemap URL' => t('Sitemap URL'),
+    'Last modification date' => t('Last modification date'),
+    'Number of URLs in this sitemap' => t('Number of URLs in this sitemap'),
+    'URL location' => t('URL location'),
+    'Change frequency' => t('Change frequency'),
+    'Priority' => t('Priority'),
+    '[xsl-js]' => base_path() . $module_path . '/gss/gss.js',
+    '[xsl-css]' => base_path() . $module_path . '/gss/gss.css',
+  );
+  $xsl_content = strtr($xsl_content, $replacements);
+
+  // Output the XSL content.
+  drupal_set_header('Content-type: application/xml; charset=utf-8');
+  drupal_set_header('X-Robots-Tag: noindex, follow');
+  echo $xsl_content;
 }
 
 /**
