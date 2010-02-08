@@ -217,7 +217,7 @@ function xmlsitemap_user_xmlsitemap_links() {
     if ($old_row === FALSE) {
       drupal_write_record('xmlsitemap', $row);
     }
-    elseif ($old_row->type == 'user' && $old_row->priority != $row->priority) {
+    elseif ($old_row->type == 'user' && ($old_row->priority != $row->priority || $old_row->changed != $row->changed || $old_row->changefreq != $row->changefreq)) {
       $row->lid = $old_row->lid;
       drupal_write_record('xmlsitemap', $row, 'lid');
     }
