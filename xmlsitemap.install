@@ -580,7 +580,7 @@ function xmlsitemap_requirements($phase) {
   $requirements = array();
   $t = get_t();
 
-  if (is_dir(drupal_get_path('module', 'xmlsitemap') . '/xmlsitemap')) {
+  if ($phase == 'runtime' && is_dir(drupal_get_path('module', 'xmlsitemap') . '/xmlsitemap')) {
     watchdog('xmlsitemap', 'You have not correctly followed the installation instructions for this module. You must make certain that the old xmlsitemap/xmlsitemap diretory is removed. The xmlsitemap/xmlsitemap/xmlsitemap.* files have been moved back to the modules root directory. The install instructions were to removed the modules/xmlsitemap directory completely before extracting the update. If you had followed that step you would have prevented this message.', NULL, WATCHDOG_ERROR);
     $requirements['xmlsitemap'] = array(
       'title' => $t('xmlsitemap'),
