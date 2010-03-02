@@ -51,7 +51,7 @@ function xmlsitemap_taxonomy_form_taxonomy_form_term_alter(&$form, &$from_state)
 
   $priority = db_result(db_query("SELECT priority_override
     FROM {xmlsitemap_taxonomy}
-    WHERE tid = %d", $form['tid']['#value'])
+    WHERE tid = %d", $form['#term']['tid'])
   );
   if ($priority === FALSE) {
     $priority = -2.0;
@@ -147,7 +147,7 @@ function xmlsitemap_taxonomy_taxonomy($op, $type, $array = NULL) {
         break;
       case 'insert':
       case 'update':
-        if (isset($array['vid'])) {
+        if (isset($array['vid']) && isset($array['xmlsitemap_taxonomy_vocabulary_priority'])) {
           if (variable_get('xmlsitemap_taxonomy_vocabulary_priority_'. $array['vid'], 0.5) != $array['xmlsitemap_taxonomy_vocabulary_priority']) {
             variable_set('xmlsitemap_taxonomy_vocabulary_priority_'. $array['vid'], $array['xmlsitemap_taxonomy_vocabulary_priority']);
             xmlsitemap_flag_sitemap();
