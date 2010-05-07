@@ -1200,7 +1200,7 @@ function xmlsitemap_run_progressive_batch() {
   $args = func_get_args();
   $batch_callback = array_shift($args);
 
-  if (!lock_acquire($batch_callback)) {
+  if (function_exists('lock_acquire') && !lock_acquire($batch_callback)) {
     return FALSE;
   }
 
@@ -1216,7 +1216,9 @@ function xmlsitemap_run_progressive_batch() {
   // Run the batch process.
   batch_process();
 
-  lock_release($batch_callback);
+  if (function_exists('lock_release')) {
+    lock_release($batch_callback);
+  }
   return TRUE;
 }
 
