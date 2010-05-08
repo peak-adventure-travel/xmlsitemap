@@ -21,9 +21,11 @@ class XMLSitemapTestHelper extends DrupalWebTestCase {
     $modules[] = 'xmlsitemap';
     call_user_func_array(array($this, 'parent::setUp'), $modules);
 
+    // Reset any of our module's static variables.
+    xmlsitemap_static_reset();
+
     // Ensure the files directory is created and writable during testing.
     // @todo This can be removed when http://drupal.org/node/654752 is fixed.
-    xmlsitemap_static_reset();
     $this->checkFilesDirectory();
   }
 
@@ -37,6 +39,23 @@ class XMLSitemapTestHelper extends DrupalWebTestCase {
   }
 
   /**
+   * Assert the page does not respond with the specified response code.
+   *
+   * @param $code
+   *   Response code. For example 200 is a successful page request. For a list
+   *   of all codes see http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html.
+   * @param $message
+   *   Message to display.
+   * @return
+   *   Assertion result.
+   */
+  protected function assertNoResponse($code, $message = '') {
+    $curl_code = curl_getinfo($this->curlHandle, CURLINFO_HTTP_CODE);
+    $match = is_array($code) ? in_array($curl_code, $code) : $curl_code == $code;
+    return $this->assertFalse($match, $message ? $message : t('HTTP response not expected !code, actual !curl_code', array('!code' => $code, '!curl_code' => $curl_code)), t('Browser'));
+  }
+
+  /**
    * Check the files directory is created (massive fails if not done).
    *
    * @todo This can be removed when http://drupal.org/node/654752 is fixed.
@@ -47,13 +66,27 @@ class XMLSitemapTestHelper extends DrupalWebTestCase {
     }
   }
 
-  protected function drupalGetSitemap($language = '', $regenerate = FALSE) {
-    if ($regenerate) {
-      $this->regenerateSitemap();
+  /**
+   * Retrieves an XML sitemap.
+   *
+   * @param $context
+   *   An optional array of the XML sitemap's context.
+   * @param $options
+   *   Options to be forwarded to url(). These values will be merged with, but
+   *   always override $sitemap['uri']['options'].
+   * @param $headers
+   *   An array containing additional HTTP request headers, each formatted as
+   *   "name: value".
+   * @return
+   *   The retrieved HTML string, also available as $this->drupalGetContent()
+   */
+  protected function drupalGetSitemap(array $context = array(), array $options = array(), array $headers = array()) {
+    $sitemap = xmlsitemap_sitemap_load_by_context($context);
+    if (!$sitemap) {
+      return $this->fail('Could not load sitemap by context.');
     }
 
-    $this->drupalGet('sitemap.xml', array('language' => xmlsitemap_language_load($language)));
-    $this->assertResponse(200);
+    return $this->drupalGet($sitemap['uri']['path'], $options + $sitemap['uri']['options'], $headers);
   }
 
   /**
@@ -596,6 +629,17 @@ class XMLSitemapUnitTest extends XMLSitemapTestHelper {
     // 2  | testing | group2  | ''       | 1      | 0.0
     // 3  | testing | group2  | ''       | 1      | 0.5
   }
+
+  /**
+   * Test that duplicate paths are skipped during generation.
+   */
+  function testDuplicatePaths() {
+    $link1 = $this->addSitemapLink(array('loc' => 'duplicate-path'));
+    $link2 = $this->addSitemapLink(array('loc' => 'duplicate-path'));
+    $this->regenerateSitemap();
+    $this->drupalGetSitemap();
+    $this->assertUniqueText('duplicate-path');
+  }
 }
 
 class XMLSitemapFunctionalTest extends XMLSitemapTestHelper {
@@ -617,14 +661,15 @@ class XMLSitemapFunctionalTest extends XMLSitemapTestHelper {
    * Test the sitemap file caching.
    */
   function testSitemapCaching() {
-    $this->drupalGetSitemap('', TRUE);
+    $this->regenerateSitemap();
+    $this->drupalGetSitemap();
     $this->assertResponse(200);
     $etag = $this->drupalGetHeader('etag');
     $last_modified = $this->drupalGetHeader('last-modified');
     $this->assertTrue($etag, t('Etag header found.'));
     $this->assertTrue($last_modified, t('Last-modified header found.'));
 
-    $this->drupalGet('sitemap.xml', array(), array('If-Modified-Since: ' . $last_modified, 'If-None-Match: ' . $etag));
+    $this->drupalGetSitemap(array(), array(), array('If-Modified-Since: ' . $last_modified, 'If-None-Match: ' . $etag));
     $this->assertResponse(304);
   }
 
@@ -639,11 +684,12 @@ class XMLSitemapFunctionalTest extends XMLSitemapTestHelper {
     $this->assertText(t('The configuration options have been saved.'));
 
     $link = $this->addSitemapLink(array('loc' => 'lifetime-test'));
-    drupal_cron_run();
+    $this->cronRun();
     $this->drupalGetSitemap();
+    $this->assertResponse(200);
     $this->assertNoRaw('lifetime-test');
 
-    variable_set('xmlsitemap_generated_last', REQUEST_TIME - 300);
+    variable_set('xmlsitemap_generated_last', REQUEST_TIME - 150);
     $this->cronRun();
     $this->drupalGetSitemap();
     $this->assertRaw('lifetime-test');
@@ -653,7 +699,9 @@ class XMLSitemapFunctionalTest extends XMLSitemapTestHelper {
     $this->drupalGetSitemap();
     $this->assertRaw('lifetime-test');
 
-    $this->drupalGetSitemap('', TRUE);
+    $this->regenerateSitemap();
+    $this->drupalGetSitemap();
+    $this->assertResponse(200);
     $this->assertNoRaw('lifetime-test');
   }
 
@@ -677,7 +725,8 @@ class XMLSitemapFunctionalTest extends XMLSitemapTestHelper {
     $this->drupalPost('admin/settings/xmlsitemap/settings', $edit, t('Save configuration'));
     $this->assertText(t('The configuration options have been saved.'));
 
-    $this->drupalGetSitemap('', TRUE);
+    $this->regenerateSitemap();
+    $this->drupalGetSitemap(array(), array('base_url' => NULL));
     $this->assertRaw('<loc>http://example.com/</loc>');
   }
 
@@ -711,16 +760,6 @@ class XMLSitemapFunctionalTest extends XMLSitemapTestHelper {
 
     // Test chunk count > 1000.
     // Test directory not writable.
-  }
-
-  /**
-   * Test that duplicate paths are skipped during generation.
-   */
-  function testDuplicatePaths() {
-    $link1 = $this->addSitemapLink(array('loc' => 'duplicate'));
-    $link2 = $this->addSitemapLink(array('loc' => 'duplicate'));
-    $this->drupalGetSitemap('', TRUE);
-    $this->assertUniqueText('duplicate');
   }
 }
 
