@@ -13,7 +13,6 @@
  */
 class XMLSitemapTestHelper extends DrupalWebTestCase {
   protected $admin_user;
-  protected $seen_ids = array();
 
   function setUp() {
     // Call parent::setUp() allowing test cases to pass further modules.
@@ -25,15 +24,13 @@ class XMLSitemapTestHelper extends DrupalWebTestCase {
     xmlsitemap_static_reset();
 
     // Ensure the files directory is created and writable during testing.
-    // @todo This can be removed when http://drupal.org/node/654752 is fixed.
+    // @todo This can be removed when http://drupal.org/node/654752 is backported to Drupal 6.
     $this->checkFilesDirectory();
   }
 
   function tearDown() {
     // Capture any (remaining) watchdog errors.
     $this->assertNoWatchdogErrors();
-    // Reset the watchdog seen IDs for the next test run.
-    $this->seen_ids = array();
 
     parent::tearDown();
   }
@@ -241,18 +238,15 @@ class XMLSitemapTestHelper extends DrupalWebTestCase {
    * @todo Add unit tests for this function.
    */
   protected function getWatchdogMessages(array $conditions = array(), $reset = FALSE) {
+    static $seen_ids = array();
     static $watchdog_schema;
-    static $levels;
 
     if (!module_exists('dblog') || $reset) {
-      $this->seen_ids = array();
+      $seen_ids = array();
       return;
     }
     if (!isset($watchdog_schema)) {
       $watchdog_schema = drupal_get_schema('watchdog');
-    }
-    if (!isset($levels)) {
-      $levels = watchdog_severity_levels();
     }
 
     $sql = "SELECT wid, type, severity, message, variables, timestamp FROM {watchdog}";
@@ -260,11 +254,14 @@ class XMLSitemapTestHelper extends DrupalWebTestCase {
     $args = array();
     foreach ($conditions as $field => $value) {
       $conditions[$field] = $field . ' = ' . db_type_placeholder($watchdog_schema['fields'][$field]['type']);
-      $args[] = ($field == 'variables' && is_array($value)) ? serialize($value) : $value;
+      if ($field == 'variables' && !is_string($value)) {
+        $value = serialize($value);
+      }
+      $args[] = $value;
     }
-    if ($this->seen_ids) {
-      $conditions[] = 'wid NOT IN (' . db_placeholders($this->seen_ids) . ')';
-      $args = array_merge($args, $this->seen_ids);
+    if ($seen_ids) {
+      $conditions[] = 'wid NOT IN (' . db_placeholders($seen_ids) . ')';
+      $args = array_merge($args, $seen_ids);
     }
 
     if ($conditions) {
@@ -275,15 +272,10 @@ class XMLSitemapTestHelper extends DrupalWebTestCase {
 
     $messages = array();
     while ($message = db_fetch_object($query)) {
-      $message->variables = unserialize($message->variables);
-      if (!is_array($message->variables)) {
-        $message->variables = array();
-      }
-      $message->text = $message->timestamp . ' - ' . $levels[$message->severity] . ' - ' . $message->type . ' - ' . t($message->message, $message->variables);
       $messages[$message->wid] = $message;
     }
 
-    $this->seen_ids = array_merge($this->seen_ids, array_keys($messages));
+    $seen_ids = array_merge($seen_ids, array_keys($messages));
     return $messages;
   }
 
@@ -303,6 +295,7 @@ class XMLSitemapTestHelper extends DrupalWebTestCase {
     $verbose = array();
 
     foreach ($messages as $message) {
+      $message->text = $this->formatWatchdogMessage($message);
       if (in_array($message->severity, array(WATCHDOG_EMERG, WATCHDOG_ALERT, WATCHDOG_CRITICAL, WATCHDOG_ERROR, WATCHDOG_WARNING))) {
         $this->fail($message->text);
       }
@@ -311,7 +304,55 @@ class XMLSitemapTestHelper extends DrupalWebTestCase {
 
     if ($verbose) {
       array_unshift($verbose, '<h2>Watchdog messages</h2>');
-      $this->verbose(implode("<br />", $verbose));
+      $this->verbose(implode("<br />", $verbose), 'Watchdog messages from test run');
+    }
+
+    // Clear the seen watchdog messages since we've failed on any errors.
+    $this->getWatchdogMessages(array(), TRUE);
+  }
+
+  /**
+   * Format a watchdog message in a one-line summary.
+   *
+   * @param $message
+   *   A watchdog messsage object.
+   * @return
+   *   A string containing the watchdog message's timestamp, severity, type,
+   *   and actual message.
+   */
+  private function formatWatchdogMessage(stdClass $message) {
+    static $levels;
+
+    if (!isset($levels)) {
+      module_load_include('admin.inc', 'dblog');
+      $levels = watchdog_severity_levels();
+    }
+
+    return t('@timestamp - @severity - @type - !message', array(
+      '@timestamp' => $message->timestamp,
+      '@severity' => $levels[$message->severity],
+      '@type' => $message->type,
+      '!message' => _dblog_format_message($message),
+    ));
+  }
+
+  /**
+   * Log verbose message in a text file.
+   *
+   * This is a copy of DrupalWebTestCase->verbose() but allows a customizable
+   * summary message rather than hard-coding 'Verbose message'.
+   *
+   * @param $verbose_message
+   *   The verbose message to be stored.
+   * @param $message
+   *   Message to display.
+   * @see simpletest_verbose()
+   *
+   * @todo Remove when http://drupal.org/node/800426 is fixed.
+   */
+  protected function verbose($verbose_message, $message = 'Verbose message') {
+    if ($id = simpletest_verbose($verbose_message)) {
+      $this->pass(l($message, $this->originalFileDirectory . '/simpletest/verbose/' . get_class($this) . '-' . $id . '.html', array('attributes' => array('target' => '_blank'))), 'Debug');
     }
   }
 }
