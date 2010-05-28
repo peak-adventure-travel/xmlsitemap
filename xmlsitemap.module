@@ -335,7 +335,7 @@ function xmlsitemap_sitemap_load_multiple(array $smids) {
  *
  * @param $context
  *   An optional XML sitemap context array to use to find the correct XML
- *   siteamp. If not provided, the current site's context will be used.
+ *   sitemap. If not provided, the current site's context will be used.
  *
  * @see xmlsitemap_get_current_context()
  */
@@ -595,6 +595,14 @@ function xmlsitemap_link_delete($entity_type, $entity_id) {
  *   The number of links that were deleted.
  */
 function xmlsitemap_link_delete_multiple(array $conditions) {
+  // Because this function is called from sub-module uninstall hooks, we have
+  // to manually check if the table exists since it could have been removed
+  // in xmlsitemap_uninstall().
+  // @see http://drupal.org/node/15145
+  if (!db_table_exists('xmlsitemap')) {
+    return FALSE;
+  }
+
   if (!variable_get('xmlsitemap_regenerate_needed', TRUE)) {
     _xmlsitemap_check_changed_links($conditions, array(), TRUE);
   }
