@@ -122,19 +122,22 @@ function xmlsitemap_menu() {
     'weight' => -10,
   );
   $items['admin/settings/xmlsitemap/add'] = array(
-    'title' => 'Add new XML sitemap',
+    'title' => 'Add XML sitemap',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('xmlsitemap_sitemap_edit_form'),
     'access arguments' => array('administer xmlsitemap'),
     'type' => MENU_CALLBACK,
     'file' => 'xmlsitemap.admin.inc',
+    'modal form' => TRUE,
   );
   $items['admin/settings/xmlsitemap/edit/%xmlsitemap_sitemap'] = array(
+    'title' => 'Edit XML sitemap',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('xmlsitemap_sitemap_edit_form', 4),
     'access arguments' => array('administer xmlsitemap'),
     'type' => MENU_CALLBACK,
     'file' => 'xmlsitemap.admin.inc',
+    'modal form' => TRUE,
   );
   $items['admin/settings/xmlsitemap/delete/%xmlsitemap_sitemap'] = array(
     'page callback' => 'drupal_get_form',
@@ -142,7 +145,9 @@ function xmlsitemap_menu() {
     'access arguments' => array('administer xmlsitemap'),
     'type' => MENU_CALLBACK,
     'file' => 'xmlsitemap.admin.inc',
+    'modal form' => TRUE,
   );
+
   $items['admin/settings/xmlsitemap/settings'] = array(
     'title' => 'Settings',
     'page callback' => 'drupal_get_form',
@@ -152,6 +157,19 @@ function xmlsitemap_menu() {
     'file' => 'xmlsitemap.admin.inc',
     'weight' => 10,
   );
+  $items['admin/settings/xmlsitemap/settings/%xmlsitemap_link_bundle/%'] = array(
+    'title callback' => 'xmlsitemap_link_bundle_settings_title',
+    'title arguments' => array(4),
+    'load arguments' => array(5),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('xmlsitemap_link_bundle_settings_form', 4),
+    'access callback' => 'xmlsitemap_link_bundle_access',
+    'access arguments' => array(4),
+    'type' => MENU_CALLBACK,
+    'file' => 'xmlsitemap.admin.inc',
+    'modal form' => TRUE,
+  );
+
   $items['admin/settings/xmlsitemap/rebuild'] = array(
     'title' => 'Rebuild links',
     'description' => 'Rebuild the site map.',
@@ -175,17 +193,6 @@ function xmlsitemap_menu() {
     'type' => MENU_CALLBACK,
     'file' => 'xmlsitemap.pages.inc',
   );
-
-  // CTools/Dialog API callback for editing bundle settings.
-  if (module_exists('ctools') && module_exists('dialog')) {
-    $items['admin/settings/xmlsitemap/settings/%/%/%ctools_js'] = array(
-      'page callback' => 'xmlsitemap_bundle_settings_dialog',
-      'page arguments' => array(4, 5, 6),
-      'access arguments' => array('administer xmlsitemap'),
-      'type' => MENU_CALLBACK,
-      'file' => 'xmlsitemap.admin.inc',
-    );
-  }
 
   return $items;
 }
@@ -859,9 +866,18 @@ function xmlsitemap_link_bundle_rename($entity, $bundle_old, $bundle_new) {
 }
 
 function xmlsitemap_link_bundle_load($entity, $bundle) {
-  $settings = variable_get("xmlsitemap_settings_{$entity}_{$bundle}", array());
-  $settings += array('status' => XMLSITEMAP_STATUS_DEFAULT, 'priority' => XMLSITEMAP_PRIORITY_DEFAULT);
-  return $settings;
+  $entity_info = xmlsitemap_get_link_info($entity);
+  $info = array(
+    'entity' => $entity,
+    'bundle' => $bundle,
+    'info' => $entity_info['bundles'][$bundle],
+  );
+  $info += variable_get("xmlsitemap_settings_{$entity}_{$bundle}", array());
+  $info += array(
+    'status' => XMLSITEMAP_STATUS_DEFAULT,
+    'priority' => XMLSITEMAP_PRIORITY_DEFAULT,
+  );
+  return $info;
 }
 
 function xmlsitemap_link_bundle_delete($entity, $bundle, $delete_links = TRUE) {
@@ -873,11 +889,16 @@ function xmlsitemap_link_bundle_delete($entity, $bundle, $delete_links = TRUE) {
   //xmlsitemap_get_link_info(NULL, TRUE);
 }
 
-function xmlsitemap_can_admin_bundle($entity, $bundle) {
-  $info = xmlsitemap_get_link_info($entity);
+function xmlsitemap_link_bundle_access($entity, $bundle = NULL) {
+  if (is_array($entity) && !isset($bundle)) {
+    $bundle = $entity;
+  }
+  else {
+    $bundle = xmlsitemap_link_bundle_load($entity, $bundle);
+  }
 
-  if (isset($info['bundles'][$bundle]['admin'])) {
-    $admin = $info['bundles'][$bundle]['admin'];
+  if (isset($bundle['info']['admin'])) {
+    $admin = $bundle['info']['admin'];
     $admin += array('access arguments' => array());
 
     if (!isset($admin['access callback']) && count($admin['access arguments']) == 1) {
@@ -1370,4 +1391,105 @@ function xmlsitemap_element_get_visible_children(array $elements) {
   }
 
   return FALSE;
+}
+
+function xmlsitemap_menu_alter(&$items) {
+  if (!module_exists('ctools')) {
+    return;
+  }
+
+  foreach ($items as $path => $item) {
+    if (!empty($item['modal form']) && strpos($path, '%ctools_js') === FALSE && $item['page callback'] ==='drupal_get_form') {
+      $items["$path/%ctools_js"] = $item;
+      $items["$path/%ctools_js"]['page callback'] = 'xmlsitemap_get_modal_form';
+      $items["$path/%ctools_js"]['page arguments'][] = substr_count($path, '/') + 1;
+    }
+  }
+}
+
+function xmlsitemap_get_operation_link($url, $options = array()) {
+  static $destination;
+  static $ctools_modal_included;
+
+  if (!isset($destination)) {
+    $destination = drupal_get_destination();
+  }
+
+  $link = array('href' => $url) + $options;
+
+  // Fetch the item's menu router link info and title.
+  $item = menu_get_item($url);
+  $link += array('title' => $item['title'], 'router info' => $item);
+
+  drupal_alter('xmlsitemap_operation_link', $link);
+
+  // Process modal frame links.
+  if (!empty($options['modal'])) {
+    if (!isset($ctools_modal_included)) {
+      $ctools_modal_included = module_exists('ctools');
+
+      // Only process a few includes once per request.
+      if ($ctools_modal_included) {
+        ctools_include('modal');
+        ctools_modal_add_js();
+        drupal_add_css(drupal_get_path('module', 'xmlsitemap') . '/xmlsitemap.admin.css');
+      }
+    }
+
+    if ($ctools_modal_included) {
+      $link['query'] = $destination;
+      $link['attributes']['class'] = 'ctools-use-modal';
+
+      if (strpos($link['href'], 'nojs') === FALSE) {
+        $link['href'] .= '/nojs/';
+      }
+      elseif (substr($link['href'], -4) === 'nojs') {
+        $link['href'] .= '/';
+      }
+    }
+  }
+
+  return $link;
+}
+
+function xmlsitemap_get_modal_form() {
+  $args = func_get_args();
+  $form_id = array_shift($args);
+  $ajax = array_pop($args);
+
+  $form_state = array(
+    'ajax' => TRUE,
+    'args' => &$args,
+  );
+
+  switch ($form_id) {
+    case 'xmlsitemap_link_bundle_settings_form':
+      $bundle_info = current($args);
+      $args = array($bundle_info['entity'], $bundle_info['bundle']);
+      break;
+  }
+
+  if ($ajax) {
+    ctools_include('ajax');
+    ctools_include('modal');
+    $commands = ctools_modal_form_wrapper($form_id, $form_state);
+    if (empty($commands)) {
+      $commands[] = ctools_modal_command_loading();
+      if (!empty($_GET['destination'])) {
+        $commands[] = ctools_ajax_command_redirect($_GET['destination']);
+      }
+    }
+    return ctools_ajax_render($commands);
+  }
+  else {
+    array_unshift($form_state['args'], $form_id);
+    if ($title = drupal_get_title()) {
+      drupal_set_title($title);
+    }
+    return call_user_func_array('drupal_get_form', $args);
+  }
+}
+
+function xmlsitemap_link_bundle_settings_title($bundle) {
+  return t('@bundle XML sitemap settings', array('@bundle' => $bundle['info']['label']));
 }

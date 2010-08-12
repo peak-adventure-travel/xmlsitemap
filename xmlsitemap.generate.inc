@@ -581,9 +581,8 @@ function xmlsitemap_rebuild_batch_fetch($entity, &$context) {
   }
 
   if (!isset($context['sandbox']['max'])) {
-    $count_query = $query;
-    $count_query['SELECT'] = "SELECT COUNT($id_key)";
-    $sql = implode(' ', $count_query);
+    $sql = implode(' ', $query);
+    $sql = str_replace("SELECT $id_key", "SELECT COUNT($id_key)", $sql);
     $context['sandbox']['max'] = (int) db_result(db_query($sql, $args));
     if (!$context['sandbox']['max']) {
       // If there are no items to process, skip everything else.

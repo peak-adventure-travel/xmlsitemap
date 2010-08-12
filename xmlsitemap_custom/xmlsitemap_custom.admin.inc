@@ -6,7 +6,15 @@
  * Administrative page callbacks for the xmlsitemap_custom module.
  */
 
+function xmlsitemap_custom_link_links_local_actions() {
+  $local_actions['add'] = xmlsitemap_get_operation_link('admin/settings/xmlsitemap/custom/add', array('modal' => TRUE));
+  return $local_actions;
+}
+
 function xmlsitemap_custom_list_links() {
+  $output = '';
+  $output .= theme('links', xmlsitemap_custom_link_links_local_actions(), array('class' => 'item-list action-links'));
+
   $header = array(
     'loc' => array('data' => t('Location'), 'field' => 'loc', 'sort' => 'asc'),
     'priority' => array('data' => t('Priority'), 'field' => 'priority'),
@@ -35,16 +43,8 @@ function xmlsitemap_custom_list_links() {
       $row['language'] = module_invoke('locale', 'language_name', $link->language);
     }
     $operations = array();
-    $operations['edit'] = array(
-      'title' => t('Edit'),
-      'href' => 'admin/settings/xmlsitemap/custom/edit/' . $link->id,
-      'query' => $destination,
-    );
-    $operations['delete'] = array(
-      'title' => t('Delete'),
-      'href' => 'admin/settings/xmlsitemap/custom/delete/' . $link->id,
-      'query' => $destination,
-    );
+    $operations['edit'] = xmlsitemap_get_operation_link('admin/settings/xmlsitemap/custom/edit/' . $link->id, array('title' => t('Edit'), 'modal' => TRUE));
+    $operations['delete'] = xmlsitemap_get_operation_link('admin/settings/xmlsitemap/custom/delete/' . $link->id, array('title' => t('Delete'), 'modal' => TRUE));
     $row['operations'] = theme('links', $operations, array('class' => 'links inline nowrap'));
     $rows[] = $row;
   }
@@ -58,7 +58,7 @@ function xmlsitemap_custom_list_links() {
     );
   }
 
-  $output = theme('table', $header, $rows);
+  $output .= theme('table', $header, $rows);
   $output .= theme('pager', NULL, 50, 0);
   return $output;
 }
@@ -127,7 +127,7 @@ function xmlsitemap_custom_edit_link_form($form_state, $link = array()) {
     '#weight' => 5,
   );
   $form['actions']['cancel'] = array(
-    '#value' => l(t('Cancel'), 'admin/settings/xmlsitemap/custom'),
+    '#value' => l(t('Cancel'), isset($_GET['destination']) ? $_GET['destination'] : 'admin/settings/xmlsitemap/custom'),
     '#weight' => 10,
   );
 

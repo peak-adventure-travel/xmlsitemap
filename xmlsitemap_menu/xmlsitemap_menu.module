@@ -86,23 +86,11 @@ function xmlsitemap_menu_xmlsitemap_process_menu_links(array $mlids) {
  * @see xmlsitemap_add_link_bundle_settings()
  */
 function xmlsitemap_menu_form_menu_edit_menu_alter(&$form, $form_state) {
-  $menu = isset($form['menu_name']['#value']) ? $form['menu_name']['#value'] : '';
+  $form['submit'] += array('#weight' => 5);
 
+  $menu = isset($form['menu_name']['#value']) ? $form['menu_name']['#value'] : '';
   module_load_include('inc', 'xmlsitemap', 'xmlsitemap.admin');
   xmlsitemap_add_link_bundle_settings($form, $form_state, 'menu', $menu);
-  $form['#submit'][] = 'xmlsitemap_menu_menu_edit_menu_submit';
-
-  $form['submit'] += array('#weight' => 50);
-  if (isset($form['delete'])) {
-    $form['delete'] += array('#weight' => 51);
-  }
-}
-
-/**
- * Form submit handler; update settings when a menu is saved.
- */
-function xmlsitemap_menu_menu_edit_menu_submit($form, $form_state) {
-  xmlsitemap_link_bundle_settings_save('menu', $form_state['values']['menu_name'], $form_state['values']['xmlsitemap']);
 }
 
 /**

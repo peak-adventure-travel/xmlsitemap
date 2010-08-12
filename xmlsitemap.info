@@ -14,7 +14,6 @@ files[] = xmlsitemap.pages.inc
 files[] = xmlsitemap.install
 files[] = xmlsitemap.test
 recommends[] = ctools
-recommends[] = dialog
 recommends[] = elements
 recommends[] = robotstxt
 recommends[] = vertical_tabs

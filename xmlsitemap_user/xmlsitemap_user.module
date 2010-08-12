@@ -127,14 +127,6 @@ function xmlsitemap_user_form_user_profile_form_alter(&$form, $form_state) {
 function xmlsitemap_user_form_user_admin_settings_alter(&$form, $form_state) {
   module_load_include('inc', 'xmlsitemap', 'xmlsitemap.admin');
   xmlsitemap_add_link_bundle_settings($form, $form_state, 'user', 'user');
-  array_unshift($form['#submit'], 'xmlsitemap_user_user_admin_settings_submit');
-}
-
-function xmlsitemap_user_user_admin_settings_submit($form, &$form_state) {
-  xmlsitemap_link_bundle_settings_save('user', 'user', $form_state['values']['xmlsitemap']);
-
-  // Do not allow system_settings_form_submit() to run variable_set() on this.
-  unset($form_state['values']['xmlsitemap']);
 }
 
 /**
