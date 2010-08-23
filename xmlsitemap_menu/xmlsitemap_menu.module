@@ -61,15 +61,18 @@ function xmlsitemap_menu_xmlsitemap_index_links($limit) {
 /**
  * Process menu sitemap links.
  *
- * @param $tids
+ * @param $mlids
  *   An array of menu link IDs.
  */
-function xmlsitemap_menu_xmlsitemap_process_menu_links(array $mlids) {
+function xmlsitemap_menu_xmlsitemap_process_menu_links(array $mlids, array $xmlsitemap = array()) {
   // Set the global user variable to the anonymous user.
   xmlsitemap_switch_user(0);
 
   foreach ($mlids as $mlid) {
     $menu_item = menu_link_load($mlid);
+    if (!empty($xmlsitemap)) {
+      $menu_item['xmlsitemap'] = $xmlsitemap;
+    }
     $link = xmlsitemap_menu_create_link($menu_item);
     xmlsitemap_link_save($link);
   }
@@ -146,7 +149,7 @@ function xmlsitemap_menu_form_menu_edit_item_alter(&$form, $form_state) {
  */
 function xmlsitemap_menu_menu_edit_item_submit($form, $form_state) {
   $mlids = array($form_state['values']['menu']['mlid']);
-  xmlsitemap_menu_xmlsitemap_process_menu_links($mlids);
+  xmlsitemap_menu_xmlsitemap_process_menu_links($mlids, $form_state['values']['xmlsitemap']);
 }
 
 /**
