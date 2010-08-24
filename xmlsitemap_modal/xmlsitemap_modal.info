@@ -1,0 +1,6 @@
+; $Id$
+name = XML sitemap modal UI
+description = "Provides an AJAX modal UI for common XML sitemap tasks."
+core = 6.x
+dependencies[] = xmlsitemap
+dependencies[] = ctools

@@ -19,7 +19,7 @@ function xmlsitemap_custom_menu() {
     'access arguments' => array('administer xmlsitemap'),
     'type' => MENU_CALLBACK,
     'file' => 'xmlsitemap_custom.admin.inc',
-    'modal form' => TRUE,
+    'modal' => TRUE,
   );
   $items['admin/settings/xmlsitemap/custom/edit/%xmlsitemap_custom'] = array(
     'title' => 'Edit custom link',
@@ -28,7 +28,7 @@ function xmlsitemap_custom_menu() {
     'access arguments' => array('administer xmlsitemap'),
     'type' => MENU_CALLBACK,
     'file' => 'xmlsitemap_custom.admin.inc',
-    'modal form' => TRUE,
+    'modal' => TRUE,
   );
   $items['admin/settings/xmlsitemap/custom/delete/%xmlsitemap_custom'] = array(
     'title' => 'Delete custom link',
@@ -37,7 +37,7 @@ function xmlsitemap_custom_menu() {
     'access arguments' => array('administer xmlsitemap'),
     'type' => MENU_CALLBACK,
     'file' => 'xmlsitemap_custom.admin.inc',
-    'modal form' => TRUE,
+    'modal' => TRUE,
   );
   return $items;
 }
