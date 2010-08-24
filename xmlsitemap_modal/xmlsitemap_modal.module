@@ -2,7 +2,7 @@
 // $Id$
 
 /**
- * Implementation of hook_menu_alter().
+ * Implements hook_menu_alter().
  */
 function xmlsitemap_modal_menu_alter(&$items) {
   foreach ($items as $path => $item) {
@@ -57,27 +57,25 @@ function xmlsitemap_modal_xmlsitemap_operation_link_alter(array &$link) {
     unset($link['modal']);
 
     if (!isset($ctools_modal_included)) {
-      $ctools_modal_included = module_exists('ctools');
-
       // Only process a few includes once per request.
-      if ($ctools_modal_included) {
-        ctools_include('ajax');
-        ctools_include('modal');
-        ctools_modal_add_js();
-        drupal_add_css(drupal_get_path('module', 'xmlsitemap_modal') . '/xmlsitemap_modal.css');
-      }
+      ctools_include('ajax');
+      ctools_include('modal');
+      ctools_modal_add_js();
+      drupal_add_css(drupal_get_path('module', 'xmlsitemap_modal') . '/xmlsitemap_modal.css');
     }
 
-    if ($ctools_modal_included) {
-      $link['attributes']['class'] = 'ctools-use-modal';
+    $link['attributes']['class'] = 'ctools-use-modal';
 
-      if (strpos($link['href'], 'nojs') === FALSE) {
-        $link['href'] .= '/nojs/';
-      }
-      elseif (substr($link['href'], -4) === 'nojs') {
-        $link['href'] .= '/';
-      }
-      //$link['href'] = trim($link['href'], '/');
+    if (strpos($link['href'], 'nojs') === FALSE) {
+      $link['href'] .= '/nojs';
+    }
+    else {
+      $link['href'] = trim($link['href'], '/');
+    }
+
+    // @todo Remove when http://drupal.org/node/565808 is fixed.
+    if (substr($link['href'], -4) === 'nojs') {
+      $link['href'] .= '/';
     }
   }
 }

@@ -117,8 +117,6 @@ function xmlsitemap_custom_edit_link_form($form_state, $link = array()) {
   );
 
   $form['actions'] = array(
-    //'#type' => 'container',
-    //'#attributes' => array('class' => array('form-actions')),
     '#weight' => 100,
   );
   $form['actions']['submit'] = array(

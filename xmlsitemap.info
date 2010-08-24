@@ -17,3 +17,4 @@ recommends[] = ctools
 recommends[] = elements
 recommends[] = robotstxt
 recommends[] = vertical_tabs
+configure = admin/config/search/xmlsitemap

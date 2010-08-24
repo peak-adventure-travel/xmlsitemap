@@ -198,8 +198,6 @@ function xmlsitemap_sitemap_edit_form($form_state, array $sitemap = array()) {
   );
 
   $form['actions'] = array(
-    //'#type' => 'container',
-    //'#attributes' => array('class' => array('form-actions')),
     '#weight' => 100,
   );
   $form['actions']['save'] = array(
@@ -471,7 +469,7 @@ function xmlsitemap_rebuild_form() {
 
   return confirm_form(
     $form,
-    t('Are you sure you want to rebuild the sitemap?'),
+    t('Are you sure you want to rebuild the XML sitemap?'),
     'admin/settings/xmlsitemap',
     '',
     t('Rebuild sitemap'),

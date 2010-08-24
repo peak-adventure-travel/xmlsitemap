@@ -602,7 +602,7 @@ function xmlsitemap_link_delete_multiple(array $conditions) {
   // Because this function is called from sub-module uninstall hooks, we have
   // to manually check if the table exists since it could have been removed
   // in xmlsitemap_uninstall().
-  // @see http://drupal.org/node/15145
+  // @see http://drupal.org/node/151452
   if (!db_table_exists('xmlsitemap')) {
     return FALSE;
   }
@@ -733,10 +733,7 @@ function xmlsitemap_clear_directory(array $sitemap = NULL, $delete = FALSE) {
  *   A boolean if TRUE will delete the $path directory afterwards.
  */
 function _xmlsitemap_delete_recursive($path, $delete_root = FALSE) {
-  if (is_file($path) || is_link($path)) {
-    unlink($path);
-  }
-  elseif (is_dir($path)) {
+  if (is_dir($path)) {
     $dir = dir($path);
     while (($entry = $dir->read()) !== FALSE) {
       if ($entry == '.' || $entry == '..') {
@@ -747,6 +744,9 @@ function _xmlsitemap_delete_recursive($path, $delete_root = FALSE) {
     }
     $dir->close();
     return $delete_root ? rmdir($path) : TRUE;
+  }
+  elseif (is_file($path) || is_link($path)) {
+    unlink($path);
   }
 }
 
@@ -791,7 +791,7 @@ function xmlsitemap_get_link_info($type = NULL, $reset = FALSE) {
         $bundle_info += array(
           'xmlsitemap' => array(),
         );
-        $bundle_info['xmlsitemap'] += xmlsitemap_link_bundle_load($key, $bundle);
+        $bundle_info['xmlsitemap'] += xmlsitemap_link_bundle_load($key, $bundle, FALSE);
       }
     }
     drupal_alter('xmlsitemap_link_info', $link_info);
@@ -862,13 +862,16 @@ function xmlsitemap_link_bundle_rename($entity, $bundle_old, $bundle_new) {
   }
 }
 
-function xmlsitemap_link_bundle_load($entity, $bundle) {
-  $entity_info = xmlsitemap_get_link_info($entity);
+function xmlsitemap_link_bundle_load($entity, $bundle, $load_bundle_info = TRUE) {
   $info = array(
     'entity' => $entity,
     'bundle' => $bundle,
     'info' => $entity_info['bundles'][$bundle],
   );
+  if ($load_bundle_info) {
+    $entity_info = xmlsitemap_get_link_info($entity);
+    $info['info'] = $entity_info['bundles'][$bundle];
+  }
   $info += variable_get("xmlsitemap_settings_{$entity}_{$bundle}", array());
   $info += array(
     'status' => XMLSITEMAP_STATUS_DEFAULT,
@@ -1272,6 +1275,23 @@ function _xmlsitemap_set_breadcrumb($path = 'admin/settings/xmlsitemap') {
   drupal_set_breadcrumb($breadcrumb);
 }
 
+function xmlsitemap_get_operation_link($url, $options = array()) {
+  static $destination;
+
+  if (!isset($destination)) {
+    $destination = drupal_get_destination();
+  }
+
+  $link = array('href' => $url) + $options;
+
+  // Fetch the item's menu router link info and title.
+  $item = menu_get_item($url);
+  $link += array('title' => $item['title'], 'router info' => $item, 'query' => $destination);
+
+  drupal_alter('xmlsitemap_operation_link', $link);
+  return $link;
+}
+
 // Functions specific to the Drupal 6 branch of this module.
 
 function xmlsitemap_static_reset($name = NULL) {
@@ -1388,21 +1408,4 @@ function xmlsitemap_element_get_visible_children(array $elements) {
   }
 
   return FALSE;
-}
-
-function xmlsitemap_get_operation_link($url, $options = array()) {
-  static $destination;
-
-  if (!isset($destination)) {
-    $destination = drupal_get_destination();
-  }
-
-  $link = array('href' => $url) + $options;
-
-  // Fetch the item's menu router link info and title.
-  $item = menu_get_item($url);
-  $link += array('title' => $item['title'], 'router info' => $item, 'query' => $destination);
-
-  drupal_alter('xmlsitemap_operation_link', $link);
-  return $link;
 }

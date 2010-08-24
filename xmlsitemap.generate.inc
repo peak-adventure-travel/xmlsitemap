@@ -236,7 +236,7 @@ function xmlsitemap_generate_chunk_header($type, array $sitemap, $handle, &$stat
 
   // Add the stylesheet link.
   if (variable_get('xmlsitemap_xsl', 1)) {
-    $xsl_url = url('sitemap.xsl', $sitemap['uri']['options'] + array('alias' => TRUE));
+    $xsl_url = url('sitemap.xsl');
     $output .= '<?xml-stylesheet type="text/xsl" href="' . $xsl_url . '"?>' . PHP_EOL;
   }
 
@@ -455,7 +455,9 @@ function xmlsitemap_regenerate_batch_generate($smid, array &$context) {
   else {
     // Cleanup the 'extra' empty file.
     $file = xmlsitemap_sitemap_get_file($sitemap, $sitemap['chunks']);
-    file_delete($file);
+    if (file_exists($file) && $sitemap['chunks'] > 1) {
+      file_delete($file);
+    }
     $sitemap['chunks']--;
 
     // Save the updated chunks and links values.
