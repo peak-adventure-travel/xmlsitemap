@@ -158,14 +158,11 @@ function xmlsitemap_menu() {
     'weight' => 10,
   );
   $items['admin/settings/xmlsitemap/settings/%xmlsitemap_link_bundle/%'] = array(
-    'title callback' => 'xmlsitemap_link_bundle_settings_title',
-    'title arguments' => array(4),
     'load arguments' => array(5),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('xmlsitemap_link_bundle_settings_form', 4),
     'access callback' => 'xmlsitemap_link_bundle_access',
     'access arguments' => array(4),
-    'type' => MENU_CALLBACK,
     'file' => 'xmlsitemap.admin.inc',
     'modal form' => TRUE,
   );
@@ -1446,6 +1443,7 @@ function xmlsitemap_get_operation_link($url, $options = array()) {
       elseif (substr($link['href'], -4) === 'nojs') {
         $link['href'] .= '/';
       }
+      //$link['href'] = trim($link['href'], '/');
     }
   }
 
@@ -1457,22 +1455,16 @@ function xmlsitemap_get_modal_form() {
   $form_id = array_shift($args);
   $ajax = array_pop($args);
 
-  $form_state = array(
-    'ajax' => TRUE,
-    'args' => &$args,
-  );
-
-  switch ($form_id) {
-    case 'xmlsitemap_link_bundle_settings_form':
-      $bundle_info = current($args);
-      $args = array($bundle_info['entity'], $bundle_info['bundle']);
-      break;
-  }
-
   if ($ajax) {
     ctools_include('ajax');
     ctools_include('modal');
+
+    $form_state = array(
+      'ajax' => TRUE,
+      'args' => $args,
+    );
     $commands = ctools_modal_form_wrapper($form_id, $form_state);
+
     if (empty($commands)) {
       $commands[] = ctools_modal_command_loading();
       if (!empty($_GET['destination'])) {
@@ -1482,14 +1474,7 @@ function xmlsitemap_get_modal_form() {
     return ctools_ajax_render($commands);
   }
   else {
-    array_unshift($form_state['args'], $form_id);
-    if ($title = drupal_get_title()) {
-      drupal_set_title($title);
-    }
+    array_unshift($args, $form_id);
     return call_user_func_array('drupal_get_form', $args);
   }
-}
-
-function xmlsitemap_link_bundle_settings_title($bundle) {
-  return t('@bundle XML sitemap settings', array('@bundle' => $bundle['info']['label']));
 }

@@ -623,17 +623,25 @@ function xmlsitemap_add_link_bundle_settings(array &$form, array &$form_state, $
   }
 }
 
-function xmlsitemap_link_bundle_settings_form(array &$form_state, $entity, $bundle, $buttons = TRUE) {
+function xmlsitemap_link_bundle_settings_form(array &$form_state, array $bundle) {
+  if (empty($form_state['ajax']) && !empty($bundle['info']['admin']['real path'])) {
+    // If this is a non-ajax form, redirect to the bundle administration page.
+    $destination = drupal_get_destination();
+    unset($_REQUEST['destination']);
+    drupal_goto($bundle['info']['admin']['real path'], $destination);
+  }
+  else {
+    drupal_set_title( t('@bundle XML sitemap settings', array('@bundle' => $bundle['info']['label'])));
+  }
+
   $form = array();
-  xmlsitemap_add_link_bundle_settings($form, $form_state, $entity, $bundle);
+  xmlsitemap_add_link_bundle_settings($form, $form_state, $bundle['entity'], $bundle['bundle']);
   $form['xmlsitemap']['#type'] = 'markup';
   $form['xmlsitemap']['#value'] = '';
   $form['xmlsitemap']['#access'] = TRUE;
   $form['xmlsitemap']['#show_message'] = TRUE;
 
   $form['actions'] = array(
-    //'#type' => 'container',
-    //'#attributes' => array('class' => array('form-actions')),
     '#weight' => 100,
   );
   $form['actions']['save'] = array(
