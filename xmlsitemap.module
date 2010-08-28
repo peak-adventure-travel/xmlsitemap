@@ -725,6 +725,22 @@ function xmlsitemap_check_directory(array $sitemap = NULL) {
   return file_check_directory($directory, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS);
 }
 
+function xmlsitemap_check_all_directories() {
+  $directories = array();
+
+  $sitemaps = xmlsitemap_sitemap_load_multiple(FALSE);
+  foreach ($sitemaps as $smid => $sitemap) {
+    $directory = xmlsitemap_get_directory($sitemap);
+    $directories[$directory] = $directory;
+  }
+
+  foreach ($directories as $directory) {
+    $directories[$directory] = file_check_directory($directory, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS);
+  }
+
+  return $directories;
+}
+
 function xmlsitemap_clear_directory(array $sitemap = NULL, $delete = FALSE) {
   $directory = xmlsitemap_get_directory($sitemap);
   return _xmlsitemap_delete_recursive($directory, $delete);
