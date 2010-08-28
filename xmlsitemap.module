@@ -869,7 +869,9 @@ function xmlsitemap_link_bundle_load($entity, $bundle, $load_bundle_info = TRUE)
   );
   if ($load_bundle_info) {
     $entity_info = xmlsitemap_get_link_info($entity);
-    $info['info'] = $entity_info['bundles'][$bundle];
+    if (isset($entity_info['bundles'][$bundle])) {
+      $info['info'] = $entity_info['bundles'][$bundle];
+    }
   }
   $info += variable_get("xmlsitemap_settings_{$entity}_{$bundle}", array());
   $info += array(
