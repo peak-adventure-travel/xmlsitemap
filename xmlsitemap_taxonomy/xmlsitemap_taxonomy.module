@@ -13,7 +13,7 @@ function xmlsitemap_taxonomy_xmlsitemap_link_info() {
       'id' => 'tid',
       'bundle' => 'vid',
     ),
-    'path callback' => 'taxonomy_term_path',
+    'uri callback' => 'xmlsitemap_taxonomy_term_uri',
     'load hook' => 'taxonomy_get_term',
     'xmlsitemap' => array(
       'process callback' => 'xmlsitemap_taxonomy_xmlsitemap_process_taxonomy_term_links',
@@ -29,6 +29,15 @@ function xmlsitemap_taxonomy_xmlsitemap_link_info() {
     );
   }
   return $types;
+}
+
+/**
+ * Entity URI callback.
+ */
+function xmlsitemap_taxonomy_term_uri($term) {
+  return array(
+    'path' => taxonomy_term_path($term),
+  );
 }
 
 /**
@@ -152,12 +161,12 @@ function xmlsitemap_taxonomy_create_link(stdClass &$term) {
   }
 
   $settings = xmlsitemap_link_bundle_load('taxonomy_term', $term->vid);
+  $uri = xmlsitemap_entity_uri('taxonomy_term', $term);
 
   $term->xmlsitemap += array(
     'id' => $term->tid,
     'type' => 'taxonomy_term',
     'subtype' => $term->vid,
-    'loc' => taxonomy_term_path($term),
     'status' => $settings['status'],
     'status_default' => $settings['status'],
     'status_override' => 0,
@@ -168,6 +177,7 @@ function xmlsitemap_taxonomy_create_link(stdClass &$term) {
 
   // The following values must always be checked because they are volatile.
   // @todo How can/should we check taxonomy term access?
+  $term->xmlsitemap['loc'] = $uri['path'];
   $term->xmlsitemap['access'] = 1;
   $term->xmlsitemap['language'] = isset($term->language) ? $term->language : '';
 

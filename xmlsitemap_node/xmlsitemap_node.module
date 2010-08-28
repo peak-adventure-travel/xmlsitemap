@@ -13,7 +13,7 @@ function xmlsitemap_node_xmlsitemap_link_info() {
       'id' => 'nid',
       'bundle' => 'type',
     ),
-    'uri callback' => 'xmlsitemap_node_path',
+    'uri callback' => 'xmlsitemap_node_uri',
     'load hook' => 'node_load',
     'xmlsitemap' => array(
       'process callback' => 'xmlsitemap_node_xmlsitemap_process_node_links',
@@ -32,10 +32,12 @@ function xmlsitemap_node_xmlsitemap_link_info() {
 }
 
 /**
- * @todo Replace with node_path in Drupal 7.
+ * Entity URI callback.
  */
-function xmlsitemap_node_path($node) {
-  return 'node/' . $node->nid;
+function xmlsitemap_node_uri($node) {
+  return array(
+    'path' => 'node/' . $node->nid,
+  );
 }
 
 /**
@@ -207,12 +209,12 @@ function xmlsitemap_node_create_link(stdClass &$node) {
   }
 
   $settings = xmlsitemap_link_bundle_load('node', $node->type);
+  $uri = xmlsitemap_entity_uri('node', $node);
 
   $node->xmlsitemap += array(
     'type' => 'node',
     'id' => $node->nid,
     'subtype' => $node->type,
-    'loc' => 'node/'. $node->nid,
     'status' => $settings['status'],
     'status_default' => $settings['status'],
     'status_override' => 0,
@@ -227,6 +229,7 @@ function xmlsitemap_node_create_link(stdClass &$node) {
   $node->xmlsitemap['changecount'] = $node->nid ? count($timestamps) - 1 : 0;
 
   // The following values must always be checked because they are volatile.
+  $node->xmlsitemap['loc'] = $uri['path'];
   $node->xmlsitemap['lastmod'] = count($timestamps) ? max($timestamps) : 0;
   $node->xmlsitemap['access'] = $node->nid ? xmlsitemap_node_view_access($node, drupal_anonymous_user()) : 1;
   $node->xmlsitemap['language'] = isset($node->language) ? $node->language : '';

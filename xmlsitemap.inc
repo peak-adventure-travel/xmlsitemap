@@ -11,7 +11,13 @@
 /**
  * Condition builder for queries.
  */
-function _xmlsitemap_build_conditions(array &$conditions = array(), array &$args = array(), $operator = '=', $update = FALSE) {
+function _xmlsitemap_build_conditions(array &$conditions, array $args = array(), array $options = array()) {
+  $options += array(
+    'table' => 'xmlsitemap',
+    'operator' => '=',
+    'update' => FALSE,
+  );
+
   $operators = array(
     'null' => array('=' => 'IS', '<>' => 'IS NOT'),
     'in' => array('=' => 'IN', '<>' => 'NOT IN'),
@@ -22,26 +28,29 @@ function _xmlsitemap_build_conditions(array &$conditions = array(), array &$args
       continue;
     }
     elseif ($value === NULL) {
-      if ($update) {
+      if ($options['update']) {
         $conditions[$field] = "$field = NULL";
       }
       else {
-        $conditions[$field] = "$field {$operators['null'][$operator]} NULL";
+        $operator = $operators['null'][$options['operator']];
+        $conditions[$field] = "$field $operator NULL";
       }
     }
     elseif (is_array($value)) {
-      if ($update) {
+      if ($options['update']) {
         trigger_error(strtr('Update not supported for field %field in @function.', array('%field' => theme('placeholder', $field), '@function' => __FUNCTION__)));
         unset($conditions[$field]);
       }
       else {
-        $type = _xmlsitemap_get_field_type('xmlsitemap', $field);
-        $conditions[$field] = "$field {$operators['in'][$operator]} (" . db_placeholders($value, $type) . ")";
+        $operator = $operators['in'][$options['operator']];
+        $type = _xmlsitemap_get_field_type($options['table'], $field);
+        $conditions[$field] = "$field $operator (" . db_placeholders($value, $type) . ")";
         $args = array_merge($args, $value);
       }
     }
     else {
-      $placeholder = db_type_placeholder(_xmlsitemap_get_field_type('xmlsitemap', $field));
+      $operator = $options['operator'];
+      $placeholder = db_type_placeholder(_xmlsitemap_get_field_type($options['table'], $field));
       $conditions[$field] = "$field $operator $placeholder";
       $args[] = $value;
     }

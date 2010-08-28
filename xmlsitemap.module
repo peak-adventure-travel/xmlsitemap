@@ -320,17 +320,27 @@ function xmlsitemap_sitemap_load($smid) {
  * @param $smids
  *   An array of XML sitemap IDs.
  */
-function xmlsitemap_sitemap_load_multiple(array $smids) {
-  $sitemaps = array();
-  if ($smids) {
-    $query = db_query("SELECT * FROM {xmlsitemap_sitemap} WHERE smid IN (" . db_placeholders($smids) . ")", $smids);
-    while ($sitemap = db_fetch_array($query)) {
-      $smid = $sitemap['smid'];
-      $sitemaps[$smid] = $sitemap;
-      $sitemaps[$smid]['context'] = unserialize($sitemap['context']);
-      $sitemaps[$smid]['uri'] = xmlsitemap_sitemap_uri($sitemaps[$smid]);
-    }
+function xmlsitemap_sitemap_load_multiple($smids = array(), array $conditions = array()) {
+  module_load_include('inc', 'xmlsitemap');
+  if ($smids !== FALSE) {
+    $conditions['smid'] = $smids;
   }
+  $args = _xmlsitemap_build_conditions($conditions, array(), array('table' => 'xmlsitemap_sitemap'));
+
+  $sql = "SELECT * FROM {xmlsitemap_sitemap}";
+  if (!empty($conditions)) {
+    $sql .= " WHERE " . implode(' AND ', $conditions);
+  }
+  $query = db_query($sql, $args);
+
+  $sitemaps = array();
+  while ($sitemap = db_fetch_array($query)) {
+    $smid = $sitemap['smid'];
+    $sitemaps[$smid] = $sitemap;
+    $sitemaps[$smid]['context'] = unserialize($sitemap['context']);
+    $sitemaps[$smid]['uri'] = xmlsitemap_sitemap_uri($sitemaps[$smid]);
+  }
+
   return $sitemaps;
 }
 
@@ -560,8 +570,8 @@ function xmlsitemap_link_update_multiple($updates = array(), $conditions = array
   // Process updates.
   $args = array();
   module_load_include('inc', 'xmlsitemap');
-  _xmlsitemap_build_conditions($updates, $args, '=', TRUE);
-  _xmlsitemap_build_conditions($conditions, $args);
+  $args =_xmlsitemap_build_conditions($updates, $args, array('operator' => '=', 'update' => TRUE));
+  $args = _xmlsitemap_build_conditions($conditions, $args);
   $sql = "UPDATE {xmlsitemap} SET " . implode(', ', $updates) . " WHERE " . implode(' AND ', $conditions);
   db_query($sql, $args);
 
@@ -1409,4 +1419,61 @@ function xmlsitemap_element_get_visible_children(array $elements) {
   }
 
   return FALSE;
+}
+
+/**
+ * Backport of entity_uri() from Drupal 7.
+ */
+function xmlsitemap_entity_uri($entity_type, &$entity) {
+  // This check enables the URI of an entity to be easily overridden from what
+  // the callback for the entity type or bundle would return, and it helps
+  // minimize performance overhead when entity_uri() is called multiple times
+  // for the same entity.
+  if (!isset($entity->uri)) {
+    $info = xmlsitemap_get_link_info($entity_type);
+    list($id, , $bundle) = xmlsitemap_entity_extract_ids($entity_type, $entity);
+
+    // A bundle-specific callback takes precedence over the generic one for the
+    // entity type.
+    if (isset($info['bundles'][$bundle]['uri callback'])) {
+      $uri_callback = $info['bundles'][$bundle]['uri callback'];
+    }
+    elseif (isset($info['uri callback'])) {
+      $uri_callback = $info['uri callback'];
+    }
+    else {
+      $uri_callback = NULL;
+    }
+
+    // Invoke the callback to get the URI. If there is no callback, set the
+    // entity's 'uri' property to FALSE to indicate that it is known to not have
+    // a URI.
+    if (isset($uri_callback) && function_exists($uri_callback)) {
+      $entity->uri = $uri_callback($entity);
+      if (!isset($entity->uri['options'])) {
+        $entity->uri['options'] = array();
+      }
+      // Pass the entity data to url() so that alter functions do not need to
+      // lookup this entity again.
+      //$entity->uri['options']['entity_type'] = $entity_type;
+      //$entity->uri['options']['entity'] = $entity;
+    }
+    else {
+      $entity->uri = FALSE;
+    }
+  }
+  return $entity->uri ? $entity->uri : NULL;
+}
+
+/**
+ * Backport of entity_extract_ids() from Drupal 7.
+ */
+function xmlsitemap_entity_extract_ids($entity_type, $entity) {
+  $info = xmlsitemap_get_link_info($entity_type);
+  // Objects being created might not have an id yet.
+  $id = isset($entity->{$info['entity keys']['id']}) ? $entity->{$info['entity keys']['id']} : NULL;
+  // If no bundle key provided, then we assume a single bundle, named after the
+  // entity type.
+  $bundle = $info['entity keys']['bundle'] ? $entity->{$info['entity keys']['bundle']} : $entity_type;
+  return array($id, NULL, $bundle);
 }
