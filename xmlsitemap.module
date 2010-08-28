@@ -809,6 +809,10 @@ function xmlsitemap_get_link_info($type = NULL, $reset = FALSE) {
         'base table' => FALSE,
         'bundles' => array(),
         'xmlsitemap' => array(),
+        'entity keys' => array(),
+      );
+      $info['entity keys'] += array(
+        'bundle' => '',
       );
       if (!isset($info['xmlsitemap']['rebuild callback']) && !empty($info['base table']) && !empty($info['entity keys']['id']) && !empty($info['xmlsitemap']['process callback'])) {
         $info['xmlsitemap']['rebuild callback'] = 'xmlsitemap_rebuild_batch_fetch';
