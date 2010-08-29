@@ -318,7 +318,9 @@ function xmlsitemap_sitemap_load($smid) {
  * Load multiple XML sitemaps from the database.
  *
  * @param $smids
- *   An array of XML sitemap IDs.
+ *   An array of XML sitemap IDs, or FALSE to load all XML sitemaps.
+ * @param $conditions
+ *   An array of conditions in the form 'field' => $value.
  */
 function xmlsitemap_sitemap_load_multiple($smids = array(), array $conditions = array()) {
   module_load_include('inc', 'xmlsitemap');
@@ -771,9 +773,7 @@ function _xmlsitemap_delete_recursive($path, $delete_root = FALSE) {
     $dir->close();
     return $delete_root ? rmdir($path) : TRUE;
   }
-  elseif (is_file($path) || is_link($path)) {
-    unlink($path);
-  }
+  return file_delete($path);
 }
 
 /**
@@ -1154,6 +1154,36 @@ function xmlsitemap_process_form_link_options($form, &$form_state) {
       $link[$field . '_override'] = 1;
     }
   }
+}
+
+function xmlsitemap_link_bundle_settings_form_submit($form, &$form_state) {
+  $entity = $form['xmlsitemap']['#entity'];
+  $bundle = $form['xmlsitemap']['#bundle'];
+
+  // Handle new bundles by fetching the proper bundle key value from the form
+  // state values.
+  if (empty($bundle)) {
+    $entity_info = $form['xmlsitemap']['#entity_info'];
+    if (isset($entity_info['bundle keys']['bundle'])) {
+      $bundle_key = $entity_info['bundle keys']['bundle'];
+      if (isset($form_state['values'][$bundle_key])) {
+        $bundle = $form_state['values'][$bundle_key];
+        $form['xmlsitemap']['#bundle'] = $bundle;
+      }
+    }
+  }
+
+  xmlsitemap_link_bundle_settings_save($entity, $bundle, $form_state['values']['xmlsitemap']);
+
+  $entity_info = $form['xmlsitemap']['#entity_info'];
+  if (!empty($form['xmlsitemap']['#show_message'])) {
+    drupal_set_message(t('XML sitemap settings for the @bundle-label %bundle have been saved.', array('@bundle-label' => drupal_strtolower($entity_info['bundle label']), '%bundle' => $entity_info['bundles'][$bundle]['label'])));
+  }
+
+  // Unset the form values since we have already saved the bundle settings and
+  // we don't want these values to get saved as variables in-case this form
+  // also uses system_settings_form().
+  unset($form_state['values']['xmlsitemap']);
 }
 
 /**

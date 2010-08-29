@@ -654,28 +654,12 @@ function xmlsitemap_link_bundle_settings_form(array &$form_state, array $bundle)
   return $form;
 }
 
-function xmlsitemap_link_bundle_settings_form_submit($form, &$form_state) {
-  $entity = $form['xmlsitemap']['#entity'];
-  $bundle = $form['xmlsitemap']['#bundle'];
-  xmlsitemap_link_bundle_settings_save($entity, $bundle, $form_state['values']['xmlsitemap']);
-
-  $entity_info = $form['xmlsitemap']['#entity_info'];
-  if (!empty($form['xmlsitemap']['#show_message'])) {
-    drupal_set_message(t('XML sitemap settings for the @bundle-label %bundle have been saved.', array('@bundle-label' => drupal_strtolower($entity_info['bundle label']), '%bundle' => $entity_info['bundles'][$bundle]['label'])));
-  }
-
-  // Unset the form values since we have already saved the bundle settings and
-  // we don't want these values to get saved as variables in-case this form
-  // also uses system_settings_form().
-  unset($form_state['values']['xmlsitemap']);
-}
-
 /**
  * Add a link's XML sitemap options to the link's form.
  *
  * @todo Add changefreq overridability.
  */
-function xmlsitemap_add_form_link_options(&$form, $entity, $bundle, $id) {
+function xmlsitemap_add_form_link_options(array &$form, $entity, $bundle, $id) {
   $info = xmlsitemap_get_link_info($entity);
 
   if (!$info || empty($info['bundles'][$bundle])) {
@@ -789,6 +773,7 @@ function xmlsitemap_add_form_link_options(&$form, $entity, $bundle, $id) {
   }
 
   // Add the submit handler to adjust the default values if selected.
+  $form += array('#submit' => array());
   if (!in_array('xmlsitemap_process_form_link_options', $form['#submit'])) {
     array_unshift($form['#submit'], 'xmlsitemap_process_form_link_options');
   }

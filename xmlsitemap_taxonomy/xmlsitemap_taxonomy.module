@@ -88,12 +88,6 @@ function xmlsitemap_taxonomy_form_taxonomy_form_vocabulary_alter(&$form, $form_s
 
   module_load_include('inc', 'xmlsitemap', 'xmlsitemap.admin');
   xmlsitemap_add_link_bundle_settings($form, $form_state, 'taxonomy_term', $vid);
-
-  // The submit and delete buttons need to be weighted down.
-  $form['submit'] += array('#weight' => 50);
-  if (isset($form['delete'])) {
-    $form['delete'] += array('#weight' => 51);
-  }
 }
 
 /**
@@ -101,19 +95,14 @@ function xmlsitemap_taxonomy_form_taxonomy_form_vocabulary_alter(&$form, $form_s
  */
 function xmlsitemap_taxonomy_form_taxonomy_form_term_alter(&$form, $form_state) {
   // Because the same form is used for deletion in confirm_form, we must check
-  // if the normal editing form elements are present. Hopefully this is fixed
-  // in Drupal 7.
-  if (isset($form['identification'])) {
-    // Add the link options.
-    module_load_include('inc', 'xmlsitemap', 'xmlsitemap.admin');
-    xmlsitemap_add_form_link_options($form, 'taxonomy_term', $form['vid']['#value'], $form['#term']['tid']);
-
-    // The submit and delete buttons need to be weighted down.
-    $form['submit'] += array('#weight' => 100);
-    if (isset($form['delete'])) {
-      $form['delete'] += array('#weight' => 110);
-    }
+  // if the normal editing form elements are present.
+  if (!isset($form['identification'])) {
+    return;
   }
+
+  // Add the link options.
+  module_load_include('inc', 'xmlsitemap', 'xmlsitemap.admin');
+  xmlsitemap_add_form_link_options($form, 'taxonomy_term', $form['vid']['#value'], $form['#term']['tid']);
 }
 
 /**
