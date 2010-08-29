@@ -81,7 +81,7 @@ function xmlsitemap_node_xmlsitemap_process_node_links(array $nids) {
 /**
  * Implements hook_nodeapi().
  */
-function xmlsitemap_node_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
+function xmlsitemap_node_nodeapi(stdClass &$node, $op, $a3 = NULL, $a4 = NULL) {
   switch ($op) {
     case 'insert':
     case 'update':
@@ -115,7 +115,7 @@ function xmlsitemap_node_comment($comment, $op) {
 /**
  * Implements hook_node_type().
  */
-function xmlsitemap_node_node_type($op, $info) {
+function xmlsitemap_node_node_type($op, stdClass $info) {
   if ($op == 'update') {
     // Cannot perform xmlsitemap_link_bundle_settings_save() here since
     // node_type_form_submit() strips all non-essential data from $info.
@@ -148,7 +148,7 @@ function xmlsitemap_node_content_extra_fields() {
  * @see node_type_form()
  * @see xmlsitemap_add_link_bundle_settings()
  */
-function xmlsitemap_node_form_node_type_form_alter(&$form, $form_state) {
+function xmlsitemap_node_form_node_type_form_alter(array &$form, array $form_state) {
   $node_type = isset($form['#node_type']->type) ? $form['#node_type']->type : '';
   module_load_include('inc', 'xmlsitemap', 'xmlsitemap.admin');
   xmlsitemap_add_link_bundle_settings($form, $form_state, 'node', $node_type);
@@ -161,7 +161,7 @@ function xmlsitemap_node_form_node_type_form_alter(&$form, $form_state) {
  *
  * @see xmlsitemap_add_form_link_options()
  */
-function xmlsitemap_node_form_alter(&$form, $form_state, $form_id) {
+function xmlsitemap_node_form_alter(array &$form, array &$form_state, $form_id) {
   if (isset($form['type']) && isset($form['#node']) && $form['type']['#value'] .'_node_form' == $form_id) {
     // Add the link options.
     module_load_include('inc', 'xmlsitemap', 'xmlsitemap.admin');
@@ -178,7 +178,7 @@ function xmlsitemap_node_form_alter(&$form, $form_state, $form_id) {
  * @return
  *   An array of UNIX timestamp integers.
  */
-function xmlsitemap_node_get_timestamps($node) {
+function xmlsitemap_node_get_timestamps(stdClass $node) {
   static $timestamps = array();
 
   if (!isset($timestamps[$node->nid])) {
@@ -200,7 +200,7 @@ function xmlsitemap_node_get_timestamps($node) {
  * @param $node
  *   A node object.
  */
-function xmlsitemap_node_create_link(stdClass &$node) {
+function xmlsitemap_node_create_link(stdClass $node) {
   if (!isset($node->xmlsitemap) || !is_array($node->xmlsitemap)) {
     $node->xmlsitemap = array();
     if ($node->nid && $link = xmlsitemap_link_load('node', $node->nid)) {
@@ -247,7 +247,7 @@ function xmlsitemap_node_create_link(stdClass &$node) {
  *   Optional, a user object representing the user for whom the operation is to
  *   be performed. Determines access for a user other than the current user.
  * @return
- *   TRUE if the operation may be performed, or FALSE otherwise.
+ *   TRUE if the operation may be performed, FALSE otherwise.
  *
  * This is for all intesive purposes a copy of Drupal 7's node_access() function.
  * It invokes a backport of Drupal 7's hook_node_grants_alter() specifically
