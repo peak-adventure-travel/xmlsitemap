@@ -69,9 +69,7 @@ function xmlsitemap_sitemap_list_form() {
 
   $smids = array();
   $query = db_query("SELECT smid FROM {xmlsitemap_sitemap}" . tablesort_sql($header));
-  while ($smid = db_result($query)) {
-    $smids[] = $smid;
-  }
+  $smids = xmlsitemap_db_fetch_col($query);
   $sitemaps = xmlsitemap_sitemap_load_multiple($smids);
 
   $options = array();

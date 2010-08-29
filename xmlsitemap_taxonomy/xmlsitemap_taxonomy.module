@@ -55,10 +55,7 @@ function xmlsitemap_taxonomy_cron() {
 function xmlsitemap_taxonomy_xmlsitemap_index_links($limit) {
   if ($vids = xmlsitemap_get_link_type_enabled_bundles('taxonomy_term')) {
     $query = db_query_range("SELECT t.tid FROM {term_data} t LEFT JOIN {xmlsitemap} x ON x.type = 'taxonomy_term' AND t.tid = x.id WHERE x.id IS NULL AND t.vid IN (" . db_placeholders($vids) . ") ORDER BY t.tid DESC", $vids, 0, $limit);
-    $tids = array();
-    while ($tid = db_result($query)) {
-      $tids[] = $tid;
-    }
+    $tids = xmlsitemap_db_fetch_col($query);
     xmlsitemap_taxonomy_xmlsitemap_process_taxonomy_term_links($tids);
   }
 }

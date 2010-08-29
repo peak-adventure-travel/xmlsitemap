@@ -191,12 +191,6 @@ class XMLSitemapWriter extends XMLWriter {
   public function endDocument() {
     $return = parent::endDocument();
 
-    // Track the maximum filesize.
-    $filesize = filesize($this->uri);
-    if ($filesize > variable_get('xmlsitemap_max_filesize', 0)) {
-      variable_set('xmlsitemap_max_filesize', $filesize);
-    }
-
     if (!$this->getStatus()) {
       trigger_error(t('Unknown error occurred while writing to file @file.', array('@file' => $this->uri)));
       return FALSE;
@@ -510,7 +504,7 @@ function xmlsitemap_generate_index(array $sitemap) {
  */
 function xmlsitemap_regenerate_batch(array $smids = array()) {
   if (empty($smids)) {
-    $smids = xmlsitemap_sitemap_get_all_smids();
+    $smids = xmlsitemap_db_fetch_col(db_query("SELECT smid FROM {xmlsitemap_sitemap}"));
   }
 
   //$t = get_t();
@@ -567,6 +561,7 @@ function xmlsitemap_regenerate_batch_generate($smid, array &$context) {
     // Save the updated chunks and links values.
     $context['sandbox']['max'] = $sitemap['chunks'];
     $sitemap['updated'] = REQUEST_TIME;
+    xmlsitemap_sitemap_get_max_filesize($sitemap);
     xmlsitemap_sitemap_save($sitemap);
   }
 
@@ -700,12 +695,10 @@ function xmlsitemap_rebuild_batch_fetch($entity, &$context) {
   $query['ORDER BY'] = "ORDER BY $id_key";
 
   $limit = 20; //variable_get('xmlsitemap_batch_limit', 100)
-
   $sql = implode(' ', $query);
   $query = db_query_range($sql, $args, 0, $limit);
-  while ($id = db_result($query)) {
-    $ids[] = $id;
-  }
+
+  $ids = xmlsitemap_db_fetch_col($query);
   $info['xmlsitemap']['process callback']($ids);
   $context['sandbox']['last_id'] = end($ids);
   $context['sandbox']['progress'] += count($ids);

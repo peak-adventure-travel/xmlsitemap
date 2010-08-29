@@ -53,10 +53,7 @@ function xmlsitemap_user_cron() {
  */
 function xmlsitemap_user_xmlsitemap_index_links($limit) {
   $query = db_query_range("SELECT u.uid FROM {users} u LEFT JOIN {xmlsitemap} x ON x.type = 'user' AND u.uid = x.id WHERE x.id IS NULL AND u.uid > 0 ORDER BY u.uid DESC", array(), 0, $limit);
-  $uids = array();
-  while ($uid = db_result($query)) {
-    $uids[] = $uid;
-  }
+  $uids = xmlsitemap_db_fetch_col($query);
   xmlsitemap_user_xmlsitemap_process_user_links($uids);
 }
 

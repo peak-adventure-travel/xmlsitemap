@@ -267,15 +267,15 @@ function xmlsitemap_variables() {
     'xmlsitemap_developer_mode' => 0,
     'xmlsitemap_frontpage_priority' => 1.0,
     'xmlsitemap_frontpage_changefreq' => XMLSITEMAP_FREQUENCY_DAILY,
-    'xmlsitemap_max_chunks' => 0,
-    'xmlsitemap_max_filesize' => 0,
     'xmlsitemap_lastmod_format' => XMLSITEMAP_LASTMOD_MEDIUM,
-    // Removed variables are set to NULL so they can still be deleted.
     'xmlsitemap_gz' => FALSE,
+    // Removed variables are set to NULL so they can still be deleted.
     'xmlsitemap_regenerate_last' => NULL,
     'xmlsitemap_custom_links' => NULL,
     'xmlsitemap_priority_default' => NULL,
     'xmlsitemap_languages' => NULL,
+    'xmlsitemap_max_chunks' => NULL,
+    'xmlsitemap_max_filesize' => NULL,
   );
 }
 
@@ -424,6 +424,22 @@ function xmlsitemap_sitemap_delete_multiple(array $smids) {
  */
 function xmlsitemap_sitemap_get_file(array $sitemap, $chunk = 'index') {
   return xmlsitemap_get_directory($sitemap) . "/{$chunk}.xml";
+}
+
+/**
+ * Find the maximum file size of all a sitemap's XML files.
+ *
+ * @param $sitemap
+ *   The XML sitemap array.
+ *
+ */
+function xmlsitemap_sitemap_get_max_filesize(array &$sitemap) {
+  $dir = xmlsitemap_get_directory($sitemap);
+  $sitemap['max_filesize'] = 0;
+  foreach (file_scan_directory($dir, '\.xml$') as $file) {
+    $sitemap['max_filesize'] = max($sitemap['max_filesize'], filesize($file->filename));
+  }
+  return $sitemap['max_filesize'];
 }
 
 /**
@@ -1391,15 +1407,6 @@ function &xmlsitemap_static($name, $default_value = NULL, $reset = FALSE) {
   return $data[$name];
 }
 
-function xmlsitemap_sitemap_get_all_smids() {
-  $smids = array();
-  $query = db_query("SELECT smid FROM {xmlsitemap_sitemap}");
-  while ($smid = db_result($query)) {
-    $smids[] = $smid;
-  }
-  return $smids;
-}
-
 /**
  * Given an table and field, return the field type.
  *
@@ -1526,4 +1533,15 @@ function xmlsitemap_entity_extract_ids($entity_type, $entity) {
   // entity type.
   $bundle = $info['entity keys']['bundle'] ? $entity->{$info['entity keys']['bundle']} : $entity_type;
   return array($id, NULL, $bundle);
+}
+
+/**
+ * Backport of the DBTNG fetchCol() from Drupal 7.
+ */
+function xmlsitemap_db_fetch_col($query) {
+  $row = array();
+  while ($result = db_result($query)) {
+    $row[] = $result;
+  }
+  return $row;
 }
