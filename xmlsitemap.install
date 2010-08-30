@@ -309,8 +309,8 @@ function xmlsitemap_install() {
   db_query("INSERT INTO {xmlsitemap} (type, id, loc, priority, changefreq) VALUES ('frontpage', 0, '', %f, %d)", variable_get('xmlsitemap_frontpage_priority', 1.0), variable_get('xmlsitemap_frontpage_changefreq', XMLSITEMAP_FREQUENCY_DAILY));
 
   // Insert the default context sitemap.
-  $context = serialize(array());
-  db_query("INSERT INTO {xmlsitemap_sitemap} (context, context_hash) VALUES ('%s', '%s')", $context, md5($context));
+  $context = array();
+  db_query("INSERT INTO {xmlsitemap_sitemap} (smid, context) VALUES ('%s', '%s')", xmlsitemap_sitemap_get_context_hash($context), serialize($context));
 
   // @todo Does the sitemap show up on first install or is it a 404 page?
 }
