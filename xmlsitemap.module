@@ -324,17 +324,18 @@ function xmlsitemap_sitemap_load($smid) {
  */
 function xmlsitemap_sitemap_load_multiple($smids = array(), array $conditions = array()) {
   module_load_include('inc', 'xmlsitemap');
+
   if ($smids !== FALSE) {
     $conditions['smid'] = $smids;
   }
-  $args = _xmlsitemap_build_conditions($conditions, array(), array('table' => 'xmlsitemap_sitemap'));
 
   $sql = "SELECT * FROM {xmlsitemap_sitemap}";
+  $args = _xmlsitemap_build_conditions($conditions, array(), array('table' => 'xmlsitemap_sitemap'));
   if (!empty($conditions)) {
     $sql .= " WHERE " . implode(' AND ', $conditions);
   }
-  $query = db_query($sql, $args);
 
+  $query = db_query($sql, $args);
   $sitemaps = array();
   while ($sitemap = db_fetch_array($query)) {
     $smid = $sitemap['smid'];
@@ -359,8 +360,8 @@ function xmlsitemap_sitemap_load_by_context(array $context = NULL) {
   if (!isset($context)) {
     $context = xmlsitemap_get_current_context();
   }
-  $hash = md5(serialize($context));
-  $smid = db_result(db_query_range("SELECT smid FROM {xmlsitemap_sitemap} WHERE context_hash = '%s'", $hash, 0, 1));
+  $hash = xmlsitemap_sitemap_get_context_hash($context);
+  $smid = db_result(db_query_range("SELECT smid FROM {xmlsitemap_sitemap} WHERE smid = '%s'", $hash, 0, 1));
   return xmlsitemap_sitemap_load($smid);
 }
 
@@ -373,17 +374,37 @@ function xmlsitemap_sitemap_load_by_context(array $context = NULL) {
  *
  * @todo Save the sitemap's URL as a column?
  */
-function xmlsitemap_sitemap_save(array $sitemap) {
-  // Make sure context is sorted before saving the hash.
-  asort($sitemap['context']);
-  $sitemap['context_hash'] = md5(serialize($sitemap['context']));
+function xmlsitemap_sitemap_save(array &$sitemap) {
+  xmlsitemap_load_all_includes();
 
-  if (!empty($sitemap['smid'])) {
-    drupal_write_record('xmlsitemap_sitemap', $sitemap, array('smid'));
+  // Make sure context is sorted before saving the hash.
+  $smid_old = isset($sitemap['smid']) ? $sitemap['smid'] : NULL;
+  $sitemap['smid'] = xmlsitemap_sitemap_get_context_hash($sitemap['context']);
+
+  // If the context was changed, we need to perform additional actions.
+  if (isset($smid_old) && $sitemap['smid'] != $smid_old) {
+    // Rename the files directory so the sitemap does not break.
+    $old_dir = xmlsitemap_get_directory(array('smid' => $smid_old));
+    $new_dir = xmlsitemap_get_directory($sitemap);
+    xmlsitemap_directory_move($old_dir, $new_dir);
+
+    // Change the smid field so drupal_write_record() does not fail.
+    db_query("UPDATE {xmlsitemap_sitemap} SET smid = '%s' WHERE smid = '%s'", $sitemap['smid'], $smid_old);
+
+    // Mark the sitemaps as needing regeneration.
+    variable_set('xmlsitemap_regenerate_needed', TRUE);
+  }
+
+  if (empty($sitemap['smid'])) {
+    drupal_write_record('xmlsitemap_sitemap', $sitemap);
+    module_invoke_all('xmlsitemap_sitemap_insert', $sitemap);
   }
   else {
-    drupal_write_record('xmlsitemap_sitemap', $sitemap);
+    drupal_write_record('xmlsitemap_sitemap', $sitemap, array('smid'));
+    module_invoke_all('xmlsitemap_sitemap_update', $sitemap);
   }
+
+  return $sitemap;
 }
 
 /**
@@ -403,6 +424,8 @@ function xmlsitemap_sitemap_delete($smid) {
  *   An array of XML sitemap IDs.
  */
 function xmlsitemap_sitemap_delete_multiple(array $smids) {
+  xmlsitemap_load_all_includes();
+
   if (!empty($smids)) {
     $sitemaps = xmlsitemap_sitemap_load_multiple($smids);
     db_query("DELETE FROM {xmlsitemap_sitemap} WHERE smid IN (" . db_placeholders($smids) . ")", $smids);
@@ -431,7 +454,6 @@ function xmlsitemap_sitemap_get_file(array $sitemap, $chunk = 'index') {
  *
  * @param $sitemap
  *   The XML sitemap array.
- *
  */
 function xmlsitemap_sitemap_get_max_filesize(array &$sitemap) {
   $dir = xmlsitemap_get_directory($sitemap);
@@ -440,6 +462,11 @@ function xmlsitemap_sitemap_get_max_filesize(array &$sitemap) {
     $sitemap['max_filesize'] = max($sitemap['max_filesize'], filesize($file->filename));
   }
   return $sitemap['max_filesize'];
+}
+
+function xmlsitemap_sitemap_get_context_hash(array &$context) {
+  asort($context);
+  return drupal_hash_base64(serialize($context));
 }
 
 /**
@@ -518,6 +545,9 @@ function xmlsitemap_link_load_multiple(array $conditions = array()) {
  *   An array with a sitemap link.
  */
 function xmlsitemap_link_save(array $link) {
+  xmlsitemap_load_all_includes();
+  module_load_include('inc', 'xmlsitemap');
+
   $link += array(
     'access' => 1,
     'status' => 1,
@@ -531,7 +561,6 @@ function xmlsitemap_link_save(array $link) {
   );
 
   // Allow other modules to alter the link before saving.
-  xmlsitemap_load_all_includes();
   drupal_alter('xmlsitemap_link', $link);
 
   // Temporary validation checks.
@@ -551,7 +580,6 @@ function xmlsitemap_link_save(array $link) {
     _xmlsitemap_check_changed_link($link, $existing, TRUE);
   }
 
-  module_load_include('inc', 'xmlsitemap');
   if ($existing) {
     xmlsitemap_write_record('xmlsitemap', $link, array('type', 'id'));
   }
@@ -642,7 +670,6 @@ function xmlsitemap_link_delete_multiple(array $conditions) {
   module_load_include('inc', 'xmlsitemap');
   $args = _xmlsitemap_build_conditions($conditions);
   db_query("DELETE FROM {xmlsitemap} WHERE " . implode(' AND ', $conditions), $args);
-
   return db_affected_rows();
 }
 
@@ -732,7 +759,12 @@ function xmlsitemap_get_directory(array $sitemap = NULL) {
     $directory = file_create_path(variable_get('xmlsitemap_path', 'xmlsitemap'));
   }
 
-  return $directory . (!empty($sitemap) ? '/' . $sitemap['context_hash'] : '');
+  if (!empty($sitemap['smid'])) {
+    return $directory . '/' . $sitemap['smid'];
+  }
+  else {
+    return $directory;
+  }
 }
 
 /**
@@ -762,6 +794,37 @@ function xmlsitemap_check_all_directories() {
 function xmlsitemap_clear_directory(array $sitemap = NULL, $delete = FALSE) {
   $directory = xmlsitemap_get_directory($sitemap);
   return _xmlsitemap_delete_recursive($directory, $delete);
+}
+
+/**
+ * Move a directory to a new location.
+ *
+ * @param $old_dir
+ *   A string specifying the filepath or URI of the original directory.
+ * @param $new_dir
+ *   A string specifying the filepath or URI of the new directory.
+ * @param $replace
+ *   Replace behavior when the destination file already exists.
+ *
+ * @return
+ *   TRUE if the directory was moved successfully. FALSE otherwise.
+ */
+function xmlsitemap_directory_move($old_dir, $new_dir, $replace = FILE_EXISTS_REPLACE) {
+  $success = file_check_directory($new_dir, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS);
+
+  if (!is_dir($old_dir) || !is_dir($new_dir) || !$success) {
+    return FALSE;
+  }
+
+  $files = file_scan_directory($old_dir, '.*');
+  foreach ($files as $file) {
+    $file->filepath_new = $new_dir . '/' . $file->basename;
+    $success &= (bool) file_move($file->filename, $file->filepath_new, $replace);
+  }
+
+  // The remove the directory.
+  $success &= rmdir($old_dir);
+  return $success;
 }
 
 /**
@@ -1544,4 +1607,27 @@ function xmlsitemap_db_fetch_col($query) {
     $row[] = $result;
   }
   return $row;
+}
+
+/**
+ * Backport of drupal_hash_base64() from Drupal 7.
+ *
+ * Calculate a base-64 encoded, URL-safe sha-256 hash.
+ *
+ * @param $data
+ *   String to be hashed.
+ *
+ * @return
+ *   A base-64 encoded sha-256 hash, with + replaced with -, / with _ and
+ *   any = padding characters removed.
+ */
+function xmlsitemap_drupal_hash_base64($data) {
+  if (function_exists('hash')) {
+    $hash = base64_encode(hash('sha256', $data, TRUE));
+  }
+  else {
+    $hash = base64_encode(sha1($data, TRUE));
+  }
+  // Modify the hash so it's safe to use in URLs.
+  return strtr($hash, array('+' => '-', '/' => '_', '=' => ''));
 }

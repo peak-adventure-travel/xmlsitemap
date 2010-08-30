@@ -67,7 +67,6 @@ function xmlsitemap_sitemap_list_form() {
   $header['chunks'] = array('data' => t('Pages'), 'field' => 'chunks');
   $header['operations'] = array('data' => t('Operations'));
 
-  $smids = array();
   $query = db_query("SELECT smid FROM {xmlsitemap_sitemap}" . tablesort_sql($header));
   $smids = xmlsitemap_db_fetch_col($query);
   $sitemaps = xmlsitemap_sitemap_load_multiple($smids);
