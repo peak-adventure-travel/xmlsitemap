@@ -75,7 +75,7 @@ class XMLSitemapTestHelper extends DrupalWebTestCase {
    *   An optional array of the XML sitemap's context.
    * @param $options
    *   Options to be forwarded to url(). These values will be merged with, but
-   *   always override $sitemap['uri']['options'].
+   *   always override $sitemap->uri['options'].
    * @param $headers
    *   An array containing additional HTTP request headers, each formatted as
    *   "name: value".
@@ -87,8 +87,7 @@ class XMLSitemapTestHelper extends DrupalWebTestCase {
     if (!$sitemap) {
       return $this->fail('Could not load sitemap by context.');
     }
-
-    return $this->drupalGet($sitemap['uri']['path'], $options + $sitemap['uri']['options'], $headers);
+    return $this->drupalGet($sitemap->uri['path'], $options + $sitemap->uri['options'], $headers);
   }
 
   /**
@@ -357,7 +356,8 @@ class XMLSitemapTestHelper extends DrupalWebTestCase {
    */
   protected function verbose($verbose_message, $message = 'Verbose message') {
     if ($id = simpletest_verbose($verbose_message)) {
-      $this->pass(l($message, $this->originalFileDirectory . '/simpletest/verbose/' . get_class($this) . '-' . $id . '.html', array('attributes' => array('target' => '_blank'))), 'Debug');
+      $url = $GLOBALS['base_url'] . '/' . $this->originalFileDirectory . '/simpletest/verbose/' . get_class($this) . '-' . $id . '.html';
+      $this->pass(l($message, $url, array('attributes' => array('target' => '_blank'))), 'User notice');
     }
   }
 }
@@ -676,11 +676,11 @@ class XMLSitemapUnitTest extends XMLSitemapTestHelper {
    * Test that duplicate paths are skipped during generation.
    */
   function testDuplicatePaths() {
-    $link1 = $this->addSitemapLink(array('loc' => 'duplicate-path'));
-    $link2 = $this->addSitemapLink(array('loc' => 'duplicate-path'));
+    $link1 = $this->addSitemapLink(array('loc' => 'duplicate'));
+    $link2 = $this->addSitemapLink(array('loc' => 'duplicate'));
     $this->regenerateSitemap();
     $this->drupalGetSitemap();
-    $this->assertUniqueText('duplicate-path');
+    $this->assertUniqueText('duplicate');
   }
 
   /**

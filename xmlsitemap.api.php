@@ -146,12 +146,12 @@ function hook_xmlsitemap_context_url_options_alter(array &$options, array $conte
  * @param $args
  *   An array of arguments to be passed to db_query() with $query.
  * @param $sitemap
- *   An XML sitemap array.
+ *   The XML sitemap object.
  */
-function hook_query_xmlsitemap_generate_alter(array &$query, array &$args, array $sitemap) {
-  if (!empty($sitemap['context']['vocabulary'])) {
+function hook_query_xmlsitemap_generate_alter(array &$query, array &$args, stdClass $sitemap) {
+  if (!empty($sitemap->context['vocabulary'])) {
     $query['WHERE'] .= " AND ((x.type = 'taxonomy_term' AND x.subtype = '%s') OR (x.type <> 'taxonomy_term')";
-    $args[] = $sitemap['context']['vocabulary'];
+    $args[] = $sitemap->context['vocabulary'];
   }
 }
 
@@ -168,10 +168,10 @@ function hook_xmlsitemap_sitemap_operations() {
  * sitemap has been removed from the table in the database.
  *
  * @param $sitemap
- *   The XML sitemap array that was deleted.
+ *   The XML sitemap object that was deleted.
  */
-function hook_xmlsitemap_sitemap_delete(array $sitemap) {
-  db_query("DELETE FROM {mytable} WHERE smid = '%s'", $sitemap['smid']);
+function hook_xmlsitemap_sitemap_delete(stdClass $sitemap) {
+  db_query("DELETE FROM {mytable} WHERE smid = '%s'", $sitemap->smid);
 }
 
 /**

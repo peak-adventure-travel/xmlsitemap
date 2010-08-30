@@ -32,8 +32,12 @@ class XMLSitemapI18nWebTestCase extends XMLSitemapTestHelper {
 
     // Create the two different language-context sitemaps.
     db_query("DELETE FROM {xmlsitemap_sitemap}");
-    xmlsitemap_sitemap_save(array('context' => array('language' => 'en')));
-    xmlsitemap_sitemap_save(array('context' => array('language' => 'fr')));
+    $sitemap = new stdClass();
+    $sitemap->context['language'] = 'en';
+    xmlsitemap_sitemap_save($sitemap);
+    $sitemap = new stdClass();
+    $sitemap->context['langauge'] = 'fr';
+    xmlsitemap_sitemap_save($sitemap);
   }
 }
 

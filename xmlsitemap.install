@@ -652,7 +652,7 @@ function xmlsitemap_update_6203() {
   $sitemaps = xmlsitemap_sitemap_load_multiple(FALSE);
   foreach ($sitemaps as $sitemap) {
     xmlsitemap_sitemap_get_max_filesize($sitemap);
-    db_query("UPDATE {xmlsitemap_sitemap} SET max_filesize = %d WHERE smid = %d", $sitemap['max_filesize'], $sitemap['smid']);
+    db_query("UPDATE {xmlsitemap_sitemap} SET max_filesize = %d WHERE smid = %d", $sitemap->max_filesize, $sitemap->smid);
   }
 
   variable_del('xmlsitemap_max_filesize');
@@ -697,8 +697,8 @@ function _xmlsitemap_sitemap_rehash_all() {
   // Force a rehash of all sitemaps.
   $sitemaps = xmlsitemap_sitemap_load_multiple(FALSE);
   foreach ($sitemaps as $sitemap) {
-    $hash = xmlsitemap_sitemap_get_context_hash($sitemap['context']);
-    if ($hash != $sitemap['smid']) {
+    $hash = xmlsitemap_sitemap_get_context_hash($sitemap->context);
+    if ($hash != $sitemap->smid) {
       xmlsitemap_sitemap_save($sitemap);
     }
   }
