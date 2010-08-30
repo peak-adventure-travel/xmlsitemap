@@ -472,7 +472,7 @@ function xmlsitemap_sitemap_get_max_filesize(stdClass &$sitemap) {
 
 function xmlsitemap_sitemap_get_context_hash(array &$context) {
   asort($context);
-  return drupal_hash_base64(serialize($context));
+  return xmlsitemap_drupal_hash_base64(serialize($context));
 }
 
 /**
