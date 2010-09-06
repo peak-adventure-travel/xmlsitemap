@@ -340,12 +340,10 @@ function xmlsitemap_sitemap_load_multiple($smids = array(), array $conditions = 
   if (!empty($conditions)) {
     $sql .= " WHERE " . implode(' AND ', $conditions);
   }
-
   $query = db_query($sql, $args);
-  $sitemaps = array();
-  while ($sitemap = db_fetch_object($query)) {
-    $smid = $sitemap->smid;
-    $sitemaps[$smid] = $sitemap;
+
+  $sitemaps = xmlsitemap_db_fetch_all_assoc($query, 'smid');
+  foreach ($sitemaps as $smid => $sitemap) {
     $sitemaps[$smid]->context = unserialize($sitemap->context);
     $sitemaps[$smid]->uri = xmlsitemap_sitemap_uri($sitemaps[$smid]);
   }
@@ -1616,6 +1614,20 @@ function xmlsitemap_db_fetch_col($query) {
     $row[] = $result;
   }
   return $row;
+}
+
+/**
+ * Backport of the DBTNG fetchAllAssoc() from Drupal 7.
+ */
+function xmlsitemap_db_fetch_all_assoc($query, $field) {
+  $return = array();
+  while ($result = db_fetch_object($query)) {
+    if (isset($result->$field)) {
+      $key = $result->$field;
+      $return[$key] = $result;
+    }
+  }
+  return $return;
 }
 
 /**
