@@ -175,7 +175,7 @@ function xmlsitemap_sitemap_list_form_submit($form, &$form_state) {
   }
 }
 
-function xmlsitemap_sitemap_edit_form($form_state, stdClass $sitemap = NULL) {
+function xmlsitemap_sitemap_edit_form(array &$form_state, stdClass $sitemap = NULL) {
   _xmlsitemap_set_breadcrumb();
 
   if (!isset($sitemap)) {
@@ -229,7 +229,7 @@ function xmlsitemap_sitemap_edit_form_validate($form, &$form_state) {
   // disappears.
   $form_state['values'] += array('context' => array());
   $existing = xmlsitemap_sitemap_load_by_context($form_state['values']['context']);
-  if ($existing && $existing['smid'] != $form_state['values']['smid']) {
+  if ($existing && $existing->smid != $form_state['values']['smid']) {
     form_set_error('context', t('A sitemap with the same context already exists.'));
   }
 }
@@ -241,7 +241,7 @@ function xmlsitemap_sitemap_edit_form_submit($form, &$form_state) {
   // @todo If context was changed, needs to be regenerated.
 }
 
-function xmlsitemap_sitemap_delete_form($form, &$form_state, stdClass $sitemap) {
+function xmlsitemap_sitemap_delete_form(array &$form_state, stdClass $sitemap) {
   _xmlsitemap_set_breadcrumb();
 
   $count = (int) db_result(db_query("SELECT COUNT(smid) FROM {xmlsitemap_sitemap}"));
