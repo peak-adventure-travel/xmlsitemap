@@ -69,7 +69,7 @@ function xmlsitemap_sitemap_list_form() {
 
   $query = db_query("SELECT smid FROM {xmlsitemap_sitemap}" . tablesort_sql($header));
   $smids = xmlsitemap_db_fetch_col($query);
-  $sitemaps = xmlsitemap_sitemap_load_multiple($smids);
+  $sitemaps = !empty($smids) ? xmlsitemap_sitemap_load_multiple($smids) : array();
 
   $options = array();
   foreach ($sitemaps as $smid => $sitemap) {
@@ -235,10 +235,10 @@ function xmlsitemap_sitemap_edit_form_validate($form, &$form_state) {
 }
 
 function xmlsitemap_sitemap_edit_form_submit($form, &$form_state) {
-  xmlsitemap_sitemap_save($form_state['values']);
+  $sitemap = (object) $form_state['values'];
+  xmlsitemap_sitemap_save($sitemap);
   drupal_set_message(t('The sitemap has been saved.'));
   $form_state['redirect'] = 'admin/settings/xmlsitemap';
-  // @todo If context was changed, needs to be regenerated.
 }
 
 function xmlsitemap_sitemap_delete_form(array &$form_state, stdClass $sitemap) {
