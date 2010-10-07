@@ -56,12 +56,8 @@ function xmlsitemap_get_path_alias($path, $language) {
  * Perform operations before rebuilding the sitemap.
  */
 function _xmlsitemap_regenerate_before() {
-  // Attempt to increase the available processing time and memory limit.
-  @set_time_limit(240);
+  // Attempt to increase the memory limit.
   _xmlsitemap_set_memory_limit();
-
-  // Set a timer so we can track how long this takes.
-  timer_start('xmlsitemap_regenerate');
 
   if (variable_get('xmlsitemap_developer_mode', 0)) {
     watchdog('xmlsitemap', 'Starting XML sitemap generation. Memory usage: @memory-peak.', array(
@@ -70,10 +66,6 @@ function _xmlsitemap_regenerate_before() {
       WATCHDOG_DEBUG
     );
   }
-
-  // Clear the maximum chunk and file size variables.
-  variable_set('xmlsitemap_max_chunks', 0);
-  variable_set('xmlsitemap_max_filesize', 0);
 }
 
 /**
@@ -147,26 +139,6 @@ function _xmlsitemap_set_memory_limit($new_limit = NULL) {
 }
 
 /**
- * Perform operations after rebuilding the sitemap.
- */
-function _xmlsitemap_regenerate_after() {
-  // Show a watchdog message that the sitemap was regenerated.
-  watchdog('xmlsitemap',
-    'Finished XML sitemap generation in @timer ms. Memory usage: @memory-peak.',
-    array(
-      '@timer' => timer_read('xmlsitemap_regenerate'),
-      '@memory-peak' => format_size(_xmlsitemap_memory_get_peak_usage()),
-    ),
-    WATCHDOG_NOTICE
-  );
-
-  // Unset the regenerate flag.
-  variable_set('xmlsitemap_regenerate_needed', FALSE);
-
-  variable_set('xmlsitemap_generated_last', REQUEST_TIME);
-}
-
-/**
  * Generate one page (chunk) of the sitemap.
  *
  * @param $sitemap
@@ -237,7 +209,13 @@ function xmlsitemap_generate_chunk(stdClass $sitemap, XMLSitemapWriter $writer, 
     if ($url_options['alias']) {
       $link['loc'] = xmlsitemap_get_path_alias($link['loc'], $link['language']->language);
     }
-    $link_url = url($link['loc'], array('language' => $link['language']) + $url_options);
+    $link_options = array(
+      'language' => $link['language'],
+      'xmlsitemap_link' => $link,
+      'xmlsitemap_sitemap' => $sitemap,
+    );
+    // @todo Add a separate hook_xmlsitemap_link_url_alter() here?
+    $link_url = url($link['loc'], $link_options + $url_options);
 
     // Skip this link if it was a duplicate of the last one.
     // @todo Figure out a way to do this before generation so we can report
@@ -323,13 +301,21 @@ function xmlsitemap_regenerate_batch(array $smids = array()) {
     'file' => drupal_get_path('module', 'xmlsitemap') . '/xmlsitemap.generate.inc',
   );
 
-  // Generate all the sitemap pages for each context.
+  // Set the regenerate flag in case something fails during file generation.
+  $batch['operations'][] = array('xmlsitemap_batch_variable_set', array(array('xmlsitemap_regenerate_needed' => TRUE)));
+  $batch['operations'][] = array('xmlsitemap_batch_timer_start', array());
+
+  // @todo Get rid of this batch operation.
   $batch['operations'][] = array('_xmlsitemap_regenerate_before', array());
+
+  // Generate all the sitemap pages for each context.
   foreach ($smids as $smid) {
     $batch['operations'][] = array('xmlsitemap_regenerate_batch_generate', array($smid));
     $batch['operations'][] = array('xmlsitemap_regenerate_batch_generate_index', array($smid));
   }
-  $batch['operations'][] = array('_xmlsitemap_regenerate_after', array());
+
+  // Clear the regeneration flag.
+  $batch['operations'][] = array('xmlsitemap_batch_variable_set', array(array('xmlsitemap_regenerate_needed' => FALSE)));
 
   return $batch;
 }
@@ -392,13 +378,24 @@ function xmlsitemap_regenerate_batch_generate_index($smid, array &$context) {
  * Batch callback; sitemap regeneration finished.
  */
 function xmlsitemap_regenerate_batch_finished($success, $results, $operations) {
-  if ($success) {
-    // Reset the rebuild flag since it was successful.
-    variable_set('xmlsitemap_regenerate_needed', FALSE);
+  $results['elapsed'] = round((microtime(TRUE) - $results['start']) * 1000, 2);
+  $elapsed = format_interval($results['elapsed'] / 1000);
+
+  if ($success && !variable_get('xmlsitemap_regenerate_needed', FALSE)) {
+    variable_set('xmlsitemap_generated_last', REQUEST_TIME);
     //drupal_set_message(t('The sitemaps were regenerated.'));
+    // Show a watchdog message that the sitemap was regenerated.
+    watchdog('xmlsitemap',
+      'Finished XML sitemap generation in @elapsed. Memory usage: @memory-peak.',
+      array(
+        '@elapsed' => $elapsed,
+        '@memory-peak' => format_size(_xmlsitemap_memory_get_peak_usage()),
+      ),
+      WATCHDOG_NOTICE
+    );
   }
   else {
-    drupal_set_message(t('The sitemaps was not successfully regenerated.'), 'error');
+    drupal_set_message(t('The sitemaps were not successfully regenerated.'), 'error');
   }
 }
 
@@ -413,7 +410,9 @@ function xmlsitemap_rebuild_batch(array $entities, $save_custom = FALSE) {
     'file' => drupal_get_path('module', 'xmlsitemap') . '/xmlsitemap.generate.inc',
   );
 
-  $batch['operations'][] = array('xmlsitemap_rebuild_batch_prerebuild', array());
+  // Set the rebuild flag in case something fails during the rebuild.
+  $batch['operations'][] = array('xmlsitemap_batch_variable_set', array(array('xmlsitemap_rebuild_needed' => TRUE)));
+  $batch['operations'][] = array('xmlsitemap_batch_timer_start', array());
 
   // Purge any links first.
   $batch['operations'][] = array('xmlsitemap_rebuild_batch_clear', array($entities, (bool) $save_custom));
@@ -424,6 +423,9 @@ function xmlsitemap_rebuild_batch(array $entities, $save_custom = FALSE) {
     $batch['operations'][] = array($info['xmlsitemap']['rebuild callback'], array($entity));
   }
 
+  // Clear the rebuild flag.
+  $batch['operations'][] = array('xmlsitemap_batch_variable_set', array(array('xmlsitemap_rebuild_needed' => FALSE)));
+
   // Add the regeneration batch.
   $regenerate_batch = xmlsitemap_regenerate_batch();
   $batch['operations'] = array_merge($batch['operations'], $regenerate_batch['operations']);
@@ -432,13 +434,21 @@ function xmlsitemap_rebuild_batch(array $entities, $save_custom = FALSE) {
 }
 
 /**
- * Batch callback; perform operations before rebuilding the sitemap data.
+ * Batch callback; start the timer.
  */
-function xmlsitemap_rebuild_batch_prerebuild() {
-  // Set the rebuild flag in case something fails during the rebuild.
-  variable_set('xmlsitemap_rebuild_needed', TRUE);
+function xmlsitemap_batch_timer_start(array &$context) {
+  if (!isset($context['results']['start'])) {
+    $context['results']['start'] = microtime(TRUE);
+  }
+}
 
-  timer_start('xmlsitemap_rebuild');
+/**
+ * Batch callback; set an array of variables and their values.
+ */
+function xmlsitemap_batch_variable_set(array $variables) {
+  foreach ($variables as $variable => $value) {
+    variable_set($variable, $value);
+  }
 }
 
 /**
@@ -520,13 +530,13 @@ function xmlsitemap_rebuild_batch_fetch($entity, &$context) {
  * Batch callback; sitemap rebuild finished.
  */
 function xmlsitemap_rebuild_batch_finished($success, $results, $operations) {
-  if ($success) {
+  if ($success && !variable_get('xmlsitemap_rebuild_needed', FALSE)) {
     // Reset the rebuild flag since it was successful.
     variable_set('xmlsitemap_rebuild_needed', FALSE);
-    drupal_set_message(t('The sitemap was rebuilt.'));
+    drupal_set_message(t('The sitemap links were rebuilt.'));
   }
   else {
-    drupal_set_message(t('The sitemap was not successfully rebuilt.'), 'error');
+    drupal_set_message(t('The sitemap links were not successfully rebuilt.'), 'error');
   }
 }
 
