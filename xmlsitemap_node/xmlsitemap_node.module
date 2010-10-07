@@ -179,9 +179,13 @@ function xmlsitemap_node_get_timestamps(stdClass $node) {
   static $timestamps = array();
 
   if (!isset($timestamps[$node->nid])) {
-    $timestamps[$node->nid] = array();
-    $query = db_query("SELECT c.timestamp FROM {comments} c WHERE c.nid = %d AND c.status = %d UNION ALL SELECT nr.timestamp FROM {node_revisions} nr WHERE nr.nid = %d", $node->nid, COMMENT_PUBLISHED, $node->nid);
+    $query = db_query("SELECT nr.timestamp FROM {node_revisions} nr WHERE nr.nid = %d", $node->nid);
     $timestamps[$node->nid] = xmlsitemap_db_fetch_col($query);
+    if (module_exists('comment')) {
+      $query = db_query("SELECT c.timestamp FROM {comments} c WHERE c.nid = %d AND c.status = %d", $node->nid, COMMENT_PUBLISHED);
+      $comment_timestamps = xmlsitemap_db_fetch_col($query);
+      $timestamps[$node->nid] = array_merge($timestamps[$node->nid], $comment_timestamps);
+    }
   }
 
   return $timestamps[$node->nid];
