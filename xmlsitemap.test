@@ -100,13 +100,6 @@ class XMLSitemapTestHelper extends DrupalWebTestCase {
     $this->assertTrue(variable_get('xmlsitemap_generated_last', 0) && !variable_get('xmlsitemap_regenerate_needed', FALSE), t('XML sitemaps regenerated and flag cleared.'));
   }
 
-  /**
-   * Runs cron in the Drupal installed by Simpletest.
-   */
-  protected function cronRun() {
-    $this->drupalGet($GLOBALS['base_url'] . '/cron.php', array('external' => TRUE));
-  }
-
   protected function assertSitemapLink($entity_type, $entity_id = NULL) {
     if (is_array($entity_type)) {
       $links = xmlsitemap_link_load_multiple($entity_type);
