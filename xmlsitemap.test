@@ -16,12 +16,7 @@ class XMLSitemapTestHelper extends DrupalWebTestCase {
 
   function setUp($modules = array()) {
     array_unshift($modules, 'xmlsitemap');
-
-    $parent_callback = 'parent::setUp';
-    if (version_compare(PHP_VERSION, '5.3.0', '<')) {
-      $parent_callback = array($this, 'parent::setUp');
-    }
-    call_user_func_array($parent_callback, $modules);
+    parent::setUp($modules);
 
     // Reset any of our module's static variables.
     xmlsitemap_static_reset();
