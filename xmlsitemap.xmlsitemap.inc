@@ -162,6 +162,20 @@ class XMLSitemapWriter extends XMLWriter {
 
     return $return;
   }
+
+  /**
+   * Explicitly define the writeRaw() function since it is not available
+   * before PHP 5.2.
+   */
+  public function writeRaw($content) {
+    static $writeraw_parent;
+
+    if (!isset($writeraw_parent)) {
+      $writeraw_parent = method_exists('XMLWriter', 'writeRaw');
+    }
+
+    return $writeraw_parent ? parent::writeRaw($content) : parent::text($content);
+  }
 }
 
 class XMLSitemapIndexWriter extends XMLSitemapWriter {

@@ -15,18 +15,29 @@ function xmlsitemap_requirements($phase) {
   $requirements = array();
   $t = get_t();
 
-  // If clean URLs are disabled there must not be an actual sitemap.xml in
-  // the root directory.
-  if (variable_get('clean_url', 0) && file_exists('./sitemap.xml')) {
-    $requirements['xmlsitemap_file'] = array(
-      'title' => $t('XML sitemap'),
-      'value' => $t('Existing sitemap.xml file found.'),
-      'severity' => REQUIREMENT_ERROR,
-      'description' => $t('The XML sitemap module cannot display its XML output if there is an existing sitemap.xml file in your website root.'),
-    );
-  }
-
   if ($phase == 'runtime') {
+    // Check that the PHP-XML extension is enabled and the XMLWriter class
+    // is available.
+    if (!extension_loaded('xml') || !class_exists('XMLWriter')) {
+      $requirements['xmlsitemap_xml_extension'] = array(
+        'title' => $t('PHP XML Extension'),
+        'value' => $t('Disabled'),
+        'severity' => REQUIREMENT_ERROR,
+        'description' => $t('The XML sitemap module requires you to enable the PHP XML extension.'),
+      );
+    }
+
+    // If clean URLs are disabled there must not be an actual sitemap.xml in
+    // the root directory.
+    if (variable_get('clean_url', 0) && file_exists('./sitemap.xml')) {
+      $requirements['xmlsitemap_file'] = array(
+        'title' => $t('XML sitemap'),
+        'value' => $t('Existing sitemap.xml file found.'),
+        'severity' => REQUIREMENT_ERROR,
+        'description' => $t('The XML sitemap module cannot display its XML output if there is an existing sitemap.xml file in your website root.'),
+      );
+    }
+
     // Check that the base directory and all its subdirectories are writable.
     $requirements['xmlsitemap_directory'] = array(
       'title' => $t('XML sitemap cache directory'),
