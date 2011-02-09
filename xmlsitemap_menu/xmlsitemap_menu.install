@@ -46,4 +46,5 @@ function xmlsitemap_menu_update_6200() {
 function xmlsitemap_menu_update_6201() {
   drupal_load('module', 'xmlsitemap');
   xmlsitemap_link_type_rename('menu', 'menu_link');
+  return array();
 }
