@@ -331,7 +331,10 @@ function xmlsitemap_sitemap_load($smid) {
 function xmlsitemap_sitemap_load_multiple($smids = array(), array $conditions = array()) {
   module_load_include('inc', 'xmlsitemap');
 
-  if ($smids !== FALSE) {
+  if ($smids === array()) {
+    return array();
+  }
+  elseif ($smids !== FALSE) {
     $conditions['smid'] = $smids;
   }
 
@@ -997,7 +1000,7 @@ function xmlsitemap_link_type_rename($entity_old, $entity_new, $bundles = NULL) 
     }
   }
 
-  xmlsitemap_link_update_multiple(array('type' => $entity_new), array('type' => $entity_old), FALSE);
+  db_query("UPDATE {xmlsitemap} SET type = '%s' WHERE type = '%s'", $entity_new, $entity_old);
   xmlsitemap_get_link_info(NULL, TRUE);
 }
 
