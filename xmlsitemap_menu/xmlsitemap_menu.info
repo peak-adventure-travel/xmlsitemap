@@ -1,4 +1,3 @@
-; $Id$
 name = XML Sitemap: Menu
 description = Adds menu items to the site map.
 package = XML Sitemap
