@@ -1,4 +1,3 @@
-; $Id$
 name = XML Sitemap: Engines
 description = Submits site map to search engines.
 package = XML Sitemap

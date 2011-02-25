@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /**
  * @file Define actions for Google, Yahoo!, Ask, and Bing.

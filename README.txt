@@ -1,4 +1,3 @@
-$Id$
 XML Sitemap Module
 Author: Matthew Loar <matthew at loar dot name>
 This module was originally written as part of Google Summer of Code 2005.

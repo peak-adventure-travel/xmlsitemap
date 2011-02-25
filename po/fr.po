@@ -1,4 +1,3 @@
-# $Id$
 #
 # French translation of Drupal (general)
 # Copyright 2007 Daniel Le Bray <dlb@enity.fr>

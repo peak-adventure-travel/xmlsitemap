@@ -1,4 +1,3 @@
-$Id$
 XML Sitemap Module
 
 If you are upgrading from Google Sitemap, make sure you are using the latest
