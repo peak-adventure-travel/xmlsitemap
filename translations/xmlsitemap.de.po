@@ -1,4 +1,3 @@
-# $Id$
 #
 # LANGUAGE translation of Drupal (gsitemap.module)
 # Copyright YEAR NAME <EMAIL@ADDRESS>

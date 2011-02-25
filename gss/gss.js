@@ -1,4 +1,3 @@
-// $Id$
 
 var selectedColor = "blue";
 var defaultColor = "black";
