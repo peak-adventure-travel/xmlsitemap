@@ -886,39 +886,46 @@ function xmlsitemap_get_link_info($type = NULL, $reset = FALSE) {
 
   if ($reset) {
     $link_info = NULL;
+    cache_clear_all('xmlsitemap:link_info:', 'cache', TRUE);
   }
   elseif ($cached = cache_get('xmlsitemap:link_info:' . $language->language)) {
     $link_info = $cached->data;
   }
 
   if (!isset($link_info)) {
-    xmlsitemap_load_all_includes();
-    $link_info = module_invoke_all('xmlsitemap_link_info');
-    foreach ($link_info as $key => &$info) {
-      $info += array(
-        'type' => $key,
-        'base table' => FALSE,
-        'bundles' => array(),
-        'xmlsitemap' => array(),
-        'entity keys' => array(),
-      );
-      $info['entity keys'] += array(
-        'bundle' => '',
-      );
-      if (!isset($info['xmlsitemap']['rebuild callback']) && !empty($info['base table']) && !empty($info['entity keys']['id']) && !empty($info['xmlsitemap']['process callback'])) {
-        $info['xmlsitemap']['rebuild callback'] = 'xmlsitemap_rebuild_batch_fetch';
-      }
-      foreach ($info['bundles'] as $bundle => &$bundle_info) {
-        $bundle_info += array(
-          'xmlsitemap' => array(),
-        );
-        $bundle_info['xmlsitemap'] += xmlsitemap_link_bundle_load($key, $bundle, FALSE);
-      }
+    $cid = 'xmlsitemap:link_info:' . $language->language;
+    if ($cache = cache_get($cid)) {
+      $link_info = $cache->data;
     }
-    drupal_alter('xmlsitemap_link_info', $link_info);
-    ksort($link_info);
-    // Cache by language since this info contains translated strings.
-    cache_set('xmlsitemap:link_info:' . $language->language, $link_info);
+    else {
+      xmlsitemap_load_all_includes();
+      $link_info = module_invoke_all('xmlsitemap_link_info');
+      foreach ($link_info as $key => &$info) {
+        $info += array(
+          'type' => $key,
+          'base table' => FALSE,
+          'bundles' => array(),
+          'xmlsitemap' => array(),
+          'entity keys' => array(),
+        );
+        $info['entity keys'] += array(
+          'bundle' => '',
+        );
+        if (!isset($info['xmlsitemap']['rebuild callback']) && !empty($info['base table']) && !empty($info['entity keys']['id']) && !empty($info['xmlsitemap']['process callback'])) {
+          $info['xmlsitemap']['rebuild callback'] = 'xmlsitemap_rebuild_batch_fetch';
+        }
+        foreach ($info['bundles'] as $bundle => &$bundle_info) {
+          $bundle_info += array(
+            'xmlsitemap' => array(),
+          );
+          $bundle_info['xmlsitemap'] += xmlsitemap_link_bundle_load($key, $bundle, FALSE);
+        }
+      }
+      drupal_alter('xmlsitemap_link_info', $link_info);
+      ksort($link_info);
+      // Cache by language since this info contains translated strings.
+      cache_set($cid, $link_info);
+    }
   }
 
   if (isset($type)) {
