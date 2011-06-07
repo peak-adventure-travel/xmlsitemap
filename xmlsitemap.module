@@ -440,7 +440,7 @@ function xmlsitemap_sitemap_delete_multiple(array $smids) {
 
   if (!empty($smids)) {
     $sitemaps = xmlsitemap_sitemap_load_multiple($smids);
-    db_query("DELETE FROM {xmlsitemap_sitemap} WHERE smid IN (" . db_placeholders($smids) . ")", $smids);
+    db_query("DELETE FROM {xmlsitemap_sitemap} WHERE smid IN (" . db_placeholders($smids, 'varchar') . ")", $smids);
 
     foreach ($sitemaps as $sitemap) {
       xmlsitemap_clear_directory($sitemap, TRUE);
