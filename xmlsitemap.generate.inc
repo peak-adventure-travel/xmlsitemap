@@ -155,7 +155,7 @@ function xmlsitemap_generate_page(stdClass $sitemap, $page) {
     $writer->endDocument();
   }
   catch (Exception $e) {
-    watchdog_exception('xmlsitemap', $e);
+    trigger_error($e->getMessage(), E_USER_ERROR);
     throw $e;
     return FALSE;
   }
