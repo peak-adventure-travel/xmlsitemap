@@ -888,9 +888,6 @@ function xmlsitemap_get_link_info($type = NULL, $reset = FALSE) {
     $link_info = NULL;
     cache_clear_all('xmlsitemap:link_info:', 'cache', TRUE);
   }
-  elseif ($cached = cache_get('xmlsitemap:link_info:' . $language->language)) {
-    $link_info = $cached->data;
-  }
 
   if (!isset($link_info)) {
     $cid = 'xmlsitemap:link_info:' . $language->language;
