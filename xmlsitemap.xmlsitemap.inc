@@ -37,7 +37,12 @@ class XMLSitemapWriter extends XMLWriter {
   }
 
   public function openUri($uri) {
-    $return = parent::openUri(realpath($uri));
+    if ($realpath = realpath($uri)) {
+      // Convert to a real path if possible. Sometimes this function returns
+      // a FALSE value, so use the original value when that happens.
+      $uri = $realpath;
+    }
+    $return = parent::openUri($uri);
     if (!$return) {
       throw new XMLSitemapGenerationException(t('Could not open file @file for writing.', array('@file' => $uri)));
     }
