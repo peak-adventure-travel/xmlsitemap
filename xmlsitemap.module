@@ -1419,7 +1419,7 @@ function xmlsitemap_run_unprogressive_batch() {
   }
 
   // Attempt to increase the execution time.
-  @set_time_limit(240);
+  xmlsitemap_set_time_limit(240);
 
   // Build the batch array.
   $batch = call_user_func_array($batch_callback, $args);
@@ -1683,4 +1683,13 @@ function xmlsitemap_drupal_hash_base64($data) {
   }
   // Modify the hash so it's safe to use in URLs.
   return strtr($hash, array('+' => '-', '/' => '_', '=' => ''));
+}
+
+/**
+ * Backport of drupal_set_time_limit from Drupal 7.
+ */
+function xmlsitemap_set_time_limit($time_limit) {
+  if (function_exists('set_time_limit')) {
+    @set_time_limit($time_limit);
+  }
 }
