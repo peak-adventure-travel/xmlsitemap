@@ -312,9 +312,6 @@ function xmlsitemap_install() {
     ->condition('name', 'xmlsitemap')
     ->execute();
 
-  // Load the module.
-  drupal_load('module', 'xmlsitemap');
-
   // Insert the homepage link into the {xmlsitemap} table so we do not show an
   // empty sitemap after install.
   db_insert('xmlsitemap')
@@ -355,7 +352,6 @@ function xmlsitemap_enable() {
  */
 function xmlsitemap_uninstall() {
   // Remove variables.
-  drupal_load('module', 'xmlsitemap');
   $variables = array_keys(xmlsitemap_variables());
   foreach ($variables as $variable) {
     variable_del($variable);
@@ -428,7 +424,6 @@ function xmlsitemap_update_6202() {
   if (!db_query_range("SELECT 1 FROM {xmlsitemap_sitemap}", 0, 1)->fetchField()) {
     // Refresh the schema and load the module if it's disabled.
     drupal_get_schema(NULL, TRUE);
-    drupal_load('module', 'xmlsitemap');
 
     if (module_exists('xmlsitemap_i18n') && $languages = variable_get('xmlsitemap_languages', array())) {
       foreach ($languages as $language) {
@@ -471,7 +466,6 @@ function xmlsitemap_update_6203() {
   db_add_field('xmlsitemap_sitemap', 'max_filesize', $field);
 
   // Scan each sitemap directory for the largest file.
-  drupal_load('module', 'xmlsitemap');
   $sitemaps = xmlsitemap_sitemap_load_multiple(FALSE);
   foreach ($sitemaps as $sitemap) {
     xmlsitemap_sitemap_get_max_filesize($sitemap);
@@ -546,7 +540,6 @@ function xmlsitemap_update_7203() {
 
 function _xmlsitemap_sitemap_rehash_all() {
   // Reload the schema cache and reprocess all sitemap hashes into smids.
-  drupal_load('module', 'xmlsitemap');
   drupal_get_schema(NULL, TRUE);
 
   // Force a rehash of all sitemaps.
