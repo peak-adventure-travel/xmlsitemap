@@ -1,0 +1,15 @@
+# Schema for the configuration files of the XMLSitemap module.
+
+xmlsitemap.settings:
+    type: mapping
+    label: 'XMLSitemap settings'
+    mapping:
+        xmlsitemap_regenerate_needed: 
+            type: boolean
+            label: 'XMLSitemap regenerate files'
+        xmlsitemap_generated_last:
+            type: integer
+            label: 'XMLSitemap last generated'
+        xmlsitemap_batch_limit:
+            type: integer
+            label: 'XMLSitemap batch limit'

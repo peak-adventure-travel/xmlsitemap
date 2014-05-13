@@ -12,7 +12,7 @@
  */
 function xmlsitemap_requirements($phase) {
   $requirements = array();
-  $t = get_t();
+  $t = 't()';
 
   // Check that required PHP extensions are enabled.
   // Note: Drupal 7 already requires the 'xml' extension.
