@@ -1,3 +1,4 @@
 xmlsitemap_regenerate_needed: true
 xmlsitemap_generated_last: 0
 xmlsitemap_batch_limit: 100
+xmlsitemap_path: 'xmlsitemap'

@@ -306,11 +306,7 @@ function xmlsitemap_schema() {
 function xmlsitemap_install() {
   // Set this module's weight to 1 so xmlsitemap_cron() runs after all other
   // xmlsitemap_x_cron() runs.
-  db_update('system')
-    ->fields(array('weight' => 1))
-    ->condition('type', 'module')
-    ->condition('name', 'xmlsitemap')
-    ->execute();
+  module_set_weight('xmlsitemap', 1);
 
   // Insert the homepage link into the {xmlsitemap} table so we do not show an
   // empty sitemap after install.
@@ -354,7 +350,7 @@ function xmlsitemap_uninstall() {
   // Remove variables.
   $variables = array_keys(xmlsitemap_variables());
   foreach ($variables as $variable) {
-    variable_del($variable);
+    \Drupal::config('xmlsitemap.settings')->clear($variable);
   }
 
   // Remove the file cache directory.

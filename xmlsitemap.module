@@ -778,7 +778,7 @@ function xmlsitemap_get_directory(stdClass $sitemap = NULL) {
   $directory = &drupal_static(__FUNCTION__);
 
   if (!isset($directory)) {
-    $directory = variable_get('xmlsitemap_path', 'xmlsitemap');
+    $directory = \Drupal::config('xmlsitemap.settings')->get('xmlsitemap_path');
   }
 
   if (!empty($sitemap->smid)) {

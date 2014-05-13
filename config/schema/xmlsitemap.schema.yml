@@ -13,3 +13,6 @@ xmlsitemap.settings:
         xmlsitemap_batch_limit:
             type: integer
             label: 'XMLSitemap batch limit'
+        xmlsitemap_path:
+            type: string
+            label: 'Path of the XML generated files'
