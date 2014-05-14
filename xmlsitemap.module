@@ -8,6 +8,7 @@
  * @file
  * Main file for the xmlsitemap module.
  */
+use Drupal\Component\Utility\Crypt;
 
 /**
  * The maximum number of links in one sitemap chunk file.
@@ -497,7 +498,7 @@ function xmlsitemap_sitemap_get_max_filesize(stdClass $sitemap) {
 
 function xmlsitemap_sitemap_get_context_hash(array &$context) {
   asort($context);
-  return drupal_hash_base64(serialize($context));
+  return Crypt::hashBase64(serialize($context));
 }
 
 /**
