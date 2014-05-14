@@ -6,6 +6,7 @@
  *
  * @ingroup xmlsitemap
  */
+use Drupal\Core\Language\LanguageInterface;
 
 /**
  * Implements hook_requirements().
@@ -33,7 +34,7 @@ function xmlsitemap_requirements($phase) {
   if ($phase == 'runtime') {
     // If clean URLs are disabled there must not be an actual sitemap.xml in
     // the root directory.
-    if (variable_get('clean_url', 0) && file_exists(DRUPAL_ROOT . '/sitemap.xml')) {
+    if (\Drupal::config('xmlsitemap.settings')->get('clean_url') && file_exists(DRUPAL_ROOT . '/sitemap.xml')) {
       $requirements['xmlsitemap_file'] = array(
         'title' => $t('XML sitemap'),
         'value' => $t('Existing sitemap.xml file found.'),
@@ -102,31 +103,31 @@ function xmlsitemap_requirements($phase) {
       $requirements['xmlsitemap_file_size']['description'] = $t('You have exceeded the maximum sitemap file size of @size. If possible, decrease the number of links per sitemap page.', array('@size' => format_size(XMLSITEMAP_MAX_SITEMAP_FILESIZE)));
       $requirements['xmlsitemap_file_size']['severity'] = REQUIREMENT_ERROR;
     }
-    elseif (!variable_get('xmlsitemap_developer_mode', 0)) {
+    elseif (!\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_developer_mode')) {
       unset($requirements['xmlsitemap_file_size']);
     }
 
     // Check when the cached files were last generated.
-    $generated_last = variable_get('xmlsitemap_generated_last', 0);
+    $generated_last = \Drupal::config('xmlsitemap.settings')->get('xmlsitemap_generated_last');
     $generated_ago = REQUEST_TIME - $generated_last;
     $requirements['xmlsitemap_generated'] = array(
       'title' => $t('XML sitemap'),
       'value' => $generated_last ? $t('Last attempted generation on !date (!interval ago).', array('!date' => format_date($generated_last, 'small'), '!interval' => format_interval($generated_ago))) : $t('Cached files have not been generated yet.'),
       'severity' => REQUIREMENT_OK,
     );
-    if (variable_get('xmlsitemap_rebuild_needed', FALSE) && _xmlsitemap_rebuild_form_access()) {
+    if (\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_rebuild_needed') && _xmlsitemap_rebuild_form_access()) {
       $requirements['xmlsitemap_generated']['severity'] = REQUIREMENT_ERROR;
       $requirements['xmlsitemap_generated']['description'] = $t('The XML sitemap data is out of sync and needs to be <a href="@link-rebuild">completely rebuilt<a>.', array('@link-rebuild' => url('admin/config/search/xmlsitemap/rebuild')));
     }
-    elseif (variable_get('xmlsitemap_regenerate_needed', FALSE)) {
+    elseif (\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_regenerate_needed')) {
       if ($max_filesize == 0) {
         // A maximum sitemap file size of 0 indicates an error in generation.
         $requirements['xmlsitemap_generated']['severity'] = REQUIREMENT_ERROR;
       }
-      elseif ($generated_ago >= variable_get('cron_threshold_error', 1209600)) {
+      elseif ($generated_ago >= \Drupal::config('xmlsitemap.settings')->get('cron_threshold_error')) {
         $requirements['xmlsitemap_generated']['severity'] = REQUIREMENT_ERROR;
       }
-      elseif ($generated_ago >= variable_get('cron_threshold_warning', 172800)) {
+      elseif ($generated_ago >= \Drupal::config('xmlsitemap.settings')->get('cron_threshold_warning')) {
         $requirements['xmlsitemap_generated']['severity'] = REQUIREMENT_WARNING;
       }
       if ($requirements['xmlsitemap_generated']['severity']) {
@@ -315,9 +316,9 @@ function xmlsitemap_install() {
       'type' => 'frontpage',
       'id' => 0,
       'loc' => '',
-      'priority' => variable_get('xmlsitemap_frontpage_priority', 1.0),
-      'changefreq' => variable_get('xmlsitemap_frontpage_changefreq', XMLSITEMAP_FREQUENCY_DAILY),
-      'language' => LANGUAGE_NONE,
+      'priority' => \Drupal::config('xmlsitemap.settings')->get('xmlsitemap_frontpage_priority'),
+      'changefreq' => \Drupal::config('xmlsitemap.settings')->get('xmlsitemap_frontpage_changefreq'),
+      'language' => LanguageInterface::LANGCODE_NOT_SPECIFIED,
     ))
     ->execute();
 
@@ -340,7 +341,7 @@ function xmlsitemap_enable() {
   // Ensure the file cache directory is available and ready.
   xmlsitemap_check_directory();
 
-  variable_set('xmlsitemap_regenerate_needed', TRUE);
+  \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_regenerate_needed', TRUE);
 }
 
 /**
@@ -421,7 +422,7 @@ function xmlsitemap_update_6202() {
     // Refresh the schema and load the module if it's disabled.
     drupal_get_schema(NULL, TRUE);
 
-    if (module_exists('xmlsitemap_i18n') && $languages = variable_get('xmlsitemap_languages', array())) {
+    if (module_exists('xmlsitemap_i18n') && $languages = \Drupal::config('xmlsitemap.settings')->get('xmlsitemap_languages')) {
       foreach ($languages as $language) {
         $sitemap = new stdClass();
         $sitemap->context = array('language' => $language);
@@ -436,11 +437,11 @@ function xmlsitemap_update_6202() {
   }
 
   // Language variable is no longer needed, so go ahead and delete it.
-  variable_del('xmlsitemap_languages');
+  \Drupal::config()->clear('xmlsitemap_languages');
 
   // Ensure that the sitemaps will be refreshed on next cron.
-  variable_set('xmlsitemap_generated_last', 0);
-  variable_set('xmlsitemap_regenerate_needed', TRUE);
+  \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_generated_last', 0);
+  \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_regenerate_needed', TRUE);
 }
 
 /**
@@ -471,8 +472,8 @@ function xmlsitemap_update_6203() {
       ->execute();
   }
 
-  variable_del('xmlsitemap_max_filesize');
-  variable_del('xmlsitemap_max_chunks');
+  \Drupal::config('xmlsitemap.settings')->clear('xmlsitemap_max_filesize');
+  \Drupal::config('xmlsitemap.settings')->clear('xmlsitemap_max_chunks');
 }
 
 /**

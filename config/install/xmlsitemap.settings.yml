@@ -13,3 +13,12 @@ xmlsitemap_frontpage_priority: 1.0
 xmlsitemap_frontpage_changefreq: 86400
 xmlsitemap_lastmod_format: 'Y-m-d\TH:i\Z'
 xmlsitemap_gz: false
+clean_url: 0
+cron_threshold_error: 1209600
+cron_threshold_warning: 172800
+xmlsitemap_regenerate_last: {}
+xmlsitemap_custom_links: {}
+xmlsitemap_priority_default: {}
+xmlsitemap_languages: {}
+xmlsitemap_max_chunks: {}
+xmlsitemap_max_filesize: {}

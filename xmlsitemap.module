@@ -231,13 +231,13 @@ function _xmlsitemap_rebuild_form_access() {
  */
 function xmlsitemap_cron() {
   // If there were no new or changed links, skip.
-  if (!variable_get('xmlsitemap_regenerate_needed', FALSE)) {
+  if (!\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_regenerate_needed')) {
     return;
   }
 
   // If the minimum sitemap lifetime hasn't been passed, skip.
-  $lifetime = REQUEST_TIME - variable_get('xmlsitemap_generated_last', 0);
-  if ($lifetime < variable_get('xmlsitemap_minimum_lifetime', 0)) {
+  $lifetime = REQUEST_TIME - \Drupal::config('xmlsitemap.settings')->get('xmlsitemap_generated_last');
+  if ($lifetime < \Drupal::config('xmlsitemap.settings')->get('xmlsitemap_minimum_lifetime')) {
     return;
   }
 
@@ -423,7 +423,7 @@ function xmlsitemap_sitemap_save(stdClass $sitemap) {
       ->execute();
 
     // Mark the sitemaps as needing regeneration.
-    variable_set('xmlsitemap_regenerate_needed', TRUE);
+    \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_regenerate_needed', TRUE);
   }
 
   if ($sitemap->is_new) {
@@ -515,7 +515,7 @@ function xmlsitemap_sitemap_uri(stdClass $sitemap) {
   drupal_alter('xmlsitemap_context_url_options', $uri['options'], $sitemap->context);
   $uri['options'] += array(
     'absolute' => TRUE,
-    'base_url' => variable_get('xmlsitemap_base_url', $GLOBALS['base_url']),
+    'base_url' => $GLOBALS['base_url'],
   );
   return $uri;
 }
@@ -592,7 +592,7 @@ function xmlsitemap_link_save(array $link) {
   $existing = db_query_range("SELECT loc, access, status, lastmod, priority, changefreq, changecount, language FROM {xmlsitemap} WHERE type = :type AND id = :id", 0, 1, array(':type' => $link['type'], ':id' => $link['id']))->fetchAssoc();
 
   // Check if this is a changed link and set the regenerate flag if necessary.
-  if (!variable_get('xmlsitemap_regenerate_needed', FALSE)) {
+  if (!\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_regenerate_needed')) {
     _xmlsitemap_check_changed_link($link, $existing, TRUE);
   }
 
@@ -625,7 +625,7 @@ function xmlsitemap_link_save(array $link) {
 function xmlsitemap_link_update_multiple($updates = array(), $conditions = array(), $check_flag = TRUE) {
   // If we are going to modify a visible sitemap link, we will need to set
   // the regenerate needed flag.
-  if ($check_flag && !variable_get('xmlsitemap_regenerate_needed', FALSE)) {
+  if ($check_flag && !\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_regenerate_needed')) {
     _xmlsitemap_check_changed_links($conditions, $updates, TRUE);
   }
 
@@ -678,7 +678,7 @@ function xmlsitemap_link_delete_multiple(array $conditions) {
     return FALSE;
   }
 
-  if (!variable_get('xmlsitemap_regenerate_needed', TRUE)) {
+  if (!\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_regenerate_needed')) {
     _xmlsitemap_check_changed_links($conditions, array(), TRUE);
   }
 
@@ -717,7 +717,7 @@ function _xmlsitemap_check_changed_links(array $conditions = array(), array $upd
   $changed = $query->execute()->fetchField();
 
   if ($changed && $flag) {
-    variable_set('xmlsitemap_regenerate_needed', TRUE);
+    \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_regenerate_needed', TRUE);
   }
 
   return $changed;
@@ -764,7 +764,7 @@ function _xmlsitemap_check_changed_link(array $link, $original_link = NULL, $fla
   }
 
   if ($changed && $flag) {
-    variable_set('xmlsitemap_regenerate_needed', TRUE);
+    \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_regenerate_needed', TRUE);
   }
 
   return $changed;
@@ -883,7 +883,7 @@ function _xmlsitemap_delete_recursive($path, $delete_root = FALSE) {
         continue;
       }
       $entry_path = $path . '/' . $entry;
-      file_unmanaged_delete_recursive($entry_path, TRUE);
+      file_unmanaged_delete_recursive($entry_path, NULL);
     }
     $dir->close();
     return $delete_root ? drupal_rmdir($path) : TRUE;
@@ -1024,7 +1024,7 @@ function xmlsitemap_link_bundle_settings_save($entity, $bundle, array $settings,
     }
   }
 
-  variable_set("xmlsitemap_settings_{$entity}_{$bundle}", $settings);
+  \Drupal::config('xmlsitemap.settings')->set("xmlsitemap_settings_{$entity}_{$bundle}", $settings);
   cache_clear_all('xmlsitemap:link_info:', 'cache', TRUE);
   //xmlsitemap_get_link_info(NULL, TRUE);
 }
@@ -1032,7 +1032,7 @@ function xmlsitemap_link_bundle_settings_save($entity, $bundle, array $settings,
 function xmlsitemap_link_bundle_rename($entity, $bundle_old, $bundle_new) {
   if ($bundle_old != $bundle_new) {
     $settings = xmlsitemap_link_bundle_load($entity, $bundle_old);
-    variable_del("xmlsitemap_settings_{$entity}_{$bundle_old}");
+    \Drupal::config('xmlsitemap.settings')->clear("xmlsitemap_settings_{$entity}_{$bundle_old}");
     xmlsitemap_link_bundle_settings_save($entity, $bundle_new, $settings, FALSE);
     xmlsitemap_link_update_multiple(array('subtype' => $bundle_new), array('type' => $entity, 'subtype' => $bundle_old));
   }
@@ -1044,11 +1044,11 @@ function xmlsitemap_link_bundle_rename($entity, $bundle_old, $bundle_new) {
 function xmlsitemap_link_type_rename($entity_old, $entity_new, $bundles = NULL) {
   $variables = db_query("SELECT name FROM {variable} WHERE name LIKE :pattern", array(':pattern' => db_like('xmlsitemap_settings_' . $entity_old . '_') . '%'))->fetchCol();
   foreach ($variables as $variable) {
-    $value = variable_get($variable);
-    variable_del($variable);
+    $value = \Drupal::config('xmlsitemap.settings')->get($variable);
+    \Drupal::config('xmlsitemap.settings')->clear($variable);
     if (isset($value)) {
       $variable_new = str_replace('xmlsitemap_settings_' . $entity_old, 'xmlsitemap_settings_' . $entity_new, $variable);
-      variable_set($variable_new, $value);
+      \Drupal::config('xmlsitemap.settings')->set($variable_new, $value);
     }
   }
 
@@ -1067,7 +1067,7 @@ function xmlsitemap_link_bundle_load($entity, $bundle, $load_bundle_info = TRUE)
       $info['info'] = $entity_info['bundles'][$bundle];
     }
   }
-  $info += variable_get("xmlsitemap_settings_{$entity}_{$bundle}", array());
+  $info += \Drupal::config('xmlsitemap.settings')->get("xmlsitemap_settings_{$entity}_{$bundle}");
   $info += array(
     'status' => XMLSITEMAP_STATUS_DEFAULT,
     'priority' => XMLSITEMAP_PRIORITY_DEFAULT,
@@ -1076,7 +1076,7 @@ function xmlsitemap_link_bundle_load($entity, $bundle, $load_bundle_info = TRUE)
 }
 
 function xmlsitemap_link_bundle_delete($entity, $bundle, $delete_links = TRUE) {
-  variable_del("xmlsitemap_settings_{$entity}_{$bundle}");
+  \Drupal::config('xmlsitemap.settings')->clear("xmlsitemap_settings_{$entity}_{$bundle}");
   if ($delete_links) {
     xmlsitemap_link_delete_multiple(array('type' => $entity, 'subtype' => $bundle));
   }
@@ -1246,12 +1246,17 @@ function xmlsitemap_calculate_changefreq($timestamps) {
  */
 function xmlsitemap_form_submit_flag_regenerate($form, $form_state) {
   foreach ($form_state['values'] as $variable => $value) {
-    $stored_value = variable_get($variable, 'not_a_variable');
+    if (\Drupal::config('xmlsitemap.settings')->get($variable) == NULL) {
+      $stored_value = 'not_a_variable';
+    }
+    else {
+      $stored_value = \Drupal::config('xmlsitemap.settings')->get($variable);
+    }
     if (is_array($value) && !empty($form_state['values']['array_filter'])) {
       $value = array_keys(array_filter($value));
     }
     if ($stored_value != 'not_a_variable' && $stored_value != $value) {
-      variable_set('xmlsitemap_regenerate_needed', TRUE);
+      \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_regenerate_needed', TRUE);
       drupal_set_message(t('XML sitemap settings have been modified and the files should be regenerated. You can <a href="@run-cron">run cron manually</a> to regenerate the cached files.', array('@run-cron' => url('admin/reports/status/run-cron', array('query' => drupal_get_destination())))), 'warning', FALSE);
       return;
     }

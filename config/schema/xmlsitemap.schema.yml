@@ -49,4 +49,31 @@ xmlsitemap.settings:
         xmlsitemap_gz:
             type: boolean
             label: 'Gz'
+        clean_url:
+            type: integer
+            label: 'Insert clean urls into sitemap'
+        cron_threshold_error:
+            type: integer
+            label: 'Threshold error for cron job'
+        cron_threshold_warning:
+            type: integer
+            label: 'Threshold warning for cron job'
+        xmlsitemap_regenerate_last:
+            type: undefined
+            label: 'Last regenerate xmlsitemap'
+        xmlsitemap_custom_links:
+            type: undefined
+            label: 'Custom links'
+        xmlsitemap_priority_default:
+            type: undefined
+            label: 'Default priority for a link'
+        xmlsitemap_languages:
+            type: mapping
+            label: 'Languages for xmlsitemap'
+        xmlsitemap_max_chunks:
+            type: undefined
+            label: 'Max chunks'
+        xmlsitemap_max_filesize:
+            type: undefined
+            label: 'Maximul size of xml file'
 
