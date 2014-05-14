@@ -1,4 +1,15 @@
+xmlsitemap_rebuild_needed: false
 xmlsitemap_regenerate_needed: true
+xmlsitemap_minimum_lifetime: 0
 xmlsitemap_generated_last: 0
+xmlsitemap_xsl: 1
+xmlsitemap_prefetch_aliases: 1
+xmlsitemap_chunk_size: 'auto'
 xmlsitemap_batch_limit: 100
 xmlsitemap_path: 'xmlsitemap'
+xmlsitemap_base_url: ''
+xmlsitemap_developer_mode: 0
+xmlsitemap_frontpage_priority: 1.0
+xmlsitemap_frontpage_changefreq: 86400
+xmlsitemap_lastmod_format: 'Y-m-d\TH:i\Z'
+xmlsitemap_gz: false

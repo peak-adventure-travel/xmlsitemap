@@ -4,15 +4,49 @@ xmlsitemap.settings:
     type: mapping
     label: 'XMLSitemap settings'
     mapping:
+        xmlsitemap_rebuild_needed:
+            type: boolean
+            label: 'Sitemap rebuilt'
         xmlsitemap_regenerate_needed: 
             type: boolean
-            label: 'XMLSitemap regenerate files'
+            label: 'Regenerate files'
+        xmlsitemap_minimum_lifetime:
+            type: integer
+            label: 'Minumum lifetime of an xmlsitemap xml file'
         xmlsitemap_generated_last:
             type: integer
-            label: 'XMLSitemap last generated'
+            label: 'Last generated sitemap'
+        xmlsitemap_xsl:
+            type: integer
+            label: 'Check XSL functionality'
+        xmlsitemap_prefetch_aliases:
+            type: integer
+            label: 'Decide to prefetch aliases'
+        xmlsitemap_chunk_size:
+            type: string
+            label: 'Set chunk size'
         xmlsitemap_batch_limit:
             type: integer
-            label: 'XMLSitemap batch limit'
+            label: 'Set batch limit'
         xmlsitemap_path:
             type: string
             label: 'Path of the XML generated files'
+        xmlsitemap_base_url:
+            type: string
+            label: 'URL for XML sitemap file'
+        xmlsitemap_developer_mode:
+            type: integer
+            label: 'Check if is developer mode'
+        xmlsitemap_frontpage_priority:
+            type: float
+            label: 'Priority of the frontpage'
+        xmlsitemap_frontpage_changefreq:
+            type: integer
+            label: 'Change frequency for frontpage'
+        xmlsitemap_lastmod_format:
+            type: integer
+            label: 'Last modified xmlsitemap format'
+        xmlsitemap_gz:
+            type: boolean
+            label: 'Gz'
+
