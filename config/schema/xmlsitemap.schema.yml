@@ -4,49 +4,49 @@ xmlsitemap.settings:
     type: mapping
     label: 'XMLSitemap settings'
     mapping:
-        xmlsitemap_rebuild_needed:
+        rebuild_needed:
             type: boolean
             label: 'Sitemap rebuilt'
-        xmlsitemap_regenerate_needed: 
+        regenerate_needed: 
             type: boolean
             label: 'Regenerate files'
-        xmlsitemap_minimum_lifetime:
+        minimum_lifetime:
             type: integer
             label: 'Minumum lifetime of an xmlsitemap xml file'
-        xmlsitemap_generated_last:
+        generated_last:
             type: integer
             label: 'Last generated sitemap'
-        xmlsitemap_xsl:
+        xsl:
             type: integer
             label: 'Check XSL functionality'
-        xmlsitemap_prefetch_aliases:
+        prefetch_aliases:
             type: integer
             label: 'Decide to prefetch aliases'
-        xmlsitemap_chunk_size:
+        chunk_size:
             type: string
             label: 'Set chunk size'
-        xmlsitemap_batch_limit:
+        batch_limit:
             type: integer
             label: 'Set batch limit'
-        xmlsitemap_path:
+        path:
             type: string
             label: 'Path of the XML generated files'
-        xmlsitemap_base_url:
+        base_url:
             type: string
             label: 'URL for XML sitemap file'
-        xmlsitemap_developer_mode:
+        developer_mode:
             type: integer
             label: 'Check if is developer mode'
-        xmlsitemap_frontpage_priority:
+        frontpage_priority:
             type: float
             label: 'Priority of the frontpage'
-        xmlsitemap_frontpage_changefreq:
+        frontpage_changefreq:
             type: integer
             label: 'Change frequency for frontpage'
-        xmlsitemap_lastmod_format:
+        lastmod_format:
             type: integer
             label: 'Last modified xmlsitemap format'
-        xmlsitemap_gz:
+        gz:
             type: boolean
             label: 'Gz'
         clean_url:
@@ -58,22 +58,22 @@ xmlsitemap.settings:
         cron_threshold_warning:
             type: integer
             label: 'Threshold warning for cron job'
-        xmlsitemap_regenerate_last:
+        regenerate_last:
             type: undefined
             label: 'Last regenerate xmlsitemap'
-        xmlsitemap_custom_links:
+        custom_links:
             type: undefined
             label: 'Custom links'
-        xmlsitemap_priority_default:
+        priority_default:
             type: undefined
             label: 'Default priority for a link'
-        xmlsitemap_languages:
+        languages:
             type: mapping
             label: 'Languages for xmlsitemap'
-        xmlsitemap_max_chunks:
+        max_chunks:
             type: undefined
             label: 'Max chunks'
-        xmlsitemap_max_filesize:
+        max_filesize:
             type: undefined
             label: 'Maximul size of xml file'
 

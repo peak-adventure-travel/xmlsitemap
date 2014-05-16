@@ -103,23 +103,23 @@ function xmlsitemap_requirements($phase) {
       $requirements['xmlsitemap_file_size']['description'] = $t('You have exceeded the maximum sitemap file size of @size. If possible, decrease the number of links per sitemap page.', array('@size' => format_size(XMLSITEMAP_MAX_SITEMAP_FILESIZE)));
       $requirements['xmlsitemap_file_size']['severity'] = REQUIREMENT_ERROR;
     }
-    elseif (!\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_developer_mode')) {
+    elseif (!\Drupal::config('xmlsitemap.settings')->get('developer_mode')) {
       unset($requirements['xmlsitemap_file_size']);
     }
 
     // Check when the cached files were last generated.
-    $generated_last = \Drupal::config('xmlsitemap.settings')->get('xmlsitemap_generated_last');
+    $generated_last = \Drupal::config('xmlsitemap.settings')->get('generated_last');
     $generated_ago = REQUEST_TIME - $generated_last;
     $requirements['xmlsitemap_generated'] = array(
       'title' => $t('XML sitemap'),
       'value' => $generated_last ? $t('Last attempted generation on !date (!interval ago).', array('!date' => format_date($generated_last, 'small'), '!interval' => format_interval($generated_ago))) : $t('Cached files have not been generated yet.'),
       'severity' => REQUIREMENT_OK,
     );
-    if (\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_rebuild_needed') && _xmlsitemap_rebuild_form_access()) {
+    if (\Drupal::config('xmlsitemap.settings')->get('rebuild_needed') && _xmlsitemap_rebuild_form_access()) {
       $requirements['xmlsitemap_generated']['severity'] = REQUIREMENT_ERROR;
       $requirements['xmlsitemap_generated']['description'] = $t('The XML sitemap data is out of sync and needs to be <a href="@link-rebuild">completely rebuilt<a>.', array('@link-rebuild' => url('admin/config/search/xmlsitemap/rebuild')));
     }
-    elseif (\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_regenerate_needed')) {
+    elseif (\Drupal::config('xmlsitemap.settings')->get('regenerate_needed')) {
       if ($max_filesize == 0) {
         // A maximum sitemap file size of 0 indicates an error in generation.
         $requirements['xmlsitemap_generated']['severity'] = REQUIREMENT_ERROR;
@@ -316,8 +316,8 @@ function xmlsitemap_install() {
       'type' => 'frontpage',
       'id' => 0,
       'loc' => '',
-      'priority' => \Drupal::config('xmlsitemap.settings')->get('xmlsitemap_frontpage_priority'),
-      'changefreq' => \Drupal::config('xmlsitemap.settings')->get('xmlsitemap_frontpage_changefreq'),
+      'priority' => \Drupal::config('xmlsitemap.settings')->get('frontpage_priority'),
+      'changefreq' => \Drupal::config('xmlsitemap.settings')->get('frontpage_changefreq'),
       'language' => LanguageInterface::LANGCODE_NOT_SPECIFIED,
     ))
     ->execute();
@@ -341,7 +341,7 @@ function xmlsitemap_enable() {
   // Ensure the file cache directory is available and ready.
   xmlsitemap_check_directory();
 
-  \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_regenerate_needed', TRUE);
+  \Drupal::config('xmlsitemap.settings')->set('regenerate_needed', TRUE);
 }
 
 /**
@@ -422,7 +422,7 @@ function xmlsitemap_update_6202() {
     // Refresh the schema and load the module if it's disabled.
     drupal_get_schema(NULL, TRUE);
 
-    if (module_exists('xmlsitemap_i18n') && $languages = \Drupal::config('xmlsitemap.settings')->get('xmlsitemap_languages')) {
+    if (module_exists('xmlsitemap_i18n') && $languages = \Drupal::config('xmlsitemap.settings')->get('languages')) {
       foreach ($languages as $language) {
         $sitemap = new stdClass();
         $sitemap->context = array('language' => $language);
@@ -437,15 +437,15 @@ function xmlsitemap_update_6202() {
   }
 
   // Language variable is no longer needed, so go ahead and delete it.
-  \Drupal::config()->clear('xmlsitemap_languages');
+  \Drupal::config()->clear('languages');
 
   // Ensure that the sitemaps will be refreshed on next cron.
-  \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_generated_last', 0);
-  \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_regenerate_needed', TRUE);
+  \Drupal::config('xmlsitemap.settings')->set('generated_last', 0);
+  \Drupal::config('xmlsitemap.settings')->set('regenerate_needed', TRUE);
 }
 
 /**
- * Convert the xmlsitemap_max_filesize variable to a max_filesize column
+ * Convert the max_filesize variable to a max_filesize column
  * per-sitemap.
  */
 function xmlsitemap_update_6203() {
@@ -472,8 +472,8 @@ function xmlsitemap_update_6203() {
       ->execute();
   }
 
-  \Drupal::config('xmlsitemap.settings')->clear('xmlsitemap_max_filesize');
-  \Drupal::config('xmlsitemap.settings')->clear('xmlsitemap_max_chunks');
+  \Drupal::config('xmlsitemap.settings')->clear('max_filesize');
+  \Drupal::config('xmlsitemap.settings')->clear('max_chunks');
 }
 
 /**
@@ -520,7 +520,7 @@ function xmlsitemap_update_7201() {
 }
 
 /**
- * Convert the xmlsitemap_max_filesize variable to a max_filesize column
+ * Convert the max_filesize variable to a max_filesize column
  * per-sitemap.
  */
 function xmlsitemap_update_7202() {

@@ -232,13 +232,13 @@ function _xmlsitemap_rebuild_form_access() {
  */
 function xmlsitemap_cron() {
   // If there were no new or changed links, skip.
-  if (!\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_regenerate_needed')) {
+  if (!\Drupal::config('xmlsitemap.settings')->get('regenerate_needed')) {
     return;
   }
 
   // If the minimum sitemap lifetime hasn't been passed, skip.
-  $lifetime = REQUEST_TIME - \Drupal::config('xmlsitemap.settings')->get('xmlsitemap_generated_last');
-  if ($lifetime < \Drupal::config('xmlsitemap.settings')->get('xmlsitemap_minimum_lifetime')) {
+  $lifetime = REQUEST_TIME - \Drupal::config('xmlsitemap.settings')->get('generated_last');
+  if ($lifetime < \Drupal::config('xmlsitemap.settings')->get('minimum_lifetine')) {
     return;
   }
 
@@ -276,28 +276,28 @@ function xmlsitemap_robotstxt() {
  */
 function xmlsitemap_variables() {
   return array(
-    'xmlsitemap_rebuild_needed' => FALSE,
-    'xmlsitemap_regenerate_needed' => FALSE,
-    'xmlsitemap_minimum_lifetime' => 0,
-    'xmlsitemap_generated_last' => 0,
-    'xmlsitemap_xsl' => 1,
-    'xmlsitemap_prefetch_aliases' => 1,
-    'xmlsitemap_chunk_size' => 'auto',
-    'xmlsitemap_batch_limit' => 100,
-    'xmlsitemap_path' => 'xmlsitemap',
-    'xmlsitemap_base_url' => $GLOBALS['base_url'],
-    'xmlsitemap_developer_mode' => 0,
-    'xmlsitemap_frontpage_priority' => 1.0,
-    'xmlsitemap_frontpage_changefreq' => XMLSITEMAP_FREQUENCY_DAILY,
-    'xmlsitemap_lastmod_format' => XMLSITEMAP_LASTMOD_MEDIUM,
-    'xmlsitemap_gz' => FALSE,
+    'rebuild_needed' => FALSE,
+    'regenerate_needed' => FALSE,
+    'minimum_lifetine' => 0,
+    'generated_last' => 0,
+    'xsl' => 1,
+    'prefetch_aliases' => 1,
+    'chunk_size' => 'auto',
+    'batch_limit' => 100,
+    'path' => 'xmlsitemap',
+    'base_url' => $GLOBALS['base_url'],
+    'developer_mode' => 0,
+    'frontpage_priority' => 1.0,
+    'frontpage_changefreq' => XMLSITEMAP_FREQUENCY_DAILY,
+    'lastmod_format' => XMLSITEMAP_LASTMOD_MEDIUM,
+    'gz' => FALSE,
     // Removed variables are set to NULL so they can still be deleted.
-    'xmlsitemap_regenerate_last' => NULL,
-    'xmlsitemap_custom_links' => NULL,
-    'xmlsitemap_priority_default' => NULL,
-    'xmlsitemap_languages' => NULL,
-    'xmlsitemap_max_chunks' => NULL,
-    'xmlsitemap_max_filesize' => NULL,
+    'regenerate_last' => NULL,
+    'custom_links' => NULL,
+    'priority_default' => NULL,
+    'languages' => NULL,
+    'max_chunks' => NULL,
+    'max_filesize' => NULL,
   );
 }
 
@@ -424,7 +424,7 @@ function xmlsitemap_sitemap_save(stdClass $sitemap) {
       ->execute();
 
     // Mark the sitemaps as needing regeneration.
-    \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_regenerate_needed', TRUE);
+    \Drupal::config('xmlsitemap.settings')->set('regenerate_needed', TRUE);
   }
 
   if ($sitemap->is_new) {
@@ -593,7 +593,7 @@ function xmlsitemap_link_save(array $link) {
   $existing = db_query_range("SELECT loc, access, status, lastmod, priority, changefreq, changecount, language FROM {xmlsitemap} WHERE type = :type AND id = :id", 0, 1, array(':type' => $link['type'], ':id' => $link['id']))->fetchAssoc();
 
   // Check if this is a changed link and set the regenerate flag if necessary.
-  if (!\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_regenerate_needed')) {
+  if (!\Drupal::config('xmlsitemap.settings')->get('regenerate_needed')) {
     _xmlsitemap_check_changed_link($link, $existing, TRUE);
   }
 
@@ -626,7 +626,7 @@ function xmlsitemap_link_save(array $link) {
 function xmlsitemap_link_update_multiple($updates = array(), $conditions = array(), $check_flag = TRUE) {
   // If we are going to modify a visible sitemap link, we will need to set
   // the regenerate needed flag.
-  if ($check_flag && !\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_regenerate_needed')) {
+  if ($check_flag && !\Drupal::config('xmlsitemap.settings')->get('regenerate_needed')) {
     _xmlsitemap_check_changed_links($conditions, $updates, TRUE);
   }
 
@@ -679,7 +679,7 @@ function xmlsitemap_link_delete_multiple(array $conditions) {
     return FALSE;
   }
 
-  if (!\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_regenerate_needed')) {
+  if (!\Drupal::config('xmlsitemap.settings')->get('regenerate_needed')) {
     _xmlsitemap_check_changed_links($conditions, array(), TRUE);
   }
 
@@ -718,7 +718,7 @@ function _xmlsitemap_check_changed_links(array $conditions = array(), array $upd
   $changed = $query->execute()->fetchField();
 
   if ($changed && $flag) {
-    \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_regenerate_needed', TRUE);
+    \Drupal::config('xmlsitemap.settings')->set('regenerate_needed', TRUE);
   }
 
   return $changed;
@@ -765,7 +765,7 @@ function _xmlsitemap_check_changed_link(array $link, $original_link = NULL, $fla
   }
 
   if ($changed && $flag) {
-    \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_regenerate_needed', TRUE);
+    \Drupal::config('xmlsitemap.settings')->set('regenerate_needed', TRUE);
   }
 
   return $changed;
@@ -779,7 +779,7 @@ function xmlsitemap_get_directory(stdClass $sitemap = NULL) {
   $directory = &drupal_static(__FUNCTION__);
 
   if (!isset($directory)) {
-    $directory = \Drupal::config('xmlsitemap.settings')->get('xmlsitemap_path');
+    $directory = \Drupal::config('xmlsitemap.settings')->get('path');
   }
 
   if (!empty($sitemap->smid)) {
@@ -1257,7 +1257,7 @@ function xmlsitemap_form_submit_flag_regenerate($form, $form_state) {
       $value = array_keys(array_filter($value));
     }
     if ($stored_value != 'not_a_variable' && $stored_value != $value) {
-      \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_regenerate_needed', TRUE);
+      \Drupal::config('xmlsitemap.settings')->set('regenerate_needed', TRUE);
       drupal_set_message(t('XML sitemap settings have been modified and the files should be regenerated. You can <a href="@run-cron">run cron manually</a> to regenerate the cached files.', array('@run-cron' => url('admin/reports/status/run-cron', array('query' => drupal_get_destination())))), 'warning', FALSE);
       return;
     }
