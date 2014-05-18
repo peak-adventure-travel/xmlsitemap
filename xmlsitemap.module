@@ -9,6 +9,8 @@
  * Main file for the xmlsitemap module.
  */
 use Drupal\Component\Utility\Crypt;
+use Drupal\Core\Session\UserSession;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * The maximum number of links in one sitemap chunk file.
@@ -86,11 +88,11 @@ function xmlsitemap_hook_info() {
 /**
  * Implements hook_help().
  */
-function xmlsitemap_help($path, $arg) {
+function xmlsitemap_help($path, Request $request) {
   $output = '';
 
   switch ($path) {
-    case 'admin/help/xmlsitemap':
+    case 'help.page.xmlsitemap':
     case 'admin/config/search/xmlsitemap/settings/%/%/%':
     case 'admin/config/search/xmlsitemap/edit/%':
     case 'admin/config/search/xmlsitemap/delete/%':
@@ -103,12 +105,11 @@ function xmlsitemap_help($path, $arg) {
       $output .= '<p>' . t("This action rebuilds your site's XML sitemap and regenerates the cached files, and may be a lengthy process. If you just installed XML sitemap, this can be helpful to import all your site's content into the sitemap. Otherwise, this should only be used in emergencies.") . '</p>';
   }
 
-  if (arg(0) == 'admin' && strpos($path, 'xmlsitemap') !== FALSE && user_access('administer xmlsitemap')) {
+  $currentUser = \Drupal::currentUser();
+  if (arg(0) == 'admin' && strpos($path, 'xmlsitemap') !== FALSE && $currentUser->hasPermission('administer xmlsitemap')) {
     module_load_include('inc', 'xmlsitemap');
-    if ($arg[1] == 'config') {
-      // Alert the user to any potential problems detected by hook_requirements.
-      xmlsitemap_check_status();
-    }
+    // Alert the user to any potential problems detected by hook_requirements.
+    xmlsitemap_check_status();
     $output .= _xmlsitemap_get_blurb();
   }
 
