@@ -311,13 +311,12 @@ function xmlsitemap_var($name, $default = NULL) {
     $defaults = xmlsitemap_variables();
   }
 
-  $name = 'xmlsitemap_' . $name;
-
   // @todo Remove when stable.
   if (!isset($defaults[$name])) {
     trigger_error(strtr('Default variable for %variable not found.', array('%variable' => drupal_placeholder($name))));
   }
 
+  return \Drupal::config('xmlsitemap.settings')->get($name);
   return variable_get($name, isset($default) || !isset($defaults[$name]) ? $default : $defaults[$name]);
 }
 

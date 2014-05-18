@@ -7,6 +7,8 @@
  * @ingroup xmlsitemap
  */
 
+use Drupal\Core\Language\LanguageInterface;
+
 /**
  * Given an internal Drupal path, return the alias for the path.
  *
@@ -50,7 +52,7 @@ function _xmlsitemap_regenerate_before() {
   // Attempt to increase the memory limit.
   _xmlsitemap_set_memory_limit();
 
-  if (variable_get('xmlsitemap_developer_mode', 0)) {
+  if (\Drupal::config('xmlsitemap.settings')->get('developer_mode')) {
     watchdog('xmlsitemap', 'Starting XML sitemap generation. Memory usage: @memory-peak.', array(
         '@memory-peak' => format_size(memory_get_peak_usage(TRUE)),
       ),
@@ -121,6 +123,7 @@ function _xmlsitemap_set_memory_limit($new_limit = NULL) {
  */
 function xmlsitemap_generate_page(stdClass $sitemap, $page) {
   try {
+    module_load_include('xmlsitemap.inc', 'xmlsitemap');
     $writer = new XMLSitemapWriter($sitemap, $page);
     $writer->startDocument();
     $writer->generateXML();
@@ -136,14 +139,14 @@ function xmlsitemap_generate_page(stdClass $sitemap, $page) {
 }
 
 function xmlsitemap_generate_chunk(stdClass $sitemap, XMLSitemapWriter $writer, $chunk) {
-  $lastmod_format = variable_get('xmlsitemap_lastmod_format', XMLSITEMAP_LASTMOD_MEDIUM);
+  $lastmod_format = \Drupal::config('xmlsitemap.settings')->get('lastmod_format');
 
   $url_options = $sitemap->uri['options'];
   $url_options += array(
     'absolute' => TRUE,
-    'base_url' => variable_get('xmlsitemap_base_url', $GLOBALS['base_url']),
+    'base_url' => \Drupal::config('xmlsitemap.settings')->get('base_url'),
     'language' => language_default(),
-    'alias' => variable_get('xmlsitemap_prefetch_aliases', TRUE),
+    'alias' => \Drupal::config('xmlsitemap.settings')->get('prefetch_aliases'),
   );
 
   $last_url = '';
@@ -164,7 +167,7 @@ function xmlsitemap_generate_chunk(stdClass $sitemap, XMLSitemapWriter $writer, 
   $links = $query->execute();
 
   while ($link = $links->fetchAssoc()) {
-    $link['language'] = $link['language'] != LANGUAGE_NONE ? xmlsitemap_language_load($link['language']) : $url_options['language'];
+    $link['language'] = $link['language'] != LanguageInterface::LANGCODE_NOT_SPECIFIED ? xmlsitemap_language_load($link['language']) : $url_options['language'];
     if ($url_options['alias']) {
       $link['loc'] = xmlsitemap_get_path_alias($link['loc'], $link['language']->language);
     }
@@ -390,7 +393,7 @@ function xmlsitemap_rebuild_batch(array $entities, $save_custom = FALSE) {
  */
 function xmlsitemap_batch_variable_set(array $variables) {
   foreach ($variables as $variable => $value) {
-    variable_set($variable, $value);
+    \Drupal::config('xmlsitemap.settings')->set($variable,$value);
   }
 }
 
