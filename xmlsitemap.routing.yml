@@ -1,0 +1,80 @@
+xmlsitemap.admin_search:
+  path: '/admin/config/search/xmlsitemap'
+  defaults:
+    _form: ''
+    _title: 'XML sitemap'
+  requirements:
+    _permission: 'administer xmlsitemap'
+    
+xmlsitemap.admin_search_list:
+  path: '/admin/config/search/xmlsitemap/list'
+  defaults:
+    _form: ''
+    _title: 'List'
+  requirements:
+    _permission: 'administer xmlsitemap'
+    
+xmlsitemap.admin_add:
+  path: '/admin/config/search/xmlsitemap/add'
+  defaults:
+    _form: ''
+    _title: 'Add new XML sitemap'
+  requirements:
+    _permission: 'administer xmlsitemap'
+    
+xmlsitemap.admin_edit:
+  path: '/admin/config/search/xmlsitemap/edit/%xmlsitemap_sitemap'
+  defaults:
+    _form: ''
+    _title: 'Edit XML sitemap'
+  requirements:
+    _permission: 'administer xmlsitemap'
+    
+xmlsitemap.admin_delete:
+  path: '/admin/config/search/xmlsitemap/delete/%xmlsitemap_sitemap'
+  defaults:
+    _form: ''
+    _title: 'Delete XML sitemap'
+  requirements:
+    _permission: 'administer xmlsitemap'
+    
+xmlsitemap.admin_search_settings:
+  path: '/admin/config/search/xmlsitemap/settings'
+  defaults:
+    _form: ''
+    _title: 'Settings'
+  requirements:
+    _permission: 'administer xmlsitemap'
+    
+xmlsitemap.admin_search_settings_bundle:
+  path: '/admin/config/search/xmlsitemap/settings/%xmlsitemap_link_bundle/%'
+  defaults:
+    _form: ''
+    _title: 'Bundle settings'
+  requirements:
+    _permission: 'administer xmlsitemap'
+    
+xmlsitemap.admin_rebuild:
+  path: '/admin/config/search/xmlsitemap/rebuild'
+  defaults:
+    _form: ''
+    _title: 'Rebuild links'
+  requirements:
+    _permission: 'administer xmlsitemap'
+
+xmlsitemap.sitemap_xml:
+  path: '/sitemap.xml'
+  defaults:
+    _content: ''
+    _title: 'Sitemap XML'
+    
+xmlsitemap.sitemap_xsl:
+  path: '/sitemap.xsl'
+  defaults:
+    _content: ''
+    _title: 'Sitemap XSL'
+    
+    
+    
+
+    

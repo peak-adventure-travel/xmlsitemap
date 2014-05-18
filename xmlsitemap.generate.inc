@@ -26,19 +26,19 @@ function xmlsitemap_get_path_alias($path, $language) {
   static $last_language;
 
   if (!isset($aliases)) {
-    $aliases[LANGUAGE_NONE] = db_query("SELECT source, alias FROM {url_alias} WHERE language = :language ORDER BY pid", array(':language' => LANGUAGE_NONE))->fetchAllKeyed();
+    $aliases[LanguageInterface::LANGCODE_NOT_SPECIFIED] = db_query("SELECT source, alias FROM {url_alias} WHERE language = :language ORDER BY pid", array(':language' => LanguageInterface::LANGCODE_NOT_SPECIFIED))->fetchAllKeyed();
   }
-  if ($language != LANGUAGE_NONE && $last_language != $language) {
+  if ($language != LanguageInterface::LANGCODE_NOT_SPECIFIED && $last_language != $language) {
     unset($aliases[$last_language]);
     $aliases[$language] = db_query("SELECT source, alias FROM {url_alias} WHERE language = :language ORDER BY pid", array(':language' => $language))->fetchAllKeyed();
     $last_language = $language;
   }
 
-  if ($language != LANGUAGE_NONE && isset($aliases[$language][$path])) {
+  if ($language != LanguageInterface::LANGCODE_NOT_SPECIFIED && isset($aliases[$language][$path])) {
     return $aliases[$language][$path];
   }
-  elseif (isset($aliases[LANGUAGE_NONE][$path])) {
-    return $aliases[LANGUAGE_NONE][$path];
+  elseif (isset($aliases[LanguageInterface::LANGCODE_NOT_SPECIFIED][$path])) {
+    return $aliases[LanguageInterface::LANGCODE_NOT_SPECIFIED][$path];
   }
   else {
     return $path;
