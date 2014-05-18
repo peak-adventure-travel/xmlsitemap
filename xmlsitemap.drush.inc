@@ -26,8 +26,8 @@ function xmlsitemap_drush_command() {
     'callback' => 'drush_xmlsitemap_index',
     'drupal dependencies' => array('xmlsitemap'),
     'options' => array(
-      '--limit' => 'The limit of links of each type to process. Default value: ' .  \Drupal::config('xmlsitemap.settings')->get('xmlsitemap_batch_limit'),
-    ),
+      '--limit' => 'The limit of links of each type to process.'
+    )
   );
   return $items;
 }
