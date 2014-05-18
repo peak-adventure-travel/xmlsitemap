@@ -8,9 +8,10 @@
  * @file
  * Main file for the xmlsitemap module.
  */
+use Symfony\Component\HttpFoundation\Request;
 use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Session\UserSession;
-use Symfony\Component\HttpFoundation\Request;
+use Drupal\Core\Language\LanguageInterface;
 
 /**
  * The maximum number of links in one sitemap chunk file.
@@ -574,7 +575,7 @@ function xmlsitemap_link_save(array $link) {
     'priority_override' => 0,
     'changefreq' => 0,
     'changecount' => 0,
-    'language' => LANGUAGE_NONE,
+    'language' => LanguageInterface::LANGCODE_NOT_SPECIFIED,
   );
 
   // Allow other modules to alter the link before saving.
