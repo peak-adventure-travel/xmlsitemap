@@ -24,9 +24,9 @@ use Drupal\Core\Entity\EntityTypeInterface;
  *     
  *
  *     "form" = {
- *       "add" = "Drupal\xmlsitemap\Entity\Form\XmlSitemapFormController",
- *       "edit" = "Drupal\xmlsitemap\Entity\Form\XmlSitemapFormController",
- *       "delete" = "Drupal\xmlsitemap\Entity\Form\XmlSitemapDeleteForm",
+ *       "add" = "Drupal\xmlsitemap\Form\XmlSitemapForm",
+ *       "edit" = "Drupal\xmlsitemap\Form\XmlSitemapForm",
+ *       "delete" = "Drupal\xmlsitemap\Form\XmlSitemapDeleteForm",
  *     },
  *     "translation" = "Drupal\content_translation\ContentTranslationController"
  *   },
@@ -41,7 +41,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
  *   },
  *   links = {
  *     "edit-form" = "xmlsitemap.admin_edit",
- *     "admin-form" = "xmlsitemap.admin_settings",
+ *     "admin-form" = "xmlsitemap.admin_add",
  *     "delete-form" = "xmlsitemap.admin_delete"
  *   }
  * )
@@ -53,6 +53,20 @@ class XmlSitemap extends ContentEntityBase implements XmlSitemapInterface {
    */
   public function id() {
     return $this->get('smid')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function chunks() {
+    return $this->get('chunks')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function links() {
+    return $this->get('links')->value;
   }
 
   /**

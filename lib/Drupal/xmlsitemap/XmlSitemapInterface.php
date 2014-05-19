@@ -34,6 +34,22 @@ interface XmlSitemapInterface extends EntityInterface {
    */
   public function uuid();
 
+  /**
+   * Returns the number of chunks in sitemap.
+   *
+   * @return int
+   *   The number of chunks in sitemap.
+   */
+  public function chunks();
+
+  /**
+   * Returns the number of links in sitemap.
+   *
+   * @return int
+   *   The number of links in sitemap.
+   */
+  public function links();
+
 
   /**
    * Defines the base fields of the entity type.
