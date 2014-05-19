@@ -49,6 +49,7 @@ function _xmlsitemap_get_version() {
 function xmlsitemap_check_status() {
   $messages = &drupal_static(__FUNCTION__);
 
+  /*
   if (!isset($messages)) {
     // Cache the list of modules that are checked.
     if ($cache = cache_get('xmlsitemap:registry:requirements')) {
@@ -84,6 +85,6 @@ function xmlsitemap_check_status() {
       drupal_set_message($message, 'warning', FALSE);
     }
   }
-
+  */
   return !empty($messages);
 }

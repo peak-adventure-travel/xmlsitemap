@@ -1,0 +1,20 @@
+xmlsitemap.add:
+  route_name: 'xmlsitemap.admin_add'
+  title: 'Add XmlSitemap'
+  appears_on:
+    - xmlsitemap.admin_search
+    - xmlsitemap.admin_search_list
+    
+xmlsitemap.edit:
+  route_name: 'xmlsitemap.admin_edit'
+  title: 'Edit XmlSitemap'
+  appears_on:
+    - xmlsitemap.admin_search
+    - xmlsitemap.admin_search_list
+    
+xmlsitemap.delete:
+  route_name: 'xmlsitemap.admin_delete'
+  title: 'Add XmlSitemap'
+  appears_on:
+    - xmlsitemap.admin_search
+    - xmlsitemap.admin_search_list
