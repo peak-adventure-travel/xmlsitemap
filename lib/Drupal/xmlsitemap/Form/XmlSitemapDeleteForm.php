@@ -42,7 +42,7 @@ class XmlSitemapDeleteForm extends ContentEntityConfirmFormBase {
    */
   public function submit(array $form, array &$form_state) {
     $this->entity->delete();
-    watchdog('content', '@type: deleted %title.', array('@type' => $this->entity->bundle(), '%title' => $this->entity->id()));
+    watchdog('content', 'deleted %title.', array( '%title' => $this->entity->id()));
     $form_state['redirect_route']['route_name'] = 'xmlsitemap.admin_search';
   }
 

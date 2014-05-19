@@ -36,12 +36,10 @@ use Drupal\Core\Entity\EntityTypeInterface;
  *   translatable = TRUE,
  *   entity_keys = {
  *     "id" = "smid",
- *     "label" = "name",
  *     "uuid" = "uuid"
  *   },
  *   links = {
  *     "edit-form" = "xmlsitemap.admin_edit",
- *     "admin-form" = "xmlsitemap.admin_add",
  *     "delete-form" = "xmlsitemap.admin_delete"
  *   }
  * )
@@ -87,6 +85,10 @@ class XmlSitemap extends ContentEntityBase implements XmlSitemapInterface {
         ->setLabel(t('ID'))
         ->setDescription(t('The ID of the XmlSitemap entity.'))
         ->setReadOnly(TRUE);
+    $fields['uuid'] = FieldDefinition::create('uuid')
+      ->setLabel(t('UUID'))
+      ->setDescription(t('The UUID of the FooBar entity.'))
+      ->setReadOnly(TRUE);
     $fields['context'] = FieldDefinition::create('string')
         ->setLabel(t('Context'))
         ->setDescription(t('The context of the XMLSitemap entity.'))

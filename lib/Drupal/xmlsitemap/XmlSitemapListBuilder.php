@@ -35,8 +35,6 @@ class XmlSitemapListBuilder extends EntityListBuilder {
     $row['last_updated'] = t('Updated');
     $row['links'] = $entity->links();
     $row['pages'] = $entity->chunks();
-    return $row;
-    $row['label'] = l($this->getLabel($entity), 'xmlsitemap/' . $entity->id());
     return $row + parent::buildRow($entity);
   }
 

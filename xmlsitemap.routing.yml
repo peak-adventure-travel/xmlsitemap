@@ -23,19 +23,17 @@ xmlsitemap.admin_add:
     _permission: 'administer xmlsitemap'
     
 xmlsitemap.admin_edit:
-  path: '/admin/config/search/xmlsitemap/edit/{xmlsitemap_sitemap}'
+  path: '/admin/config/search/xmlsitemap/edit'
   defaults:
     _entity_form: 'xmlsitemap.edit'
-    _form: '\Drupal\xmlsitemap\Form\XmlSitemapSettingsForm'
     _title: 'Edit XML sitemap'
   requirements:
     _permission: 'administer xmlsitemap'
     
 xmlsitemap.admin_delete:
-  path: '/admin/config/search/xmlsitemap/delete/{xmlsitemap_sitemap}'
+  path: '/admin/config/search/xmlsitemap/delete'
   defaults:
     _entity_form: 'xmlsitemap.delete'
-    _form: '\Drupal\xmlsitemap\Form\XmlSitemapSettingsForm'
     _title: 'Delete XML sitemap'
   requirements:
     _permission: 'administer xmlsitemap'
