@@ -18,7 +18,7 @@ class XmlSitemapDeleteForm extends ContentEntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getQuestion() {
-    return t('Are you sure you want to delete entity %name?', array('%name' => $this->entity->id()));
+    return t('Are you sure you want to delete sitemap %name?', array('%name' => $this->entity->id()));
   }
 
   /**
