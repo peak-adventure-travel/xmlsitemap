@@ -77,7 +77,11 @@ function xmlsitemap_check_status() {
     }
 
     if ($messages) {
-      $message = t('One or more problems were detected with your XML sitemap configuration: !messages', array('!messages' => theme('item_list', array('items' => $messages))));
+      $messages = array(
+        '#type' => 'item_list',
+        '#items' => array($messages)
+      );
+      $message = t('One or more problems were detected with your XML sitemap configuration: !messages', array('!messages' => drupal_render($messages)));
       if (\Drupal::currentUser()->hasPermission('access site reports')) {
         $message .= t('Check the <a href="@status-report">status report</a> for more information.', array('@status-report' => url('admin/reports/status')));
       }
