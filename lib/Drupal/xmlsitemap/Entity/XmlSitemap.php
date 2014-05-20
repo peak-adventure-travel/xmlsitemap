@@ -70,6 +70,30 @@ class XmlSitemap extends ContentEntityBase implements XmlSitemapInterface {
   /**
    * {@inheritdoc}
    */
+  public function setId($smid) {
+    $this->set('smid', $smid);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setChunks($chunks) {
+    $this->set('chunks', $chunks);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setLinks($links) {
+    $this->set('chunks', $chunks);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
     parent::preCreate($storage_controller, $values);
     $values += array(

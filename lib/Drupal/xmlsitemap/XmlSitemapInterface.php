@@ -24,6 +24,16 @@ interface XmlSitemapInterface extends EntityInterface {
   public function id();
 
   /**
+   * Set the xmlsitemap id.
+   *
+   * @param string $smid
+   *
+   * @return \Drupal\xmlsitemap\XmlSitemapInterface
+   *   The called xmlsitemap entity.
+   */
+  public function setId($smid);
+
+  /**
    * Returns the entity UUID (Universally Unique Identifier).
    *
    * The UUID is guaranteed to be unique and can be used to identify an entity
@@ -43,6 +53,16 @@ interface XmlSitemapInterface extends EntityInterface {
   public function chunks();
 
   /**
+   * Set the xmlsitemap chunks number.
+   *
+   * @param int $chunks
+   *
+   * @return \Drupal\xmlsitemap\XmlSitemapInterface
+   *   The called xmlsitemap entity.
+   */
+  public function setChunks($chunks);
+
+  /**
    * Returns the number of links in sitemap.
    *
    * @return int
@@ -50,6 +70,15 @@ interface XmlSitemapInterface extends EntityInterface {
    */
   public function links();
 
+  /**
+   * Set the xmlsitemap links number.
+   *
+   * @param int $links
+   *    
+   * @return \Drupal\xmlsitemap\XmlSitemapInterface
+   *   The called xmlsitemap entity.
+   */
+  public function setLinks($links);
 
   /**
    * Defines the base fields of the entity type.
