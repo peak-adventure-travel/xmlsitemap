@@ -36,7 +36,11 @@ use Drupal\Core\Entity\EntityTypeInterface;
  *   translatable = TRUE,
  *   entity_keys = {
  *     "id" = "smid",
- *     "uuid" = "uuid"
+ *     "uuid" = "uuid",
+ *     "chunks" = "chunks",
+ *     "links" = "links",
+ *     "max_filesize" = "max_filesize",
+ *     "context" = "context"
  *   },
  *   links = {
  *     "edit-form" = "xmlsitemap.admin_edit",
@@ -70,6 +74,20 @@ class XmlSitemap extends ContentEntityBase implements XmlSitemapInterface {
   /**
    * {@inheritdoc}
    */
+  public function context() {
+    return $this->get('context')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function maxFileSize() {
+    return $this->get('max_filesize')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function setId($smid) {
     $this->set('smid', $smid);
     return $this;
@@ -87,7 +105,23 @@ class XmlSitemap extends ContentEntityBase implements XmlSitemapInterface {
    * {@inheritdoc}
    */
   public function setLinks($links) {
-    $this->set('chunks', $chunks);
+    $this->set('links', $links);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setMaxFileSize($max_file_size) {
+    $this->set('max_filesize', $max_file_size);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setContext($context) {
+    $this->set('context', $context);
     return $this;
   }
 
@@ -110,9 +144,9 @@ class XmlSitemap extends ContentEntityBase implements XmlSitemapInterface {
         ->setDescription(t('The ID of the XmlSitemap entity.'))
         ->setReadOnly(TRUE);
     $fields['uuid'] = FieldDefinition::create('uuid')
-      ->setLabel(t('UUID'))
-      ->setDescription(t('The UUID of the FooBar entity.'))
-      ->setReadOnly(TRUE);
+        ->setLabel(t('UUID'))
+        ->setDescription(t('The UUID of the FooBar entity.'))
+        ->setReadOnly(TRUE);
     $fields['context'] = FieldDefinition::create('string')
         ->setLabel(t('Context'))
         ->setDescription(t('The context of the XMLSitemap entity.'))

@@ -45,6 +45,24 @@ interface XmlSitemapInterface extends EntityInterface {
   public function uuid();
 
   /**
+   * Returns the context.
+   *
+   * @return array
+   *   The array with sitemap context.
+   */
+  public function context();
+
+  /**
+   * Set the xmlsitemap context.
+   *
+   * @param array $context
+   *
+   * @return \Drupal\xmlsitemap\XmlSitemapInterface
+   *   The called xmlsitemap entity.
+   */
+  public function setContext($context);
+
+  /**
    * Returns the number of chunks in sitemap.
    *
    * @return int
@@ -79,6 +97,24 @@ interface XmlSitemapInterface extends EntityInterface {
    *   The called xmlsitemap entity.
    */
   public function setLinks($links);
+
+  /**
+   * Returns maximum size of sitemap.
+   *
+   * @return int
+   *   Maximum size of sitemap.
+   */
+  public function maxFileSize();
+
+  /**
+   * Set maximum size of sitemap.
+   *
+   * @param int $max_file_size
+   *
+   * @return \Drupal\xmlsitemap\XmlSitemapInterface
+   *   The called xmlsitemap entity.
+   */
+  public function setMaxFileSize($max_file_size);
 
   /**
    * Defines the base fields of the entity type.
