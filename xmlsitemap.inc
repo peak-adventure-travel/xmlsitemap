@@ -49,21 +49,20 @@ function _xmlsitemap_get_version() {
 function xmlsitemap_check_status() {
   $messages = &drupal_static(__FUNCTION__);
 
-  /*
   if (!isset($messages)) {
     // Cache the list of modules that are checked.
-    if ($cache = cache_get('xmlsitemap:registry:requirements')) {
+    if ($cache = \Drupal::cache()->get('xmlsitemap:registry:requirements')) {
       $modules = $cache->data;
     }
     else {
       $modules = array();
-      module_load_all_includes('install');
+      \Drupal::moduleHandler()->loadAllIncludes('install');
       foreach (module_implements('requirements') as $module) {
         if (strpos($module, 'xmlsitemap') !== FALSE) {
           $modules[] = $module;
         }
       }
-      cache_set('xmlsitemap:registry:requirements', $modules);
+      \Drupal::cache()->set('xmlsitemap:registry:requirements', $modules);
     }
 
     $messages = array();
@@ -79,12 +78,12 @@ function xmlsitemap_check_status() {
 
     if ($messages) {
       $message = t('One or more problems were detected with your XML sitemap configuration: !messages', array('!messages' => theme('item_list', array('items' => $messages))));
-      if (user_access('access site reports')) {
+      if (\Drupal::currentUser()->hasPermission('access site reports')) {
         $message .= t('Check the <a href="@status-report">status report</a> for more information.', array('@status-report' => url('admin/reports/status')));
       }
       drupal_set_message($message, 'warning', FALSE);
     }
   }
-  */
+
   return !empty($messages);
 }
