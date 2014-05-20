@@ -74,7 +74,7 @@ class XmlSitemap extends ContentEntityBase implements XmlSitemapInterface {
   /**
    * {@inheritdoc}
    */
-  public function context() {
+  public function xmlSitemapContext() {
     return $this->get('context')->value;
   }
 
@@ -120,7 +120,7 @@ class XmlSitemap extends ContentEntityBase implements XmlSitemapInterface {
   /**
    * {@inheritdoc}
    */
-  public function setContext($context) {
+  public function setXmlSitemapContext($context) {
     $this->set('context', $context);
     return $this;
   }

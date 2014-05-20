@@ -50,7 +50,7 @@ interface XmlSitemapInterface extends EntityInterface {
    * @return array
    *   The array with sitemap context.
    */
-  public function context();
+  public function xmlSitemapContext();
 
   /**
    * Set the xmlsitemap context.
@@ -60,7 +60,7 @@ interface XmlSitemapInterface extends EntityInterface {
    * @return \Drupal\xmlsitemap\XmlSitemapInterface
    *   The called xmlsitemap entity.
    */
-  public function setContext($context);
+  public function setXmlSitemapContext($context);
 
   /**
    * Returns the number of chunks in sitemap.

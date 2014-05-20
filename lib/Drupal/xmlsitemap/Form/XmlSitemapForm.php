@@ -20,7 +20,10 @@ class XmlSitemapForm extends ContentEntityForm {
    */
   public function form(array $form, array &$form_state) {
     /* @var $entity \Drupal\xmlsitemap\Entity\XmlSitemap */
-    $form = parent::form($form, $form_state);
+    if ($this->operation == 'edit') {
+      $form['#title'] = $this->t('<em>Edit sitemap</em>');
+    }
+
     /*$entity = $this->entity;
     $form['user_id'] = array(
       '#type' => 'textfield',
@@ -37,7 +40,7 @@ class XmlSitemapForm extends ContentEntityForm {
       '#default_value' => $entity->getUntranslated()->language()->id,
       '#languages' => Language::STATE_ALL,
     );*/
-    return $form;
+    return parent::form($form,$form_state);
   }
 
   /**
