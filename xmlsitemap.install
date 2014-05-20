@@ -257,6 +257,12 @@ function xmlsitemap_schema() {
         'length' => 64,
         'not null' => TRUE,
       ),
+      'uuid' => array(
+        'description' => 'Unique Key: Universally unique identifier for this entity.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => FALSE,
+      ),
       'context' => array(
         'description' => 'Serialized array with the sitemaps context',
         'type' => 'text',
