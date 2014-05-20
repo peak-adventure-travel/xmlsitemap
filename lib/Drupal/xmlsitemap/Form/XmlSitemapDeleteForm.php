@@ -2,23 +2,23 @@
 
 /**
  * @file
- * Contains \Drupal\xmlsitemap\Form\XmlSitemapDeleteForm
+ * Contains \Drupal\xmlsitemap\Form\XmlSitemapDeleteForm.
  */
 
 namespace Drupal\xmlsitemap\Form;
 
-use Drupal\Core\Entity\ContentEntityConfirmFormBase;
+use Drupal\Core\Entity\EntityConfirmFormBase;
 
 /**
- * Provides a form for deleting an xmlsitemap entity.
+ * Builds the form to delete a Example.
  */
-class XmlSitemapDeleteForm extends ContentEntityConfirmFormBase {
+class XmlSitemapDeleteForm extends EntityConfirmFormBase {
 
   /**
    * {@inheritdoc}
    */
   public function getQuestion() {
-    return t('Are you sure you want to delete sitemap %name?', array('%name' => $this->entity->id()));
+    return $this->t('Are you sure you want to delete %name?', array('%name' => $this->entity->label()));
   }
 
   /**
@@ -26,7 +26,7 @@ class XmlSitemapDeleteForm extends ContentEntityConfirmFormBase {
    */
   public function getCancelRoute() {
     return array(
-      'route_name' => 'xmlsitemap.admin_search',
+      'route_name' => 'xmlsitemap.admin_search_list',
     );
   }
 
@@ -34,7 +34,7 @@ class XmlSitemapDeleteForm extends ContentEntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getConfirmText() {
-    return t('Delete');
+    return $this->t('Delete');
   }
 
   /**
@@ -42,8 +42,8 @@ class XmlSitemapDeleteForm extends ContentEntityConfirmFormBase {
    */
   public function submit(array $form, array &$form_state) {
     $this->entity->delete();
-    watchdog('content', 'deleted %title.', array( '%title' => $this->entity->id()));
-    $form_state['redirect_route']['route_name'] = 'xmlsitemap.admin_search';
+    drupal_set_message($this->t('Category %label has been deleted.', array('%label' => $this->entity->label())));
+    $form_state['redirect'] = 'admin/config/search/xmlsitemap';
   }
 
 }
