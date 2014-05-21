@@ -10,9 +10,16 @@ namespace Drupal\xmlsitemap\Form;
 use Drupal\Core\Entity\EntityConfirmFormBase;
 
 /**
- * Builds the form to delete a Example.
+ * Builds the form to delete a sitemap.
  */
 class XmlSitemapDeleteForm extends EntityConfirmFormBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBaseFormID() {
+    return 'xmlsitemap_delete_form';
+  }
 
   /**
    * {@inheritdoc}

@@ -28,13 +28,8 @@ use Drupal\xmlsitemap\XmlSitemapInterface;
  *   admin_permission = "administer site configuration",
  *   entity_keys = {
  *     "id" = "smid",
- *     "label" = "label",
  *     "uuid" = "uuid",
- *     "chunks" = "chunks",
- *     "links" = "links",
- *     "max_filesize" = "max_filesize",
- *     "context" = "context",
- *     "updated" = "updated"
+ *     "label" = "label"
  *   },
  *   links = {
  *     "edit-form" = "xmlsitemap.admin_edit",
