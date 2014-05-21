@@ -17,6 +17,10 @@ class XmlSitemapForm extends EntityForm {
    */
   public function form(array $form, array &$form_state) {
     $form = parent::form($form, $form_state);
+    if ($this->entity->isNew()) {
+      $this->entity->setContext(array());
+      $this->entity->setOriginalId(NULL);
+    }
     $xmlsitemap = $this->entity;
     $form['label'] = array(
       '#type' => 'textfield',
@@ -26,14 +30,18 @@ class XmlSitemapForm extends EntityForm {
       '#description' => $this->t("Label for the Example."),
       '#required' => TRUE,
     );
-    $form['id'] = array(
+    $form['smid'] = array(
       '#type' => 'machine_name',
-      '#default_value' => $xmlsitemap->id(),
+      '#default_value' => $xmlsitemap->id,
+      '#disabled' => TRUE,
       '#machine_name' => array(
-        'exists' => 'example_load',
-      ),
-      '#disabled' => !$xmlsitemap->isNew(),
+        'exists' => 'Drupal\xmlsitemap\Entity\XmlSitemap::load',
+        'source' => array('id'),
+      )
     );
+    $form['context'] = array(
+    '#tree' => TRUE,
+  );
     // You will need additional form elements for your custom properties.
     return $form;
   }
@@ -43,6 +51,11 @@ class XmlSitemapForm extends EntityForm {
    */
   public function save(array $form, array &$form_state) {
     $xmlsitemap = $this->entity;
+    if ($xmlsitemap->isNew()) {
+      $context = $xmlsitemap->getContext();
+      $xmlsitemap->setId(xmlsitemap_sitemap_get_context_hash($context));
+      $xmlsitemap->setContext($context);
+    }
     $status = $xmlsitemap->save();
     if ($status) {
       drupal_set_message($this->t('Saved the %label sitemap.', array(
