@@ -17,7 +17,7 @@ class XmlSitemapForm extends EntityForm {
    */
   public function form(array $form, array &$form_state) {
     $form = parent::form($form, $form_state);
-    if ($this->entity->isNew()) {
+    if ($this->entity->getContext() == NULL) {
       $this->entity->setContext(array());
       $this->entity->setOriginalId(NULL);
     }
@@ -30,19 +30,17 @@ class XmlSitemapForm extends EntityForm {
       '#description' => $this->t("Label for the Example."),
       '#required' => TRUE,
     );
-    $form['smid'] = array(
-      '#type' => 'machine_name',
-      '#default_value' => $xmlsitemap->id,
-      '#disabled' => TRUE,
-      '#machine_name' => array(
-        'exists' => 'Drupal\xmlsitemap\Entity\XmlSitemap::load',
-        'source' => array('id'),
-      )
-    );
     $form['context'] = array(
-    '#tree' => TRUE,
-  );
-    // You will need additional form elements for your custom properties.
+      '#tree' => TRUE,
+    );
+    $visible_children = element_get_visible_children($form['context']);
+    if (empty($visible_children)) {
+      $form['context']['empty'] = array(
+        '#type' => 'markup',
+        '#markup' => '<p>' . t('There are currently no XML sitemap contexts available.') . '</p>',
+      );
+    }
+
     return $form;
   }
 
