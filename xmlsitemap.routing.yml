@@ -57,7 +57,7 @@ xmlsitemap.admin_settings_bundle:
 xmlsitemap.admin_rebuild:
   path: '/admin/config/search/xmlsitemap/rebuild'
   defaults:
-    _form: '\Drupal\xmlsitemap\Form\XmlSitemapSettingsForm'
+    _form: '\Drupal\xmlsitemap\Form\XmlSitemapRebuildForm'
     _title: 'Rebuild links'
   requirements:
     _permission: 'administer xmlsitemap'
