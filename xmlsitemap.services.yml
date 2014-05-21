@@ -1,0 +1,6 @@
+services:
+  xmlsitemap.generator:
+    class: Drupal\xmlsitemap\XmlSitemapGeneratorService
+    arguments: []
+    tags:
+      - { name: xmlsitemap_generator }
