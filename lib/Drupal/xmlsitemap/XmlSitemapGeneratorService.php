@@ -12,7 +12,7 @@ use Drupal\Core\Language\LanguageInterface;
 /**
  * XmlSitemap generator service.
  */
-class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
+class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
 
   public static $aliases;
   public static $last_language;
