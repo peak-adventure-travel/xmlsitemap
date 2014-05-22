@@ -1,5 +1,5 @@
 services:
-  xmlsitemap.generator:
+  xmlsitemap_generator:
     class: Drupal\xmlsitemap\XmlSitemapGeneratorService
     arguments: []
     tags:
