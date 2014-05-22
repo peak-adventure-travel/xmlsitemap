@@ -67,12 +67,16 @@ xmlsitemap.sitemap_xml:
   defaults:
     _content: '\Drupal\xmlsitemap\Form\XmlSitemapSettingsForm'
     _title: 'Sitemap XML'
+  requirements:
+    _permission: 'administer xmlsitemap'
     
 xmlsitemap.sitemap_xsl:
   path: '/sitemap.xsl'
   defaults:
-    _content: '\Drupal\xmlsitemap\Form\XmlSitemapSettingsForm'
+    _content: '\Drupal\xmlsitemap\Controller\XmlSitemapController::renderSitemapXsl'
     _title: 'Sitemap XSL'
+  requirements:
+    _permission: 'administer xmlsitemap'
     
     
     
