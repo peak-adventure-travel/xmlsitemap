@@ -7,6 +7,8 @@
  * @ingroup xmlsitemap
  */
 
+use Drupal\Component\Utility\Timer;
+
 /**
  * Implements hook_drush_command().
  */
@@ -42,7 +44,7 @@ function drush_xmlsitemap_regenerate() {
   xmlsitemap_run_unprogressive_batch('xmlsitemap_regenerate_batch');
 
   $vars = array(
-    '@timer' => timer_read('xmlsitemap_regenerate'),
+    '@timer' => Timer::read('xmlsitemap_regenerate'),
     '@memory-peak' => format_size(memory_get_peak_usage(TRUE)),
   );
   drush_print(dt('XML sitemap files regenerated in @timer ms. Peak memory usage: @memory-peak.', $vars));
@@ -61,7 +63,7 @@ function drush_xmlsitemap_rebuild() {
   xmlsitemap_run_unprogressive_batch('xmlsitemap_rebuild_batch', $rebuild_types, TRUE);
 
   $vars = array(
-    '@timer' => timer_read('xmlsitemap_rebuild'),
+    '@timer' => Timer::read('xmlsitemap_rebuild'),
     '@memory-peak' => format_size(memory_get_peak_usage(TRUE)),
   );
   drush_print(dt('XML sitemap files rebuilt in @timer ms. Peak memory usage: @memory-peak.', $vars));
