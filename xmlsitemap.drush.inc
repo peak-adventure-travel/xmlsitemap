@@ -73,7 +73,7 @@ function drush_xmlsitemap_rebuild() {
  * Process un-indexed XML sitemap links.
  */
 function drush_xmlsitemap_index() {
-  $limit = (int) drush_get_option('limit', variable_get('xmlsitemap_batch_limit', 100));
+  $limit = (int) drush_get_option('limit', \Drupal::config('xmlsitemap.settings')->get('batch_limit'));
   $count_before = db_query("SELECT COUNT(id) FROM {xmlsitemap}")->fetchField();
 
   module_invoke_all('xmlsitemap_index_links', $limit);
