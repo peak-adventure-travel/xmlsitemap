@@ -22,23 +22,20 @@ class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
    * {@inheritdoc}
    */
   public function getPathAlias($path, $language) {
-    static $aliases;
-    static $last_language;
-
-    if (!isset(self::$aliases)) {
-      self::$aliases[LanguageInterface::LANGCODE_NOT_SPECIFIED] = db_query("SELECT source, alias FROM {url_alias} WHERE language = :language ORDER BY pid", array(':language' => LanguageInterface::LANGCODE_NOT_SPECIFIED))->fetchAllKeyed();
+    if (!isset(static::$aliases)) {
+      static::$aliases[LanguageInterface::LANGCODE_NOT_SPECIFIED] = db_query("SELECT source, alias FROM {url_alias} WHERE langcode = :language ORDER BY pid", array(':language' => LanguageInterface::LANGCODE_NOT_SPECIFIED))->fetchAllKeyed();
     }
     if ($language != LanguageInterface::LANGCODE_NOT_SPECIFIED && $last_language != $language) {
-      unset(self::$aliases[$last_language]);
-      self::$aliases[$language] = db_query("SELECT source, alias FROM {url_alias} WHERE language = :language ORDER BY pid", array(':language' => $language))->fetchAllKeyed();
-      self::$last_language = $language;
+      unset(static::$aliases[$last_language]);
+      static::$aliases[$language] = db_query("SELECT source, alias FROM {url_alias} WHERE language = :language ORDER BY pid", array(':language' => $language))->fetchAllKeyed();
+      static::$last_language = $language;
     }
 
-    if ($language != LanguageInterface::LANGCODE_NOT_SPECIFIED && isset(self::$aliases[$language][$path])) {
-      return self::$aliases[$language][$path];
+    if ($language != LanguageInterface::LANGCODE_NOT_SPECIFIED && isset(static::$aliases[$language][$path])) {
+      return static::$aliases[$language][$path];
     }
-    elseif (isset(self::$aliases[LanguageInterface::LANGCODE_NOT_SPECIFIED][$path])) {
-      return self::$aliases[LanguageInterface::LANGCODE_NOT_SPECIFIED][$path];
+    elseif (isset(static::$aliases[LanguageInterface::LANGCODE_NOT_SPECIFIED][$path])) {
+      return static::$aliases[LanguageInterface::LANGCODE_NOT_SPECIFIED][$path];
     }
     else {
       return $path;

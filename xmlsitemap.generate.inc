@@ -26,7 +26,7 @@ function xmlsitemap_get_path_alias($path, $language) {
   static $last_language;
 
   if (!isset($aliases)) {
-    $aliases[LanguageInterface::LANGCODE_NOT_SPECIFIED] = db_query("SELECT source, alias FROM {url_alias} WHERE language = :language ORDER BY pid", array(':language' => LanguageInterface::LANGCODE_NOT_SPECIFIED))->fetchAllKeyed();
+    $aliases[LanguageInterface::LANGCODE_NOT_SPECIFIED] = db_query("SELECT source, alias FROM {url_alias} WHERE langcode = :language ORDER BY pid", array(':language' => LanguageInterface::LANGCODE_NOT_SPECIFIED))->fetchAllKeyed();
   }
   if ($language != LanguageInterface::LANGCODE_NOT_SPECIFIED && $last_language != $language) {
     unset($aliases[$last_language]);
