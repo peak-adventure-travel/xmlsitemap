@@ -4,6 +4,8 @@
  * @file
  * XML sitemap integration functions for xmlsitemap.module.
  */
+use Drupal\xmlsitemap\XmlSitemapInterface;
+
 
 class XMLSitemapException extends Exception {}
 
@@ -28,7 +30,7 @@ class XMLSitemapWriter extends XMLWriter {
    * @param $page
    *   The current page of the sitemap being generated.
    */
-  function __construct(stdClass $sitemap, $page) {
+  function __construct(XmlSitemapInterface $sitemap, $page) {
     $this->sitemap = $sitemap;
     $this->sitemap_page = $page;
     $this->uri = xmlsitemap_sitemap_get_file($sitemap, $page);

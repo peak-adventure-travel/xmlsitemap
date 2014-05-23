@@ -8,6 +8,8 @@
  */
 
 use Drupal\Core\Language\LanguageInterface;
+use Drupal\xmlsitemap\XmlSitemapInterface;
+use Drupal\xmlsitemap\Entity\XmlSitemap;
 
 /**
  * Given an internal Drupal path, return the alias for the path.
@@ -121,7 +123,7 @@ function _xmlsitemap_set_memory_limit($new_limit = NULL) {
  * @param $page
  *   An integer of the specific page of the sitemap to generate.
  */
-function xmlsitemap_generate_page(stdClass $sitemap, $page) {
+function xmlsitemap_generate_page(XmlSitemapInterface $sitemap, $page) {
   try {
     module_load_include('xmlsitemap.inc', 'xmlsitemap');
     $writer = new XMLSitemapWriter($sitemap, $page);
