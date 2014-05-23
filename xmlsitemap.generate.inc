@@ -86,7 +86,7 @@ function _xmlsitemap_get_optimal_memory_limit() {
     $optimal_limit += xmlsitemap_get_chunk_size() * 500;
 
     // Add memory for storing the url aliases.
-    if (variable_get('xmlsitemap_prefetch_aliases', 1)) {
+    if (\Drupal::config('xmlsitemap.settings')->get('prefetch_aliases', 1)) {
       $aliases = db_query("SELECT COUNT(pid) FROM {url_alias}")->fetchField();
       $optimal_limit += $aliases * 250;
     }
@@ -340,7 +340,7 @@ function xmlsitemap_regenerate_batch_generate_index($smid, array &$context) {
  * Batch callback; sitemap regeneration finished.
  */
 function xmlsitemap_regenerate_batch_finished($success, $results, $operations, $elapsed) {
-  if ($success && !\Drupal::config('xmlsitemap.settings')->get('regenerate_needed')) {
+  if ($success && \Drupal::config('xmlsitemap.settings')->get('regenerate_needed') == FALSE) {
     \Drupal::config('xmlsitemap.settings')->set('generated_last', REQUEST_TIME);
     drupal_set_message(t('The sitemaps were regenerated.'));
     // Show a watchdog message that the sitemap was regenerated.
