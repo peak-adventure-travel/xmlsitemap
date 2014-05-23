@@ -6,15 +6,19 @@
  */
 use Drupal\xmlsitemap\XmlSitemapInterface;
 
+class XMLSitemapException extends Exception {
 
-class XMLSitemapException extends Exception {}
+}
 
-class XMLSitemapGenerationException extends XMLSitemapException {}
+class XMLSitemapGenerationException extends XMLSitemapException {
+
+}
 
 /**
  * Extended class for writing XML sitemap files.
  */
 class XMLSitemapWriter extends XMLWriter {
+
   protected $uri = NULL;
   protected $sitemapElementCount = 0;
   protected $linkCountFlush = 500;
@@ -160,18 +164,20 @@ class XMLSitemapWriter extends XMLWriter {
 
     return $return;
   }
+
 }
 
 class XMLSitemapIndexWriter extends XMLSitemapWriter {
+
   protected $rootElement = 'sitemapindex';
 
-  function __construct(stdClass $sitemap, $page = 'index') {
+  function __construct(XmlSitemapInterface $sitemap, $page = 'index') {
     parent::__construct($sitemap, 'index');
   }
 
   public function getRootAttributes() {
     $attributes['xmlns'] = 'http://www.sitemaps.org/schemas/sitemap/0.9';
-    if (variable_get('xmlsitemap_developer_mode', 0)) {
+    if (\Drupal::config('xmlsitemap.settings')->get('developer_mode')) {
       $attributes['xmlns:xsi'] = 'http://www.w3.org/2001/XMLSchema-instance';
       $attributes['xsi:schemaLocation'] = 'http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd';
     }
@@ -179,7 +185,7 @@ class XMLSitemapIndexWriter extends XMLSitemapWriter {
   }
 
   public function generateXML() {
-    $lastmod_format = variable_get('xmlsitemap_lastmod_format', XMLSITEMAP_LASTMOD_MEDIUM);
+    $lastmod_format = \Drupal::config('xmlsitemap.settings')->get('lastmod_format');
 
     $url_options = $this->sitemap->uri['options'];
     $url_options += array(
@@ -199,6 +205,7 @@ class XMLSitemapIndexWriter extends XMLSitemapWriter {
       $this->writeSitemapElement('sitemap', $element);
     }
   }
+
 }
 
 /**
@@ -227,13 +234,13 @@ function xmlsitemap_link_frontpage_settings(&$form) {
     '#type' => 'select',
     '#title' => t('Priority'),
     '#options' => xmlsitemap_get_priority_options(),
-    '#default_value' => variable_get('xmlsitemap_frontpage_priority', 1.0),
+    '#default_value' => \Drupal::config('xmlsitemap.settings')->get('frontpage_priority'),
   );
   $form['xmlsitemap_frontpage_changefreq'] = array(
     '#type' => 'select',
     '#title' => t('Change frequency'),
     '#options' => xmlsitemap_get_changefreq_options(),
-    '#default_value' => variable_get('xmlsitemap_frontpage_changefreq', XMLSITEMAP_FREQUENCY_DAILY),
+    '#default_value' => \Drupal::config('xmlsitemap.settings')->get('frontpage_changefreq'),
   );
   return $form;
 }
