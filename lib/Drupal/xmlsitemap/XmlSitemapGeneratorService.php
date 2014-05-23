@@ -229,10 +229,13 @@ class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
    */
   public function regenerateBatch(array $smids = array()) {
     if (empty($smids)) {
-      $smids = db_query("SELECT smid FROM {xmlsitemap_sitemap}")->fetchCol();
+      $sitemaps = \Drupal::entityManager()->getStorage('xmlsitemap')->loadMultiple();
+      foreach ($sitemaps as $sitemap) {
+        $smids[] = $sitemap->id();
+      }
     }
 
-    //$t = get_t();
+    $t = 't';
     $batch = array(
       'operations' => array(),
       //'error_message' => $t('An error has occurred.'),

@@ -249,10 +249,13 @@ function xmlsitemap_generate_index(stdClass $sitemap) {
  */
 function xmlsitemap_regenerate_batch(array $smids = array()) {
   if (empty($smids)) {
-    $smids = db_query("SELECT smid FROM {xmlsitemap_sitemap}")->fetchCol();
+    $sitemaps = \Drupal::entityManager()->getStorage('xmlsitemap')->loadMultiple();
+    foreach ($sitemaps as $sitemap) {
+      $smids[] = $sitemap->id();
+    }
   }
-
-  //$t = get_t();
+  
+  $t = 't';
   $batch = array(
     'operations' => array(),
     //'error_message' => $t('An error has occurred.'),
