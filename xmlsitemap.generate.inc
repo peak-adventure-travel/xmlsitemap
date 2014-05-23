@@ -302,7 +302,7 @@ function xmlsitemap_regenerate_batch_generate($smid, array &$context) {
 
   $sitemap = &$context['sandbox']['sitemap'];
   $links = xmlsitemap_generate_page($sitemap, $sitemap->getChunks());
-  $context['message'] = t('Now generating %sitemap-url.', array('%sitemap-url' => url('sitemap.xml', $sitemap->uri['options'] + array('query' => array('page' => $sitemap->chunks)))));
+  $context['message'] = t('Now generating %sitemap-url.', array('%sitemap-url' => url('sitemap.xml', $sitemap->uri['options'] + array('query' => array('page' => $sitemap->getChunks())))));
 
   if ($links) {
     $sitemap->links += $links;
@@ -310,15 +310,15 @@ function xmlsitemap_regenerate_batch_generate($smid, array &$context) {
   }
   else {
     // Cleanup the 'extra' empty file.
-    $file = xmlsitemap_sitemap_get_file($sitemap, $sitemap->chunks);
-    if (file_exists($file) && $sitemap->chunks > 1) {
+    $file = xmlsitemap_sitemap_get_file($sitemap, $sitemap->getChunks());
+    if (file_exists($file) && $sitemap->getChunks() > 1) {
       file_unmanaged_delete($file);
     }
-    $sitemap->chunks--;
+    $sitemap->setChunks($sitemap->getChunks() - 1);
 
     // Save the updated chunks and links values.
-    $context['sandbox']['max'] = $sitemap->chunks;
-    $sitemap->updated = REQUEST_TIME;
+    $context['sandbox']['max'] = $sitemap->getChunks();
+    $sitemap->setUpdated(REQUEST_TIME);
     xmlsitemap_sitemap_get_max_filesize($sitemap);
     xmlsitemap_sitemap_save($sitemap);
   }
