@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Session\UserSession;
 use Drupal\Core\Language\LanguageInterface;
+use Drupal\xmlsitemap\XmlSitemapInterface;
 
 /**
  * The maximum number of links in one sitemap chunk file.
@@ -513,16 +514,16 @@ function xmlsitemap_sitemap_get_context_hash(array &$context) {
 /**
  * Returns the uri elements of an XML sitemap.
  *
- * @param $sitemap
- *   An unserialized data array for an XML sitemap.
+ * @param \Drupal\xmlsitemap\XmlSitemapInterface $sitemap
+ *   The sitemap represented by and XmlSitemapInterface object.
  * @return
  *   An array containing the 'path' and 'options' keys used to build the uri of
  *   the XML sitemap, and matching the signature of url().
  */
-function xmlsitemap_sitemap_uri(stdClass $sitemap) {
+function xmlsitemap_sitemap_uri(XmlSitemapInterface $sitemap) {
   $uri['path'] = 'sitemap.xml';
-  $uri['options'] = module_invoke_all('xmlsitemap_context_url_options', $sitemap->context);
-  drupal_alter('xmlsitemap_context_url_options', $uri['options'], $sitemap->context);
+  $uri['options'] = module_invoke_all('xmlsitemap_context_url_options', $sitemap->getContext());
+  drupal_alter('xmlsitemap_context_url_options', $uri['options'], $sitemap->getContext());
   $uri['options'] += array(
     'absolute' => TRUE,
     'base_url' => $GLOBALS['base_url'],
