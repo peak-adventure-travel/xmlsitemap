@@ -267,7 +267,7 @@ function xmlsitemap_regenerate_batch(array $smids = array()) {
   );
 
   // Set the regenerate flag in case something fails during file generation.
-  $batch['operations'][] = array('xmlsitemap_batch_variable_set', array(array('xmlsitemap_regenerate_needed' => TRUE)));
+  $batch['operations'][] = array('xmlsitemap_batch_variable_set', array(array('regenerate_needed' => TRUE)));
 
   // @todo Get rid of this batch operation.
   $batch['operations'][] = array('_xmlsitemap_regenerate_before', array());
@@ -279,7 +279,7 @@ function xmlsitemap_regenerate_batch(array $smids = array()) {
   }
 
   // Clear the regeneration flag.
-  $batch['operations'][] = array('xmlsitemap_batch_variable_set', array(array('xmlsitemap_regenerate_needed' => FALSE)));
+  $batch['operations'][] = array('xmlsitemap_batch_variable_set', array(array('regenerate_needed' => FALSE)));
 
   return $batch;
 }
@@ -302,11 +302,11 @@ function xmlsitemap_regenerate_batch_generate($smid, array &$context) {
 
   $sitemap = &$context['sandbox']['sitemap'];
   $links = xmlsitemap_generate_page($sitemap, $sitemap->getChunks());
-  $context['message'] = t('Now generating %sitemap-url.', array('%sitemap-url' => url('sitemap.xml', $sitemap->uri['options'] + array('query' => array('page' => $sitemap->getChunks())))));
+  //$context['message'] = t('Now generating %sitemap-url.', array('%sitemap-url' => url('sitemap.xml', $sitemap->uri['options'] + array('query' => array('page' => $sitemap->getChunks())))));
 
   if ($links) {
-    $sitemap->links += $links;
-    $sitemap->chunks++;
+    $sitemap->setLinks($sitemap->getLinks() + $links);
+    $sitemap->setChunks($sitemap->getChunks() + 1);
   }
   else {
     // Cleanup the 'extra' empty file.
@@ -323,8 +323,8 @@ function xmlsitemap_regenerate_batch_generate($smid, array &$context) {
     xmlsitemap_sitemap_save($sitemap);
   }
 
-  if ($sitemap->chunks != $context['sandbox']['max']) {
-    $context['finished'] = $sitemap->chunks / $context['sandbox']['max'];
+  if ($sitemap->getChunks() != $context['sandbox']['max']) {
+    $context['finished'] = $sitemap->getChunks() / $context['sandbox']['max'];
   }
 }
 
@@ -333,9 +333,9 @@ function xmlsitemap_regenerate_batch_generate($smid, array &$context) {
  */
 function xmlsitemap_regenerate_batch_generate_index($smid, array &$context) {
   $sitemap = xmlsitemap_sitemap_load($smid);
-  if ($sitemap->chunks > 1) {
+  if ($sitemap->getChunks() > 1) {
     xmlsitemap_generate_index($sitemap);
-    $context['message'] = t('Now generating sitemap index %sitemap-url.', array('%sitemap-url' => url('sitemap.xml', $sitemap->uri['options'])));
+    //$context['message'] = t('Now generating sitemap index %sitemap-url.', array('%sitemap-url' => url('sitemap.xml', $sitemap->uri['options'])));
   }
 }
 
@@ -479,7 +479,7 @@ function xmlsitemap_rebuild_batch_fetch($entity, &$context) {
  * Batch callback; sitemap rebuild finished.
  */
 function xmlsitemap_rebuild_batch_finished($success, $results, $operations, $elapsed) {
-  if ($success && !variable_get('xmlsitemap_rebuild_needed', FALSE)) {
+  if ($success && !\Drupal::config('xmlsitemap.settings')->get('rebuild_needed')) {
     drupal_set_message(t('The sitemap links were rebuilt.'));
   }
   else {
