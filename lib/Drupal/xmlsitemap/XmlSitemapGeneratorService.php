@@ -158,7 +158,7 @@ class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
     while ($link = $links->fetchAssoc()) {
       $link['language'] = $link['language'] != LanguageInterface::LANGCODE_NOT_SPECIFIED ? xmlsitemap_language_load($link['language']) : $url_options['language'];
       if ($url_options['alias']) {
-        $link['loc'] = $this->getPathAlias($link['loc'], $link['language']->language);
+        $link['loc'] = $this->getPathAlias($link['loc'], $link['language']->langcode);
       }
       $link_options = array(
         'language' => $link['language'],
