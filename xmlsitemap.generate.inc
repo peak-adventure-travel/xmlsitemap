@@ -224,7 +224,7 @@ function xmlsitemap_generate_chunk(stdClass $sitemap, XMLSitemapWriter $writer, 
  * @param $sitemap
  *   An unserialized data array for an XML sitemap.
  */
-function xmlsitemap_generate_index(stdClass $sitemap) {
+function xmlsitemap_generate_index(XmlSitemapInterface $sitemap) {
   try {
     $writer = new XMLSitemapIndexWriter($sitemap);
     $writer->startDocument();
@@ -289,9 +289,10 @@ function xmlsitemap_regenerate_batch(array $smids = array()) {
  */
 function xmlsitemap_regenerate_batch_generate($smid, array &$context) {
   if (!isset($context['sandbox']['sitemap'])) {
-    $context['sandbox']['sitemap'] = xmlsitemap_sitemap_load($smid);
-    $context['sandbox']['sitemap']->chunks = 1;
-    $context['sandbox']['sitemap']->links = 0;
+    $sitemap = \Drupal::entityManager()->getStorage('xmlsitemap')->load($smid);
+    $context['sandbox']['sitemap'] = $sitemap;
+    $context['sandbox']['sitemap']->setChunks(1);
+    $context['sandbox']['sitemap']->setLinks(0);
     $context['sandbox']['max'] = XMLSITEMAP_MAX_SITEMAP_LINKS;
 
     // Clear the cache directory for this sitemap before generating any files.
@@ -300,7 +301,7 @@ function xmlsitemap_regenerate_batch_generate($smid, array &$context) {
   }
 
   $sitemap = &$context['sandbox']['sitemap'];
-  $links = xmlsitemap_generate_page($sitemap, $sitemap->chunks);
+  $links = xmlsitemap_generate_page($sitemap, $sitemap->getChunks());
   $context['message'] = t('Now generating %sitemap-url.', array('%sitemap-url' => url('sitemap.xml', $sitemap->uri['options'] + array('query' => array('page' => $sitemap->chunks)))));
 
   if ($links) {
