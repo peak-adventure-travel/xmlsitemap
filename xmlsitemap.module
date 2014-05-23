@@ -357,17 +357,23 @@ function xmlsitemap_sitemap_load_multiple($smids = array(), array $conditions = 
   if ($smids !== FALSE) {
     $conditions['smid'] = $smids;
   }
-
-  $query = db_select('xmlsitemap_sitemap');
-  $query->fields('xmlsitemap_sitemap');
-  foreach ($conditions as $field => $value) {
-    $query->condition($field, $value);
+  else {
+    $conditions['smid'] = array();
   }
+  $storage = Drupal::entityManager()->getStorage('xmlsitemap');
 
-  $sitemaps = $query->execute()->fetchAllAssoc('smid');
-  foreach ($sitemaps as $smid => $sitemap) {
-    $sitemaps[$smid]->context = unserialize($sitemap->context);
-    $sitemaps[$smid]->uri = xmlsitemap_sitemap_uri($sitemaps[$smid]);
+  $sitemaps = $storage->loadMultiple($conditions['smid']);
+  /* $query = db_select('xmlsitemap_sitemap');
+    $query->fields('xmlsitemap_sitemap');
+    foreach ($conditions as $field => $value) {
+    $query->condition($field, $value);
+    }
+    $sitemaps = $query->execute()->fetchAllAssoc('smid');
+   */
+  $sitemaps = array();
+  foreach ($sitemaps as $sitemap) {
+    $sitemaps[$sitemap->id()]->setContext(unserialize($sitemap->getContext()));
+    $sitemaps[$sitemap->id()]->uri = xmlsitemap_sitemap_uri($sitemap);
   }
 
   return $sitemaps;
@@ -420,9 +426,9 @@ function xmlsitemap_sitemap_save(stdClass $sitemap) {
 
     // Change the smid field so drupal_write_record() does not fail.
     db_update('xmlsitemap_sitemap')
-      ->fields(array('smid' => $sitemap->smid))
-      ->condition('smid', $sitemap->old_smid)
-      ->execute();
+        ->fields(array('smid' => $sitemap->smid))
+        ->condition('smid', $sitemap->old_smid)
+        ->execute();
 
     // Mark the sitemaps as needing regeneration.
     \Drupal::config('xmlsitemap.settings')->set('regenerate_needed', TRUE);
@@ -459,12 +465,14 @@ function xmlsitemap_sitemap_delete($smid) {
 function xmlsitemap_sitemap_delete_multiple(array $smids) {
   if (!empty($smids)) {
     $sitemaps = xmlsitemap_sitemap_load_multiple($smids);
-    db_delete('xmlsitemap_sitemap')
-        ->condition('smid', $smids)
-        ->execute();
-
+    /*
+      db_delete('xmlsitemap_sitemap')
+      ->condition('smid', $smids)
+      ->execute();
+     */
     foreach ($sitemaps as $sitemap) {
       xmlsitemap_clear_directory($sitemap, TRUE);
+      $sitemap->delete();
       module_invoke_all('xmlsitemap_sitemap_delete', $sitemap);
     }
   }
@@ -775,7 +783,6 @@ function _xmlsitemap_check_changed_link(array $link, $original_link = NULL, $fla
 /**
  * @} End of "defgroup xmlsitemap_api"
  */
-
 function xmlsitemap_get_directory(stdClass $sitemap = NULL) {
   $directory = &drupal_static(__FUNCTION__);
 
@@ -783,7 +790,7 @@ function xmlsitemap_get_directory(stdClass $sitemap = NULL) {
     $directory = \Drupal::config('xmlsitemap.settings')->get('path');
   }
 
-  if (!empty($sitemap->smid)) {
+  if ($sitemap != NULL && !empty($sitemap->id)) {
     return file_build_uri($directory . '/' . $sitemap->smid);
   }
   else {
@@ -973,7 +980,7 @@ function xmlsitemap_get_link_type_enabled_bundles($entity_type) {
   foreach ($info['bundles'] as $bundle => $bundle_info) {
     $settings = xmlsitemap_link_bundle_load($entity_type, $bundle);
     if (!empty($settings['status'])) {
-    //if (!empty($bundle_info['xmlsitemap']['status'])) {
+      //if (!empty($bundle_info['xmlsitemap']['status'])) {
       $bundles[] = $bundle;
     }
   }
@@ -1216,7 +1223,7 @@ function xmlsitemap_get_chunk_size($reset = FALSE) {
  */
 function xmlsitemap_recalculate_changefreq(&$link) {
   $link['changefreq'] = round((($link['changefreq'] * $link['changecount']) + (REQUEST_TIME - $link['lastmod'])) / ($link['changecount'] + 1));
-  $link['changecount']++;
+  $link['changecount'] ++;
   $link['lastmod'] = REQUEST_TIME;
 }
 
@@ -1413,7 +1420,6 @@ function xmlsitemap_language_load($language = LANGUAGE_NONE) {
  * @defgroup xmlsitemap_context_api XML sitemap API for sitemap contexts.
  * @{
  */
-
 function xmlsitemap_get_context_info($context = NULL, $reset = FALSE) {
   global $language;
   $info = &drupal_static(__FUNCTION__);
@@ -1500,7 +1506,7 @@ function xmlsitemap_run_unprogressive_batch() {
 
   // We need to manually set the progressive variable again.
   // @todo Remove when http://drupal.org/node/638712 is fixed.
-  $batch =& batch_get();
+  $batch = & batch_get();
   $batch['progressive'] = FALSE;
 
   // Run the batch process.
