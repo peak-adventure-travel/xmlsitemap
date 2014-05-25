@@ -73,7 +73,7 @@ xmlsitemap.sitemap_xml:
 xmlsitemap.sitemap_xsl:
   path: '/sitemap.xsl'
   defaults:
-    _content: '\Drupal\xmlsitemap\Controller\XmlSitemapController::renderSitemapXsl'
+    _controller: '\Drupal\xmlsitemap\Controller\XmlSitemapController::renderSitemapXsl'
     _title: 'Sitemap XSL'
   requirements:
     _permission: 'administer xmlsitemap'

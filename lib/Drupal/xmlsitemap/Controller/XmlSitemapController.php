@@ -8,6 +8,7 @@
 namespace Drupal\xmlsitemap\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Symfony\Component\HttpFoundation\Response;
 
 class XmlSitemapController extends ControllerBase {
 
@@ -38,7 +39,7 @@ class XmlSitemapController extends ControllerBase {
     // Output the XSL content.
     drupal_add_http_header('Content-type', 'application/xml; charset=utf-8');
     drupal_add_http_header('X-Robots-Tag', 'noindex, follow');
-    print $xsl_content;
+    return new Response($xsl_content);
   }
 
 }
