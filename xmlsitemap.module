@@ -470,11 +470,11 @@ function xmlsitemap_sitemap_delete_multiple(array $smids) {
  * Return the expected file path for a specific sitemap chunk.
  *
  * @param $sitemap
- *   An XML sitemap array.
+ *   An XmlSitemapInterface sitemap object.
  * @param $chunk
  *   An optional specific chunk in the sitemap. Defaults to the index page.
  */
-function xmlsitemap_sitemap_get_file(stdClass $sitemap, $chunk = 'index') {
+function xmlsitemap_sitemap_get_file(XmlSitemapInterface $sitemap, $chunk = 'index') {
   return xmlsitemap_get_directory($sitemap) . "/{$chunk}.xml";
 }
 
