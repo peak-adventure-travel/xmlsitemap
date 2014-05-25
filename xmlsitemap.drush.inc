@@ -6,7 +6,6 @@
  *
  * @ingroup xmlsitemap
  */
-
 use Drupal\Component\Utility\Timer;
 
 /**
@@ -74,10 +73,11 @@ function drush_xmlsitemap_rebuild() {
  */
 function drush_xmlsitemap_index() {
   $limit = (int) drush_get_option('limit', \Drupal::config('xmlsitemap.settings')->get('batch_limit'));
-  $count_before = db_query("SELECT COUNT(id) FROM {xmlsitemap}")->fetchField();
+  $entity_manager = \Drupal::entityManager()->getStorage('xmlsitemap');
+  $count_before = count($entity_manager->loadMultiple());
 
-  module_invoke_all('xmlsitemap_index_links', $limit);
-  $count_after = db_query("SELECT COUNT(id) FROM {xmlsitemap}")->fetchField();
+  \Drupal::moduleHandler()->invokeAll('xmlsitemap_index_links', $limit);
+  $count_after = count($entity_manager->loadMultiple());
 
   if ($count_after == $count_before) {
     drush_print(dt('No new XML sitemap links to index.'));
