@@ -407,18 +407,19 @@ function xmlsitemap_sitemap_load_by_context(array $context = NULL) {
  *
  * @todo Save the sitemap's URL as a column?
  */
-function xmlsitemap_sitemap_save(stdClass $sitemap) {
-  if (!isset($sitemap->context)) {
-    $sitemap->context = array();
+function xmlsitemap_sitemap_save(XmlSitemapInterface $sitemap) {
+  if (!isset($sitemap->getContext())) {
+    $sitemap->setContext(array());
   }
 
   // Make sure context is sorted before saving the hash.
-  $sitemap->is_new = empty($sitemap->smid);
-  $sitemap->old_smid = $sitemap->is_new ? NULL : $sitemap->smid;
-  $sitemap->smid = xmlsitemap_sitemap_get_context_hash($sitemap->context);
-
+  //$sitemap->is_new = empty($sitemap->getId());
+  //$sitemap->old_smid = $sitemap->is_new ? NULL : $sitemap->smid;
+  $sitemap->setOriginalId($sitemap->isNew()? NULL : $sitemap->getId());
+  //$sitemap->smid = xmlsitemap_sitemap_get_context_hash($sitemap->context);
+  $sitemap->setId(xmlsitemap_sitemap_get_context_hash($sitemap->getContext()));
   // If the context was changed, we need to perform additional actions.
-  if (!$sitemap->is_new && $sitemap->smid != $sitemap->old_smid) {
+  if (!$sitemap->isNew() && $sitemap->getId() != $sitemap->getOriginalId()) {
     // Rename the files directory so the sitemap does not break.
     $old_sitemap = (object) array('smid' => $sitemap->old_smid);
     $old_dir = xmlsitemap_get_directory($old_sitemap);
@@ -426,15 +427,16 @@ function xmlsitemap_sitemap_save(stdClass $sitemap) {
     xmlsitemap_directory_move($old_dir, $new_dir);
 
     // Change the smid field so drupal_write_record() does not fail.
-    db_update('xmlsitemap_sitemap')
+    /*db_update('xmlsitemap_sitemap')
         ->fields(array('smid' => $sitemap->smid))
         ->condition('smid', $sitemap->old_smid)
         ->execute();
-
+        */
     // Mark the sitemaps as needing regeneration.
     \Drupal::config('xmlsitemap.settings')->set('regenerate_needed', TRUE);
   }
-
+  $sitemap->save();
+  /*
   if ($sitemap->is_new) {
     drupal_write_record('xmlsitemap_sitemap', $sitemap);
     module_invoke_all('xmlsitemap_sitemap_insert', $sitemap);
@@ -442,7 +444,7 @@ function xmlsitemap_sitemap_save(stdClass $sitemap) {
   else {
     drupal_write_record('xmlsitemap_sitemap', $sitemap, array('smid'));
     module_invoke_all('xmlsitemap_sitemap_update', $sitemap);
-  }
+  }*/
 
   return $sitemap;
 }
