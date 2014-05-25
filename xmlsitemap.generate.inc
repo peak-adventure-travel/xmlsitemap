@@ -6,7 +6,6 @@
  *
  * @ingroup xmlsitemap
  */
-
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\xmlsitemap\XmlSitemapInterface;
 use Drupal\xmlsitemap\Entity\XmlSitemap;
@@ -56,9 +55,8 @@ function _xmlsitemap_regenerate_before() {
 
   if (\Drupal::config('xmlsitemap.settings')->get('developer_mode')) {
     watchdog('xmlsitemap', 'Starting XML sitemap generation. Memory usage: @memory-peak.', array(
-        '@memory-peak' => format_size(memory_get_peak_usage(TRUE)),
-      ),
-      WATCHDOG_DEBUG
+      '@memory-peak' => format_size(memory_get_peak_usage(TRUE)),
+        ), WATCHDOG_DEBUG
     );
   }
 }
@@ -140,7 +138,7 @@ function xmlsitemap_generate_page(XmlSitemapInterface $sitemap, $page) {
   return $writer->getSitemapElementCount();
 }
 
-function xmlsitemap_generate_chunk(stdClass $sitemap, XMLSitemapWriter $writer, $chunk) {
+function xmlsitemap_generate_chunk(XmlSitemapInterface $sitemap, XMLSitemapWriter $writer, $chunk) {
   $lastmod_format = \Drupal::config('xmlsitemap.settings')->get('lastmod_format');
 
   $url_options = $sitemap->uri['options'];
@@ -256,7 +254,7 @@ function xmlsitemap_regenerate_batch(array $smids = array()) {
       $smids[] = $sitemap->id();
     }
   }
-  
+
   $t = 't';
   $batch = array(
     'operations' => array(),
@@ -289,7 +287,8 @@ function xmlsitemap_regenerate_batch(array $smids = array()) {
  */
 function xmlsitemap_regenerate_batch_generate($smid, array &$context) {
   if (!isset($context['sandbox']['sitemap'])) {
-    $sitemap = \Drupal::entityManager()->getStorage('xmlsitemap')->load($smid);
+    //$sitemap = \Drupal::entityManager()->getStorage('xmlsitemap')->load($smid);
+    $sitemap = xmlsitemap_sitemap_load($smid);
     $context['sandbox']['sitemap'] = $sitemap;
     $context['sandbox']['sitemap']->setChunks(1);
     $context['sandbox']['sitemap']->setLinks(0);
@@ -299,7 +298,6 @@ function xmlsitemap_regenerate_batch_generate($smid, array &$context) {
     xmlsitemap_check_directory($context['sandbox']['sitemap']);
     xmlsitemap_clear_directory($context['sandbox']['sitemap']);
   }
-
   $sitemap = &$context['sandbox']['sitemap'];
   $links = xmlsitemap_generate_page($sitemap, $sitemap->getChunks());
   //$context['message'] = t('Now generating %sitemap-url.', array('%sitemap-url' => url('sitemap.xml', $sitemap->uri['options'] + array('query' => array('page' => $sitemap->getChunks())))));
@@ -333,9 +331,9 @@ function xmlsitemap_regenerate_batch_generate($smid, array &$context) {
  */
 function xmlsitemap_regenerate_batch_generate_index($smid, array &$context) {
   $sitemap = xmlsitemap_sitemap_load($smid);
-  if ($sitemap->getChunks() > 1) {
+  if ($sitemap != NULL && $sitemap->getChunks() > 1) {
     xmlsitemap_generate_index($sitemap);
-    //$context['message'] = t('Now generating sitemap index %sitemap-url.', array('%sitemap-url' => url('sitemap.xml', $sitemap->uri['options'])));
+    $context['message'] = t('Now generating sitemap index %sitemap-url.', array('%sitemap-url' => url('sitemap.xml', $sitemap->uri['options'])));
   }
 }
 
@@ -347,13 +345,10 @@ function xmlsitemap_regenerate_batch_finished($success, $results, $operations, $
     \Drupal::config('xmlsitemap.settings')->set('generated_last', REQUEST_TIME);
     drupal_set_message(t('The sitemaps were regenerated.'));
     // Show a watchdog message that the sitemap was regenerated.
-    watchdog('xmlsitemap',
-      'Finished XML sitemap generation in @elapsed. Memory usage: @memory-peak.',
-      array(
-        '@elapsed' => $elapsed,
-        '@memory-peak' => format_size(memory_get_peak_usage(TRUE)),
-      ),
-      WATCHDOG_NOTICE
+    watchdog('xmlsitemap', 'Finished XML sitemap generation in @elapsed. Memory usage: @memory-peak.', array(
+      '@elapsed' => $elapsed,
+      '@memory-peak' => format_size(memory_get_peak_usage(TRUE)),
+        ), WATCHDOG_NOTICE
     );
   }
   else {
@@ -399,7 +394,7 @@ function xmlsitemap_rebuild_batch(array $entities, $save_custom = FALSE) {
  */
 function xmlsitemap_batch_variable_set(array $variables) {
   foreach ($variables as $variable => $value) {
-    \Drupal::config('xmlsitemap.settings')->set($variable,$value);
+    \Drupal::config('xmlsitemap.settings')->set($variable, $value);
   }
 }
 

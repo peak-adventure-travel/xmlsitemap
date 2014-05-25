@@ -371,7 +371,6 @@ function xmlsitemap_sitemap_load_multiple($smids = array(), array $conditions = 
     }
     $sitemaps = $query->execute()->fetchAllAssoc('smid');
    */
-  $sitemaps = array();
   foreach ($sitemaps as $sitemap) {
     $sitemaps[$sitemap->id()]->setContext(unserialize($sitemap->getContext()));
     $sitemaps[$sitemap->id()]->uri = xmlsitemap_sitemap_uri($sitemap);
@@ -408,14 +407,15 @@ function xmlsitemap_sitemap_load_by_context(array $context = NULL) {
  * @todo Save the sitemap's URL as a column?
  */
 function xmlsitemap_sitemap_save(XmlSitemapInterface $sitemap) {
-  if (!isset($sitemap->getContext())) {
+  $context = $sitemap->getContext();
+  if (!isset($context) || !$context) {
     $sitemap->setContext(array());
   }
 
   // Make sure context is sorted before saving the hash.
   //$sitemap->is_new = empty($sitemap->getId());
   //$sitemap->old_smid = $sitemap->is_new ? NULL : $sitemap->smid;
-  $sitemap->setOriginalId($sitemap->isNew()? NULL : $sitemap->getId());
+  $sitemap->setOriginalId($sitemap->isNew() ? NULL : $sitemap->getId());
   //$sitemap->smid = xmlsitemap_sitemap_get_context_hash($sitemap->context);
   $sitemap->setId(xmlsitemap_sitemap_get_context_hash($sitemap->getContext()));
   // If the context was changed, we need to perform additional actions.
@@ -426,25 +426,10 @@ function xmlsitemap_sitemap_save(XmlSitemapInterface $sitemap) {
     $new_dir = xmlsitemap_get_directory($sitemap);
     xmlsitemap_directory_move($old_dir, $new_dir);
 
-    // Change the smid field so drupal_write_record() does not fail.
-    /*db_update('xmlsitemap_sitemap')
-        ->fields(array('smid' => $sitemap->smid))
-        ->condition('smid', $sitemap->old_smid)
-        ->execute();
-        */
     // Mark the sitemaps as needing regeneration.
     \Drupal::config('xmlsitemap.settings')->set('regenerate_needed', TRUE);
   }
   $sitemap->save();
-  /*
-  if ($sitemap->is_new) {
-    drupal_write_record('xmlsitemap_sitemap', $sitemap);
-    module_invoke_all('xmlsitemap_sitemap_insert', $sitemap);
-  }
-  else {
-    drupal_write_record('xmlsitemap_sitemap', $sitemap, array('smid'));
-    module_invoke_all('xmlsitemap_sitemap_update', $sitemap);
-  }*/
 
   return $sitemap;
 }
@@ -499,13 +484,13 @@ function xmlsitemap_sitemap_get_file(stdClass $sitemap, $chunk = 'index') {
  * @param $sitemap
  *   The XML sitemap array.
  */
-function xmlsitemap_sitemap_get_max_filesize(stdClass $sitemap) {
+function xmlsitemap_sitemap_get_max_filesize(XmlSitemapInterface $sitemap) {
   $dir = xmlsitemap_get_directory($sitemap);
-  $sitemap->max_filesize = 0;
+  $sitemap->setMaxFileSize(0);
   foreach (file_scan_directory($dir, '/\.xml$/') as $file) {
-    $sitemap->max_filesize = max($sitemap->max_filesize, filesize($file->uri));
+    $sitemap->setMaxFileSize(max($sitemap->getMaxFileSize(), filesize($file->uri)));
   }
-  return $sitemap->max_filesize;
+  return $sitemap->getMaxFileSize();
 }
 
 function xmlsitemap_sitemap_get_context_hash(array &$context) {
