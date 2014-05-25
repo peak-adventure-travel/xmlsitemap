@@ -39,6 +39,7 @@ use Drupal\xmlsitemap\XmlSitemapInterface;
  */
 class XmlSitemap extends ConfigEntityBase implements XmlSitemapInterface {
 
+  public $uri;
   /**
    * The XmlSitemap ID.
    *
