@@ -451,7 +451,8 @@ function xmlsitemap_rebuild_batch_fetch($entity, &$context) {
   // PostgreSQL cannot have the ORDERED BY in the count query.
   $query->entityOrderBy('entity_id');
 
-  $limit = 20; //variable_get('xmlsitemap_batch_limit', 100)
+  // get batch limit
+  $limit = \Drupal::config('xmlsitemap.settings')->get('batch_limit');
   $query->range(0, $limit);
 
   $result = $query->execute();
