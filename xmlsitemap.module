@@ -393,8 +393,14 @@ function xmlsitemap_sitemap_load_by_context(array $context = NULL) {
     $context = xmlsitemap_get_current_context();
   }
   $hash = xmlsitemap_sitemap_get_context_hash($context);
-  $smid = db_query_range("SELECT smid FROM {xmlsitemap_sitemap} WHERE smid = :hash", 0, 1, array(':hash' => $hash))->fetchField();
-  return xmlsitemap_sitemap_load($smid);
+  $sitemaps = \Drupal::entityManager()->getStorage('xmlsitemap')->loadMultiple();
+  return reset($sitemaps);
+  foreach ($sitemaps as $sitemap) {
+    if ($sitemap->getContext() == $hash) {
+      return $sitemap;
+    }
+  }
+  return NULL;
 }
 
 /**
@@ -771,15 +777,14 @@ function _xmlsitemap_check_changed_link(array $link, $original_link = NULL, $fla
 /**
  * @} End of "defgroup xmlsitemap_api"
  */
-function xmlsitemap_get_directory(stdClass $sitemap = NULL) {
+function xmlsitemap_get_directory(XmlSitemapInterface  $sitemap = NULL) {
   $directory = &drupal_static(__FUNCTION__);
-
   if (!isset($directory)) {
     $directory = \Drupal::config('xmlsitemap.settings')->get('path');
   }
 
   if ($sitemap != NULL && !empty($sitemap->id)) {
-    return file_build_uri($directory . '/' . $sitemap->smid);
+    return file_build_uri($directory . '/' . $sitemap->id);
   }
   else {
     return file_build_uri($directory);
