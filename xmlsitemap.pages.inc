@@ -6,8 +6,8 @@
  *
  * @ingroup xmlsitemap
  */
-
 use Drupal\xmlsitemap\XmlSitemapInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Get the sitemap chunk/page of the current request.
@@ -38,7 +38,7 @@ function xmlsitemap_get_current_chunk(XmlSitemapInterface $sitemap) {
 function xmlsitemap_output_chunk() {
   $sitemap = xmlsitemap_sitemap_load_by_context();
   if (!$sitemap) {
-    return MENU_NOT_FOUND;
+    throw new NotFoundHttpException();
   }
 
   $chunk = xmlsitemap_get_current_chunk($sitemap);
@@ -64,9 +64,8 @@ function xmlsitemap_output_chunk() {
  */
 function xmlsitemap_output_file($file, array $headers = array()) {
   if (!file_exists($file) || !is_readable($file)) {
-    return MENU_NOT_FOUND;
+    throw new NotFoundHttpException();
   }
-
   $mtime = filemtime($file);
   $last_modified = gmdate(DATE_RFC1123, $mtime);
   $etag = '"' . md5($last_modified) . '"';
@@ -108,24 +107,22 @@ function xmlsitemap_file_transfer($uri, $headers) {
   foreach ($headers as $name => $value) {
     drupal_add_http_header($name, $value);
   }
-  drupal_send_headers();
+  //drupal_send_headers();
 
   // Attempt to increase time to transfer file.
   drupal_set_time_limit(240);
-
-  //$scheme = variable_get('file_default_scheme', 'public');
-  $scheme = file_default_scheme() . "://public";
+  $scheme = file_default_scheme();
   // Transfer file in 16 KB chunks to save memory usage.
   if ($scheme && file_stream_wrapper_valid_scheme($scheme) && $fd = fopen($uri, 'rb')) {
     while (!feof($fd)) {
-      print fread($fd, 1024*16);
+      print fread($fd, 1024 * 16);
     }
     fclose($fd);
   }
   else {
-    drupal_not_found();
+    throw new NotFoundHttpException();
   }
-  drupal_exit();
+  exit();
 }
 
 /**

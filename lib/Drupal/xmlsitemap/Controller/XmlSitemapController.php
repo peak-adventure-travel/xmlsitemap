@@ -9,8 +9,35 @@ namespace Drupal\xmlsitemap\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class XmlSitemapController extends ControllerBase {
+
+  public function renderSitemapXml() {
+    module_load_include('module', 'xmlsitemap');
+    module_load_include('pages.inc', 'xmlsitemap');
+    $sitemap = xmlsitemap_sitemap_load_by_context();
+    if (!$sitemap) {
+      throw new NotFoundHttpException();
+    }
+    $chunk = xmlsitemap_get_current_chunk($sitemap);
+    $file = xmlsitemap_sitemap_get_file($sitemap, $chunk);
+
+    // Provide debugging information if enabled.
+    if (\Drupal::config('xmlsitemap.settings')->get('developer_mode') /*&& isset($_GET['debug'])*/) {
+      $output = array();
+      $context = xmlsitemap_get_current_context();
+      $output[] = "Current context: " . print_r($context, TRUE);
+      $output[] = "Sitemap: " . print_r($sitemap, TRUE);
+      $output[] = "Chunk: $chunk";
+      $output[] = "Cache file location: $file";
+      $output[] = "Cache file exists: " . (file_exists($file) ? 'Yes' : 'No');
+      return new Response(implode('<br />', $output));
+    }
+    xmlsitemap_output_file();
+    return new Response();
+    return new Response(xmlsitemap_output_file($file));
+  }
 
   public function renderSitemapXsl() {
     // Read the XSL content from the file.
