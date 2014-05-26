@@ -380,7 +380,7 @@ function xmlsitemap_rebuild_batch(array $entities, $save_custom = FALSE) {
   }
 
   // Clear the rebuild flag.
-  $batch['operations'][] = array('xmlsitemap_batch_variable_set', array(array('xmlsitemap_rebuild_needed' => FALSE)));
+  $batch['operations'][] = array('xmlsitemap_batch_variable_set', array(array('rebuild_needed' => FALSE)));
 
   // Add the regeneration batch.
   $regenerate_batch = xmlsitemap_regenerate_batch();
