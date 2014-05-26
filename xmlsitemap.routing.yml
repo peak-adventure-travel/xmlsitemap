@@ -65,7 +65,7 @@ xmlsitemap.admin_rebuild:
 xmlsitemap.sitemap_xml:
   path: '/sitemap.xml'
   defaults:
-    _content: '\Drupal\xmlsitemap\Form\XmlSitemapSettingsForm'
+    _controller: '\Drupal\xmlsitemap\Controller\XmlSitemapController::renderSitemapXml'
     _title: 'Sitemap XML'
   requirements:
     _permission: 'administer xmlsitemap'
