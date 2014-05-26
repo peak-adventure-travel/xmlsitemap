@@ -777,7 +777,7 @@ function _xmlsitemap_check_changed_link(array $link, $original_link = NULL, $fla
 /**
  * @} End of "defgroup xmlsitemap_api"
  */
-function xmlsitemap_get_directory(XmlSitemapInterface  $sitemap = NULL) {
+function xmlsitemap_get_directory(XmlSitemapInterface $sitemap = NULL) {
   $directory = &drupal_static(__FUNCTION__);
   if (!isset($directory)) {
     $directory = \Drupal::config('xmlsitemap.settings')->get('path');
@@ -907,7 +907,7 @@ function _xmlsitemap_delete_recursive($path, $delete_root = FALSE) {
  * @see hook_xmlsitemap_link_info_alter()
  */
 function xmlsitemap_get_link_info($type = NULL, $reset = FALSE) {
-  global $language;
+  $language = \Drupal::languageManager()->getCurrentLanguage();
   $link_info = &drupal_static(__FUNCTION__);
 
   if ($reset) {
@@ -916,24 +916,35 @@ function xmlsitemap_get_link_info($type = NULL, $reset = FALSE) {
   }
 
   if (!isset($link_info)) {
-    $cid = 'xmlsitemap:link_info:' . $language->language;
+    $cid = 'xmlsitemap:link_info:' . $language->getId();
     if ($cache = \Drupal::cache()->get($cid)) {
       $link_info = $cache->data;
     }
     else {
       entity_info_cache_clear();
-      $link_info = entity_get_info();
-      foreach ($link_info as $key => $info) {
-        if (empty($info['uri callback']) || !isset($info['xmlsitemap'])) {
+      $link_info = array();
+      $entity_types = \Drupal::entityManager()->getDefinitions();
+      foreach ($entity_types as $key => $entity_type) {
+        $link_info[$key] = array(
+          'label' => $entity_type->getLabel(),
+          'type' => $entity_type->id(),
+          'base table' => $entity_type->getBaseTable(),
+          'bundles' => \Drupal::entityManager()->getBundleInfo($entity_type->id())
+        );
+        $uri_callback = $entity_type->getUriCallback();
+        if (empty($uri_callback) || !isset($entity_type->xmlsitemap)) {
           // Remove any non URL-able or XML sitemap un-supported entites.
+          unset($entity_types[$key]);
           unset($link_info[$key]);
         }
-        foreach ($info['bundles'] as $bundle_key => $bundle) {
+        foreach (\Drupal::entityManager()->getBundleInfo($entity_type->id()) as $bundle_key => $bundle) {
           if (!isset($bundle['xmlsitemap'])) {
             // Remove any un-supported entity bundles.
             //unset($link_info[$key]['bundles'][$bundle_key]);
           }
         }
+        unset($entity_types[$key]);
+        unset($link_info[$key]);
       }
       $link_info = array_merge($link_info, module_invoke_all('xmlsitemap_link_info'));
       foreach ($link_info as $key => &$info) {
@@ -953,7 +964,8 @@ function xmlsitemap_get_link_info($type = NULL, $reset = FALSE) {
           $bundle_info['xmlsitemap'] += xmlsitemap_link_bundle_load($key, $bundle, FALSE);
         }
       }
-      drupal_alter('xmlsitemap_link_info', $link_info);
+      //drupal_alter('xmlsitemap_link_info', $link_info);
+      \Drupal::moduleHandler()->alter('xmlsitemap_link_info', $link_info);
       ksort($link_info);
       // Cache by language since this info contains translated strings.
       \Drupal::cache()->set($cid, $link_info);
@@ -1069,7 +1081,7 @@ function xmlsitemap_link_bundle_load($entity, $bundle, $load_bundle_info = TRUE)
       $info['info'] = $entity_info['bundles'][$bundle];
     }
   }
-  $info += \Drupal::config('xmlsitemap.settings')->get("xmlsitemap_settings_{$entity}_{$bundle}");
+  //$info += \Drupal::config('xmlsitemap.settings')->get("xmlsitemap_settings_{$entity}_{$bundle}");
   $info += array(
     'status' => XMLSITEMAP_STATUS_DEFAULT,
     'priority' => XMLSITEMAP_PRIORITY_DEFAULT,
