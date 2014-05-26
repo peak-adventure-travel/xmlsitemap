@@ -368,7 +368,7 @@ function xmlsitemap_rebuild_batch(array $entities, $save_custom = FALSE) {
   );
 
   // Set the rebuild flag in case something fails during the rebuild.
-  $batch['operations'][] = array('xmlsitemap_batch_variable_set', array(array('xmlsitemap_rebuild_needed' => TRUE)));
+  $batch['operations'][] = array('xmlsitemap_batch_variable_set', array(array('rebuild_needed' => TRUE)));
 
   // Purge any links first.
   $batch['operations'][] = array('xmlsitemap_rebuild_batch_clear', array($entities, (bool) $save_custom));
