@@ -7,6 +7,7 @@
  * @ingroup xmlsitemap
  */
 use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Session\AnonymousUserSession;
 
 /**
  * Implements hook_requirements().
@@ -134,6 +135,16 @@ function xmlsitemap_requirements($phase) {
         $requirements['xmlsitemap_generated']['description'] = $t('The XML cached files are out of date and need to be regenerated. You can <a href="@link-cron">run cron manually</a> to regenerate the sitemap files.', array('@link-cron' => url('admin/reports/status/run-cron', array('query' => drupal_get_destination()))));
       }
     }
+    $anonymous_accout = new AnonymousUserSession();
+
+    if (!$anonymous_accout->hasPermission('access user profiles')) {
+      $requirements['xmlsitemap_user_anonymous_permission'] = array(
+        'title' => $t('XML sitemap user'),
+        'value' => $t('Anonymous access to user profiles'),
+        'description' => $t('In order to list user profile links in the sitemap, the anonymous user must have the <a href="@perm-link"><em>View user profiles</em> permission</a>.', array('@perm-link' => url('admin/people/permissions/' . DRUPAL_ANONYMOUS_RID, array('fragment' => 'module-user')))),
+        'severity' => REQUIREMENT_ERROR,
+      );
+    }
   }
 
   return $requirements;
@@ -214,9 +225,9 @@ function xmlsitemap_schema() {
         'description' => 'The priority of this URL relative to other URLs on your site. Valid values range from 0.0 to 1.0.',
         'type' => 'float',
         'default' => NULL,
-        // @todo Convert this field to non-nullable.
-        //'default' => 0.5,
-        //'not null' => NULL,
+      // @todo Convert this field to non-nullable.
+      //'default' => 0.5,
+      //'not null' => NULL,
       ),
       'priority_override' => array(
         'description' => 'A boolean that if TRUE means that the priority field has been overridden from its default value.',
@@ -293,13 +304,13 @@ function xmlsitemap_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
-      //'queued' => array(
-      //  'type' => 'int',
-      //  'unsigned' => TRUE,
-      //  'not null' => TRUE,
-      //  'default' => 0,
-      //  'description' => 'Time when this sitemap was queued for regeneration, 0 if not queued.',
-      //),
+    //'queued' => array(
+    //  'type' => 'int',
+    //  'unsigned' => TRUE,
+    //  'not null' => TRUE,
+    //  'default' => 0,
+    //  'description' => 'Time when this sitemap was queued for regeneration, 0 if not queued.',
+    //),
     ),
     'primary key' => array('smid'),
   );
@@ -318,24 +329,24 @@ function xmlsitemap_install() {
   // Insert the homepage link into the {xmlsitemap} table so we do not show an
   // empty sitemap after install.
   db_insert('xmlsitemap')
-    ->fields(array(
-      'type' => 'frontpage',
-      'id' => 0,
-      'loc' => '',
-      'priority' => \Drupal::config('xmlsitemap.settings')->get('frontpage_priority'),
-      'changefreq' => \Drupal::config('xmlsitemap.settings')->get('frontpage_changefreq'),
-      'language' => LanguageInterface::LANGCODE_NOT_SPECIFIED,
-    ))
-    ->execute();
+      ->fields(array(
+        'type' => 'frontpage',
+        'id' => 0,
+        'loc' => '',
+        'priority' => \Drupal::config('xmlsitemap.settings')->get('frontpage_priority'),
+        'changefreq' => \Drupal::config('xmlsitemap.settings')->get('frontpage_changefreq'),
+        'language' => LanguageInterface::LANGCODE_NOT_SPECIFIED,
+      ))
+      ->execute();
 
   // Insert the default context sitemap.
   $context = array();
   db_insert('xmlsitemap_sitemap')
-    ->fields(array(
-      'smid' => xmlsitemap_sitemap_get_context_hash($context),
-      'context' => serialize($context),
-    ))
-    ->execute();
+      ->fields(array(
+        'smid' => xmlsitemap_sitemap_get_context_hash($context),
+        'context' => serialize($context),
+      ))
+      ->execute();
 
   // @todo Does the sitemap show up on first install or is it a 404 page?
 }
@@ -473,9 +484,9 @@ function xmlsitemap_update_6203() {
   foreach ($sitemaps as $sitemap) {
     xmlsitemap_sitemap_get_max_filesize($sitemap);
     db_update('xmlsitemap_sitemap')
-      ->fields(array('max_filesize' => $sitemap->max_filesize))
-      ->condition('smid', $sitemap->smid)
-      ->execute();
+        ->fields(array('max_filesize' => $sitemap->max_filesize))
+        ->condition('smid', $sitemap->smid)
+        ->execute();
   }
 
   \Drupal::config('xmlsitemap.settings')->clear('max_filesize');
@@ -513,9 +524,9 @@ function xmlsitemap_update_6204() {
  */
 function xmlsitemap_update_7200() {
   db_update('xmlsitemap')
-    ->fields(array('language' => LANGUAGE_NONE))
-    ->condition('language', '')
-    ->execute();
+      ->fields(array('language' => LANGUAGE_NONE))
+      ->condition('language', '')
+      ->execute();
 }
 
 /**
