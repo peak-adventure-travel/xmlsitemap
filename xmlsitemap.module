@@ -1283,7 +1283,7 @@ function xmlsitemap_form_submit_flag_regenerate($form, $form_state) {
  * @todo Remove when http://drupal.org/node/287292 is fixed.
  */
 function xmlsitemap_switch_user($new_user = NULL) {
-  global $user;
+  $user = \Drupal::currentUser();
   $user_original = &drupal_static(__FUNCTION__);
 
   if (!isset($new_user)) {
@@ -1297,7 +1297,7 @@ function xmlsitemap_switch_user($new_user = NULL) {
       return FALSE;
     }
   }
-  elseif (is_numeric($new_user) && $user->uid != $new_user) {
+  elseif (is_numeric($new_user) && $user->id() != $new_user) {
     // Get the full user object.
     if (!$new_user) {
       $new_user = drupal_anonymous_user();
@@ -1314,7 +1314,7 @@ function xmlsitemap_switch_user($new_user = NULL) {
 
     $user = $new_user;
   }
-  elseif (is_object($new_user) && $user->uid != $new_user->uid) {
+  elseif (is_object($new_user) && $user->id() != $new_user->id()) {
     // Backup the original user object.
     if (!isset($user_original)) {
       $user_original = $user;
