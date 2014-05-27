@@ -250,7 +250,7 @@ function xmlsitemap_link_frontpage_settings(&$form) {
  */
 function xmlsitemap_xmlsitemap_link_alter(&$link) {
   // Alter the frontpage priority.
-  if ($link['type'] == 'frontpage' || $link['loc'] == '' || $link['loc'] == variable_get('site_frontpage', 'node')) {
+  if ($link['type'] == 'frontpage' || $link['loc'] == '' || $link['loc'] == Drupal::config('system.site')->get('page.front')) {
     $link['priority'] = \Drupal::config('xmlsitemap.settings')->get('frontpage_priority');
     $link['changefreq'] = \Drupal::config('xmlsitemap.settings')->get('frontpage_changefreq');
   }
