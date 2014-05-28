@@ -13,6 +13,11 @@ namespace Drupal\xmlsitemap_custom\Controller;
 class XmlSitemapCustomListController {
 
   public function render() {
+    $build['xmlsitemap_add_custom'] = array(
+      '#type' => 'link',
+      '#title' => 'Add custom link',
+      '#href' => 'admin/config/search/xmlsitemap/custom/add'
+    );
     $header = array(
       'loc' => array('data' => t('Location'), 'field' => 'loc', 'sort' => 'asc'),
       'priority' => array('data' => t('Priority'), 'field' => 'priority'),
@@ -63,7 +68,7 @@ class XmlSitemapCustomListController {
     );
     $build['xmlsitemap_custom_pager'] = array('#theme' => 'pager');
 
-    return $build['xmlsitemap_custom_table'];
+    return $build;
   }
 
 }
