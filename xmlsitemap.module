@@ -603,11 +603,11 @@ function xmlsitemap_link_save(array $link) {
   // Save the link and allow other modules to respond to the link being saved.
   if ($existing) {
     drupal_write_record('xmlsitemap', $link, array('type', 'id'));
-    module_invoke_all('xmlsitemap_link_update', $link);
+    \Drupal::moduleHandler()->invokeAll('xmlsitemap_link_update', $link);
   }
   else {
     drupal_write_record('xmlsitemap', $link);
-    module_invoke_all('xmlsitemap_link_insert', $link);
+    \Drupal::moduleHandler()->invokeAll('xmlsitemap_link_insert', $link);
   }
 
   return $link;
