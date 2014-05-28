@@ -8,6 +8,7 @@
 namespace Drupal\xmlsitemap\Form;
 
 use Drupal\Core\Entity\EntityConfirmFormBase;
+use Drupal\Core\Url;
 
 /**
  * Builds the form to delete a sitemap.
@@ -32,9 +33,7 @@ class XmlSitemapDeleteForm extends EntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getCancelRoute() {
-    return array(
-      'route_name' => 'xmlsitemap.admin_search_list',
-    );
+    return new Url('xmlsitemap.admin_search_list');
   }
 
   /**
