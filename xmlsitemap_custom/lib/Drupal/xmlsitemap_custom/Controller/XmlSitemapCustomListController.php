@@ -12,7 +12,7 @@ namespace Drupal\xmlsitemap_custom\Controller;
  */
 class XmlSitemapCustomListController {
 
-  public function content() {
+  public function render() {
     $header = array(
       'loc' => array('data' => t('Location'), 'field' => 'loc', 'sort' => 'asc'),
       'priority' => array('data' => t('Priority'), 'field' => 'priority'),
@@ -54,6 +54,7 @@ class XmlSitemapCustomListController {
 
     // @todo Convert to tableselect
     $build['xmlsitemap_custom_table'] = array(
+      '#type' => 'table',
       '#theme' => 'table',
       '#header' => $header,
       '#rows' => $rows,
@@ -61,7 +62,7 @@ class XmlSitemapCustomListController {
     );
     $build['xmlsitemap_custom_pager'] = array('#theme' => 'pager');
 
-    return $build;
+    return $build['xmlsitemap_custom_table'];
   }
 
 }
