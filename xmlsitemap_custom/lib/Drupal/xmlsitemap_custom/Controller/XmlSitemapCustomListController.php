@@ -32,12 +32,13 @@ class XmlSitemapCustomListController {
     $result = $query->execute();
 
     foreach ($result as $link) {
+      $language = \Drupal::languageManager()->getLanguage($link->language);
       $row = array();
       $row['loc'] = l($link->loc, $link->loc);
       $row['priority'] = number_format($link->priority, 1);
       $row['changefreq'] = $link->changefreq ? drupal_ucfirst(xmlsitemap_get_changefreq($link->changefreq)) : t('None');
       if (isset($header['language'])) {
-        $row['language'] = \Drupal::moduleHandler()->invoke('locale', 'language_name', $link->language);
+        $row['language'] = t($language->name);
       }
       $operations = array();
       $operations['edit'] = xmlsitemap_get_operation_link('admin/config/search/xmlsitemap/custom/edit/' . $link->id, array('title' => t('Edit'), 'modal' => TRUE));
@@ -54,7 +55,7 @@ class XmlSitemapCustomListController {
 
     // @todo Convert to tableselect
     $build['xmlsitemap_custom_table'] = array(
-      '#type' => 'table',
+      '#type' => 'tableselect',
       '#theme' => 'table',
       '#header' => $header,
       '#rows' => $rows,
