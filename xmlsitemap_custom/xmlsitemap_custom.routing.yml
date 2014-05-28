@@ -15,7 +15,7 @@ xmlsitemap_custom.add:
     _permission: 'administer xmlsitemap'
 
 xmlsitemap_custom.edit:
-  path: '/admin/config/search/xmlsitemap/custom/{xmlsitemap_custom}/edit'
+  path: '/admin/config/search/xmlsitemap/custom/edit/{link}'
   defaults:
     _entity_list: 'xmlsitemap'
     _title: 'Edit custom link'
@@ -23,9 +23,9 @@ xmlsitemap_custom.edit:
     _permission: 'administer xmlsitemap'
     
 xmlsitemap_custom.delete:
-  path: '/admin/config/search/xmlsitemap/custom/{xmlsitemap_custom}/delete'
+  path: '/admin/config/search/xmlsitemap/custom/delete/{link}'
   defaults:
-    _entity_list: 'xmlsitemap'
+    _form: '\Drupal\xmlsitemap_custom\Form\XmlSitemapCustomDeleteForm'
     _title: 'Delete custom link'
   requirements:
     _permission: 'administer xmlsitemap'
