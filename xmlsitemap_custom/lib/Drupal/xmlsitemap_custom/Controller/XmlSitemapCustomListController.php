@@ -45,11 +45,23 @@ class XmlSitemapCustomListController {
       if (isset($header['language'])) {
         $row['language'] = t($language->name);
       }
-      $operations = array();
-      $operations['edit'] = xmlsitemap_get_operation_link('admin/config/search/xmlsitemap/custom/edit/' . $link->id, array('title' => t('Edit'), 'modal' => TRUE));
-      $operations['delete'] = xmlsitemap_get_operation_link('admin/config/search/xmlsitemap/custom/delete/' . $link->id, array('title' => t('Delete'), 'modal' => TRUE));
+      $operations['edit'] = array(
+         'title' => 'Edit',
+         'route_name' => 'xmlsitemap_custom.edit',
+         'route_parameters' => array(
+           'link' => $link->id
+         )
+       );
+      $operations['delete'] = array(
+         'title' => 'Delete',
+         'route_name' => 'xmlsitemap_custom.delete',
+         'route_parameters' => array(
+           'link' => $link->id
+         )
+       );
       $row['operations'] = array(
         'data' => array(
+          '#type' => 'operations',
           '#theme' => 'links',
           '#links' => $operations,
           '#attributes' => array('class' => array('links', 'inline')),
