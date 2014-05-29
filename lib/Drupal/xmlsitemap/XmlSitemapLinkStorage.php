@@ -1,9 +1,17 @@
 <?php
 
+/**
+ * @file
+ * Definition of Drupal\xmlsitemap\XmlSitemapLinkStorage.
+ */
+
 namespace Drupal\xmlsitemap;
 
 use Drupal\Core\Language\LanguageInterface;
 
+/**
+ * Provides a class to save/update/delete/load xmlsitemap links.
+ */
 class XmlSitemapLinkStorage {
 
   /**
@@ -217,6 +225,43 @@ class XmlSitemapLinkStorage {
     }
 
     return $query->execute();
+  }
+
+  /**
+   * Load a specific sitemap link from the database.
+   *
+   * @param $entity_type
+   *   A string with the entity type.
+   * @param $entity_id
+   *   An integer with the entity ID.
+   * @return
+   *   A sitemap link (array) or FALSE if the conditions were not found.
+   */
+  public static function linkLoad($entity_type, $entity_id) {
+    $link = self::linkLoadMultiple(array('type' => $entity_type, 'id' => $entity_id));
+    return $link ? reset($link) : FALSE;
+  }
+
+  /**
+   * Load sitemap links from the database.
+   *
+   * @param $conditions
+   *   An array of conditions on the {xmlsitemap} table in the form
+   *   'field' => $value.
+   * @return
+   *   An array of sitemap link arrays.
+   */
+  public static function linkLoadMultiple(array $conditions = array()) {
+    $query = db_select('xmlsitemap');
+    $query->fields('xmlsitemap');
+
+    foreach ($conditions as $field => $value) {
+      $query->condition($field, $value);
+    }
+
+    $links = $query->execute()->fetchAllAssoc(\PDO::FETCH_ASSOC);
+
+    return $links;
   }
 
 }
