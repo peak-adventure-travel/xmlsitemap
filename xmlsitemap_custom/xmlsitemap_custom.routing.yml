@@ -17,7 +17,7 @@ xmlsitemap_custom.add:
 xmlsitemap_custom.edit:
   path: '/admin/config/search/xmlsitemap/custom/edit/{link}'
   defaults:
-    _entity_list: 'xmlsitemap'
+    _form: '\Drupal\xmlsitemap_custom\Form\XmlSitemapCustomEditForm'
     _title: 'Edit custom link'
   requirements:
     _permission: 'administer xmlsitemap'
