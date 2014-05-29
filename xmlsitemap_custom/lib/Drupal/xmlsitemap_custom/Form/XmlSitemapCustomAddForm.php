@@ -110,9 +110,14 @@ class XmlSitemapCustomAddForm extends FormBase {
     $query->condition('loc', $link['loc']);
     $query->condition('status',1 );
     $query->condition('access',1);
+    $query->condition('language',$link['language']);
     $result = $query->execute()->fetchAssoc();
     if ($result != FALSE) {
       \Drupal::formBuilder()->setErrorByName('loc', $form_state, t('There is already an existing link in the sitemap with the path %link.', array('%link' => $link['loc'])));
+    }
+
+    if (!drupal_valid_path($link['loc'])) {
+      \Drupal::formBuilder()->setErrorByName('loc', $form_state, t('The %link is not valid for the current site.', array('%link' => $link['loc'])));
     }
     parent::validateForm($form, $form_state);
   }
