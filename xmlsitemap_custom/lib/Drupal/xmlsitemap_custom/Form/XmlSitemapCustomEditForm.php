@@ -10,6 +10,7 @@ namespace Drupal\xmlsitemap_custom\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Session\AnonymousUserSession;
+use Drupal\xmlsitemap\XmlSitemapLinkStorage;
 
 class XmlSitemapCustomEditForm extends FormBase {
 
@@ -127,7 +128,7 @@ class XmlSitemapCustomEditForm extends FormBase {
    */
   public function submitForm(array &$form, array &$form_state) {
     $link = $form_state['values'];
-    xmlsitemap_link_save($link);
+    XmlSitemapLinkStorage::linkSave($link);
     drupal_set_message(t('The custom link for %loc was saved.', array('%loc' => $link['loc'])));
 
     $form_state['redirect_route']['route_name'] = 'xmlsitemap_custom.list';
