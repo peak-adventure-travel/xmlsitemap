@@ -27,7 +27,7 @@ class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
     }
     if ($language != LanguageInterface::LANGCODE_NOT_SPECIFIED && $last_language != $language) {
       unset(static::$aliases[$last_language]);
-      static::$aliases[$language] = db_query("SELECT source, alias FROM {url_alias} WHERE language = :language ORDER BY pid", array(':language' => $language))->fetchAllKeyed();
+      static::$aliases[$language] = db_query("SELECT source, alias FROM {url_alias} WHERE langcode = :language ORDER BY pid", array(':language' => $language))->fetchAllKeyed();
       static::$last_language = $language;
     }
 
