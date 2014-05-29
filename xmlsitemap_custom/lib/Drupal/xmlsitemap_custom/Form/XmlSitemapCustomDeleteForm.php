@@ -11,10 +11,11 @@ use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\Core\Url;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class XmlSitemapCustomDeleteForm extends ConfirmFormBase {
 
-  protected $link;
+  protected $custom_link;
 
   /**
    * {@inheritdoc}
@@ -24,8 +25,20 @@ class XmlSitemapCustomDeleteForm extends ConfirmFormBase {
   }
 
   public function buildForm(array $form, array &$form_state, $link = '') {
-    $this->link = $link;
-    parent::buildForm($form, $form_state);
+    $query = db_select('xmlsitemap');
+    $query->fields('xmlsitemap');
+    $query->condition('type', 'custom');
+    $query->condition('id', $link);
+    $result = $query->execute();
+    $link = $result->fetchAssoc();
+    if (!$link) {
+      drupal_set_message(t('No valid custom link specified.'),'error');
+      return new RedirectResponse('/admin/config/search/xmlsitemap/custom/');
+    }
+    else {
+      $this->custom_link = $link;
+    }
+    return parent::buildForm($form, $form_state);
   }
 
   /**
@@ -45,18 +58,18 @@ class XmlSitemapCustomDeleteForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  function getQuestion() {
-    return t('Are you sure you want to delete %link?', array('%link' => $this->link));
+  public function getQuestion() {
+    return t('Are you sure you want to delete %link?', array('%link' => $this->custom_link['loc']));
   }
 
   /**
    * {@inheritdoc}
    */
   public function submitForm(array &$form, array &$form_state) {
-    xmlsitemap_link_delete('custom', $this->link);
-    drupal_set_message(t('The custom link for %loc has been deleted.', array('%loc' => $this->link)));
-    watchdog('xmlsitemap', 'The custom link for %loc has been deleted.', array('%loc' => $this->link), WATCHDOG_NOTICE);
-    $form_state['redirect']['route'] = 'admin/config/search/xmlsitemap/custom';
+    xmlsitemap_link_delete('custom', $this->custom_link['id']);
+    drupal_set_message(t('The custom link for %loc has been deleted.', array('%loc' => $this->link['loc'])));
+    watchdog('xmlsitemap', 'The custom link for %loc has been deleted.', array('%loc' => $this->link['loc']), WATCHDOG_NOTICE);
+    $form_state['redirect_route']['route_name'] = 'xmlsitemap_custom.list';
   }
 
 }
