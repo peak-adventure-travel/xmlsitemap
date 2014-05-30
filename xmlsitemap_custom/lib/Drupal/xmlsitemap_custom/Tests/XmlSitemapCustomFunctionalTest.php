@@ -14,6 +14,8 @@ use Drupal\xmlsitemap\Tests\XmlSitemapTestHelper;
  */
 class XmlSitemapCustomFunctionalTest extends XmlSitemapTestHelper {
 
+  public static $modules = array('xmlsitemap_custom', 'path', 'node');
+
   public static function getInfo() {
     return array(
       'name' => 'XML sitemap custom interface tests',
@@ -22,19 +24,18 @@ class XmlSitemapCustomFunctionalTest extends XmlSitemapTestHelper {
     );
   }
 
-  public function setUp($modules = array()) {
-    $modules[] = 'xmlsitemap_custom';
-    $modules[] = 'path';
-    parent::setUp($modules);
+  public function setUp() {
+    parent::setUp();
 
     $this->admin_user = $this->drupalCreateUser(array('access content', 'administer xmlsitemap'));
     $this->drupalLogin($this->admin_user);
   }
 
   public function testCustomLinks() {
+    $language = \Drupal::languageManager()->getCurrentLanguage();
     // Set a path alias for the node page.
     $alias = array('source' => 'system/files', 'alias' => 'public-files');
-    path_save($alias);
+    \Drupal::service('path.alias_storage')->save('system/files', 'public-files', $language->getId());
 
     $this->drupalGet('admin/config/search/xmlsitemap/custom');
     $this->clickLink(t('Add custom link'));

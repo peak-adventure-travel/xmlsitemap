@@ -14,10 +14,12 @@ use Drupal\simpletest\WebTestBase;
  */
 class XmlSitemapTestHelper extends WebTestBase {
 
+  public static $modules = array('xmlsitemap');
+
   protected $admin_user;
 
-  public function setUp($modules = array()) {
-    array_unshift($modules, 'xmlsitemap');
+  public function setUp() {
+    array_unshift(self::$modules, 'xmlsitemap');
     parent::setUp();
   }
 
