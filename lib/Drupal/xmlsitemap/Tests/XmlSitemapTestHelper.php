@@ -39,7 +39,7 @@ class XmlSitemapTestHelper extends WebTestBase {
    * @return
    *   Assertion result.
    */
-  protected function assertNoResponse($code, $message = '') {
+  protected function assertNoResponse($code, $message = '',$group = 'Browser') {
     $curl_code = curl_getinfo($this->curlHandle, CURLINFO_HTTP_CODE);
     $match = is_array($code) ? in_array($curl_code, $code) : $curl_code == $code;
     return $this->assertFalse($match, $message ? $message : t('HTTP response not expected !code, actual !curl_code', array('!code' => $code, '!curl_code' => $curl_code)), t('Browser'));
