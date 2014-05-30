@@ -15,7 +15,7 @@ class XmlSitemapCustomListController {
   public function render() {
     $build['xmlsitemap_add_custom'] = array(
       '#type' => 'link',
-      '#title' => 'Add custom link',
+      '#title' => t('Add custom link'),
       '#href' => 'admin/config/search/xmlsitemap/custom/add'
     );
     $header = array(
@@ -46,14 +46,14 @@ class XmlSitemapCustomListController {
         $row['language'] = t($language->name);
       }
       $operations['edit'] = array(
-         'title' => 'Edit',
+         'title' => t('Edit'),
          'route_name' => 'xmlsitemap_custom.edit',
          'route_parameters' => array(
            'link' => $link->id
          )
        );
       $operations['delete'] = array(
-         'title' => 'Delete',
+         'title' => t('Delete'),
          'route_name' => 'xmlsitemap_custom.delete',
          'route_parameters' => array(
            'link' => $link->id
