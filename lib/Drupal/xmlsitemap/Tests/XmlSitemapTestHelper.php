@@ -322,7 +322,7 @@ class XmlSitemapTestHelper extends WebTestBase {
    * @todo Remove when http://drupal.org/node/800426 is fixed.
    */
   protected function verbose($verbose_message, $message = 'Verbose message') {
-    if ($id = simpletest_verbose($verbose_message)) {
+    if ($id = parent::verbose($verbose_message)) {
       $url = file_create_url($this->originalFileDirectory . '/simpletest/verbose/' . get_class($this) . '-' . $id . '.html');
       $this->error(l($message, $url, array('attributes' => array('target' => '_blank'))), 'User notice');
     }
