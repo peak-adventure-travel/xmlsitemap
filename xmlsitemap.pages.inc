@@ -107,7 +107,7 @@ function xmlsitemap_file_transfer($uri, $headers) {
   foreach ($headers as $name => $value) {
     drupal_add_http_header($name, $value);
   }
-  //drupal_send_headers();
+  drupal_send_headers();
 
   // Attempt to increase time to transfer file.
   drupal_set_time_limit(240);

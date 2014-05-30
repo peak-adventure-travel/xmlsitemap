@@ -24,7 +24,7 @@ class XmlSitemapController extends ControllerBase {
     $file = xmlsitemap_sitemap_get_file($sitemap, $chunk);
 
     // Provide debugging information if enabled.
-    if (\Drupal::config('xmlsitemap.settings')->get('developer_mode') /*&& isset($_GET['debug'])*/) {
+    if (\Drupal::config('xmlsitemap.settings')->get('developer_mode')) {
       $output = array();
       $context = xmlsitemap_get_current_context();
       $output[] = "Current context: " . print_r($context, TRUE);
@@ -34,9 +34,7 @@ class XmlSitemapController extends ControllerBase {
       $output[] = "Cache file exists: " . (file_exists($file) ? 'Yes' : 'No');
       return new Response(implode('<br />', $output));
     }
-    xmlsitemap_output_file();
-    return new Response();
-    return new Response(xmlsitemap_output_file($file));
+    xmlsitemap_output_file($file);
   }
 
   public function renderSitemapXsl() {
