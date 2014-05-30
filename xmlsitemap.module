@@ -912,7 +912,9 @@ function xmlsitemap_get_link_info($type = NULL, $reset = FALSE) {
 
   if ($reset) {
     $link_info = NULL;
-    cache_clear_all('xmlsitemap:link_info:', 'cache', TRUE);
+    foreach (\Drupal::languageManager()->getLanguages() as $lang) {
+      \Drupal::cache()->delete('xmlsitemap:link_info:' . $lang->getId());
+    }
   }
 
   if (!isset($link_info)) {
@@ -921,7 +923,7 @@ function xmlsitemap_get_link_info($type = NULL, $reset = FALSE) {
       $link_info = $cache->data;
     }
     else {
-      entity_info_cache_clear();
+      \Drupal::entityManager()->clearCachedDefinitions();
       $link_info = array();
       $entity_types = \Drupal::entityManager()->getDefinitions();
       foreach ($entity_types as $key => $entity_type) {
