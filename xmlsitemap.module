@@ -519,7 +519,7 @@ function xmlsitemap_sitemap_uri(XmlSitemapInterface $sitemap) {
   drupal_alter('xmlsitemap_context_url_options', $uri['options'], $sitemap->getContext());
   $uri['options'] += array(
     'absolute' => TRUE,
-    'base_url' => $GLOBALS['base_url'],
+    'base_url' => \Drupal::config('xmlsitemap.settings')->get('base_url')
   );
   return $uri;
 }
