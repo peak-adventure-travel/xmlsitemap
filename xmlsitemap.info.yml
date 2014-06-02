@@ -3,5 +3,5 @@ type: module
 description: Creates an XML sitemap conforming to the <a href="http://sitemaps.org/">sitemaps.org protocol</a>.
 package: XML sitemap
 core: 8.x
-configure: admin.xmlsitemap
+configure: xmlsitemap.admin_search
 recommends: robotstxt
