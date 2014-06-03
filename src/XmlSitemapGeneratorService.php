@@ -22,13 +22,17 @@ class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
    * {@inheritdoc}
    */
   public function getPathAlias($path, $language) {
+    $query = db_select('url_alias', 'u');
+    $query->fields('u', array('source', 'alias'));
     if (!isset(static::$aliases)) {
-      static::$aliases[LanguageInterface::LANGCODE_NOT_SPECIFIED] = db_query("SELECT source, alias FROM {url_alias} WHERE langcode = :language ORDER BY pid", array(':language' => LanguageInterface::LANGCODE_NOT_SPECIFIED))->fetchAllKeyed();
+      $query->condition('langcode', LanguageInterface::LANGCODE_NOT_SPECIFIED, '=');
+      $static::$aliases[LanguageInterface::LANGCODE_NOT_SPECIFIED] = $query->execute()->fetchAllKeyed();
     }
     if ($language != LanguageInterface::LANGCODE_NOT_SPECIFIED && $last_language != $language) {
       unset(static::$aliases[$last_language]);
-      static::$aliases[$language] = db_query("SELECT source, alias FROM {url_alias} WHERE langcode = :language ORDER BY pid", array(':language' => $language))->fetchAllKeyed();
-      static::$last_language = $language;
+      $query->condition('langcode', $language, '=');
+      $query->orderBy('pid');
+      static::$aliases[$language] = $query->execute()->fetchAllKeyed();
     }
 
     if ($language != LanguageInterface::LANGCODE_NOT_SPECIFIED && isset(static::$aliases[$language][$path])) {
