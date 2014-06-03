@@ -26,9 +26,12 @@ class XmlSitemapCustomAddForm extends FormBase {
    */
   public function buildForm(array $form, array &$form_state) {
     \Drupal::moduleHandler()->loadInclude('xmlsitemap', 'inc', 'xmlsitemap.admin');
+    $query = db_select('xmlsitemap', 'x');
+    $query->addExpression('MAX(id)');
+    $id = $query->execute()->fetchField();
     $link = array();
     $link += array(
-      'id' => db_query("SELECT MAX(id) FROM {xmlsitemap} WHERE type = 'custom'")->fetchField() + 1,
+      'id' => $id + 1,
       'loc' => '',
       'priority' => XMLSITEMAP_PRIORITY_DEFAULT,
       'lastmod' => 0,
@@ -109,9 +112,9 @@ class XmlSitemapCustomAddForm extends FormBase {
     $query->fields('xmlsitemap');
     $query->condition('type', 'custom');
     $query->condition('loc', $link['loc']);
-    $query->condition('status',1 );
-    $query->condition('access',1);
-    $query->condition('language',$link['language']);
+    $query->condition('status', 1);
+    $query->condition('access', 1);
+    $query->condition('language', $link['language']);
     $result = $query->execute()->fetchAssoc();
     if ($result != FALSE) {
       \Drupal::formBuilder()->setErrorByName('loc', $form_state, t('There is already an existing link in the sitemap with the path %link.', array('%link' => $link['loc'])));

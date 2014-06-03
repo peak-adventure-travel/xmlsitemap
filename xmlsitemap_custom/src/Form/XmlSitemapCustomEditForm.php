@@ -41,8 +41,11 @@ class XmlSitemapCustomEditForm extends FormBase {
     else {
       $this->custom_link = $link;
     }
+    $query = db_select('xmlsitemap', 'x');
+    $query->addExpression('MAX(id)');
+    $id = $query->execute()->fetchField();
     $this->custom_link += array(
-      'id' => db_query("SELECT MAX(id) FROM {xmlsitemap} WHERE type = 'custom'")->fetchField() + 1,
+      'id' => $id + 1,
       'loc' => '',
       'priority' => XMLSITEMAP_PRIORITY_DEFAULT,
       'lastmod' => 0,
