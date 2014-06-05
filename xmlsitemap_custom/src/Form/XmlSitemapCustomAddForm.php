@@ -123,7 +123,7 @@ class XmlSitemapCustomAddForm extends FormBase {
     }
     try {
       $client = new Client();
-      $res = $client->get(\Drupal::config('xmlsitemap.settings')->get('base_url') . '/' . $link['loc']);
+      $res = $client->get(url(NULL, array('absolute' => TRUE)) . $link['loc']);
     }
     catch (ClientException $e) {
       \Drupal::formBuilder()->setErrorByName('loc', $form_state, t('The custom link @link is either invalid or it cannot be accessed by anonymous users.', array('@link' => $link['loc'])));
