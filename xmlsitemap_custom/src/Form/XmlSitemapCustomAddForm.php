@@ -11,6 +11,8 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\xmlsitemap\XmlSitemapLinkStorage;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 
 class XmlSitemapCustomAddForm extends FormBase {
 
@@ -119,34 +121,12 @@ class XmlSitemapCustomAddForm extends FormBase {
     if ($result != FALSE) {
       \Drupal::formBuilder()->setErrorByName('loc', $form_state, t('There is already an existing link in the sitemap with the path %link.', array('%link' => $link['loc'])));
     }
-    $collection = \Drupal::service('router.route_provider')->getRoutesByPattern('/' . $link['loc']);
-    if ($collection->count() == 0) {
-      \Drupal::formBuilder()->setErrorByName('loc', $form_state, t('The custom link @link is either invalid or it cannot be accessed by anonymous users.', array('@link' => $link['loc'])));
-      return ;
-    }
-    $anonymous_user = new AnonymousUserSession();
-    $request = \Drupal\Core\Routing\RequestHelper::duplicate(\Drupal::request(), '/' . $link['loc']);
-    $request->attributes->set('_system_path', $link['loc']);
-    $request->attributes->set('_menu_admin', TRUE);
-    $routes = $collection->all();
-    $route = reset($routes);
-
     try {
-      $request->attributes->add(\Drupal::service('router')->matchRequest($request));
+      $client = new Client();
+      $res = $client->get(\Drupal::config('xmlsitemap.settings')->get('base_url') . '/' . $link['loc']);
     }
-    catch (ParamNotConvertedException $e) {
+    catch (ClientException $e) {
       \Drupal::formBuilder()->setErrorByName('loc', $form_state, t('The custom link @link is either invalid or it cannot be accessed by anonymous users.', array('@link' => $link['loc'])));
-      return ;
-    }
-
-    if (!$route) {
-      \Drupal::formBuilder()->setErrorByName('loc', $form_state, t('The custom link @link is either invalid or it cannot be accessed by anonymous users.', array('@link' => $link['loc'])));    
-      return ;
-    }
-
-    if ($route && !\Drupal::service('access_manager')->check($route, $request, $anonymous_user)) {
-      \Drupal::formBuilder()->setErrorByName('loc', $form_state, t('The custom link @link is either invalid or it cannot be accessed by anonymous users.', array('@link' => $link['loc'])));
-      return ;
     }
 
     parent::validateForm($form, $form_state);
