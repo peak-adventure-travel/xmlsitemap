@@ -50,13 +50,13 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
     );
 
     $form['advanced'] = array(
-      '#type' => 'fieldset',
+      '#type' => 'details',
       '#title' => t('Advanced settings'),
       '#collapsible' => TRUE,
       '#collapsed' => !\Drupal::config('xmlsitemap.settings')->get('developer_mode'),
       '#weight' => 10,
     );
-    $form['advanced']['xmlsitemap_gz'] = array(
+    $form['advanced']['gz'] = array(
       '#type' => 'checkbox',
       '#title' => t('Generate additional compressed sitemaps using gzip.'),
       '#default_value' => \Drupal::config('xmlsitemap.settings')->get('gz'),
