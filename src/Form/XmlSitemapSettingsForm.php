@@ -53,7 +53,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
       '#type' => 'details',
       '#title' => t('Advanced settings'),
       '#collapsible' => TRUE,
-      '#collapsed' => !\Drupal::config('xmlsitemap.settings')->get('developer_mode'),
+      '#collapsed' => !\Drupal::state()->get('developer_mode'),
       '#weight' => 10,
     );
     $form['advanced']['gz'] = array(
@@ -95,7 +95,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
     $form['advanced']['base_url'] = array(
       '#type' => 'textfield',
       '#title' => t('Default base URL'),
-      '#default_value' => \Drupal::config('xmlsitemap.settings')->get('base_url'),
+      '#default_value' => \Drupal::state()->get('base_url'),
       '#size' => 30,
       '#description' => t('This is the default base URL used for sitemaps and sitemap links.'),
       '#required' => TRUE,
@@ -116,7 +116,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
     $form['advanced']['developer_mode'] = array(
       '#type' => 'checkbox',
       '#title' => t('Enable developer mode to expose additional settings.'),
-      '#default_value' => \Drupal::config('xmlsitemap.settings')->get('developer_mode'),
+      '#default_value' => \Drupal::state()->get('developer_mode'),
     );
 
     $form['xmlsitemap_settings'] = array(
@@ -179,10 +179,15 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
     // Save any changes to the frontpage link.
     $values = $form_state['values'];
     xmlsitemap_link_save(array('type' => 'frontpage', 'id' => 0, 'loc' => ''));
+    \Drupal::state()->set('developer_mode',$values['developer_mode']);
+    \Drupal::state()->set('base_url',$values['base_url']);
+    unset($values['developer_mode']);
+    unset($values['base_url']);
     foreach ($values as $key => $value) {
       \Drupal::config('xmlsitemap.settings')->set($key,$value);
     }
     \Drupal::config('xmlsitemap.settings')->save();
+
     parent::submitForm($form, $form_state);
   }
 

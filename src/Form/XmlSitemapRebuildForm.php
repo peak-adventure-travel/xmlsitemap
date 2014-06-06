@@ -47,8 +47,8 @@ class XmlSitemapRebuildForm extends ConfigFormBase {
       '#description' => t('If no link types are selected, the sitemap files will just be regenerated.'),
       '#multiple' => TRUE,
       '#options' => $rebuild_types,
-      '#default_value' => \Drupal::config('xmlsitemap.settings')->get('rebuild_needed') || !\Drupal::config('xmlsitemap.settings')->get('developer_mode') ? $rebuild_types : array(),
-      '#access' => \Drupal::config('xmlsitemap.settings')->get('developer_mode'),
+      '#default_value' => \Drupal::config('xmlsitemap.settings')->get('rebuild_needed') || !\Drupal::state()->get('developer_mode') ? $rebuild_types : array(),
+      '#access' => \Drupal::state()->get('developer_mode'),
     );
     return parent::buildForm($form, $form_state);
   }

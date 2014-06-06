@@ -31,12 +31,6 @@ xmlsitemap.settings:
         path:
             type: string
             label: 'Path of the XML generated files'
-        base_url:
-            type: string
-            label: 'URL for XML sitemap file'
-        developer_mode:
-            type: integer
-            label: 'Check if is developer mode'
         frontpage_priority:
             type: float
             label: 'Priority of the frontpage'

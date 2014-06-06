@@ -58,7 +58,7 @@ function _xmlsitemap_regenerate_before() {
   // Attempt to increase the memory limit.
   _xmlsitemap_set_memory_limit();
 
-  if (\Drupal::config('xmlsitemap.settings')->get('developer_mode')) {
+  if (\Drupal::state()->get('developer_mode')) {
     watchdog('xmlsitemap', 'Starting XML sitemap generation. Memory usage: @memory-peak.', array(
       '@memory-peak' => format_size(memory_get_peak_usage(TRUE)),
         ), WATCHDOG_DEBUG
@@ -149,7 +149,7 @@ function xmlsitemap_generate_chunk(XmlSitemapInterface $sitemap, XMLSitemapWrite
   $url_options = $sitemap->uri['options'];
   $url_options += array(
     'absolute' => TRUE,
-    'base_url' => \Drupal::config('xmlsitemap.settings')->get('base_url'),
+    'base_url' => \Drupal::state()->get('base_url'),
     'language' => language_default(),
     'alias' => \Drupal::config('xmlsitemap.settings')->get('prefetch_aliases'),
   );

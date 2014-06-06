@@ -24,7 +24,7 @@ class XmlSitemapController extends ControllerBase {
     $file = xmlsitemap_sitemap_get_file($sitemap, $chunk);
 
     // Provide debugging information if enabled.
-    if (\Drupal::config('xmlsitemap.settings')->get('developer_mode')) {
+    if (\Drupal::state()->get('developer_mode')) {
       $output = array();
       $context = xmlsitemap_get_current_context();
       $output[] = "Current context: " . print_r($context, TRUE);

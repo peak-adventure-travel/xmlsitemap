@@ -75,7 +75,7 @@ class XMLSitemapWriter extends XMLWriter {
    */
   public function getRootAttributes() {
     $attributes['xmlns'] = 'http://www.sitemaps.org/schemas/sitemap/0.9';
-    if (\Drupal::config('xmlsitemap.settings')->get('developer_mode')) {
+    if (\Drupal::state()->get('developer_mode')) {
       $attributes['xmlns:xsi'] = 'http://www.w3.org/2001/XMLSchema-instance';
       $attributes['xsi:schemaLocation'] = 'http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd';
     }
@@ -177,7 +177,7 @@ class XMLSitemapIndexWriter extends XMLSitemapWriter {
 
   public function getRootAttributes() {
     $attributes['xmlns'] = 'http://www.sitemaps.org/schemas/sitemap/0.9';
-    if (\Drupal::config('xmlsitemap.settings')->get('developer_mode')) {
+    if (\Drupal::state()->get('developer_mode')) {
       $attributes['xmlns:xsi'] = 'http://www.w3.org/2001/XMLSchema-instance';
       $attributes['xsi:schemaLocation'] = 'http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd';
     }

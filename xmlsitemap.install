@@ -104,7 +104,7 @@ function xmlsitemap_requirements($phase) {
       $requirements['xmlsitemap_file_size']['description'] = $t('You have exceeded the maximum sitemap file size of @size. If possible, decrease the number of links per sitemap page.', array('@size' => format_size(XMLSITEMAP_MAX_SITEMAP_FILESIZE)));
       $requirements['xmlsitemap_file_size']['severity'] = REQUIREMENT_ERROR;
     }
-    elseif (!\Drupal::config('xmlsitemap.settings')->get('developer_mode')) {
+    elseif (!\Drupal::state()->get('developer_mode')) {
       unset($requirements['xmlsitemap_file_size']);
     }
 
@@ -347,6 +347,8 @@ function xmlsitemap_install() {
         'context' => serialize($context),
       ))
       ->execute();
+  \Drupal::state()->set('base_url', url(NULL, array('absolute' => TRUE)));
+  \Drupal::state()->set('developer_mode',0);
 
   // @todo Does the sitemap show up on first install or is it a 404 page?
 }
