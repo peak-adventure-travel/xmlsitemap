@@ -794,7 +794,7 @@ function xmlsitemap_get_directory(XmlSitemapInterface $sitemap = NULL) {
 /**
  * Check that the sitemap files directory exists and is writable.
  */
-function xmlsitemap_check_directory(stdClass $sitemap = NULL) {
+function xmlsitemap_check_directory(XmlSitemapInterface $sitemap = NULL) {
   $directory = xmlsitemap_get_directory($sitemap);
   $result = file_prepare_directory($directory, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS);
   if (!$result) {
@@ -825,7 +825,7 @@ function xmlsitemap_check_all_directories() {
   return $directories;
 }
 
-function xmlsitemap_clear_directory(stdClass $sitemap = NULL, $delete = FALSE) {
+function xmlsitemap_clear_directory(XmlSitemapInterface $sitemap = NULL, $delete = FALSE) {
   $directory = xmlsitemap_get_directory($sitemap);
   return _xmlsitemap_delete_recursive($directory, $delete);
 }
@@ -1468,7 +1468,7 @@ function xmlsitemap_get_current_context() {
   return $context;
 }
 
-function _xmlsitemap_sitemap_context_summary(stdClass $sitemap, $context_key, array $context_info) {
+function _xmlsitemap_sitemap_context_summary(XmlSitemapInterface $sitemap, $context_key, array $context_info) {
   $context_value = isset($sitemap->context[$context_key]) ? $sitemap->context[$context_key] : NULL;
 
   if (!isset($context_value)) {
