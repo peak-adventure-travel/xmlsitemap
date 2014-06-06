@@ -1,22 +1,24 @@
 
-(function ($) {
+(function($, Drupal) {
 
-Drupal.behaviors.xmlsitemapFieldsetSummaries = {
-  attach: function (context) {
-    $('fieldset#edit-xmlsitemap', context).drupalSetSummary(function (context) {
-      var vals = [];
+  "use strict";
 
-      // Inclusion select field.
-      var status = $('#edit-xmlsitemap-status option:selected').text();
-      vals.push(Drupal.t('Inclusion: @value', { '@value': status }));
+  Drupal.behaviors.xmlsitemapFieldsetSummaries = {
+    attach: function(context) {
+      $('fieldset#edit-xmlsitemap', context).drupalSetSummary(function(context) {
+        var vals = [];
 
-      // Priority select field.
-      var priority = $('#edit-xmlsitemap-priority option:selected').text();
-      vals.push(Drupal.t('Priority: @value', { '@value': priority }));
+        // Inclusion select field.
+        var status = $('#edit-xmlsitemap-status option:selected').text();
+        vals.push(Drupal.t('Inclusion: @value', {'@value': status}));
 
-      return vals.join('<br />');
-    });
-  }
-};
+        // Priority select field.
+        var priority = $('#edit-xmlsitemap-priority option:selected').text();
+        vals.push(Drupal.t('Priority: @value', {'@value': priority}));
 
-})(jQuery);
+        return vals.join('<br />');
+      });
+    }
+  };
+
+})(jQuery, Drupal);
