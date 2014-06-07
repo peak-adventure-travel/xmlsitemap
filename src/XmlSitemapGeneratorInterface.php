@@ -73,12 +73,12 @@ interface XmlSitemapGeneratorInterface {
    *
    * @param $sitemap
    *   An unserialized data array for an XML sitemap.
-   * @param XMLSitemapWriter $writer
+   * @param XmlSitemapWriter $writer
    *   XML writer object
    * @param $page
    *   An integer of the specific page of the sitemap to generate.
    */
-  public function generateChunk(stdClass $sitemap, XMLSitemapWriter $writer, $chunk);
+  public function generateChunk(stdClass $sitemap, XmlSitemapWriter $writer, $chunk);
 
   /**
    * Generate the index sitemap.

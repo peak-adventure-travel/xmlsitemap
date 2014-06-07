@@ -10,7 +10,7 @@ namespace Drupal\xmlsitemap;
 /**
  * Extended class for writing XML sitemap files.
  */
-class XmlSitemapWriter extends XMLWriter {
+class XmlSitemapWriter extends \XMLWriter {
 
   protected $uri = NULL;
   protected $sitemapElementCount = 0;

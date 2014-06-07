@@ -114,7 +114,7 @@ class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
   public function generatePage(XmlSitemapInterface $sitemap, $page) {
     try {
       module_load_include('xmlsitemap.inc', 'xmlsitemap');
-      $writer = new XMLSitemapWriter($sitemap, $page);
+      $writer = new XmlSitemapWriter($sitemap, $page);
       $writer->startDocument();
       $writer->generateXML();
       $writer->endDocument();
@@ -131,7 +131,7 @@ class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
   /**
    * {@inheritdoc}
    */
-  public function generateChunk(XmlSitemapInterface $sitemap, XMLSitemapWriter $writer, $chunk) {
+  public function generateChunk(XmlSitemapInterface $sitemap, XmlSitemapWriter $writer, $chunk) {
     $lastmod_format = \Drupal::config('xmlsitemap.settings')->get('lastmod_format');
 
     $url_options = $sitemap->uri['options'];
@@ -214,7 +214,7 @@ class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
    */
   public function generateIndex(XmlSitemapInterface $sitemap) {
     try {
-      $writer = new XMLSitemapIndexWriter($sitemap);
+      $writer = new XmlSitemapIndexWriter($sitemap);
       $writer->startDocument();
       $writer->generateXML();
       $writer->endDocument();

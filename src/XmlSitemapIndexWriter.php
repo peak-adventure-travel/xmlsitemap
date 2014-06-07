@@ -10,7 +10,7 @@ namespace Drupal\xmlsitemap;
 /**
  * Extended class for writing XML sitemap indexes.
  */
-class XMLSitemapIndexWriter extends XmlSitemapWriter {
+class XmlSitemapIndexWriter extends XmlSitemapWriter {
 
   protected $rootElement = 'sitemapindex';
 

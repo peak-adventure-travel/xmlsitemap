@@ -9,6 +9,8 @@
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\xmlsitemap\XmlSitemapInterface;
 use Drupal\xmlsitemap\Entity\XmlSitemap;
+use Drupal\xmlsitemap\XmlSitemapGenerationException;
+use Drupal\xmlsitemap\XmlSitemapWriter;
 
 /**
  * Given an internal Drupal path, return the alias for the path.
@@ -129,7 +131,7 @@ function _xmlsitemap_set_memory_limit($new_limit = NULL) {
 function xmlsitemap_generate_page(XmlSitemapInterface $sitemap, $page) {
   try {
     module_load_include('xmlsitemap.inc', 'xmlsitemap');
-    $writer = new XMLSitemapWriter($sitemap, $page);
+    $writer = new XmlSitemapWriter($sitemap, $page);
     $writer->startDocument();
     $writer->generateXML();
     $writer->endDocument();
@@ -143,7 +145,7 @@ function xmlsitemap_generate_page(XmlSitemapInterface $sitemap, $page) {
   return $writer->getSitemapElementCount();
 }
 
-function xmlsitemap_generate_chunk(XmlSitemapInterface $sitemap, XMLSitemapWriter $writer, $chunk) {
+function xmlsitemap_generate_chunk(XmlSitemapInterface $sitemap, XmlSitemapWriter $writer, $chunk) {
   $lastmod_format = \Drupal::config('xmlsitemap.settings')->get('lastmod_format');
 
   $url_options = $sitemap->uri['options'];
@@ -229,7 +231,7 @@ function xmlsitemap_generate_chunk(XmlSitemapInterface $sitemap, XMLSitemapWrite
  */
 function xmlsitemap_generate_index(XmlSitemapInterface $sitemap) {
   try {
-    $writer = new XMLSitemapIndexWriter($sitemap);
+    $writer = new XmlSitemapIndexWriter($sitemap);
     $writer->startDocument();
     $writer->generateXML();
     $writer->endDocument();
