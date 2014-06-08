@@ -6,6 +6,14 @@
  */
 
 /**
+ * Implements hook_install().
+ */
+function xmlsitemap_engines_install() {
+  $variables = xmlsitemap_engines_variables();
+  \Drupal::state()->setMultiple($variables);
+}
+
+/**
  * Implements hook_uninstall().
  */
 function xmlsitemap_engines_uninstall() {
