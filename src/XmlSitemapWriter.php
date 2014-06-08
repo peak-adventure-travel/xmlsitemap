@@ -59,7 +59,7 @@ class XmlSitemapWriter extends \XMLWriter {
    * Add the XML stylesheet to the XML page.
    */
   public function writeXSL() {
-    $this->writePi('xml-stylesheet', 'type="text/xsl" href="' . url(NULL, array('absolute' => TRUE)) . 'sitemap.xsl' . '"');
+    $this->writePi('xml-stylesheet', 'type="text/xsl" href="' . url('sitemap.xsl') . '"');
     $this->writeRaw(PHP_EOL);
   }
 
