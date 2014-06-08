@@ -1,0 +1,9 @@
+name: XML sitemap engines
+type: module
+description: Submit the sitemap to search engines.
+package: XML sitemap
+core: 8.x
+configure: xmlsitemap.admin_search
+recommends:
+    - site_verify
+configure: admin.engines
