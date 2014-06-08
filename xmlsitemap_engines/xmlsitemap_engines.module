@@ -174,11 +174,11 @@ function xmlsitemap_engines_prepare_url($url, $sitemap) {
  * @see hook_xmlsitemap_engines_info_alter()
  */
 function xmlsitemap_engines_get_engine_info($engine = NULL) {
-  global $language;
+  $language = \Drupal::languageManager()->getCurrentLanguage();
   $engines = &drupal_static(__FUNCTION__);
 
   if (!isset($engines)) {
-    if ($cached = cache_get('xmlsitemap:engines:' . $language->language)) {
+    if ($cached = \Drupal::cache()->get('xmlsitemap:engines:' . $language->getId())) {
       $engines = $cached->data;
     }
     else {
@@ -187,7 +187,7 @@ function xmlsitemap_engines_get_engine_info($engine = NULL) {
       // Allow other modulse to alter the engine info.
       drupal_alter('xmlsitemap_engine_info', $engines);
       // Cache by language since engine names are translated.
-      cache_set('xmlsitemap:engines:' . $language->language, $engines);
+      \Drupal::cache()->set('xmlsitemap:engines:' . $language->getId(), $engines);
     }
   }
 
