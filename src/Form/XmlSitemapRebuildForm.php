@@ -39,8 +39,8 @@ class XmlSitemapRebuildForm extends ConfigFormBase {
 
     // Build a list of rebuildable link types.
     module_load_include('generate.inc', 'xmlsitemap');
-    //$rebuild_types = xmlsitemap_get_rebuildable_link_types();
-    $rebuild_types = array_combine(array(), array());
+    $rebuild_types = xmlsitemap_get_rebuildable_link_types();
+    $rebuild_types = array_combine($rebuild_types,$rebuild_types);
     $form['entities'] = array(
       '#type' => 'select',
       '#title' => t("Select which link types you would like to rebuild"),
