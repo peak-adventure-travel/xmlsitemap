@@ -4,6 +4,7 @@ description: Submit the sitemap to search engines.
 package: XML sitemap
 core: 8.x
 configure: xmlsitemap.admin_search
+dependencies: xmlsitemap
 recommends:
     - site_verify
 configure: admin.engines
