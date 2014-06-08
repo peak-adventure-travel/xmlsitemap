@@ -27,7 +27,6 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, array &$form_state) {
-    global $base_root;
     $intervals = array(300, 900, 1800, 3600, 10800, 21600, 43200, 86400, 172800, 259200, 604800);
     $form['minimum_lifetime'] = array(
       '#type' => 'select',

@@ -10,6 +10,6 @@ namespace Drupal\xmlsitemap;
 /**
  * Exception thrown at sitemap generation
  */
-class XmlSitemapGenerationException extends XMLSitemapException {
+class XmlSitemapGenerationException extends XmlSitemapException {
  
 }
