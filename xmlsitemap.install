@@ -260,50 +260,51 @@ function xmlsitemap_schema() {
     ),
   );
 
-  $schema['xmlsitemap_sitemap'] = array(
+  /*
+    $schema['xmlsitemap_sitemap'] = array(
     'fields' => array(
-      'smid' => array(
-        'description' => 'The sitemap ID (the hashed value of {xmlsitemap}.context.',
-        'type' => 'varchar',
-        'length' => 64,
-        'not null' => TRUE,
-      ),
-      'uuid' => array(
-        'description' => 'Unique Key: Universally unique identifier for this entity.',
-        'type' => 'varchar',
-        'length' => 128,
-        'not null' => FALSE,
-      ),
-      'context' => array(
-        'description' => 'Serialized array with the sitemaps context',
-        'type' => 'text',
-        'not null' => TRUE,
-        'serialize' => TRUE,
-      ),
-      'updated' => array(
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'default' => 0,
-      ),
-      'links' => array(
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'default' => 0,
-      ),
-      'chunks' => array(
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'default' => 0,
-      ),
-      'max_filesize' => array(
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'default' => 0,
-      ),
+    'smid' => array(
+    'description' => 'The sitemap ID (the hashed value of {xmlsitemap}.context.',
+    'type' => 'varchar',
+    'length' => 64,
+    'not null' => TRUE,
+    ),
+    'uuid' => array(
+    'description' => 'Unique Key: Universally unique identifier for this entity.',
+    'type' => 'varchar',
+    'length' => 128,
+    'not null' => FALSE,
+    ),
+    'context' => array(
+    'description' => 'Serialized array with the sitemaps context',
+    'type' => 'text',
+    'not null' => TRUE,
+    'serialize' => TRUE,
+    ),
+    'updated' => array(
+    'type' => 'int',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'default' => 0,
+    ),
+    'links' => array(
+    'type' => 'int',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'default' => 0,
+    ),
+    'chunks' => array(
+    'type' => 'int',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'default' => 0,
+    ),
+    'max_filesize' => array(
+    'type' => 'int',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'default' => 0,
+    ),
     //'queued' => array(
     //  'type' => 'int',
     //  'unsigned' => TRUE,
@@ -313,8 +314,8 @@ function xmlsitemap_schema() {
     //),
     ),
     'primary key' => array('smid'),
-  );
-
+    );
+   */
   return $schema;
 }
 
@@ -340,15 +341,22 @@ function xmlsitemap_install() {
       ->execute();
 
   // Insert the default context sitemap.
+  /* db_insert('xmlsitemap_sitemap')
+    ->fields(array(
+    'smid' => xmlsitemap_sitemap_get_context_hash($context),
+    'context' => serialize($context),
+    ))
+    ->execute();
+   */
   $context = array();
-  db_insert('xmlsitemap_sitemap')
-      ->fields(array(
-        'smid' => xmlsitemap_sitemap_get_context_hash($context),
-        'context' => serialize($context),
-      ))
-      ->execute();
+  $sitemap = \Drupal::entityManager()->getStorage('xmlsitemap')->create(array(
+    'id' => xmlsitemap_sitemap_get_context_hash($context),
+    'context' => serialize($context),
+    'label' => \Drupal::state()->get('base_url')
+  ));
+  $sitemap->save();
   \Drupal::state()->set('base_url', url(NULL, array('absolute' => TRUE)));
-  \Drupal::state()->set('developer_mode',0);
+  \Drupal::state()->set('developer_mode', 0);
 
   // @todo Does the sitemap show up on first install or is it a 404 page?
 }
