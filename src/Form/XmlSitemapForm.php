@@ -54,16 +54,21 @@ class XmlSitemapForm extends EntityForm {
       $xmlsitemap->setId(xmlsitemap_sitemap_get_context_hash($context));
       $xmlsitemap->setContext($context);
     }
-    $status = $xmlsitemap->save();
-    if ($status) {
-      drupal_set_message($this->t('Saved the %label sitemap.', array(
-            '%label' => $xmlsitemap->label(),
-      )));
+    if (xmlsitemap_sitemap_load($xmlsitemap->id())) {
+      drupal_set_message($this->t('There is another sitemap saved with the same context.'),'error');
     }
     else {
-      drupal_set_message($this->t('The %label sitemap was not saved.', array(
-            '%label' => $xmlsitemap->label(),
-      )));
+      $status = $xmlsitemap->save();
+      if ($status) {
+        drupal_set_message($this->t('Saved the %label sitemap.', array(
+              '%label' => $xmlsitemap->label(),
+        )));
+      }
+      else {
+        drupal_set_message($this->t('The %label sitemap was not saved.', array(
+              '%label' => $xmlsitemap->label(),
+        )));
+      }
     }
     $form_state['redirect'] = 'admin/config/search/xmlsitemap';
   }
