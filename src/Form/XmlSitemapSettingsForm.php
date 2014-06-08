@@ -157,15 +157,15 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
    */
   public function validateForm(array &$form, array &$form_state) {
     // Check that the chunk size will not create more than 1000 chunks.
-    $chunk_size = $form_state['values']['xmlsitemap_chunk_size'];
+    $chunk_size = $form_state['values']['chunk_size'];
     if ($chunk_size != 'auto' && $chunk_size != 50000 && (xmlsitemap_get_link_count() / $chunk_size) > 1000) {
-      form_set_error('xmlsitemap_chunk_size', t('The sitemap page link count of @size will create more than 1,000 sitemap pages. Please increase the link count.', array('@size' => $chunk_size)));
+      form_set_error('chunk_size', t('The sitemap page link count of @size will create more than 1,000 sitemap pages. Please increase the link count.', array('@size' => $chunk_size)));
     }
 
-    $base_url = &$form_state['values']['xmlsitemap_base_url'];
+    $base_url = &$form_state['values']['base_url'];
     $base_url = rtrim($base_url, '/');
     if ($base_url != '' && !UrlHelper::isValid($base_url, TRUE)) {
-      \Drupal::formBuilder()->setErrorByName('xmlsitemap_base_url', $form_state,t('Invalid base URL.'));
+      \Drupal::formBuilder()->setErrorByName('base_url', $form_state,t('Invalid base URL.'));
     }
 
     parent::validateForm($form, $form_state);
