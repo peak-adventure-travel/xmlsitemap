@@ -67,9 +67,16 @@ function xmlsitemap_requirements($phase) {
         $requirements['xmlsitemap_directory']['description'] = $t('The following directories were not found or are not writable by the server. See <a href="@docpage">@docpage</a> for more information. !directories', array('!directories' => theme('item_list', array('items' => array_keys($directories))), '@docpage' => 'http://drupal.org/node/34025'));
       }
     }
-
+    $sitemaps = xmlsitemap_sitemap_load_multiple();
+    $max_links = -1;
+    $max_chunks = -1;
+    $max_filesize = -1;
+    foreach ($sitemaps as $sitemap) {
+      $max_links = max(array($max_links,$sitemap->getLinks()));
+      $max_chunks = max(array($max_chunks,$sitemap->getChunks()));
+      $max_filesize = max(array($max_filesize,$sitemap->getMaxFileSize()));
+    }
     // The maximum number of links in a sitemap.
-    $max_links = db_query("SELECT MAX(links) FROM {xmlsitemap_sitemap}")->fetchField();
     $max_links_limit = XMLSITEMAP_MAX_SITEMAP_LINKS * XMLSITEMAP_MAX_SITEMAP_LINKS;
     if ($max_links > $max_links_limit) {
       $requirements['xmlsitemap_link_count'] = array(
@@ -81,7 +88,6 @@ function xmlsitemap_requirements($phase) {
     }
 
     // The maximum number of chunks in a sitemap.
-    $max_chunks = db_query("SELECT MAX(chunks) FROM {xmlsitemap_sitemap}")->fetchField();
     if ($max_chunks > XMLSITEMAP_MAX_SITEMAP_LINKS) {
       $requirements['xmlsitemap_chunk_count'] = array(
         'title' => $t('XML sitemap page count'),
@@ -95,7 +101,6 @@ function xmlsitemap_requirements($phase) {
     }
 
     // Check maximum file size.
-    $max_filesize = db_query("SELECT MAX(max_filesize) FROM {xmlsitemap_sitemap}")->fetchField();
     $requirements['xmlsitemap_file_size'] = array(
       'title' => $t('XML sitemap maximum file size'),
       'value' => format_size($max_filesize),
