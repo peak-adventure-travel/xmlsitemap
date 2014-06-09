@@ -7,9 +7,11 @@ use Drupal\xmlsitemap\Tests\XmlSitemapTestHelper;
 class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestHelper {
 
   protected $submit_url;
-  
-  public static $modules = array('xmlsitemap_engines','xmlsitemap_engines_test');
+  public static $modules = array('xmlsitemap_engines', 'xmlsitemap_engines_test');
 
+  /**
+   * {@inheritdoc}
+   */
   public static function getInfo() {
     return array(
       'name' => 'XML sitemap engines functional tests',
@@ -18,8 +20,12 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestHelper {
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function setUp() {
     parent::setUp();
+
 
     $this->admin_user = $this->drupalCreateUser(array('access content', 'administer xmlsitemap'));
     $this->drupalLogin($this->admin_user);
@@ -32,6 +38,9 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestHelper {
     $this->submit_url = url('ping', array('absolute' => TRUE, 'query' => array('sitemap' => ''))) . '[sitemap]';
   }
 
+  /**
+   * Check if sitemaps are sent to searching engines
+   */
   public function submitEngines() {
     variable_set('xmlsitemap_engines_submit_last', REQUEST_TIME - 10000);
     variable_set('xmlsitemap_generated_last', REQUEST_TIME - 100);
@@ -40,6 +49,9 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestHelper {
     $this->assertTrue(variable_get('xmlsitemap_engines_submit_last', 0) > (REQUEST_TIME - 100), 'Submitted the sitemaps to search engines.');
   }
 
+  /**
+   * Check if an url is correctly prepared
+   */
   public function testPrepareURL() {
     $sitemap = 'http://example.com/sitemap.xml';
     $input = 'http://example.com/ping?sitemap=[sitemap]&foo=bar';
@@ -47,6 +59,9 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestHelper {
     $this->assertEqual(xmlsitemap_engines_prepare_url($input, $sitemap), $output);
   }
 
+  /**
+   * Create sitemaps and send them to search engines
+   */
   public function testSubmitSitemaps() {
     $sitemaps = array();
     $sitemap = new stdClass();
@@ -67,6 +82,9 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestHelper {
     $this->assertWatchdogMessage(array('type' => 'xmlsitemap', 'message' => 'Recieved ping for @sitemap.', 'variables' => array('@sitemap' => 'http://example.com/sitemap-2.xml')));
   }
 
+  /**
+   * Check if ping works
+   */
   public function testPing() {
     $edit = array('xmlsitemap_engines_engines[simpletest]' => TRUE);
     $this->drupalPost('admin/config/search/xmlsitemap/engines', $edit, t('Save configuration'));
@@ -77,6 +95,9 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestHelper {
     $this->assertWatchdogMessage(array('type' => 'xmlsitemap', 'message' => 'Recieved ping for @sitemap.'));
   }
 
+  /**
+   * Check if custom urls are functional
+   */
   public function testCustomURL() {
     $edit = array('xmlsitemap_engines_custom_urls' => 'an-invalid-url');
     $this->drupalPost('admin/config/search/xmlsitemap/engines', $edit, t('Save configuration'));
