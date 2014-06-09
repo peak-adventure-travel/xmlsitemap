@@ -359,7 +359,7 @@ function xmlsitemap_sitemap_load_multiple($smids = array(), array $conditions = 
     $conditions['smid'] = $smids;
   }
   else {
-    $conditions['smid'] = array();
+    $conditions['smid'] = NULL;
   }
   $storage = Drupal::entityManager()->getStorage('xmlsitemap');
 
