@@ -200,7 +200,7 @@ class XmlSitemapTestHelper extends WebTestBase {
     $value = xmlsitemap_var($variable);
 
     if ($reset_if_true && $value) {
-      variable_set('xmlsitemap_' . $variable, FALSE);
+      \Drupal::config('xmlsitemap.settings')->set($variable, FALSE);
     }
 
     return $this->assertEqual($value, $assert_value, "xmlsitemap_$variable is " . ($assert_value ? 'TRUE' : 'FALSE'));

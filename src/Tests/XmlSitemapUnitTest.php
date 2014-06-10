@@ -23,7 +23,7 @@ class XmlSitemapUnitTest extends XmlSitemapTestHelper {
   }
 
   public function testAssertFlag() {
-    variable_set('xmlsitemap_rebuild_needed', TRUE);
+    \Drupal::config('xmlsitemap.settings')->set('rebuild_needed', TRUE);
     $this->assertTrue(xmlsitemap_var('rebuild_needed'));
     $this->assertTrue($this->assertFlag('rebuild_needed', TRUE, FALSE));
     $this->assertTrue(xmlsitemap_var('rebuild_needed'));
@@ -72,7 +72,7 @@ class XmlSitemapUnitTest extends XmlSitemapTestHelper {
    */
   public function testGetChunkCount() {
     // Set a low chunk size for testing.
-    variable_set('xmlsitemap_chunk_size', 4);
+    \Drupal::config('xmlsitemap.settings')->set('chunk_size', 4);
 
     // Make the total number of links just equal to the chunk size.
     $count = db_query("SELECT COUNT(id) FROM {xmlsitemap}")->fetchField();
