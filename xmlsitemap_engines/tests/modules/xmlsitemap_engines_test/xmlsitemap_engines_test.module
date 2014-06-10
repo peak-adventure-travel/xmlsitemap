@@ -1,5 +1,7 @@
 <?php
 
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 /**
  * Implements hook_menu().
  */
@@ -34,7 +36,7 @@ function xmlsitemap_engines_test_pinged() {
   if (empty($_GET['sitemap']) || !valid_url($_GET['sitemap'])) {
     watchdog('xmlsitemap', 'No valid sitemap parameter provided.', array(), WATCHDOG_WARNING);
     // @todo Remove this? Causes an extra watchdog error to be handled.
-    return MENU_NOT_FOUND;
+    throw new NotFoundHttpException();
   }
   else {
     watchdog('xmlsitemap', 'Recieved ping for @sitemap.', array('@sitemap' => $_GET['sitemap']));
