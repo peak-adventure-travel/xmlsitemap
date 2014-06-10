@@ -58,8 +58,7 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
       '#description' => t('Enter one URL per line. The token [sitemap] will be replaced with the URL to your sitemap. For example: %example-before would become %example-after.', array('%example-before' => 'http://example.com/ping?[sitemap]', '%example-after' => xmlsitemap_engines_prepare_url('http://example.com/ping?[sitemap]', url('sitemap.xml', array('absolute' => TRUE))))),
       '#default_value' => \Drupal::state()->get('xmlsitemap_engines_custom_urls'),
       '#rows' => 2,
-      '#wysiwyg' => FALSE,
-      '#element_validate' => array('xmlsitemap_engines_validate_custom_urls'),
+      '#wysiwyg' => FALSE
     );
 
     // Ensure the xmlsitemap_engines variable gets filterd to a simple array.
