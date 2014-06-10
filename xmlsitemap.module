@@ -1293,7 +1293,7 @@ function xmlsitemap_switch_user($new_user = NULL) {
       // Restore the original user.
       $user = $user_original;
       $user_original = NULL;
-      drupal_save_session(TRUE);
+      \Drupal::service('session_manager')->save();
     }
     else {
       return FALSE;
@@ -1311,7 +1311,7 @@ function xmlsitemap_switch_user($new_user = NULL) {
     // Backup the original user object.
     if (!isset($user_original)) {
       $user_original = $user;
-      drupal_save_session(FALSE);
+      \Drupal::service('session_manager')->save();
     }
 
     $user = $new_user;
@@ -1320,7 +1320,7 @@ function xmlsitemap_switch_user($new_user = NULL) {
     // Backup the original user object.
     if (!isset($user_original)) {
       $user_original = $user;
-      drupal_save_session(FALSE);
+      \Drupal::service('session_manager')->save();
     }
 
     $user = $new_user;
