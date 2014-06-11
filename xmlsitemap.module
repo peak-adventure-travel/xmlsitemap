@@ -371,9 +371,13 @@ function xmlsitemap_sitemap_load_multiple($smids = array(), array $conditions = 
     }
     $sitemaps = $query->execute()->fetchAllAssoc('smid');
    */
-  foreach ($sitemaps as $sitemap) {
-    $sitemaps[$sitemap->id()]->setContext(unserialize($sitemap->getContext()));
-    $sitemaps[$sitemap->id()]->uri = xmlsitemap_sitemap_uri($sitemap);
+  if (count($sitemaps) <= 0) {
+    return array();
+  }
+  foreach ($sitemaps as &$sitemap) {
+    $sitemap->setContext(unserialize($sitemap->getContext()));
+    $uri = xmlsitemap_sitemap_uri($sitemap);
+    $sitemap->uri = $uri;
   }
 
   return $sitemaps;
@@ -516,7 +520,8 @@ function xmlsitemap_sitemap_get_context_hash(array &$context) {
 function xmlsitemap_sitemap_uri(XmlSitemapInterface $sitemap) {
   $uri['path'] = 'sitemap.xml';
   $uri['options'] = module_invoke_all('xmlsitemap_context_url_options', $sitemap->getContext());
-  drupal_alter('xmlsitemap_context_url_options', $uri['options'], $sitemap->getContext());
+  $context = $sitemap->getContext();
+  \Drupal::moduleHandler()->alter('xmlsitemap_context_url_options', $uri['options'], $context);
   $uri['options'] += array(
     'absolute' => TRUE,
     'base_url' => \Drupal::state()->get('base_url')
