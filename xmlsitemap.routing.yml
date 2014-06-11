@@ -45,6 +45,14 @@ xmlsitemap.admin_settings:
     _title: 'Settings'
   requirements:
     _permission: 'administer xmlsitemap'
+
+xmlsitemap.entities_settings:
+  path: '/admin/config/search/xmlsitemap/entities/settings'
+  defaults:
+    _form: '\Drupal\xmlsitemap\Form\XmlSitemapEntitiesSettingsForm'
+    _title: 'Custom Entities Settings'
+  requirements:
+    _permission: 'administer xmlsitemap'
     
 xmlsitemap.admin_settings_bundle:
   path: '/admin/config/search/xmlsitemap/settings/%xmlsitemap_link_bundle/%'
