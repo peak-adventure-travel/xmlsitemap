@@ -39,7 +39,13 @@ use Drupal\xmlsitemap\XmlSitemapInterface;
  */
 class XmlSitemap extends ConfigEntityBase implements XmlSitemapInterface {
 
+  /**
+   * Sitemap uri data.
+   *
+   * @var array
+   */
   public $uri;
+
   /**
    * The XmlSitemap ID.
    *
@@ -66,35 +72,35 @@ class XmlSitemap extends ConfigEntityBase implements XmlSitemapInterface {
    *
    * @var int
    */
-  protected $chunks;
+  public $chunks;
 
   /**
    * The XmlSitemap links number.
    *
    * @var int
    */
-  protected $links;
+  public $links;
 
   /**
    * Maximum size for a sitemap.
    *
    * @var int
    */
-  protected $max_filesize;
+  public $max_filesize;
 
   /**
    * The XmlSitemap context.
    *
    * @var array
    */
-  protected $context;
+  public $context;
 
   /**
    * Last time when sitemap was updated.
    *
    * @var int
    */
-  protected $updated;
+  public $updated;
 
   /**
    * {@inheritdoc}
