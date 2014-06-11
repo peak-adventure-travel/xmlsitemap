@@ -471,7 +471,7 @@ function xmlsitemap_sitemap_delete_multiple(array $smids) {
     foreach ($sitemaps as $sitemap) {
       xmlsitemap_clear_directory($sitemap, TRUE);
       $sitemap->delete();
-      module_invoke_all('xmlsitemap_sitemap_delete', $sitemap);
+      \Drupal::moduleHandler()->invokeAll('xmlsitemap_sitemap_delete', $sitemap);
     }
   }
 }
@@ -519,7 +519,7 @@ function xmlsitemap_sitemap_get_context_hash(array &$context) {
  */
 function xmlsitemap_sitemap_uri(XmlSitemapInterface $sitemap) {
   $uri['path'] = 'sitemap.xml';
-  $uri['options'] = module_invoke_all('xmlsitemap_context_url_options', $sitemap->getContext());
+  $uri['options'] = \Drupal::moduleHandler()->invokeAll('xmlsitemap_context_url_options', $sitemap->getContext());
   $context = $sitemap->getContext();
   \Drupal::moduleHandler()->alter('xmlsitemap_context_url_options', $uri['options'], $context);
   $uri['options'] += array(
@@ -953,7 +953,7 @@ function xmlsitemap_get_link_info($type = NULL, $reset = FALSE) {
         unset($entity_types[$key]);
         unset($link_info[$key]);
       }
-      $link_info = array_merge($link_info, module_invoke_all('xmlsitemap_link_info'));
+      $link_info = array_merge($link_info, \Drupal::moduleHandler()->invokeAll('xmlsitemap_link_info'));
       foreach ($link_info as $key => &$info) {
         $info += array(
           'type' => $key,
@@ -1444,7 +1444,7 @@ function xmlsitemap_get_context_info($context = NULL, $reset = FALSE) {
   }
 
   if (!isset($info)) {
-    $info = module_invoke_all('xmlsitemap_context_info');
+    $info = \Drupal::moduleHandler()->invokeAll('xmlsitemap_context_info');
     drupal_alter('xmlsitemap_context_info', $info);
     ksort($info);
     // Cache by language since this info contains translated strings.
@@ -1465,7 +1465,7 @@ function xmlsitemap_get_current_context() {
   $context = &drupal_static(__FUNCTION__);
 
   if (!isset($context)) {
-    $context = module_invoke_all('xmlsitemap_context');
+    $context = \Drupal::moduleHandler()->invokeAll('xmlsitemap_context');
     drupal_alter('xmlsitemap_context', $context);
     asort($context);
   }

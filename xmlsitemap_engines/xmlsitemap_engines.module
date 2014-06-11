@@ -1,4 +1,4 @@
-<?php
+in<?php
 
 use GuzzleHttp\Exception\RequestException;
 
@@ -191,7 +191,7 @@ function xmlsitemap_engines_get_engine_info($engine = NULL) {
     }
     else {
       // Fetch the results of all hook_xmlsitemap_engine_info() implementations.
-      $engines = module_invoke_all('xmlsitemap_engine_info');
+      $engines = \Drupal::moduleHandler()->invokeAll('xmlsitemap_engine_info');
       // Allow other modulse to alter the engine info.
       drupal_alter('xmlsitemap_engine_info', $engines);
       // Cache by language since engine names are translated.

@@ -14,7 +14,7 @@ function xmlsitemap_sitemap_list_form() {
   $destination = drupal_get_destination();
 
   // Build the 'Update options' form.
-  $form['#operations'] = module_invoke_all('xmlsitemap_sitemap_operations');
+  $form['#operations'] = \Drupal::moduleHandler()->invokeAll('xmlsitemap_sitemap_operations');
   $operations = array();
   foreach ($form['#operations'] as $operation => $operation_info) {
     $operations[$operation] = $operation_info['label'];
