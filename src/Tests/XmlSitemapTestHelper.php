@@ -291,7 +291,7 @@ class XmlSitemapTestHelper extends WebTestBase {
    *   A string containing the watchdog message's timestamp, severity, type,
    *   and actual message.
    */
-  private function formatWatchdogMessage(stdClass $message) {
+  private function formatWatchdogMessage($message) {
     static $levels;
 
     if (!isset($levels)) {
@@ -303,7 +303,7 @@ class XmlSitemapTestHelper extends WebTestBase {
       '@timestamp' => $message->timestamp,
       '@severity' => $levels[$message->severity],
       '@type' => $message->type,
-      '!message' => theme_dblog_message(array('event' => $message, 'link' => FALSE)),
+      //'!message' => theme_dblog_message(array('event' => $message, 'link' => FALSE)),
     ));
   }
 
