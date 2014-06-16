@@ -6,6 +6,7 @@
  *
  * @ingroup xmlsitemap
  */
+use Drupal\xmlsitemap\XmlSitemapInterface;
 
 /**
  * @addtogroup hooks
@@ -80,12 +81,12 @@ function hook_xmlsitemap_link_alter(&$link) {
  */
 function hook_xmlsitemap_link_insert(array $link) {
   db_insert('mytable')
-    ->fields(array(
-      'link_type' => $link['type'],
-      'link_id' => $link['id'],
-      'link_status' => $link['status'],
-    ))
-    ->execute();
+      ->fields(array(
+        'link_type' => $link['type'],
+        'link_id' => $link['id'],
+        'link_status' => $link['status'],
+      ))
+      ->execute();
 }
 
 /**
@@ -99,18 +100,19 @@ function hook_xmlsitemap_link_insert(array $link) {
  */
 function hook_xmlsitemap_link_update(array $link) {
   db_update('mytable')
-    ->fields(array(
-      'link_type' => $link['type'],
-      'link_id' => $link['id'],
-      'link_status' => $link['status'],
-    ))
-    ->execute();
+      ->fields(array(
+        'link_type' => $link['type'],
+        'link_id' => $link['id'],
+        'link_status' => $link['status'],
+      ))
+      ->execute();
 }
 
 /**
  * Index links for the XML sitemaps.
  */
 function hook_xmlsitemap_index_links($limit) {
+
 }
 
 /**
@@ -155,7 +157,8 @@ function hook_xmlsitemap_context() {
  * @see hook_xmlsitemap_context()
  */
 function hook_xmlsitemap_context_alter(&$context) {
-  if (user_access('administer taxonomy')) {
+  $currentUser = \Drupal::currentUser();
+  if ($currentUser->hasPermission('administer taxonomy')) {
     unset($context['vocabulary']);
   }
 }
@@ -164,12 +167,14 @@ function hook_xmlsitemap_context_alter(&$context) {
  * Provide options for the url() function based on an XML sitemap context.
  */
 function hook_xmlsitemap_context_url_options(array $context) {
+
 }
 
 /**
  * Alter the url() options based on an XML sitemap context.
  */
 function hook_xmlsitemap_context_url_options_alter(array &$options, array $context) {
+
 }
 
 /**
@@ -199,6 +204,7 @@ function hook_query_xmlsitemap_generate_alter(QueryAlterableInterface $query) {
  * Provide information about XML sitemap bulk operations.
  */
 function hook_xmlsitemap_sitemap_operations() {
+
 }
 
 /**
@@ -210,7 +216,7 @@ function hook_xmlsitemap_sitemap_operations() {
  * @param $sitemap
  *   The XML sitemap object that was deleted.
  */
-function hook_xmlsitemap_sitemap_delete(stdClass $sitemap) {
+function hook_xmlsitemap_sitemap_delete(XmlSitemapInterface $sitemap) {
   db_query("DELETE FROM {mytable} WHERE smid = '%s'", $sitemap->smid);
 }
 
