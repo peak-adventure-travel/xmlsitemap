@@ -15,13 +15,14 @@ use Drupal\Component\Utility\UrlHelper;
 class XmlSitemapEnginesTestController extends ControllerBase {
 
   public function render() {
-    if (empty($_GET['sitemap']) || !UrlHelper::isValid($_GET['sitemap'])) {
+    $query = \Drupal::request()->query->get('sitemap');
+    if (empty($query) || !UrlHelper::isValid($query)) {
       watchdog('xmlsitemap', 'No valid sitemap parameter provided.', array(), WATCHDOG_WARNING);
       // @todo Remove this? Causes an extra watchdog error to be handled.
       throw new NotFoundHttpException();
     }
     else {
-      watchdog('xmlsitemap', 'Recieved ping for @sitemap.', array('@sitemap' => $_GET['sitemap']));
+      watchdog('xmlsitemap', 'Recieved ping for @sitemap.', array('@sitemap' => $query));
     }
     return new Response('', 200);
   }

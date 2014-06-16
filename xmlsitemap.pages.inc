@@ -14,7 +14,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 function xmlsitemap_get_current_chunk(XmlSitemapInterface $sitemap) {
   // Check if we should be displaing the index.
-  if (!isset($_GET['page']) || !is_numeric($_GET['page'])) {
+  $query = \Drupal::request()->query;
+  if (!isset($query->get('page')) || !is_numeric($query->get('page'))) {
     if ($sitemap->getChunks() > 1) {
       return 'index';
     }
@@ -23,7 +24,7 @@ function xmlsitemap_get_current_chunk(XmlSitemapInterface $sitemap) {
     }
   }
   else {
-    return (int) $_GET['page'];
+    return (int) $query->get('page');
   }
 }
 
@@ -45,7 +46,8 @@ function xmlsitemap_output_chunk() {
   $file = xmlsitemap_sitemap_get_file($sitemap, $chunk);
 
   // Provide debugging information if enabled.
-  if (\Drupal::state()->get('developer_mode', 0) && isset($_GET['debug'])) {
+  $query = \Drupal::request()->query;
+  if (\Drupal::state()->get('developer_mode', 0) && isset($query->get('debug'))) {
     $output = array();
     $context = xmlsitemap_get_current_context();
     $output[] = "Current context: " . print_r($context, TRUE);
