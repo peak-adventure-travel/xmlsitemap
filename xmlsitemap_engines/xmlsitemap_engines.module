@@ -22,7 +22,7 @@ function xmlsitemap_engines_help($path, $arg) {
   $output = '';
   switch ($path) {
     case 'admin/config/search/xmlsitemap/engines':
-      if (!module_exists('site_verify')) {
+      if (!\Drupal::moduleHandler()->moduleExists('site_verify')) {
         $output .= '<p>' . t('In order to verify site ownership with the search engines listed below, it is highly recommended to download and install the <a href="@site-verify">Site verification module</a>.', array('@site-verify' => 'http://drupal.org/project/site_verify')) . '</p>';
       }
       break;

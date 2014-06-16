@@ -96,6 +96,4 @@ xmlsitemap.*:
         updated:
             type: integer
             label: 'Last time sitemap was updated'
-        uri:
-            type: mapping
 
