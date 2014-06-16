@@ -13,6 +13,8 @@ use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Session\UserSession;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\xmlsitemap\XmlSitemapInterface;
+use Drupal\user\Entity\User;
+use Drupal\user\UserInterface;
 
 /**
  * The maximum number of links in one sitemap chunk file.
@@ -614,11 +616,13 @@ function xmlsitemap_link_save(array $link) {
 
   // Save the link and allow other modules to respond to the link being saved.
   if ($existing) {
+    print "ana are mere" . PHP_EOL;
     drupal_write_record('xmlsitemap', $link, array('type', 'id'));
     \Drupal::moduleHandler()->invokeAll('xmlsitemap_link_update', $link);
   }
   else {
-    drupal_write_record('xmlsitemap', $link);
+    print "bogdan are mere" . PHP_EOL;
+    $result = drupal_write_record('xmlsitemap', $link);
     \Drupal::moduleHandler()->invokeAll('xmlsitemap_link_insert', $link);
   }
 
@@ -1611,18 +1615,18 @@ function xmlsitemap_user_xmlsitemap_process_user_links(array $uids) {
   if (!\Drupal::state()->get('xmlsitemap_entity_user')) {
     return ;
   }
-  $accounts = user_load_multiple($uids);
+  $accounts = User::loadMultiple($uids);
   foreach ($accounts as $account) {
-    $link = xmlsitemap_user_create_link($account);
-    xmlsitemap_link_save($link);
+    print var_dump($account->id);
+    //$link = xmlsitemap_user_create_link($account);
+    //xmlsitemap_link_save($link);
   }
 }
 
 /**
  * Implements hook_user_presave().
  */
-function xmlsitemap_user_presave(&$edit, $account, $category) {
-  drupal_set_message('ana are mere');
+function xmlsitemap_user_presave(UserInterface $account) {
   if (!\Drupal::state()->get('xmlsitemap_entity_user')) {
     return ;
   }
@@ -1640,7 +1644,7 @@ function xmlsitemap_user_presave(&$edit, $account, $category) {
 /**
  * Implements hook_user_insert().
  */
-function xmlsitemap_user_insert(&$edit, $account, $category) {
+function xmlsitemap_user_insert(UserInterface $account) {
   if (!\Drupal::state()->get('xmlsitemap_entity_user')) {
     return ;
   }
@@ -1651,7 +1655,7 @@ function xmlsitemap_user_insert(&$edit, $account, $category) {
 /**
  * Implements hook_user_update().
  */
-function xmlsitemap_user_update(&$edit, $account, $category) {
+function xmlsitemap_user_update(UserInterface $account) {
   if (!\Drupal::state()->get('xmlsitemap_entity_user')) {
     return ;
   }
@@ -1662,7 +1666,7 @@ function xmlsitemap_user_update(&$edit, $account, $category) {
 /**
  * Implements hook_user_delete().
  */
-function xmlsitemap_user_delete($account) {
+function xmlsitemap_user_delete(UserInterface $account) {
   xmlsitemap_link_delete('user', $account->uid);
 }
 
@@ -1686,7 +1690,7 @@ function xmlsitemap_field_extra_fields() {
  * @param $account
  *   A user object.
  */
-function xmlsitemap_user_create_link(&$account) {
+function xmlsitemap_user_create_link(UserInterface &$account) {
   if (!isset($account->xmlsitemap)) {
     $account->xmlsitemap = array();
     if ($account->uid && $link = xmlsitemap_link_load('user', $account->uid)) {
@@ -1695,7 +1699,6 @@ function xmlsitemap_user_create_link(&$account) {
   }
 
   $settings = xmlsitemap_link_bundle_load('user', 'user');
-  //$uri = entity_uri('user', $account);
   $uri = $account->uri;
   $account->xmlsitemap += array(
     'type' => 'user',
