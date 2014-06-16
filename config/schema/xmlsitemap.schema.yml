@@ -71,3 +71,31 @@ xmlsitemap.settings:
             type: undefined
             label: 'Maximul size of xml file'
 
+xmlsitemap.*:
+    type: config_entity
+    label: 'Sitemap'
+    mapping:
+        id:
+            type: string
+            label: 'Sitemap id'
+        label:
+            type: string
+            label: 'Sitemap label'
+        chunks:
+            type: integer
+            label: 'Number of chunks'
+        links:
+            type: integer
+            label: 'Number of links'
+        max_filesize:
+            type: integer
+            label: 'Maximum filesize of the sitemap'
+        context:
+            type: string
+            label: 'Context of the sitemap'
+        updated:
+            type: integer
+            label: 'Last time sitemap was updated'
+        uri:
+            type: mapping
+
