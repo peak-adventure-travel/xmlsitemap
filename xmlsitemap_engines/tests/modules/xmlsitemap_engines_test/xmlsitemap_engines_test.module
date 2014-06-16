@@ -3,18 +3,6 @@
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * Implements hook_menu().
- */
-function xmlsitemap_engines_test_menu() {
-  $items['ping'] = array(
-    'page callback' => 'xmlsitemap_engines_test_pinged',
-    'access callback' => TRUE,
-    'type' => MENU_CALLBACK,
-  );
-  return $items;
-}
-
-/**
  * Implements hook_xmlsitemap_engine_info().
  */
 function xmlsitemap_engines_test_xmlsitemap_engine_info() {
