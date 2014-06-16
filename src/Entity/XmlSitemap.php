@@ -54,13 +54,6 @@ class XmlSitemap extends ConfigEntityBase implements XmlSitemapInterface {
   public $id;
 
   /**
-   * The XmlSitemap UUID.
-   *
-   * @var string
-   */
-  public $uuid;
-
-  /**
    * The XmlSitemap label.
    *
    * @var string
