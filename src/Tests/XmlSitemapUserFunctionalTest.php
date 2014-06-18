@@ -2,13 +2,13 @@
 
 /**
  * @file
- * Contains \Drupal\xmlsitemap\Tests\XmlSitemapFunctionalTest.
+ * Contains \Drupal\xmlsitemap\Tests\XmlSitemapUserFunctionalTest.
  */
 
 namespace Drupal\xmlsitemap\Tests;
 
 /**
- * Tests the generation of sitemaps.
+ * Tests the generation of user links.
  */
 class XmlSitemapUserFunctionalTest extends XmlSitemapTestHelper {
 
