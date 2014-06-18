@@ -15,6 +15,8 @@ use Drupal\Core\Language\LanguageInterface;
 use Drupal\xmlsitemap\XmlSitemapInterface;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
+use Drupal\Component\Utility\String;
+use Drupal\Core\Render\Element;
 
 /**
  * The maximum number of links in one sitemap chunk file.
@@ -218,6 +220,18 @@ function xmlsitemap_menu() {
   );
 
   return $items;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function xmlsitemap_theme() {
+  return array(
+    'xmlsitemap_content_settings_table' => array(
+      'render element' => 'element',
+      'file' => 'xmlsitemap.module',
+    ),
+  );
 }
 
 /**
@@ -620,7 +634,6 @@ function xmlsitemap_link_save(array $link) {
     \Drupal::moduleHandler()->invokeAll('xmlsitemap_link_update', $link);
   }
   else {
-    print "bogdan are mere" . PHP_EOL;
     $result = drupal_write_record('xmlsitemap', $link);
     \Drupal::moduleHandler()->invokeAll('xmlsitemap_link_insert', $link);
   }
@@ -1056,8 +1069,13 @@ function xmlsitemap_link_bundle_settings_save($entity, $bundle, array $settings,
   }
 
   \Drupal::config('xmlsitemap.settings')->set("xmlsitemap_settings_{$entity}_{$bundle}", $settings);
-  cache_clear_all('xmlsitemap:link_info:', 'cache', TRUE);
-  //xmlsitemap_get_link_info(NULL, TRUE);
+  \Drupal::config('xmlsitemap.settings')->save();
+  foreach (\Drupal::languageManager()->getLanguages() as $lang) {
+      \Drupal::cache()->delete('xmlsitemap:link_info:' . $lang->getId());
+  }
+  \Drupal::cache()->deleteAll();
+  //cache_clear_all('xmlsitemap:link_info:', 'cache', TRUE);
+  xmlsitemap_get_link_info(NULL, TRUE);
 }
 
 function xmlsitemap_link_bundle_rename($entity, $bundle_old, $bundle_new) {
@@ -1574,11 +1592,9 @@ function xmlsitemap_get_operation_link($url, $options = array()) {
   return $link;
 }
 
-
 /**
  * Hooks for xmlsitemap_user submodule
  */
-
 
 /**
  * Implements hook_entity_info_alter().
@@ -1597,11 +1613,10 @@ function xmlsitemap_entity_info_alter(&$entity_info) {
  * Implements hook_xmlsitemap_index_links().
  */
 function xmlsitemap_xmlsitemap_index_links($limit) {
-  if (!\Drupal::state()->get('xmlsitemap_entity_user')) {
-    return ;
+  if (\Drupal::state()->get('xmlsitemap_entity_user')) {
+    $uids = db_query_range("SELECT u.uid FROM {users} u LEFT JOIN {xmlsitemap} x ON x.type = 'user' AND u.uid = x.id WHERE x.id IS NULL AND u.uid > 0 ORDER BY u.uid DESC", 0, $limit)->fetchCol();
+    xmlsitemap_user_xmlsitemap_process_user_links($uids);
   }
-  $uids = db_query_range("SELECT u.uid FROM {users} u LEFT JOIN {xmlsitemap} x ON x.type = 'user' AND u.uid = x.id WHERE x.id IS NULL AND u.uid > 0 ORDER BY u.uid DESC", 0, $limit)->fetchCol();
-  xmlsitemap_user_xmlsitemap_process_user_links($uids);
 }
 
 /**
@@ -1612,7 +1627,7 @@ function xmlsitemap_xmlsitemap_index_links($limit) {
  */
 function xmlsitemap_user_xmlsitemap_process_user_links(array $uids) {
   if (!\Drupal::state()->get('xmlsitemap_entity_user')) {
-    return ;
+    return;
   }
   $accounts = User::loadMultiple($uids);
   foreach ($accounts as $account) {
@@ -1626,14 +1641,14 @@ function xmlsitemap_user_xmlsitemap_process_user_links(array $uids) {
  */
 function xmlsitemap_user_presave(UserInterface $account) {
   if (!\Drupal::state()->get('xmlsitemap_entity_user')) {
-    return ;
+    return;
   }
   $uid = $account->id();
   if (!empty($uid)) {
     $link = xmlsitemap_user_create_link($account);
-    if (isset($edit['xmlsitemap'])) {
-      $link = $edit['xmlsitemap'] + $link;
-      unset($edit['xmlsitemap']);
+    if (isset($account->xmlsitemap)) {
+      $link = $account->xmlsitemap + $link;
+      //unset($edit['xmlsitemap']);
     }
     xmlsitemap_link_save($link);
   }
@@ -1644,7 +1659,7 @@ function xmlsitemap_user_presave(UserInterface $account) {
  */
 function xmlsitemap_user_insert(UserInterface $account) {
   if (!\Drupal::state()->get('xmlsitemap_entity_user')) {
-    return ;
+    return;
   }
   $link = xmlsitemap_user_create_link($account);
   xmlsitemap_link_save($link);
@@ -1655,7 +1670,7 @@ function xmlsitemap_user_insert(UserInterface $account) {
  */
 function xmlsitemap_user_update(UserInterface $account) {
   if (!\Drupal::state()->get('xmlsitemap_entity_user')) {
-    return ;
+    return;
   }
   $link = xmlsitemap_user_create_link($account);
   xmlsitemap_link_save($link);
@@ -1665,7 +1680,7 @@ function xmlsitemap_user_update(UserInterface $account) {
  * Implements hook_user_delete().
  */
 function xmlsitemap_user_delete(UserInterface $account) {
-  xmlsitemap_link_delete('user', $account->uid);
+  xmlsitemap_link_delete('user', $account->id());
 }
 
 /**
@@ -1711,7 +1726,7 @@ function xmlsitemap_user_create_link(UserInterface &$account) {
   );
 
   // The following values must always be checked because they are volatile.
-  $account->xmlsitemap['loc'] = $uri['path'];
+  $account->xmlsitemap['loc'] = $uri;
   if ($account->isActive()) {
     $status = 1;
   }
@@ -1725,3 +1740,90 @@ function xmlsitemap_user_create_link(UserInterface &$account) {
   return $account->xmlsitemap;
 }
 
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * @see user_admin_settings()
+ * @see xmlsitemap_add_link_bundle_settings()
+ */
+function xmlsitemap_form_user_form_alter(&$form, $form_state) {
+  // Add the link options.
+  module_load_include('inc', 'xmlsitemap', 'xmlsitemap.admin');
+  xmlsitemap_add_form_link_options($form, 'user', 'user', \Drupal::currentUser()->id());
+}
+
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * @see user_admin_settings()
+ * @see xmlsitemap_add_link_bundle_settings()
+ */
+function xmlsitemap_form_user_admin_settings_alter(&$form, $form_state) {
+  module_load_include('inc', 'xmlsitemap', 'xmlsitemap.admin');
+  xmlsitemap_add_link_bundle_settings($form, $form_state, 'user', 'user');
+  //$form['email_title'] += array('#weight' => 10);
+  $form['email'] += array('#weight' => 10);
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for theme_language_content_settings_table().
+ */
+function template_preprocess_xmlsitemap_content_settings_table(&$variables) {
+  // Add a render element representing the bundle language settings table.
+  $element = $variables['element'];
+
+  $header = array(
+    array(
+      'data' => $element['#bundle_label'],
+      'class' => array('bundle'),
+    ),
+    array(
+      'data' => t('Configuration'),
+      'class' => array('operations'),
+    ),
+  );
+
+  $rows = array();
+  foreach (Element::children($element) as $bundle) {
+    $rows[$bundle] = array(
+      'data' => array(
+        array(
+          'data' => array(
+            '#prefix' => '<label>',
+            '#suffix' => '</label>',
+            '#markup' => String::checkPlain($element[$bundle]['settings']['#label']),
+          ),
+          'class' => array('bundle'),
+        ),
+        array(
+          'data' => $element[$bundle]['settings'],
+          'class' => array('operations'),
+        ),
+      ),
+      'class' => array('bundle-settings'),
+    );
+  }
+
+  $variables['build'] = array(
+    '#title' => $element['#title'],
+    '#header' => $header,
+    '#rows' => $rows,
+    '#type' => 'table',
+  );
+}
+
+/**
+ * Returns HTML for an administration settings table.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - build: A render element representing a table of bundle content language
+ *     settings for a particular entity type.
+ *
+ * @ingroup themable
+ */
+function theme_xmlsitemap_content_settings_table($variables) {
+  return '<h4>' . $variables['build']['#title'] . '</h4>' . drupal_render($variables['build']);
+}
