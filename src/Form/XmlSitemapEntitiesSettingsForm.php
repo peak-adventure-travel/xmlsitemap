@@ -81,7 +81,10 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
       }
 
       $labels[$entity_type_id] = $entity_type->getLabel() ? : $entity_type_id;
-      $default[$entity_type_id] = FALSE;
+
+      if (\Drupal::state()->get('xmlsitemap_entity_' . $entity_type_id,0)) {
+        $default[] = $entity_type_id;
+      }
     }
 
     asort($labels);
@@ -104,10 +107,9 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
       $entity_type = $entity_types[$entity_type_id];
 
       $form['settings'][$entity_type_id] = array(
-        '#title' => $label,
         '#type' => 'container',
         '#entity_type' => $entity_type_id,
-        '#theme' => 'language_content_settings_table',
+        '#theme' => 'xmlsitemap_content_settings_table',
         '#bundle_label' => $entity_type->getBundleLabel() ? : $label,
         '#states' => array(
           'visible' => array(
@@ -115,19 +117,14 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
           ),
         ),
       );
-
       foreach ($bundles[$entity_type_id] as $bundle => $bundle_info) {
         $form['settings'][$entity_type_id][$bundle]['settings'] = array(
           '#type' => 'item',
           '#label' => $bundle_info['label'],
-          'language' => array(
-            '#type' => 'language_configuration',
-            '#entity_information' => array(
-              'entity_type' => $entity_type_id,
-              'bundle' => $bundle,
+          'bundle' => array(
+            '#type' => 'checkbox',
+            '#default_value' => \Drupal::state()->get('xmlsitemap_entity_' . $entity_type_id . '_bundle_' . $bundle,0)
             ),
-            '#default_value' => $language_configuration[$entity_type_id][$bundle],
-          ),
         );
       }
     }
@@ -139,9 +136,14 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
   }
 
   public function submitForm(array &$form, array &$form_state) {
-    $values = $form_state['values']['custom_entity_types'];
-    foreach ($this->entities as $entity) {
-      \Drupal::state()->set('xmlsitemap_entity_' . $entity, $values[$entity] ? TRUE : FALSE);
+    $bundles = $this->entityManager->getAllBundleInfo();
+    $entity_values = $form_state['values']['entity_types'];
+    foreach ($entity_values as $key => $value) {
+      \Drupal::state()->set('xmlsitemap_entity_' . $key, $value);
+      foreach ($bundles[$key] as $bundle_key => $bundle_value) {
+        \Drupal::state()->set('xmlsitemap_entity_' . $key . '_bundle_' . $bundle_key,
+            $form_state['values']['settings'][$key][$bundle_key]['settings']['bundle']);
+      }
     }
     parent::submitForm($form, $form_state);
   }
