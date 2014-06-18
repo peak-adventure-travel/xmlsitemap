@@ -9,11 +9,14 @@ namespace Drupal\xmlsitemap\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Configure what entities will be included in sitemap
  */
-class XmlSitemapEntitiesSettingsForm extends ConfigFormBase {
+class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements ContainerInjectionInterface {
 
   /**
    * Custom entities that can be included in sitemap.
@@ -23,15 +26,40 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase {
   protected $entities;
 
   /**
+   * The entity manager.
+   *
+   * @var \Drupal\Core\Entity\EntityManagerInterface
+   */
+  protected $entityManager;
+
+  /**
    * {@inheritdoc}
    */
   public function getFormId() {
     return 'xmlsitemap_config_entities_settings_form';
   }
 
-  public function __construct(ConfigFactoryInterface $config_factory) {
+  /**
+   * Constructs a ContentLanguageSettingsForm object.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory.
+   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   *   The entity manager.
+   */
+  public function __construct(ConfigFactoryInterface $config_factory, EntityManagerInterface $entity_manager) {
     parent::__construct($config_factory);
     $this->entities = array('menu', 'user', 'taxonomy', 'node');
+    $this->entityManager = $entity_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+        $container->get('config.factory'), $container->get('entity.manager')
+    );
   }
 
   /**
