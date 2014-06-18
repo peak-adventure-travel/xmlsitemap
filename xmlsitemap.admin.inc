@@ -35,8 +35,8 @@ function xmlsitemap_sitemap_list_form() {
   $form['operations']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Update'),
-    //'#validate' => array('xmlsitemap_sitemap_list_form_validate'),
-    //'#submit' => array('xmlsitemap_sitemap_list_form_submit'),
+      //'#validate' => array('xmlsitemap_sitemap_list_form_validate'),
+      //'#submit' => array('xmlsitemap_sitemap_list_form_submit'),
   );
 
   $contexts = xmlsitemap_get_context_info();
@@ -239,12 +239,7 @@ function xmlsitemap_sitemap_delete_form(array $form, array &$form_state, stdClas
     '#value' => $sitemap->smid,
   );
   return confirm_form(
-    $form,
-    t('Are you sure you want to delete the XML sitemap?'),
-    'admin/config/search/xmlsitemap',
-    '',
-    t('Delete'),
-    t('Cancel')
+      $form, t('Are you sure you want to delete the XML sitemap?'), 'admin/config/search/xmlsitemap', '', t('Delete'), t('Cancel')
   );
 }
 
@@ -454,12 +449,7 @@ function xmlsitemap_rebuild_form() {
   );
 
   return confirm_form(
-    $form,
-    t('Are you sure you want to rebuild the XML sitemap?'),
-    'admin/config/search/xmlsitemap',
-    '',
-    t('Rebuild sitemap'),
-    t('Cancel')
+      $form, t('Are you sure you want to rebuild the XML sitemap?'), 'admin/config/search/xmlsitemap', '', t('Rebuild sitemap'), t('Cancel')
   );
 }
 
@@ -568,7 +558,7 @@ function xmlsitemap_add_link_bundle_settings(array &$form, array &$form_state, $
   $bundle_info = xmlsitemap_link_bundle_load($entity, $bundle);
 
   $form['xmlsitemap'] = array(
-    '#type' => 'fieldset',
+    '#type' => 'details',
     '#title' => t('XML sitemap'),
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
@@ -633,7 +623,7 @@ function xmlsitemap_link_bundle_settings_form(array $form, array &$form_state, a
     drupal_goto($admin_path, array('query' => $destination));
   }
   else {
-    drupal_set_title( t('@bundle XML sitemap settings', array('@bundle' => $bundle['info']['label'])));
+    drupal_set_title(t('@bundle XML sitemap settings', array('@bundle' => $bundle['info']['label'])));
   }
 
   $form = array();
@@ -664,11 +654,11 @@ function xmlsitemap_link_bundle_settings_form(array $form, array &$form_state, a
  * @todo Add changefreq overridability.
  */
 function xmlsitemap_add_form_link_options(array &$form, $entity, $bundle, $id) {
-  $info = xmlsitemap_get_link_info($entity);
+  $info = xmlsitemap_get_link_info($entity, TRUE);
 
-  if (!$info || empty($info['bundles'][$bundle])) {
+  /* if (!$info || empty($info['bundles'][$bundle])) {
     return;
-  }
+    } */
 
   if (!$link = xmlsitemap_link_load($entity, $id)) {
     $link = array();
@@ -685,13 +675,14 @@ function xmlsitemap_add_form_link_options(array &$form, $entity, $bundle, $id) {
     'priority_override' => 0,
   );
 
+  $currentUser = \Drupal::currentUser();
   $form['xmlsitemap'] = array(
-    '#type' => 'fieldset',
+    '#type' => 'details',
     '#tree' => TRUE,
     '#title' => t('XML sitemap'),
     '#collapsible' => TRUE,
     '#collapsed' => !$link['status_override'] && !$link['priority_override'],
-    '#access' => user_access('administer xmlsitemap') || xmlsitemap_link_bundle_access($bundle_info),
+    '#access' => $currentUser->hasPermission('administer xmlsitemap') || xmlsitemap_link_bundle_access($bundle_info),
     '#group' => 'additional_settings',
     '#attached' => array(
       'js' => array(
@@ -782,12 +773,12 @@ function xmlsitemap_add_form_link_options(array &$form, $entity, $bundle, $id) {
   //  '#type' => 'value',
   //  '#value' => $node->xmlsitemap['changecount'],
   //);
-
   // Add the submit handler to adjust the default values if selected.
-  $form += array('#submit' => array());
-  if (!in_array('xmlsitemap_process_form_link_options', $form['#submit'])) {
+  $form['actions']['submit']['#submit'][] = 'xmlsitemap_process_form_link_options';
+  /* $form += array('#submit' => array());
+    if (!in_array('xmlsitemap_process_form_link_options', $form['#submit'])) {
     array_unshift($form['#submit'], 'xmlsitemap_process_form_link_options');
-  }
+    } */
 }
 
 /**
@@ -858,4 +849,65 @@ function xmlsitemap_get_status_options($default = NULL) {
   $options += $statuses;
 
   return $options;
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for theme_language_content_settings_table().
+ */
+function template_preprocess_xmlsitemap_content_settings_table(&$variables) {
+  // Add a render element representing the bundle language settings table.
+  $element = $variables['element'];
+
+  $header = array(
+    array(
+      'data' => $element['#bundle_label'],
+      'class' => array('bundle'),
+    ),
+    array(
+      'data' => t('Configuration'),
+      'class' => array('operations'),
+    ),
+  );
+
+  $rows = array();
+  foreach (Element::children($element) as $bundle) {
+    $rows[$bundle] = array(
+      'data' => array(
+        array(
+          'data' => array(
+            '#prefix' => '<label>',
+            '#suffix' => '</label>',
+            '#markup' => String::checkPlain($element[$bundle]['settings']['#label']),
+          ),
+          'class' => array('bundle'),
+        ),
+        array(
+          'data' => $element[$bundle]['settings'],
+          'class' => array('operations'),
+        ),
+      ),
+      'class' => array('bundle-settings'),
+    );
+  }
+
+  $variables['build'] = array(
+    '#title' => $element['#title'],
+    '#header' => $header,
+    '#rows' => $rows,
+    '#type' => 'table',
+  );
+}
+
+/**
+ * Returns HTML for an administration settings table.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - build: A render element representing a table of bundle content language
+ *     settings for a particular entity type.
+ *
+ * @ingroup themable
+ */
+function theme_xmlsitemap_content_settings_table($variables) {
+  return '<h4>' . $variables['build']['#title'] . '</h4>' . drupal_render($variables['build']);
 }
