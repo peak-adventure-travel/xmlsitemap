@@ -11,19 +11,14 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Session\AnonymousUserSession;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Configure what entities will be included in sitemap
  */
 class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements ContainerInjectionInterface {
-
-  /**
-   * Custom entities that can be included in sitemap.
-   * 
-   * @var array
-   */
-  protected $entities;
 
   /**
    * The entity manager.
@@ -49,7 +44,6 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
    */
   public function __construct(ConfigFactoryInterface $config_factory, EntityManagerInterface $entity_manager) {
     parent::__construct($config_factory);
-    $this->entities = array('menu', 'user', 'taxonomy', 'node');
     $this->entityManager = $entity_manager;
   }
 
@@ -66,19 +60,80 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
    * {@inheritdoc}
    */
   public function buildForm(array $form, array &$form_state) {
+    $entity_types = $this->entityManager->getDefinitions();
+    $labels = array();
     $default = array();
-    foreach ($this->entities as $entity) {
-      if (\Drupal::state()->get('xmlsitemap_entity_' . $entity)) {
-        $default[$entity] = $entity;
+    $anonymous_user = new AnonymousUserSession();
+    $bundles = $this->entityManager->getAllBundleInfo();
+
+    foreach ($entity_types as $entity_type_id => $entity_type) {
+      $access_controller = $this->entityManager->getAccessController($entity_type->id());
+      if (!$access_controller) {
+        continue;
+      }
+      $entities = $this->entityManager->getStorage($entity_type_id)->loadMultiple();
+      if (!$entities) {
+        continue;
+      }
+      $entity = reset($entities);
+      if (!$access_controller->access($entity, 'view', LanguageInterface::LANGCODE_DEFAULT, $anonymous_user)) {
+        continue;
+      }
+
+      $labels[$entity_type_id] = $entity_type->getLabel() ? : $entity_type_id;
+      $default[$entity_type_id] = FALSE;
+    }
+
+    asort($labels);
+
+    $form = array(
+      '#labels' => $labels,
+    );
+
+    $form['entity_types'] = array(
+      '#title' => $this->t('Custom sitemap entities settings'),
+      '#type' => 'checkboxes',
+      '#options' => $labels,
+      '#default_value' => $default,
+    );
+
+
+    $form['settings'] = array('#tree' => TRUE);
+
+    foreach ($labels as $entity_type_id => $label) {
+      $entity_type = $entity_types[$entity_type_id];
+
+      $form['settings'][$entity_type_id] = array(
+        '#title' => $label,
+        '#type' => 'container',
+        '#entity_type' => $entity_type_id,
+        '#theme' => 'language_content_settings_table',
+        '#bundle_label' => $entity_type->getBundleLabel() ? : $label,
+        '#states' => array(
+          'visible' => array(
+            ':input[name="entity_types[' . $entity_type_id . ']"]' => array('checked' => TRUE),
+          ),
+        ),
+      );
+
+      foreach ($bundles[$entity_type_id] as $bundle => $bundle_info) {
+        $form['settings'][$entity_type_id][$bundle]['settings'] = array(
+          '#type' => 'item',
+          '#label' => $bundle_info['label'],
+          'language' => array(
+            '#type' => 'language_configuration',
+            '#entity_information' => array(
+              'entity_type' => $entity_type_id,
+              'bundle' => $bundle,
+            ),
+            '#default_value' => $language_configuration[$entity_type_id][$bundle],
+          ),
+        );
       }
     }
-    $form['custom_entity_types'] = array(
-      '#title' => $this->t('Select custom entity types that will be introduced in sitemap'),
-      '#type' => 'checkboxes',
-      '#options' => array_combine($this->entities, array_map('ucwords', $this->entities)),
-      '#default_value' => $default
-    );
+
     $form = parent::buildForm($form, $form_state);
+    $form['actions']['submit']['#value'] = $this->t('Save');
 
     return $form;
   }
