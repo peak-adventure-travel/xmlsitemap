@@ -394,7 +394,8 @@ function xmlsitemap_sitemap_load_multiple($smids = array(), array $conditions = 
     return array();
   }
   foreach ($sitemaps as &$sitemap) {
-    $sitemap->setContext(unserialize($sitemap->getContext()));
+    $sitemap->setContext($sitemap->getContext());
+    //$sitemap->setContext(unserialize($sitemap->getContext()));
     $uri = xmlsitemap_sitemap_uri($sitemap);
     $sitemap->setContext(serialize($sitemap->getContext()));
     $sitemap->uri = $uri;
@@ -1071,7 +1072,7 @@ function xmlsitemap_link_bundle_settings_save($entity, $bundle, array $settings,
   \Drupal::config('xmlsitemap.settings')->set("xmlsitemap_settings_{$entity}_{$bundle}", $settings);
   \Drupal::config('xmlsitemap.settings')->save();
   foreach (\Drupal::languageManager()->getLanguages() as $lang) {
-      \Drupal::cache()->delete('xmlsitemap:link_info:' . $lang->getId());
+    \Drupal::cache()->delete('xmlsitemap:link_info:' . $lang->getId());
   }
   \Drupal::cache()->deleteAll();
   //cache_clear_all('xmlsitemap:link_info:', 'cache', TRUE);
@@ -1740,7 +1741,6 @@ function xmlsitemap_user_create_link(UserInterface &$account) {
   return $account->xmlsitemap;
 }
 
-
 /**
  * Implements hook_form_FORM_ID_alter().
  *
@@ -1752,7 +1752,6 @@ function xmlsitemap_form_user_form_alter(&$form, $form_state) {
   module_load_include('inc', 'xmlsitemap', 'xmlsitemap.admin');
   xmlsitemap_add_form_link_options($form, 'user', 'user', \Drupal::currentUser()->id());
 }
-
 
 /**
  * Implements hook_form_FORM_ID_alter().
