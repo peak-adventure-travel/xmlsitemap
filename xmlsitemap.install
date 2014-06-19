@@ -357,7 +357,7 @@ function xmlsitemap_install() {
   $sitemap = \Drupal::entityManager()->getStorage('xmlsitemap')->create(array(
     'id' => xmlsitemap_sitemap_get_context_hash($context),
   ));
-  $sitemap = $sitemap->setContext($context);
+  $sitemap = $sitemap->setContext(array());
   $sitemap = $sitemap->setLabel(\Drupal::state()->get('base_url'));
   $sitemap->save();
   \Drupal::state()->setMultiple(array(

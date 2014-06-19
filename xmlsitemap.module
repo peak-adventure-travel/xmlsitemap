@@ -395,9 +395,7 @@ function xmlsitemap_sitemap_load_multiple($smids = array(), array $conditions = 
   }
   foreach ($sitemaps as &$sitemap) {
     $sitemap->setContext($sitemap->getContext());
-    //$sitemap->setContext(unserialize($sitemap->getContext()));
     $uri = xmlsitemap_sitemap_uri($sitemap);
-    $sitemap->setContext(serialize($sitemap->getContext()));
     $sitemap->uri = $uri;
   }
 
@@ -447,7 +445,6 @@ function xmlsitemap_sitemap_save(XmlSitemapInterface $sitemap) {
   //$sitemap->is_new = empty($sitemap->getId());
   //$sitemap->old_smid = $sitemap->is_new ? NULL : $sitemap->smid;
   $sitemap->setOriginalId($sitemap->isNew() ? NULL : $sitemap->getId());
-  //$sitemap->smid = xmlsitemap_sitemap_get_context_hash($sitemap->context);
   $sitemap->setId(xmlsitemap_sitemap_get_context_hash($sitemap->getContext()));
   // If the context was changed, we need to perform additional actions.
   if (!$sitemap->isNew() && $sitemap->getId() != $sitemap->getOriginalId()) {
@@ -525,9 +522,6 @@ function xmlsitemap_sitemap_get_max_filesize(XmlSitemapInterface $sitemap) {
 }
 
 function xmlsitemap_sitemap_get_context_hash(array &$context) {
-  if (is_string($context)) {
-    $context = unserialize($context);
-  }
   asort($context);
   return Crypt::hashBase64(serialize($context));
 }
