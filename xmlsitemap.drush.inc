@@ -76,7 +76,7 @@ function drush_xmlsitemap_index() {
   $entity_manager = \Drupal::entityManager()->getStorage('xmlsitemap');
   $count_before = count($entity_manager->loadMultiple());
 
-  \Drupal::moduleHandler()->invokeAll('xmlsitemap_index_links', $limit);
+  \Drupal::moduleHandler()->invokeAll('xmlsitemap_index_links', array('limit' => $limit));
   $count_after = count($entity_manager->loadMultiple());
 
   if ($count_after == $count_before) {
