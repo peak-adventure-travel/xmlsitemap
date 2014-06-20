@@ -10,6 +10,7 @@ namespace Drupal\xmlsitemap\Form;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Component\Utility\MapArray;
 use Drupal\Component\Utility\UrlHelper;
+use Drupal\Core\Render\Element;
 
 /**
  * Configure xmlsitemap settings for this site.
@@ -27,6 +28,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, array &$form_state) {
+    \Drupal::moduleHandler()->loadInclude('xmlsitemap','inc', 'xmlsitemap.admin');
     $intervals = array(300, 900, 1800, 3600, 10800, 21600, 43200, 86400, 172800, 259200, 604800);
     $form['minimum_lifetime'] = array(
       '#type' => 'select',
@@ -123,31 +125,34 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
       '#weight' => 20,
     );
 
-    //$entities = xmlsitemap_get_link_info(NULL, TRUE);
-    //module_load_all_includes('inc', 'xmlsitemap');
-    /* foreach ($entities as $entity => $entity_info) {
+    $entities = xmlsitemap_get_link_info(NULL, TRUE);
+    \Drupal::moduleHandler()->loadAllIncludes('inc', 'xmlsitemap');
+    foreach ($entities as $entity => $entity_info) {
+      if (!\Drupal::state()->get('xmlsitemap_entity_' . $entity, 0) && $entity != 'frontpage') {
+        continue;
+      }
       $form[$entity] = array(
-      '#type' => 'fieldset',
-      '#title' => $entity_info['label'],
-      '#collapsible' => TRUE,
-      '#collapsed' => TRUE,
-      '#group' => 'xmlsitemap_settings',
+        '#type' => 'details',
+        '#title' => $entity_info['label'],
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+        '#group' => 'xmlsitemap_settings',
       );
 
       if (!empty($entity_info['bundles'])) {
-      // If this entity has bundles, show a bundle setting summary.
-      xmlsitemap_add_form_entity_summary($form[$entity], $entity, $entity_info);
+        // If this entity has bundles, show a bundle setting summary.
+        //xmlsitemap_add_form_entity_summary($form[$entity], $entity, $entity_info);
       }
 
       if (!empty($entity_info['xmlsitemap']['settings callback'])) {
-      // Add any entity-specific settings.
-      $entity_info['xmlsitemap']['settings callback']($form[$entity]);
+        // Add any entity-specific settings.
+        $entity_info['xmlsitemap']['settings callback']($form[$entity]);
       }
 
       // Ensure that the entity fieldset is not shown if there are no accessible
       // sub-elements.
-      $form[$entity]['#access'] = (bool) element_get_visible_children($form[$entity]);
-      } */
+      //$form[$entity]['#access'] = (bool) Element::getVisibleChildren($form[$entity]);
+    }
 
     return parent::buildForm($form, $form_state);
   }
@@ -165,7 +170,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
     $base_url = &$form_state['values']['base_url'];
     $base_url = rtrim($base_url, '/');
     if ($base_url != '' && !UrlHelper::isValid($base_url, TRUE)) {
-      \Drupal::formBuilder()->setErrorByName('base_url', $form_state,t('Invalid base URL.'));
+      \Drupal::formBuilder()->setErrorByName('base_url', $form_state, t('Invalid base URL.'));
     }
 
     parent::validateForm($form, $form_state);
@@ -178,12 +183,12 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
     // Save any changes to the frontpage link.
     $values = $form_state['values'];
     xmlsitemap_link_save(array('type' => 'frontpage', 'id' => 0, 'loc' => ''));
-    \Drupal::state()->set('developer_mode',$values['developer_mode']);
-    \Drupal::state()->set('base_url',$values['base_url']);
+    \Drupal::state()->set('developer_mode', $values['developer_mode']);
+    \Drupal::state()->set('base_url', $values['base_url']);
     unset($values['developer_mode']);
     unset($values['base_url']);
     foreach ($values as $key => $value) {
-      \Drupal::config('xmlsitemap.settings')->set($key,$value);
+      \Drupal::config('xmlsitemap.settings')->set($key, $value);
     }
     \Drupal::config('xmlsitemap.settings')->save();
 
