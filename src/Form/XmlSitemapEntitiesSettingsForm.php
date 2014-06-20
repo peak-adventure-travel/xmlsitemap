@@ -82,7 +82,7 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
 
       $labels[$entity_type_id] = $entity_type->getLabel() ? : $entity_type_id;
 
-      if (\Drupal::state()->get('xmlsitemap_entity_' . $entity_type_id,0)) {
+      if (\Drupal::state()->get('xmlsitemap_entity_' . $entity_type_id, 0)) {
         $default[] = $entity_type_id;
       }
     }
@@ -123,8 +123,8 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
           '#label' => $bundle_info['label'],
           'bundle' => array(
             '#type' => 'checkbox',
-            '#default_value' => \Drupal::state()->get('xmlsitemap_entity_' . $entity_type_id . '_bundle_' . $bundle,0)
-            ),
+            '#default_value' => \Drupal::state()->get('xmlsitemap_entity_' . $entity_type_id . '_bundle_' . $bundle, 0)
+          ),
         );
       }
     }
@@ -140,9 +140,15 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
     $entity_values = $form_state['values']['entity_types'];
     foreach ($entity_values as $key => $value) {
       \Drupal::state()->set('xmlsitemap_entity_' . $key, $value);
-      foreach ($bundles[$key] as $bundle_key => $bundle_value) {
-        \Drupal::state()->set('xmlsitemap_entity_' . $key . '_bundle_' . $bundle_key,
-            $form_state['values']['settings'][$key][$bundle_key]['settings']['bundle']);
+      if ($value) {
+        foreach ($bundles[$key] as $bundle_key => $bundle_value) {
+          \Drupal::state()->set('xmlsitemap_entity_' . $key . '_bundle_' . $bundle_key, $form_state['values']['settings'][$key][$bundle_key]['settings']['bundle']);
+        }
+      }
+      else {
+        foreach ($bundles[$key] as $bundle_key => $bundle_value) {
+          \Drupal::state()->set('xmlsitemap_entity_' . $key . '_bundle_' . $bundle_key, 0);
+        }
       }
     }
     parent::submitForm($form, $form_state);

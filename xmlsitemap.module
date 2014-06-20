@@ -1724,10 +1724,10 @@ function xmlsitemap_xmlsitemap_index_links($limit) {
       }
       $entity_bundles[] = $bundle;
     }
-    $query = \Drupal::entityManager()->getStorage($entity_type_id)->getQuery();
-    $query->condition('bundle', $entity_bundles, 'in');
-    $entities = $query->execute();
-    xmlsitemap_xmlsitemap_process_entity_links($entities);
+    $query = \Drupal::entityManager()->getStorage($entity_type->id())->getQuery();
+    $query->condition('type', $entity_bundles, 'in');
+    $ids = $query->execute();
+    xmlsitemap_xmlsitemap_process_entity_links($entity_type_id, $ids);
   }
 }
 
@@ -1737,9 +1737,10 @@ function xmlsitemap_xmlsitemap_index_links($limit) {
  * @param $entities
  *   An array of .
  */
-function xmlsitemap_xmlsitemap_process_entity_links(array $entities) {
+function xmlsitemap_xmlsitemap_process_entity_links($entity_type, array $ids) {
+  $entities = entity_load_multiple($entity_type, $ids);
   foreach ($entities as $entity) {
-    $link = xmlsitemap_user_create_link($entity);
+    $link = xmlsitemap_entity_create_link($entity);
     xmlsitemap_link_save($link);
   }
 }
