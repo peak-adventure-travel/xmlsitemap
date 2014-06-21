@@ -5,6 +5,8 @@
  * XML sitemap integration functions for xmlsitemap.module.
  */
 use Drupal\xmlsitemap\XmlSitemapInterface;
+use Drupal\Core\Database\Query\AlterableInterface;
+use Drupal\Core\Entity\Query\QueryInterface;
 
 /**
  * Implements hook_xmlsitemap_link_info().
@@ -96,8 +98,8 @@ function xmlsitemap_sitemap_multiple_update(array $smids) {
 /**
  * Implements hook_query_TAG_alter().
  */
-function xmlsitemap_query_xmlsitemap_link_bundle_access_alter(QueryAlterableInterface $query) {
-  if ($query instanceof EntityFieldQuery && $entity = $query->getMetaData('entity')) {
+function xmlsitemap_query_xmlsitemap_link_bundle_access_alter(AlterableInterface $query) {
+  if ($query instanceof QueryInterface && $entity = $query->getMetaData('entity')) {
     $info = $query->getMetaData('entity_info');
     $bundle = $query->getMetaData('bundle');
     if (empty($bundle)) {
