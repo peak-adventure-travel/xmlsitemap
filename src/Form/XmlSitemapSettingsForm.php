@@ -141,7 +141,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
 
       if (!empty($entity_info['bundles'])) {
         // If this entity has bundles, show a bundle setting summary.
-        //xmlsitemap_add_form_entity_summary($form[$entity], $entity, $entity_info);
+        xmlsitemap_add_form_entity_summary($form[$entity], $entity, $entity_info);
       }
 
       if (!empty($entity_info['xmlsitemap']['settings callback'])) {
@@ -151,7 +151,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
 
       // Ensure that the entity fieldset is not shown if there are no accessible
       // sub-elements.
-      //$form[$entity]['#access'] = (bool) Element::getVisibleChildren($form[$entity]);
+      $form[$entity]['#access'] = (bool) Element::getVisibleChildren($form[$entity]);
     }
 
     return parent::buildForm($form, $form_state);
