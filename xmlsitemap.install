@@ -353,13 +353,6 @@ function xmlsitemap_install() {
     ))
     ->execute();
    */
-  $context = array();
-  $sitemap = \Drupal::entityManager()->getStorage('xmlsitemap')->create(array(
-    'id' => xmlsitemap_sitemap_get_context_hash($context),
-  ));
-  $sitemap = $sitemap->setContext(array());
-  $sitemap = $sitemap->setLabel(\Drupal::state()->get('base_url'));
-  $sitemap->save();
   \Drupal::state()->setMultiple(array(
     'base_url' => url(NULL, array('absolute' => TRUE)),
     'developer_mode' => 0,
@@ -368,8 +361,13 @@ function xmlsitemap_install() {
     'xmlsitemap_entity_taxonomy' => FALSE,
     'xmlsitemap_entity_user' => FALSE
   ));
-
-  // @todo Does the sitemap show up on first install or is it a 404 page?
+  $context = array();
+  $sitemap = \Drupal::entityManager()->getStorage('xmlsitemap')->create(array(
+    'id' => xmlsitemap_sitemap_get_context_hash($context),
+  ));
+  $sitemap = $sitemap->setContext(array());
+  $sitemap = $sitemap->setLabel(\Drupal::state()->get('base_url'));
+  $sitemap->save();
 }
 
 /**
