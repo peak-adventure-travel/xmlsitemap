@@ -760,6 +760,7 @@ function xmlsitemap_add_form_link_options(array &$form, $entity, $bundle, $id) {
     '#value' => $link['priority_override'],
   );
 
+  $form['actions']['submit']['#submit'][] = 'xmlsitemap_process_form_link_options';
   // Other persistent fields.
   //$form['xmlsitemap']['lastmod'] = array(
   //  '#type' => 'value',
@@ -773,12 +774,6 @@ function xmlsitemap_add_form_link_options(array &$form, $entity, $bundle, $id) {
   //  '#type' => 'value',
   //  '#value' => $node->xmlsitemap['changecount'],
   //);
-  // Add the submit handler to adjust the default values if selected.
-  $form['actions']['submit']['#submit'][] = 'xmlsitemap_process_form_link_options';
-  /* $form += array('#submit' => array());
-    if (!in_array('xmlsitemap_process_form_link_options', $form['#submit'])) {
-    array_unshift($form['#submit'], 'xmlsitemap_process_form_link_options');
-    } */
 }
 
 /**

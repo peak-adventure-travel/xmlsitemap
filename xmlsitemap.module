@@ -1370,6 +1370,9 @@ function xmlsitemap_restore_user() {
   return xmlsitemap_switch_user();
 }
 
+/**
+ * Submit callback for the entity form to save.
+ */
 function xmlsitemap_process_form_link_options($form, &$form_state) {
   $link = &$form_state['values']['xmlsitemap'];
   $fields = array('status' => XMLSITEMAP_STATUS_DEFAULT, 'priority' => XMLSITEMAP_PRIORITY_DEFAULT);
@@ -1383,6 +1386,9 @@ function xmlsitemap_process_form_link_options($form, &$form_state) {
       $link[$field . '_override'] = 1;
     }
   }
+
+  $entity = $form_state['controller']->getEntity();
+  $entity->xmlsitemap = $form_state['values']['xmlsitemap'];
 }
 
 function xmlsitemap_link_bundle_settings_form_submit($form, &$form_state) {
