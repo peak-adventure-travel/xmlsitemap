@@ -446,7 +446,8 @@ function xmlsitemap_sitemap_save(XmlSitemapInterface $sitemap) {
   //$sitemap->is_new = empty($sitemap->getId());
   //$sitemap->old_smid = $sitemap->is_new ? NULL : $sitemap->smid;
   $sitemap->setOriginalId($sitemap->isNew() ? NULL : $sitemap->getId());
-  $sitemap->setId(xmlsitemap_sitemap_get_context_hash($sitemap->getContext()));
+  $context = $sitemap->getContext();
+  $sitemap->setId(xmlsitemap_sitemap_get_context_hash($context));
   // If the context was changed, we need to perform additional actions.
   if (!$sitemap->isNew() && $sitemap->getId() != $sitemap->getOriginalId()) {
     // Rename the files directory so the sitemap does not break.

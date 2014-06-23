@@ -582,7 +582,8 @@ function _xmlsitemap_sitemap_rehash_all() {
   // Force a rehash of all sitemaps.
   $sitemaps = xmlsitemap_sitemap_load_multiple(FALSE);
   foreach ($sitemaps as $sitemap) {
-    $hash = xmlsitemap_sitemap_get_context_hash($sitemap->context);
+    $context = $sitemap->context;
+    $hash = xmlsitemap_sitemap_get_context_hash($context);
     if ($hash != $sitemap->smid) {
       xmlsitemap_sitemap_save($sitemap);
     }
