@@ -1861,8 +1861,10 @@ function xmlsitemap_xmlsitemap_index_links($limit) {
       }
       $entity_bundles[] = $bundle;
     }
-    $query = \Drupal::entityManager()->getStorage($entity_type->id())->getQuery();
-    $query->condition('type', $entity_bundles, 'in');
+    $query = \Drupal::entityManager()->getStorage($entity_type_id)->getQuery();
+    if ($entity_type->get('type')) {
+      $query->condition('type', $entity_bundles, 'IN');
+    }
     $ids = $query->execute();
     xmlsitemap_xmlsitemap_process_entity_links($entity_type_id, $ids);
   }
