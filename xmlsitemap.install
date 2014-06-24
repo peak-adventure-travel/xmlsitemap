@@ -165,10 +165,12 @@ function xmlsitemap_schema() {
     'fields' => array(
       'id' => array(
         'description' => 'Primary key with type; a unique id for the item.',
-        'type' => 'int',
+        'type' => 'varchar',
+        'length' => 32,
         'not null' => TRUE,
-        'unsigned' => TRUE,
-        'default' => 0,
+        'default' => '',
+        //'unsigned' => TRUE,
+        //'default' => 0,
       ),
       'type' => array(
         'description' => 'Primary key with id; the type of item (e.g. node, user, etc.).',

@@ -1974,7 +1974,7 @@ function xmlsitemap_entity_create_link(EntityInterface $entity) {
   $uri = $entity->url();
   $entity->xmlsitemap += array(
     'type' => $entity->getEntityTypeId(),
-    'id' => $entity->id(),
+    'id' => (string) $entity->id(),
     'subtype' => $entity->bundle(),
     'status' => $settings['status'],
     'status_default' => $settings['status'],
@@ -1988,7 +1988,6 @@ function xmlsitemap_entity_create_link(EntityInterface $entity) {
   // The following values must always be checked because they are volatile.
   $entity->xmlsitemap['loc'] = $uri;
   $entity->xmlsitemap['access'] = isset($url) ? 1 : 0;
-  $entity->xmlsitemap['status'] = 1;
   $language = $entity->language();
   $entity->xmlsitemap['language'] = !empty($language) ? $language->getId() : LanguageInterface::LANGCODE_NOT_SPECIFIED;
 
