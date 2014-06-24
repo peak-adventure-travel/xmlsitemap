@@ -566,7 +566,7 @@ function xmlsitemap_add_link_bundle_settings(array &$form, array &$form_state, $
     '#group' => 'additional_settings',
     '#attached' => array(
       'js' => array(
-        'vertical-tabs' => drupal_get_path('module', 'xmlsitemap') . '/xmlsitemap.js',
+        'vertical-tabs' => drupal_get_path('module', 'xmlsitemap') . '/js/xmlsitemap.js',
       ),
     ),
     '#tree' => TRUE,

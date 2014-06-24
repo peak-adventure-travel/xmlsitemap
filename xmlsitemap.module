@@ -1409,7 +1409,7 @@ function xmlsitemap_add_form_link_options(array &$form, $entity, $bundle, $id) {
     '#group' => 'additional_settings',
     '#attached' => array(
       'js' => array(
-        'vertical-tabs' => drupal_get_path('module', 'xmlsitemap') . '/xmlsitemap.js',
+        'vertical-tabs' => drupal_get_path('module', 'xmlsitemap') . '/js/xmlsitemap.js',
       ),
     ),
   );
