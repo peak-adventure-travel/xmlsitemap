@@ -1484,6 +1484,9 @@ function xmlsitemap_add_form_link_options(array &$form, $entity, $bundle, $id) {
   );
 
   $form['actions']['submit']['#submit'][] = 'xmlsitemap_process_form_link_options';
+  if (isset($form['actions']['publish'])) {
+    $form['actions']['publish']['#submit'][] = 'xmlsitemap_process_form_link_options';
+  }
   // Other persistent fields.
   //$form['xmlsitemap']['lastmod'] = array(
   //  '#type' => 'value',
@@ -1899,10 +1902,6 @@ function xmlsitemap_entity_presave(EntityInterface $entity) {
   $id = $entity->id();
   if (!empty($id)) {
     $link = xmlsitemap_entity_create_link($entity);
-    /* if (isset($edit['xmlsitemap'])) {
-      $link = $edit['xmlsitemap'] + $link;
-      unset($edit['xmlsitemap']);
-      } */
     xmlsitemap_link_save($link);
   }
 }
