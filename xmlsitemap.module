@@ -1578,12 +1578,12 @@ function xmlsitemap_get_changefreq_options() {
  * @return
  *   A language object.
  */
-function xmlsitemap_language_load($language = LANGUAGE_NONE) {
+function xmlsitemap_language_load($language = LanguageInterface::LANGCODE_NOT_SPECIFIED) {
   $languages = &drupal_static(__FUNCTION__);
 
   if (!isset($languages)) {
-    $languages = language_list();
-    $languages[LANGUAGE_NONE] = NULL;
+    $languages = \Drupal::languageManager()->getLanguages();
+    $languages[LanguageInterface::LANGCODE_NOT_SPECIFIED] = NULL;
   }
 
   return isset($languages[$language]) ? $languages[$language] : NULL;
@@ -1594,22 +1594,22 @@ function xmlsitemap_language_load($language = LANGUAGE_NONE) {
  * @{
  */
 function xmlsitemap_get_context_info($context = NULL, $reset = FALSE) {
-  global $language;
+  $language = \Drupal::languageManager()->getCurrentLanguage();
   $info = &drupal_static(__FUNCTION__);
 
   if ($reset) {
     $info = NULL;
   }
-  elseif ($cached = \Drupal::cache()->get('xmlsitemap:context_info:' . $language->language)) {
+  elseif ($cached = \Drupal::cache()->get('xmlsitemap:context_info:' . $language->getId())) {
     $info = $cached->data;
   }
 
   if (!isset($info)) {
     $info = \Drupal::moduleHandler()->invokeAll('xmlsitemap_context_info');
-    drupal_alter('xmlsitemap_context_info', $info);
+    \Drupal::moduleHandler()->alter('xmlsitemap_context_info', $info);
     ksort($info);
     // Cache by language since this info contains translated strings.
-    \Drupal::cache()->set('xmlsitemap:context_info:' . $language->language, $info);
+    \Drupal::cache()->set('xmlsitemap:context_info:' . $language->getId(), $info);
   }
 
   if (isset($context)) {
