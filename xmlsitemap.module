@@ -1992,3 +1992,65 @@ function xmlsitemap_entity_create_link(EntityInterface $entity) {
 
   return $entity->xmlsitemap;
 }
+
+/**
+ * Implements hook_xmlsitemap_context_info().
+ */
+function xmlsitemap_xmlsitemap_context_info() {
+  if (!\Drupal::moduleHandler()->moduleExists('language') || !\Drupal::moduleHandler()->moduleExists('config_translation')) {
+    return array();
+  }
+  $context['language'] = array(
+    'label' => t('Language'),
+    'summary callback' => 'language_name',
+    'default' => \Drupal::languageManager()->getDefaultLanguage(),
+  );
+  return $context;
+}
+
+/**
+ * Implements hook_xmlsitemap_context().
+ */
+function xmlsitemap_xmlsitemap_context() {
+  if (!\Drupal::moduleHandler()->moduleExists('language') || !\Drupal::moduleHandler()->moduleExists('config_translation')) {
+    return array();
+  }
+  $language = \Drupal::languageManager()->getCurrentLanguage();
+  $context['language'] = $language->getId();
+  return $context;
+}
+
+/**
+ * Implements hook_xmlsitemap_context_url_options().
+ */
+function xmlsitemap_xmlsitemap_context_url_options(array $context) {
+  $options = array();
+  if (!\Drupal::moduleHandler()->moduleExists('language') || !\Drupal::moduleHandler()->moduleExists('config_translation')) {
+    return $options;
+  }
+  if (isset($context['language'])) {
+    $options['language'] = xmlsitemap_language_load($context['language']);
+  }
+  return $options;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function xmlsitemap_form_xmlsitemap_sitemap_edit_form_alter(&$form, $form_state) {
+  if (!\Drupal::moduleHandler()->moduleExists('language') || !\Drupal::moduleHandler()->moduleExists('config_translation')) {
+    return;
+  }
+  $options = array();
+  $languages = \Drupal::languageManager()->getLanguages();
+  foreach ($languages as $language_key => $language) {
+    $options[$language_key] = $language->getName();
+  }
+
+  $form['context']['language'] = array(
+    '#type' => 'select',
+    '#title' => t('Language'),
+    '#options' => $options,
+    '#default_value' => isset($form['#sitemap']->context['language']) ? $form['#sitemap']->context['language'] : LanguageInterface::LANGCODE_NOT_SPECIFIED,
+  );
+}
