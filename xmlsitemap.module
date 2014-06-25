@@ -2054,3 +2054,62 @@ function xmlsitemap_form_xmlsitemap_sitemap_edit_form_alter(&$form, $form_state)
     '#default_value' => isset($form['#sitemap']->context['language']) ? $form['#sitemap']->context['language'] : LanguageInterface::LANGCODE_NOT_SPECIFIED,
   );
 }
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * @see i18n_db_rewrite_where()
+ */
+function xmlsitemap_query_xmlsitemap_generate_alter(QueryAlterableInterface $query) {
+  //$mode = variable_get('i18n_selection_mode', 'simple');
+  $mode = \Drupal::config('xmlsitemap.settings')->get('i18n_selection_mode');
+  if (!$mode) {
+    $mode = 'simple';
+  }
+
+  $sitemap = $query->getMetaData('sitemap');
+
+  if (!isset($sitemap->context['language']) || $mode == 'off') {
+    return;
+  }
+
+  // Get languages to simplify query building.
+  $current = $sitemap->context['language'];
+  $default = \Drupal::languageManager()->getDefaultLanguage()->getId();
+
+  if ($mode == 'mixed' && $current == $default) {
+    // If mode is mixed but current = default, is the same as 'simple'.
+    $mode = 'simple';
+  }
+
+  switch ($mode) {
+    case 'simple':
+      // Current language and language neutral.
+      $query->condition('language', array($current, LanguageInterface::LANGCODE_NOT_SPECIFIED));
+      break;
+    case 'mixed':
+      // Mixed current language (if available) or default language (if not) and language neutral.
+      $query->condition('language', array($current, $default, LanguageInterface::LANGCODE_NOT_SPECIFIED));
+      break;
+    case 'default':
+      // Only default language and language neutral.
+      $query->condition('language', array($default, LanguageInterface::LANGCODE_NOT_SPECIFIED));
+      break;
+    case 'strict':
+      // Only current language (for nodes), simple for all other types.
+      $node_condition = db_and();
+      $node_condition->condition('type', 'node');
+      $node_condition->condition('language', $current);
+      $normal_condition = db_and();
+      $normal_condition->condition('type', 'node', '<>');
+      $normal_condition->condition('language', array($current, LanguageInterface::LANGCODE_NOT_SPECIFIED));
+      $condition = db_or();
+      $condition->condition($node_condition);
+      $condition->condition($normal_condition);
+      $query->condition($condition);
+      break;
+    case 'off':
+      // All content. No language conditions apply.
+      break;
+  }
+}
