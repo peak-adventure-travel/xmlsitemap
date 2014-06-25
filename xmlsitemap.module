@@ -395,7 +395,6 @@ function xmlsitemap_sitemap_load_multiple($smids = array(), array $conditions = 
     return array();
   }
   foreach ($sitemaps as &$sitemap) {
-    $sitemap->setContext($sitemap->getContext());
     $uri = xmlsitemap_sitemap_uri($sitemap);
     $sitemap->uri = $uri;
   }
@@ -491,7 +490,7 @@ function xmlsitemap_sitemap_delete_multiple(array $smids) {
     foreach ($sitemaps as $sitemap) {
       xmlsitemap_clear_directory($sitemap, TRUE);
       $sitemap->delete();
-      \Drupal::moduleHandler()->invokeAll('xmlsitemap_sitemap_delete', $sitemap);
+      \Drupal::moduleHandler()->invokeAll('xmlsitemap_sitemap_delete', array($sitemap));
     }
   }
 }
@@ -539,8 +538,8 @@ function xmlsitemap_sitemap_get_context_hash(array &$context) {
  */
 function xmlsitemap_sitemap_uri(XmlSitemapInterface $sitemap) {
   $uri['path'] = 'sitemap.xml';
-  $uri['options'] = \Drupal::moduleHandler()->invokeAll('xmlsitemap_context_url_options', $sitemap->getContext());
-  $context = $sitemap->getContext();
+  $uri['options'] = \Drupal::moduleHandler()->invokeAll('xmlsitemap_context_url_options', array($sitemap->context));
+  $context = $sitemap->context;
   \Drupal::moduleHandler()->alter('xmlsitemap_context_url_options', $uri['options'], $context);
   $uri['options'] += array(
     'absolute' => TRUE,
@@ -628,11 +627,11 @@ function xmlsitemap_link_save(array $link) {
   // Save the link and allow other modules to respond to the link being saved.
   if ($existing) {
     drupal_write_record('xmlsitemap', $link, array('type', 'id'));
-    \Drupal::moduleHandler()->invokeAll('xmlsitemap_link_update', $link);
+    \Drupal::moduleHandler()->invokeAll('xmlsitemap_link_update', array($link));
   }
   else {
     $result = drupal_write_record('xmlsitemap', $link);
-    \Drupal::moduleHandler()->invokeAll('xmlsitemap_link_insert', $link);
+    \Drupal::moduleHandler()->invokeAll('xmlsitemap_link_insert', array($link));
   }
 
   return $link;
