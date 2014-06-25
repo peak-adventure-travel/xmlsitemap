@@ -110,7 +110,8 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
         '#type' => 'container',
         '#entity_type' => $entity_type_id,
         '#theme' => 'xmlsitemap_content_settings_table',
-        '#bundle_label' => $entity_type->getBundleLabel() ? : $label,
+        '#bundle_label' => $entity_type->getBundleLabel() ? $entity_type->getBundleLabel() : $label,
+        '#title' => $entity_type->getBundleLabel() ? $entity_type->getBundleLabel() : $label,
         '#states' => array(
           'visible' => array(
             ':input[name="entity_types[' . $entity_type_id . ']"]' => array('checked' => TRUE),
