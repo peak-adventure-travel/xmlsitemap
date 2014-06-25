@@ -21,6 +21,7 @@ use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Entity;
+use Drupal\Core\Session\AnonymousUserSession;
 
 /**
  * The maximum number of links in one sitemap chunk file.
@@ -1466,6 +1467,17 @@ function xmlsitemap_add_form_link_options(array &$form, $entity, $bundle, $id) {
       ),
     ),
   );
+  $form['xmlsitemap']['changefreq'] = array(
+    '#type' => 'select',
+    '#title' => t('Change frequency'),
+    '#options' => xmlsitemap_get_changefreq_options(),
+    '#states' => array(
+      'invisible' => array(
+        'select[name="xmlsitemap[status]"]' => array('value' => '0'),
+      ),
+    ),
+      //  '#value' => $node->xmlsitemap['changefreq'],
+  );
   if (!$link['status_default']) {
     // If the default status is excluded, add a visible state on the include
     // override option.
@@ -1490,10 +1502,6 @@ function xmlsitemap_add_form_link_options(array &$form, $entity, $bundle, $id) {
   //$form['xmlsitemap']['lastmod'] = array(
   //  '#type' => 'value',
   //  '#value' => $node->xmlsitemap['lastmod'],
-  //);
-  //$form['xmlsitemap']['changefreq'] = array(
-  //  '#type' => 'value',
-  //  '#value' => $node->xmlsitemap['changefreq'],
   //);
   //$form['xmlsitemap']['changecount'] = array(
   //  '#type' => 'value',
@@ -1820,13 +1828,14 @@ function xmlsitemap_form_controller(array $form_state) {
  * Implements hook_form_alter().
  */
 function xmlsitemap_form_alter(array &$form, array &$form_state) {
+  $anonymous_user = new AnonymousUserSession();
   $form_controller = xmlsitemap_form_controller($form_state);
   if (!$form_controller) {
     return;
   }
 
   $entity = $form_controller ? $form_controller->getEntity() : NULL;
-  if (!$entity) {
+  if (!$entity || !$entity->access('view', $anonymous_user)) {
     return;
   }
 
@@ -1880,7 +1889,11 @@ function xmlsitemap_xmlsitemap_index_links($limit) {
  */
 function xmlsitemap_xmlsitemap_process_entity_links($entity_type, array $ids) {
   $entities = entity_load_multiple($entity_type, $ids);
+  $anonymous_user = new AnonymousUserSession();
   foreach ($entities as $entity) {
+    if (!$entity->access('view', $anonymous_user)) {
+      continue;
+    }
     $link = xmlsitemap_entity_create_link($entity);
     xmlsitemap_link_save($link);
   }
@@ -1895,9 +1908,15 @@ function xmlsitemap_xmlsitemap_process_entity_links($entity_type, array $ids) {
 function xmlsitemap_entity_presave(EntityInterface $entity) {
   $entity_type = $entity->getEntityTypeId();
   $bundle = $entity->bundle();
+  $anonymous_user = new AnonymousUserSession();
+
   if (!\Drupal::state()->get('xmlsitemap_entity_' . $entity_type . '_bundle_' . $bundle, 0)) {
     return;
   }
+  if (!$entity->access('view', $anonymous_user)) {
+    return;
+  }
+
   $id = $entity->id();
   if (!empty($id)) {
     $link = xmlsitemap_entity_create_link($entity);
@@ -1914,9 +1933,15 @@ function xmlsitemap_entity_presave(EntityInterface $entity) {
 function xmlsitemap_entity_insert(EntityInterface $entity) {
   $entity_type = $entity->getEntityTypeId();
   $bundle = $entity->bundle();
+  $anonymous_user = new AnonymousUserSession();
+
   if (!\Drupal::state()->get('xmlsitemap_entity_' . $entity_type . '_bundle_' . $bundle, 0)) {
     return;
   }
+  if (!$entity->access('view', $anonymous_user)) {
+    return;
+  }
+
   $link = xmlsitemap_entity_create_link($entity);
   xmlsitemap_link_save($link);
 }
@@ -1930,9 +1955,15 @@ function xmlsitemap_entity_insert(EntityInterface $entity) {
 function xmlsitemap_entity_update(EntityInterface $entity) {
   $entity_type = $entity->getEntityTypeId();
   $bundle = $entity->bundle();
+  $anonymous_user = new AnonymousUserSession();
+
   if (!\Drupal::state()->get('xmlsitemap_entity_' . $entity_type . '_bundle_' . $bundle, 0)) {
     return;
   }
+  if (!$entity->access('view', $anonymous_user)) {
+    return;
+  }
+
   $link = xmlsitemap_entity_create_link($entity);
   xmlsitemap_link_save($link);
 }
@@ -1946,9 +1977,7 @@ function xmlsitemap_entity_update(EntityInterface $entity) {
 function xmlsitemap_entity_delete(EntityInterface $entity) {
   $entity_type = $entity->getEntityTypeId();
   $bundle = $entity->bundle();
-  if (!\Drupal::state()->get('xmlsitemap_entity_' . $entity_type . '_bundle_' . $bundle, 0)) {
-    return;
-  }
+
   xmlsitemap_link_delete($entity->getEntityTypeId(), $entity->id());
 }
 
