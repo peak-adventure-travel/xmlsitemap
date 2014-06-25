@@ -398,6 +398,18 @@ function xmlsitemap_uninstall() {
 
   // Remove the file cache directory.
   xmlsitemap_clear_directory(NULL, TRUE);
+
+  $entities = \Drupal::entityManager()->getDefinitions();
+  $bundles = \Drupal::entityManager()->getAllBundleInfo();
+
+  $state_variables = array();
+  foreach ($entities as $entity_id => $entity) {
+    $state_variables[] = 'xmlsitemap_entity_' . $entity_id;
+    foreach ($bundles[$entity_id] as $bundle_id => $bundle) {
+      $state_variables[] = 'xmlsitemap_entity' . $entity_id . '_bundle_' . $bundle_id;
+    }
+  }
+  \Drupal::state()->deleteMultiple($state_variables);
 }
 
 /**

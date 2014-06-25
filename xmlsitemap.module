@@ -1289,7 +1289,6 @@ function xmlsitemap_calculate_changefreq($timestamps) {
  * calls to variable_set().
  */
 function xmlsitemap_form_submit_flag_regenerate($form, $form_state) {
-  drupal_set_message('bogdan are mere');
   foreach ($form_state['values'] as $variable => $value) {
     if (\Drupal::config('xmlsitemap.settings')->get($variable) == NULL) {
       $stored_value = 'not_a_variable';
@@ -2065,7 +2064,6 @@ function xmlsitemap_form_language_admin_overview_form_alter(&$form, $form_state)
   if (!\Drupal::moduleHandler()->moduleExists('language') || !\Drupal::moduleHandler()->moduleExists('config_translation')) {
     return;
   }
-  drupal_set_message(count($form['#submit']));
   array_unshift($form['#submit'], 'xmlsitemap_form_submit_flag_regenerate');
 }
 
