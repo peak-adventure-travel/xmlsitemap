@@ -1289,6 +1289,7 @@ function xmlsitemap_calculate_changefreq($timestamps) {
  * calls to variable_set().
  */
 function xmlsitemap_form_submit_flag_regenerate($form, $form_state) {
+  drupal_set_message('bogdan are mere');
   foreach ($form_state['values'] as $variable => $value) {
     if (\Drupal::config('xmlsitemap.settings')->get($variable) == NULL) {
       $stored_value = 'not_a_variable';
@@ -2056,11 +2057,27 @@ function xmlsitemap_form_xmlsitemap_sitemap_edit_form_alter(&$form, $form_state)
 }
 
 /**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Set the regeneration needed flag if settings are changed.
+ */
+function xmlsitemap_form_language_admin_overview_form_alter(&$form, $form_state) {
+  if (!\Drupal::moduleHandler()->moduleExists('language') || !\Drupal::moduleHandler()->moduleExists('config_translation')) {
+    return;
+  }
+  drupal_set_message(count($form['#submit']));
+  array_unshift($form['#submit'], 'xmlsitemap_form_submit_flag_regenerate');
+}
+
+/**
  * Implements hook_query_TAG_alter().
  *
  * @see i18n_db_rewrite_where()
  */
 function xmlsitemap_query_xmlsitemap_generate_alter(QueryAlterableInterface $query) {
+  if (!\Drupal::moduleHandler()->moduleExists('language') || !\Drupal::moduleHandler()->moduleExists('config_translation')) {
+    return;
+  }
   //$mode = variable_get('i18n_selection_mode', 'simple');
   $mode = \Drupal::config('xmlsitemap.settings')->get('i18n_selection_mode');
   if (!$mode) {
