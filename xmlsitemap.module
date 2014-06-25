@@ -1482,9 +1482,9 @@ function xmlsitemap_add_form_link_options(array &$form, $entity, $bundle, $id) {
     '#value' => $link['priority_override'],
   );
 
-  $form['actions']['submit']['#submit'][] = 'xmlsitemap_process_form_link_options';
+  array_unshift($form['actions']['submit']['#submit'], 'xmlsitemap_process_form_link_options');
   if (isset($form['actions']['publish'])) {
-    $form['actions']['publish']['#submit'][] = 'xmlsitemap_process_form_link_options';
+    array_unshift($form['actions']['publish']['#submit'], 'xmlsitemap_process_form_link_options');
   }
   // Other persistent fields.
   //$form['xmlsitemap']['lastmod'] = array(
