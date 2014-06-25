@@ -15,6 +15,13 @@ class XmlSitemapForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
+  public function getFormId() {
+    return 'xmlsitemap_sitemap_edit_form';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function form(array $form, array &$form_state) {
     $form = parent::form($form, $form_state);
     if ($this->entity->getContext() == NULL) {
