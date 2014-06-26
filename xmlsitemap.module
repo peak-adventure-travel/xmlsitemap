@@ -416,11 +416,9 @@ function xmlsitemap_sitemap_load_by_context(array $context = NULL) {
   if (!isset($context)) {
     $context = xmlsitemap_get_current_context();
   }
-  $hash = xmlsitemap_sitemap_get_context_hash($context);
   $sitemaps = \Drupal::entityManager()->getStorage('xmlsitemap')->loadMultiple();
-  return reset($sitemaps);
   foreach ($sitemaps as $sitemap) {
-    if ($sitemap->getContext() == $hash) {
+    if ($sitemap->context == $context) {
       return $sitemap;
     }
   }
