@@ -563,7 +563,7 @@ function xmlsitemap_add_link_bundle_settings(array &$form, array &$form_state, $
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
     '#access' => \Drupal::currentUser()->hasPermission('administer xmlsitemap'),
-    '#group' => 'additional_settings',
+    '#group' => 'advanced',
     '#attached' => array(
       'js' => array(
         'vertical-tabs' => drupal_get_path('module', 'xmlsitemap') . '/js/xmlsitemap.js',
@@ -577,7 +577,7 @@ function xmlsitemap_add_link_bundle_settings(array &$form, array &$form_state, $
   );
 
   // Hack to remove fieldset summary if Vertical tabs is not enabled.
-  if (!isset($form['additional_settings'])) {
+  if (!isset($form['advanced'])) {
     unset($form['xmlsitemap']['#attached']['js']['vertical-tabs']);
   }
 
@@ -603,16 +603,6 @@ function xmlsitemap_add_link_bundle_settings(array &$form, array &$form_state, $
       ),
     ),
   );
-
-  $form += array('#submit' => array());
-  array_unshift($form['#submit'], 'xmlsitemap_link_bundle_settings_form_submit');
-
-  if (isset($form['submit'])) {
-    $form['submit'] += array('#weight' => 40);
-  }
-  if (isset($form['delete'])) {
-    $form['delete'] += array('#weight' => 50);
-  }
 }
 
 function xmlsitemap_link_bundle_settings_form(array $form, array &$form_state, array $bundle) {
