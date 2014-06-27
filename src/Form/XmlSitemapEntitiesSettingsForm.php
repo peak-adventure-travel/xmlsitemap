@@ -13,6 +13,7 @@ use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Session\AnonymousUserSession;
+use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -67,16 +68,7 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
     $bundles = $this->entityManager->getAllBundleInfo();
 
     foreach ($entity_types as $entity_type_id => $entity_type) {
-      $access_controller = $this->entityManager->getAccessController($entity_type->id());
-      if (!$access_controller) {
-        continue;
-      }
-      $entities = $this->entityManager->getStorage($entity_type_id)->loadMultiple();
-      if (!$entities) {
-        continue;
-      }
-      $entity = reset($entities);
-      if (!$access_controller->access($entity, 'view', LanguageInterface::LANGCODE_DEFAULT, $anonymous_user)) {
+      if (!$entity_type instanceof ContentEntityTypeInterface) {
         continue;
       }
 
