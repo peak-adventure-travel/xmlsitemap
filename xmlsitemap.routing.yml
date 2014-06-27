@@ -55,10 +55,10 @@ xmlsitemap.entities_settings:
     _permission: 'administer xmlsitemap'
     
 xmlsitemap.admin_settings_bundle:
-  path: '/admin/config/search/xmlsitemap/settings/%xmlsitemap_link_bundle/%'
+  path: '/admin/config/search/xmlsitemap/settings/{entity}/{bundle}'
   defaults:
-    _form: '\Drupal\xmlsitemap\Form\XmlSitemapSettingsForm'
-    _title: 'Bundle settings'
+    _form: '\Drupal\xmlsitemap\Form\XmlSitemapLinkBundleSettingsForm'
+    _title: 'Link Bundle Settings'
   requirements:
     _permission: 'administer xmlsitemap'
     
