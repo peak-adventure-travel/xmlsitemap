@@ -1469,12 +1469,13 @@ function xmlsitemap_add_form_link_options(array &$form, $entity, $bundle, $id) {
     '#type' => 'select',
     '#title' => t('Change frequency'),
     '#options' => xmlsitemap_get_changefreq_options(),
+    '#default_value' => XMLSITEMAP_FREQUENCY_ALWAYS,
+    '#description' => t('Select the frequency of changes.'),
     '#states' => array(
       'invisible' => array(
         'select[name="xmlsitemap[status]"]' => array('value' => '0'),
       ),
     ),
-      //  '#value' => $node->xmlsitemap['changefreq'],
   );
   if (!$link['status_default']) {
     // If the default status is excluded, add a visible state on the include
