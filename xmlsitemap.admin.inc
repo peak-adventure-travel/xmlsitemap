@@ -562,7 +562,7 @@ function xmlsitemap_add_link_bundle_settings(array &$form, array &$form_state, $
     '#title' => t('XML sitemap'),
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
-    '#access' => user_access('administer xmlsitemap'),
+    '#access' => \Drupal::currentUser()->hasPermission('administer xmlsitemap'),
     '#group' => 'additional_settings',
     '#attached' => array(
       'js' => array(
