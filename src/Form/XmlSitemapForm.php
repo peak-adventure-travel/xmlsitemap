@@ -55,25 +55,23 @@ class XmlSitemapForm extends EntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, array &$form_state) {
-    $xmlsitemap = $this->entity;
-    if ($xmlsitemap->isNew()) {
-      $context = $xmlsitemap->getContext();
-      $xmlsitemap->setId(xmlsitemap_sitemap_get_context_hash($context));
-      $xmlsitemap->setContext($context);
-    }
-    if (xmlsitemap_sitemap_load($xmlsitemap->id())) {
-      drupal_set_message($this->t('There is another sitemap saved with the same context.'),'error');
+    $this->entity->context = $form_state['values']['context'];
+    $context = $form_state['values']['context'];
+    $this->entity->label = $form_state['values']['label'];
+    $this->entity->id = xmlsitemap_sitemap_get_context_hash($context);
+    if (xmlsitemap_sitemap_load_by_context($form_state['values']['context']) != NULL) {
+      drupal_set_message($this->t('There is another sitemap saved with the same context.'), 'error');
     }
     else {
-      $status = $xmlsitemap->save();
+      $status = $this->entity->save();
       if ($status) {
         drupal_set_message($this->t('Saved the %label sitemap.', array(
-              '%label' => $xmlsitemap->label(),
+              '%label' => $this->entity->label(),
         )));
       }
       else {
         drupal_set_message($this->t('The %label sitemap was not saved.', array(
-              '%label' => $xmlsitemap->label(),
+              '%label' => $this->entity->label(),
         )));
       }
     }
