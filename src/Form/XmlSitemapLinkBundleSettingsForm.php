@@ -67,30 +67,36 @@ class XmlSitemapLinkBundleSettingsForm extends ConfigFormBase implements Contain
   public function buildForm(array $form, array &$form_state, $entity = NULL, $bundle = NULL) {
     $this->entity_type = $entity;
     $this->bundle_type = $bundle;
+    $request = $this->getRequest();
+
     \Drupal::moduleHandler()->loadInclude('xmlsitemap', 'inc', 'xmlsitemap.admin');
-    if (empty($form_state['ajax']) && $admin_path = xmlsitemap_get_bundle_path($entity, $bundle)) {
+    if (!$request->isXmlHttpRequest() && $admin_path = xmlsitemap_get_bundle_path($entity, $bundle)) {
       // If this is a non-ajax form, redirect to the bundle administration page.
       $destination = drupal_get_destination();
-      unset($_GET['destination']);
+      $request->query->remove('destination');
       $url = url($admin_path, array('query' => array($destination)));
-      return new \Symfony\Component\HttpFoundation\RedirectResponse($url);
+      return new RedirectResponse($url);
     }
     else {
       $form['#title'] = $this->t('@bundle XML sitemap settings', array('@bundle' => $bundle));
     }
 
-    xmlsitemap_add_link_bundle_settings($form, $form_state, $bundle['entity'], $bundle['bundle']);
+    xmlsitemap_add_link_bundle_settings($form, $form_state, $entity, $bundle);
     $form['xmlsitemap']['#type'] = 'markup';
     $form['xmlsitemap']['#value'] = '';
     $form['xmlsitemap']['#access'] = TRUE;
     $form['xmlsitemap']['#show_message'] = TRUE;
 
-    $destination = $_GET['destination'];
+    $destination = $request->get('destination');
+
     $form['actions']['cancel'] = array(
-      '#value' => l(t('Cancel'), isset($destination) ? $destination : 'admin/config/search/xmlsitemap/settings'),
-      '#weight' => 10,
+      '#type' => 'link',
+      '#title' => $this->t('Cancel'),
+      '#href' => isset($destination) ? $destination : 'admin/config/search/xmlsitemap/settings',
+      '#weight' => 10
     );
     $form = parent::buildForm($form, $form_state);
+
     return $form;
   }
 
@@ -114,7 +120,7 @@ class XmlSitemapLinkBundleSettingsForm extends ConfigFormBase implements Contain
       }
     }
 
-    xmlsitemap_link_bundle_settings_save($entity, $bundle, $form_state['values']['xmlsitemap']);
+    xmlsitemap_link_bundle_settings_save($this->entity_type, $this->bundle_type, $form_state['values']['xmlsitemap'], TRUE);
 
     $entity_info = $form['xmlsitemap']['#entity_info'];
     if (!empty($form['xmlsitemap']['#show_message'])) {
