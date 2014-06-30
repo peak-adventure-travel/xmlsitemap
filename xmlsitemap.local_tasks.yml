@@ -18,3 +18,23 @@ xmlsitemap.delete:
   appears_on:
     - xmlsitemap.admin_search
     - xmlsitemap.admin_search_list
+
+xmlsitemap.admin_search:
+  route_name: xmlsitemap.admin_search
+  base_route: xmlsitemap.admin_search
+  title: 'List'
+
+xmlsitemap.admin_settings:
+  route_name: xmlsitemap.admin_settings
+  base_route: xmlsitemap.admin_search
+  title: 'Settings'
+
+xmlsitemap.admin_rebuild:
+  route_name: xmlsitemap.admin_rebuild
+  base_route: xmlsitemap.admin_search
+  title: 'Rebuild'
+
+xmlsitemap.entities_settings:
+  route_name: xmlsitemap.entities_settings
+  base_route: xmlsitemap.admin_search
+  title: 'Sitemap Entities'
