@@ -23,6 +23,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Entity;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Database\Query\AlterableInterface;
 
 /**
  * The maximum number of links in one sitemap chunk file.
@@ -2100,7 +2101,7 @@ function xmlsitemap_form_language_admin_overview_form_alter(&$form, $form_state)
  *
  * @see i18n_db_rewrite_where()
  */
-function xmlsitemap_query_xmlsitemap_generate_alter(QueryAlterableInterface $query) {
+function xmlsitemap_query_xmlsitemap_generate_alter(AlterableInterface $query) {
   if (!\Drupal::moduleHandler()->moduleExists('language') || !\Drupal::moduleHandler()->moduleExists('config_translation')) {
     return;
   }
