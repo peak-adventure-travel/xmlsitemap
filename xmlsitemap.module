@@ -22,6 +22,7 @@ use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Entity;
 use Drupal\Core\Session\AnonymousUserSession;
+use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
  * The maximum number of links in one sitemap chunk file.
@@ -99,25 +100,26 @@ function xmlsitemap_hook_info() {
 /**
  * Implements hook_help().
  */
-function xmlsitemap_help($path, Request $request) {
+function xmlsitemap_help($route_name, RouteMatchInterface $request) {
   $output = '';
 
-  switch ($path) {
+  switch ($route_name) {
     case 'help.page.xmlsitemap':
-    case 'admin/config/search/xmlsitemap/settings/%/%/%':
-    case 'admin/config/search/xmlsitemap/edit/%':
-    case 'admin/config/search/xmlsitemap/delete/%':
+    case 'xmlsitemap.admin_settings':
+    case 'xmlsitemap.entities_settings':
+    case 'xmlsitemap.admin_edit':
+    case 'xmlsitemap.admin_delete':
       return;
-    case 'admin/help#xmlsitemap':
+    case 'xmlsitemap.admin_search':
       break;
-    case 'admin/config/search/xmlsitemap':
+    case 'xmlsitemap.admin_search_list':
       break;
-    case 'admin/config/search/xmlsitemap/rebuild':
+    case 'xmlsitemap.admin_rebuild':
       $output .= '<p>' . t("This action rebuilds your site's XML sitemap and regenerates the cached files, and may be a lengthy process. If you just installed XML sitemap, this can be helpful to import all your site's content into the sitemap. Otherwise, this should only be used in emergencies.") . '</p>';
   }
 
   $currentUser = \Drupal::currentUser();
-  if (arg(0) == 'admin' && strpos($path, 'xmlsitemap') !== FALSE && $currentUser->hasPermission('administer xmlsitemap')) {
+  if (strpos($route_name, 'xmlsitemap') !== FALSE && $currentUser->hasPermission('administer xmlsitemap')) {
     module_load_include('inc', 'xmlsitemap');
     // Alert the user to any potential problems detected by hook_requirements.
     xmlsitemap_check_status();
@@ -1122,7 +1124,7 @@ function xmlsitemap_link_bundle_delete($entity, $bundle, $delete_links = TRUE) {
     xmlsitemap_link_delete_multiple(array('type' => $entity, 'subtype' => $bundle));
   }
   cache_clear_all('xmlsitemap:link_info:', 'cache', TRUE);
-  //xmlsitemap_get_link_info(NULL, TRUE);
+  xmlsitemap_get_link_info(NULL, TRUE);
 }
 
 function xmlsitemap_link_bundle_access($entity, $bundle = NULL) {
