@@ -100,7 +100,7 @@ function xmlsitemap_hook_info() {
 /**
  * Implements hook_help().
  */
-function xmlsitemap_help($route_name, RouteMatchInterface $request) {
+function xmlsitemap_help($route_name, RouteMatchInterface $route_match) {
   $output = '';
 
   switch ($route_name) {
