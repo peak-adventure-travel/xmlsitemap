@@ -14,7 +14,7 @@ class XmlSitemapUserFunctionalTest extends XmlSitemapTestHelper {
 
   protected $normal_user;
   protected $accounts = array();
-  public static $modules = array('xmlsitemap','user','node');
+  public static $modules = array('xmlsitemap', 'user', 'node');
 
   public static function getInfo() {
     return array(
@@ -39,7 +39,6 @@ class XmlSitemapUserFunctionalTest extends XmlSitemapTestHelper {
     // Update the normal user to make its sitemap link visible.
     $account = clone $this->normal_user;
     $account->save();
-    //user_save($account, array('access' => 1, 'login' => 1));
   }
 
   public function testBlockedUser() {

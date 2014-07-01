@@ -14,6 +14,8 @@ use Drupal\xmlsitemap\Tests\XmlSitemapTestHelper;
  */
 class XmlSitemapRobotsTxtIntegrationTest extends XmlSitemapTestHelper {
 
+  public static $modules = array('xmlsitemap', 'robotstxt');
+
   public static function getInfo() {
     return array(
       'name' => 'XML sitemap robots.txt',
@@ -23,9 +25,8 @@ class XmlSitemapRobotsTxtIntegrationTest extends XmlSitemapTestHelper {
     );
   }
 
-  public function setUp($modules = array()) {
-    $modules[] = 'robotstxt';
-    parent::setUp($modules);
+  public function setUp() {
+    parent::setUp();
   }
 
   public function testRobotsTxt() {
