@@ -293,7 +293,8 @@ function xmlsitemap_modules_disabled(array $modules) {
  */
 function xmlsitemap_robotstxt() {
   if ($sitemap = xmlsitemap_sitemap_load_by_context()) {
-    $robotstxt[] = 'Sitemap: ' . url($sitemap->uri['path'], $sitemap->uri['options']);
+    $uri = xmlsitemap_sitemap_uri($sitemap);
+    $robotstxt[] = 'Sitemap: ' . url($uri['path'], $uri['options']);
     return $robotstxt;
   }
 }
