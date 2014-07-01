@@ -363,11 +363,11 @@ function xmlsitemap_install() {
     'xmlsitemap_entity_taxonomy' => FALSE,
     'xmlsitemap_entity_user' => FALSE
   ));
-  $context = array();
+  $context = xmlsitemap_get_current_context();
   $sitemap = \Drupal::entityManager()->getStorage('xmlsitemap')->create(array(
     'id' => xmlsitemap_sitemap_get_context_hash($context),
   ));
-  $sitemap = $sitemap->setContext(array());
+  $sitemap = $sitemap->setContext(xmlsitemap_get_current_context());
   $sitemap = $sitemap->setLabel(\Drupal::state()->get('base_url'));
   $sitemap->save();
 }
