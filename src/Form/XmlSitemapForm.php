@@ -9,6 +9,7 @@ namespace Drupal\xmlsitemap\Form;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityForm;
+use Drupal\Core\Entity\EntityStorageException;
 
 class XmlSitemapForm extends EntityForm {
 
@@ -59,22 +60,24 @@ class XmlSitemapForm extends EntityForm {
     $context = $form_state['values']['context'];
     $this->entity->label = $form_state['values']['label'];
     $this->entity->id = xmlsitemap_sitemap_get_context_hash($context);
-    if (xmlsitemap_sitemap_load_by_context($form_state['values']['context']) != NULL) {
-      drupal_set_message($this->t('There is another sitemap saved with the same context.'), 'error');
-    }
-    else {
+
+    try {
       $status = $this->entity->save();
-      if ($status) {
+      if ($status == SAVED_NEW) {
         drupal_set_message($this->t('Saved the %label sitemap.', array(
               '%label' => $this->entity->label(),
         )));
       }
-      else {
-        drupal_set_message($this->t('The %label sitemap was not saved.', array(
+      else if ($status == SAVED_UPDATED) {
+        drupal_set_message($this->t('Updated the %label sitemap.', array(
               '%label' => $this->entity->label(),
         )));
       }
     }
+    catch (EntityStorageException $ex) {
+      drupal_set_message($this->t('There is another sitemap saved with the same context.'), 'error');
+    }
+
     $form_state['redirect'] = 'admin/config/search/xmlsitemap';
   }
 
