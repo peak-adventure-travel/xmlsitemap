@@ -4,10 +4,3 @@ xmlsitemap.admin_search:
   route_name: xmlsitemap.admin_search
   parent: system.admin_config_search
   weight: -5
-
-xmlsitemap.entities_settings:
-  title: 'XML Sitemap entities'
-  description: 'Configure your entities that will be included in sitemap.'
-  route_name: xmlsitemap.entities_settings
-  parent: system.admin_config_search
-  weight: -4
