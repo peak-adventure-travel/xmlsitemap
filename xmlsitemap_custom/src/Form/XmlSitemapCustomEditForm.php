@@ -11,6 +11,8 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\xmlsitemap\XmlSitemapLinkStorage;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 
 class XmlSitemapCustomEditForm extends FormBase {
 
@@ -120,8 +122,12 @@ class XmlSitemapCustomEditForm extends FormBase {
     $link = &$form_state['values'];
     $link['loc'] = trim($link['loc']);
     $link['loc'] = \Drupal::service('path.alias_manager')->getPathByAlias($link['loc'], $link['language']);
-    if (!drupal_valid_path($link['loc'])) {
-      \Drupal::formBuilder()->setErrorByName('loc', $form_state, t('The %link is not valid for the current site.', array('%link' => $link['loc'])));
+    try {
+      $client = new Client();
+      $res = $client->get(url(NULL, array('absolute' => TRUE)) . $link['loc']);
+    }
+    catch (ClientException $e) {
+      \Drupal::formBuilder()->setErrorByName('loc', $form_state, t('The custom link @link is either invalid or it cannot be accessed by anonymous users.', array('@link' => $link['loc'])));
     }
     parent::validateForm($form, $form_state);
   }
