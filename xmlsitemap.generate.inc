@@ -36,7 +36,7 @@ function xmlsitemap_get_path_alias($path, $language) {
   }
   if ($language != LanguageInterface::LANGCODE_NOT_SPECIFIED && $last_language != $language) {
     unset($aliases[$last_language]);
-    $query->condition('langcode',$language,'=');
+    $query->condition('langcode', $language, '=');
     $query->orderBy('pid');
     $aliases[$language] = $query->execute()->fetchAllKeyed();
     $last_language = $language;
@@ -403,6 +403,7 @@ function xmlsitemap_batch_variable_set(array $variables) {
   foreach ($variables as $variable => $value) {
     \Drupal::config('xmlsitemap.settings')->set($variable, $value);
   }
+  \Drupal::config('xmlsitemap.settings')->save();
 }
 
 /**

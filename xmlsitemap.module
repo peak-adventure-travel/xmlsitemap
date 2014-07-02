@@ -273,7 +273,6 @@ function xmlsitemap_cron() {
   module_load_include('generate.inc', 'xmlsitemap');
   xmlsitemap_run_unprogressive_batch('xmlsitemap_regenerate_batch');
 
-  \Drupal::config('xmlsitemap.settings')->set('regenerate_needed', FALSE)->save();
 }
 
 /**

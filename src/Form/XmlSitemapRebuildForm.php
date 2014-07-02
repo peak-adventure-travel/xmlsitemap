@@ -27,13 +27,15 @@ class XmlSitemapRebuildForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, array &$form_state) {
-    if (!$this->request->request && !\Drupal::config('xmlsitemap.settings')->get('rebuild_needed')) {
+    $request = $this->getRequest();
+    if (!$request->request && !\Drupal::config('xmlsitemap.settings')->get('rebuild_needed')) {
       if (!\Drupal::config('xmlsitemap.settings')->get('regenerate_needed')) {
         drupal_set_message(t('Your sitemap is up to date and does not need to be rebuilt.'), 'error');
       }
       else {
-        $this->request->query->set('destination','admin/config/search/xmlsitemap');
+        $request->query->set('destination','admin/config/search/xmlsitemap');
         drupal_set_message(t('A rebuild is not necessary. If you are just wanting to regenerate the XML sitemap files, you can <a href="@link-cron">run cron manually</a>.', array('@link-cron' => url('admin/reports/status/run-cron', array('query' => drupal_get_destination())))), 'warning');
+        $this->setRequest($request);
       }
     }
 
