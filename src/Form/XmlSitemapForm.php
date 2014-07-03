@@ -56,6 +56,9 @@ class XmlSitemapForm extends EntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, array &$form_state) {
+    if (!isset($form_state['values']['context'])) {
+      $form_state['values']['context'] = xmlsitemap_get_current_context();
+    }
     $this->entity->context = $form_state['values']['context'];
     $context = $form_state['values']['context'];
     $this->entity->label = $form_state['values']['label'];
