@@ -10,6 +10,7 @@ namespace Drupal\xmlsitemap\Form;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityStorageException;
+use Drupal\Core\Language\LanguageInterface;
 
 class XmlSitemapForm extends EntityForm {
 
@@ -26,7 +27,7 @@ class XmlSitemapForm extends EntityForm {
   public function form(array $form, array &$form_state) {
     $form = parent::form($form, $form_state);
     if ($this->entity->getContext() == NULL) {
-      $this->entity->setContext(array());
+      $this->entity->context = array();
       $this->entity->setOriginalId(NULL);
     }
     $xmlsitemap = $this->entity;
@@ -58,6 +59,9 @@ class XmlSitemapForm extends EntityForm {
   public function save(array $form, array &$form_state) {
     if (!isset($form_state['values']['context'])) {
       $form_state['values']['context'] = xmlsitemap_get_current_context();
+    }
+    if (isset($form_state['values']['context']['language']) && $form_state['values']['context']['language'] == LanguageInterface::LANGCODE_NOT_SPECIFIED) {
+      unset($form_state['values']['context']['language']);
     }
     $this->entity->context = $form_state['values']['context'];
     $context = $form_state['values']['context'];
