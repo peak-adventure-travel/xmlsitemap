@@ -24,9 +24,6 @@ function xmlsitemap_engines_help($route_name, RouteMatchInterface $route_match) 
 
   switch ($route_name) {
     case 'xmlsitemap_engines.settings':
-      if (!\Drupal::moduleHandler()->moduleExists('site_verify')) {
-        $output .= '<p>' . t('In order to verify site ownership with the search engines listed below, it is highly recommended to download and install the <a href="@site-verify">Site verification module</a>.', array('@site-verify' => 'http://drupal.org/project/site_verify')) . '</p>';
-      }
       break;
   }
 
