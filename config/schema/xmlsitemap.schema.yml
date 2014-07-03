@@ -91,7 +91,7 @@ xmlsitemap.*:
             type: integer
             label: 'Maximum filesize of the sitemap'
         context:
-            type: string
+            type: mapping
             label: 'Context of the sitemap'
         updated:
             type: integer
