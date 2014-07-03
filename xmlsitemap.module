@@ -440,16 +440,15 @@ function xmlsitemap_sitemap_load_by_context(array $context = NULL) {
  * @todo Save the sitemap's URL as a column?
  */
 function xmlsitemap_sitemap_save(XmlSitemapInterface $sitemap) {
-  $context = $sitemap->getContext();
+  $context = $sitemap->context;
   if (!isset($context) || !$context) {
-    $sitemap->setContext(array());
+    $sitemap->context = array();
   }
 
   // Make sure context is sorted before saving the hash.
   //$sitemap->is_new = empty($sitemap->getId());
   //$sitemap->old_smid = $sitemap->is_new ? NULL : $sitemap->smid;
   $sitemap->setOriginalId($sitemap->isNew() ? NULL : $sitemap->getId());
-  $context = $sitemap->getContext();
   $sitemap->setId(xmlsitemap_sitemap_get_context_hash($context));
   // If the context was changed, we need to perform additional actions.
   if (!$sitemap->isNew() && $sitemap->getId() != $sitemap->getOriginalId()) {
@@ -2078,6 +2077,7 @@ function xmlsitemap_form_xmlsitemap_sitemap_edit_form_alter(&$form, $form_state)
   foreach ($languages as $language_key => $language) {
     $options[$language_key] = $language->getName();
   }
+  $options[LanguageInterface::LANGCODE_NOT_SPECIFIED] = t('Undefined language');
 
   $form['context']['language'] = array(
     '#type' => 'select',
