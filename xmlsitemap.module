@@ -2108,7 +2108,7 @@ function xmlsitemap_query_xmlsitemap_generate_alter(AlterableInterface $query) {
   if (!\Drupal::moduleHandler()->moduleExists('language') || !\Drupal::moduleHandler()->moduleExists('config_translation')) {
     return;
   }
-  //$mode = variable_get('i18n_selection_mode', 'simple');
+
   $mode = \Drupal::config('xmlsitemap.settings')->get('i18n_selection_mode');
   if (!$mode) {
     $mode = 'simple';
