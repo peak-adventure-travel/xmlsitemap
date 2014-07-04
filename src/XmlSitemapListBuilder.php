@@ -46,4 +46,15 @@ class XmlSitemapListBuilder extends ConfigEntityListBuilder {
     return $row + parent::buildRow($entity);
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getOperations(EntityInterface $entity) {
+    $operations = parent::getOperations($entity);
+    if (isset($operations['translate'])) {
+      unset($operations['translate']);
+    }
+    return $operations;
+  }
+
 }
