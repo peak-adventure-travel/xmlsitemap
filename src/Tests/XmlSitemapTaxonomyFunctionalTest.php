@@ -29,6 +29,14 @@ class XmlSitemapTaxonomyFunctionalTest extends XmlSitemapTestHelper {
   public function setUp() {
     parent::setUp();
 
+    \Drupal::state()->set('xmlsitemap_entity_taxonomy_vocabulary', TRUE);
+    \Drupal::state()->set('xmlsitemap_entity_taxonomy_vocabulary_bundle_taxonomy_vocabulary', TRUE);
+
+    // allow anonymous user to view user profiles
+    $user_role = entity_load('user_role', DRUPAL_ANONYMOUS_RID);
+    $user_role->grantPermission('administer taxonomy');
+    $user_role->save();
+
     $this->admin_user = $this->drupalCreateUser(array('administer taxonomy', 'administer xmlsitemap'));
     $this->normal_user = $this->drupalCreateUser(array('access content'));
   }
@@ -38,20 +46,21 @@ class XmlSitemapTaxonomyFunctionalTest extends XmlSitemapTestHelper {
 
     $edit = array(
       'name' => $this->randomName(),
-      'machine_name' => drupal_strtolower($this->randomName()),
+      'vid' => drupal_strtolower($this->randomName()),
       'xmlsitemap[status]' => '1',
       'xmlsitemap[priority]' => '1.0',
     );
     $this->drupalPostForm('admin/structure/taxonomy/add', $edit, 'Save');
     $this->assertText("Created new vocabulary {$edit['name']}.");
-    $vocabulary = taxonomy_vocabulary_machine_name_load($edit['machine_name']);
+
+    $vocabulary = taxonomy_vocabulary_load($edit['vid']);
 
     $edit = array(
       'name' => $this->randomName(),
       'xmlsitemap[status]' => 'default',
       'xmlsitemap[priority]' => 'default',
     );
-    $this->drupalPostForm("admin/structure/taxonomy/{$vocabulary->machine_name}/add", $edit, 'Save');
+    $this->drupalPostForm("admin/structure/taxonomy/manage/{$vocabulary->id()}", $edit, 'Save');
   }
 
 }
