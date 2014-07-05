@@ -73,11 +73,11 @@ function drush_xmlsitemap_rebuild() {
  */
 function drush_xmlsitemap_index() {
   $limit = (int) drush_get_option('limit', \Drupal::config('xmlsitemap.settings')->get('batch_limit'));
-  $entity_manager = \Drupal::entityManager()->getStorage('xmlsitemap');
-  $count_before = count($entity_manager->loadMultiple());
+  $count_before = db_select('xmlsitemap','x')->countQuery()->execute()->fetchField();
 
   \Drupal::moduleHandler()->invokeAll('xmlsitemap_index_links', array('limit' => $limit));
-  $count_after = count($entity_manager->loadMultiple());
+
+  $count_after = db_select('xmlsitemap','x')->countQuery()->execute()->fetchField();
 
   if ($count_after == $count_before) {
     drush_print(dt('No new XML sitemap links to index.'));
