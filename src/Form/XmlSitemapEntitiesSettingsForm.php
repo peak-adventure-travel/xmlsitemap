@@ -136,11 +136,15 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
       if ($value) {
         foreach ($bundles[$key] as $bundle_key => $bundle_value) {
           \Drupal::state()->set('xmlsitemap_entity_' . $key . '_bundle_' . $bundle_key, $form_state['values']['settings'][$key][$bundle_key]['settings']['bundle']);
+          if (!$form_state['values']['settings'][$key][$bundle_key]['settings']['bundle']) {
+            xmlsitemap_link_bundle_delete($key, $bundle_key, TRUE);
+          }
         }
       }
       else {
         foreach ($bundles[$key] as $bundle_key => $bundle_value) {
           \Drupal::state()->set('xmlsitemap_entity_' . $key . '_bundle_' . $bundle_key, 0);
+          xmlsitemap_link_bundle_delete($key, $bundle_key, TRUE);
         }
       }
     }

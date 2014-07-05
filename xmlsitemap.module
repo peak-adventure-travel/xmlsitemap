@@ -1126,7 +1126,7 @@ function xmlsitemap_link_bundle_delete($entity, $bundle, $delete_links = TRUE) {
   if ($delete_links) {
     xmlsitemap_link_delete_multiple(array('type' => $entity, 'subtype' => $bundle));
   }
-  cache_clear_all('xmlsitemap:link_info:', 'cache', TRUE);
+  //cache_clear_all('xmlsitemap:link_info:', 'cache', TRUE);
   xmlsitemap_get_link_info(NULL, TRUE);
 }
 
