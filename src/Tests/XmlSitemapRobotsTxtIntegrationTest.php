@@ -27,13 +27,26 @@ class XmlSitemapRobotsTxtIntegrationTest extends XmlSitemapTestHelper {
 
   public function setUp() {
     parent::setUp();
+
+    if (file_exists('robots.txt')) {
+      file_unmanaged_move('robots.txt','robots_temp.txt');
+    }
   }
 
   public function testRobotsTxt() {
     // Request the un-clean robots.txt path so this will work in case there is
     // still the robots.txt file in the root directory.
-    $this->drupalGet('', array('query' => array('q' => 'robots.txt')));
+    //$this->drupalGet('', array('query' => array('q' => 'robots.txt')));
+    $this->drupalGet('/robots.txt');
     $this->assertRaw('Sitemap: ' . url('sitemap.xml', array('absolute' => TRUE)));
+  }
+
+  public function tearDown() {
+    parent::tearDown();
+
+    if (file_exists('robots_temp.txt')) {
+      file_unmanaged_move('robots_temp.txt', 'robots.txt');
+    }
   }
 
 }
