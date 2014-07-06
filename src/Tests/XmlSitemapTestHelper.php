@@ -77,7 +77,8 @@ class XmlSitemapTestHelper extends WebTestBase {
     if (!$sitemap) {
       return $this->fail('Could not load sitemap by context.');
     }
-    return $this->drupalGet($sitemap->uri['path'], $options + $sitemap->uri['options'], $headers);
+    $uri = xmlsitemap_sitemap_uri($sitemap);
+    return $this->drupalGet($uri['path'], $options + $uri['options'], $headers);
   }
 
   /**
