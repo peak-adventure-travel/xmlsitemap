@@ -14,6 +14,8 @@ use Drupal\xmlsitemap\Tests\XmlSitemapTestHelper;
  */
 class XmlSitemapUnitTest extends XmlSitemapTestHelper {
 
+  public static $modules = array('xmlsitemap');
+
   public static function getInfo() {
     return array(
       'name' => 'XML sitemap unit tests',
@@ -23,7 +25,7 @@ class XmlSitemapUnitTest extends XmlSitemapTestHelper {
   }
 
   public function testAssertFlag() {
-    \Drupal::config('xmlsitemap.settings')->set('rebuild_needed', TRUE);
+    \Drupal::config('xmlsitemap.settings')->set('rebuild_needed', TRUE)->save();
     $this->assertTrue(xmlsitemap_var('rebuild_needed'));
     $this->assertTrue($this->assertFlag('rebuild_needed', TRUE, FALSE));
     $this->assertTrue(xmlsitemap_var('rebuild_needed'));
@@ -72,7 +74,7 @@ class XmlSitemapUnitTest extends XmlSitemapTestHelper {
    */
   public function testGetChunkCount() {
     // Set a low chunk size for testing.
-    \Drupal::config('xmlsitemap.settings')->set('chunk_size', 4);
+    \Drupal::config('xmlsitemap.settings')->set('chunk_size', 4)->save();
 
     // Make the total number of links just equal to the chunk size.
     $count = db_query("SELECT COUNT(id) FROM {xmlsitemap}")->fetchField();
@@ -100,15 +102,6 @@ class XmlSitemapUnitTest extends XmlSitemapTestHelper {
     $this->assertEqual(db_query("SELECT COUNT(id) FROM {xmlsitemap}")->fetchField(), 0);
     $this->assertEqual(xmlsitemap_get_chunk_count(TRUE), 1);
   }
-
-  //function testGetChunkFile() {
-  //}
-  //
-  //function testGetChunkSize() {
-  //}
-  //
-  //function testGetLinkCount() {
-  //}
 
   /**
    * Tests for xmlsitemap_calculate_changereq().
@@ -150,55 +143,6 @@ class XmlSitemapUnitTest extends XmlSitemapTestHelper {
       $this->assertEqual($value, $expected);
     }
   }
-
-  /**
-   * Tests for xmlsitemap_switch_user and xmlsitemap_restore_user().
-   */
-  public function testSwitchUser() {
-    global $user;
-
-    $original_user = $user;
-    $new_user = $this->drupalCreateUser();
-
-    // Switch to a new valid user.
-    $this->assertEqual(xmlsitemap_switch_user($new_user), TRUE);
-    $this->assertEqual($user->uid, $new_user->uid);
-
-    // Switch again to the anonymous user.
-    $this->assertEqual(xmlsitemap_switch_user(0), TRUE);
-    $this->assertEqual($user->uid, 0);
-
-    // Switch again to the new user.
-    $this->assertEqual(xmlsitemap_switch_user($new_user->uid), TRUE);
-    $this->assertEqual($user->uid, $new_user->uid);
-
-    // Test that after two switches the original user was restored.
-    $this->assertEqual(xmlsitemap_restore_user(), TRUE);
-    $this->assertEqual($user->uid, $original_user->uid);
-
-    // Attempt to switch to the same user.
-    $this->assertEqual(xmlsitemap_switch_user($original_user->uid), FALSE);
-    $this->assertEqual($user->uid, $original_user->uid);
-    $this->assertEqual(xmlsitemap_restore_user(), FALSE);
-    $this->assertEqual($user->uid, $original_user->uid);
-
-    // Attempt to switch to an invalid user ID.
-    $invalid_uid = db_query("SELECT MAX(uid) FROM {users}")->fetchField() + 100;
-    $this->assertEqual(xmlsitemap_switch_user($invalid_uid), FALSE);
-    $this->assertEqual($user->uid, $original_user->uid);
-    $this->assertEqual(xmlsitemap_restore_user(), FALSE);
-    $this->assertEqual($user->uid, $original_user->uid);
-
-    // Attempt user switching when the original user is anonymous.
-    $user = drupal_anonymous_user();
-    $this->assertEqual(xmlsitemap_switch_user(0), FALSE);
-    $this->assertEqual($user->uid, 0);
-    $this->assertEqual(xmlsitemap_restore_user(), FALSE);
-    $this->assertEqual($user->uid, 0);
-  }
-
-  //function testLoadLink() {
-  //}
 
   /**
    * Tests for xmlsitemap_link_save().
@@ -257,7 +201,7 @@ class XmlSitemapUnitTest extends XmlSitemapTestHelper {
     $link1 = $this->addSitemapLink(array('loc' => 'testing1', 'status' => 0));
     $link2 = $this->addSitemapLink(array('loc' => 'testing1', 'status' => 1));
     $link3 = $this->addSitemapLink(array('status' => 0));
-    variable_set('xmlsitemap_regenerate_needed', FALSE);
+    \Drupal::config('xmlsitemap.settings')->set('regenerate_needed', FALSE)->save();
 
     // Test delete multiple links.
     // Test that the regenerate flag is set when visible links are deleted.
@@ -283,7 +227,7 @@ class XmlSitemapUnitTest extends XmlSitemapTestHelper {
     $links[1] = $this->addSitemapLink(array('subtype' => 'group1'));
     $links[2] = $this->addSitemapLink(array('subtype' => 'group1'));
     $links[3] = $this->addSitemapLink(array('subtype' => 'group2'));
-    variable_set('xmlsitemap_regenerate_needed', FALSE);
+    \Drupal::config('xmlsitemap.settings')->set('regenerate_needed', FALSE)->save();
     // id | type    | subtype | language | access | status | priority
     // 1  | testing | group1  | ''       | 1      | 1      | 0.5
     // 2  | testing | group1  | ''       | 1      | 1      | 0.5
@@ -337,7 +281,7 @@ class XmlSitemapUnitTest extends XmlSitemapTestHelper {
    * Test that the sitemap will not be genereated before the lifetime expires.
    */
   public function testMinimumLifetime() {
-    variable_set('xmlsitemap_minimum_lifetime', 300);
+    \Drupal::config('xmlsitemap.settings')->set('minimum_lifetime', 300)->save();
     $this->regenerateSitemap();
 
     $link = $this->addSitemapLink(array('loc' => 'lifetime-test'));
@@ -346,7 +290,7 @@ class XmlSitemapUnitTest extends XmlSitemapTestHelper {
     $this->assertResponse(200);
     $this->assertNoRaw('lifetime-test');
 
-    variable_set('xmlsitemap_generated_last', REQUEST_TIME - 400);
+    \Drupal::config('xmlsitemap.settings')->set('generated_last', REQUEST_TIME - 400);
     $this->cronRun();
     $this->drupalGetSitemap();
     $this->assertRaw('lifetime-test');
