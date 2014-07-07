@@ -27,7 +27,7 @@ use Drupal\xmlsitemap\XmlSitemapInterface;
  *   config_prefix = "xmlsitemap",
  *   admin_permission = "administer site configuration",
  *   entity_keys = {
- *     "id" = "smid",
+ *     "id" = "id",
  *     "uuid" = "uuid",
  *     "label" = "label"
  *   },
