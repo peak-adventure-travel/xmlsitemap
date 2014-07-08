@@ -31,6 +31,7 @@ class XmlSitemapForm extends EntityForm {
       $this->entity->setOriginalId(NULL);
     }
     $xmlsitemap = $this->entity;
+    $form['#entity'] = $xmlsitemap;
     $form['label'] = array(
       '#type' => 'textfield',
       '#title' => $this->t('Label'),

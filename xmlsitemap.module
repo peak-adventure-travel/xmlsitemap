@@ -2083,7 +2083,7 @@ function xmlsitemap_form_xmlsitemap_sitemap_edit_form_alter(&$form, $form_state)
     '#type' => 'select',
     '#title' => t('Language'),
     '#options' => $options,
-    '#default_value' => isset($form['#sitemap']->context['language']) ? $form['#sitemap']->context['language'] : LanguageInterface::LANGCODE_NOT_SPECIFIED,
+    '#default_value' => isset($form['#entity']->context['language']) ? $form['#entity']->context['language'] : LanguageInterface::LANGCODE_NOT_SPECIFIED,
   );
 }
 
