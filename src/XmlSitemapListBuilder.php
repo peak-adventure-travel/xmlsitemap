@@ -34,7 +34,7 @@ class XmlSitemapListBuilder extends ConfigEntityListBuilder {
     $row['label'] = $this->getLabel($entity);
     if (\Drupal::moduleHandler()->moduleExists('language') && \Drupal::moduleHandler()->moduleExists('config_translation')) {
       if (isset($entity->context['language'])) {
-        $language = \Drupal::languageManager()->getCurrentLanguage($entity->context['language']);
+        $language = \Drupal::languageManager()->getLanguage($entity->context['language']);
         $row['language'] = $language->getName();
       }
       else {
