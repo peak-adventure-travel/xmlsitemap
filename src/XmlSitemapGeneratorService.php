@@ -8,6 +8,7 @@
 namespace Drupal\xmlsitemap;
 
 use Drupal\Core\Language\LanguageInterface;
+use Drupal\Component\Utility\Bytes;
 
 /**
  * XmlSitemap generator service.
@@ -79,7 +80,7 @@ class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
     $optimal_limit = &drupal_static(__FUNCTION__);
     if (!isset($optimal_limit)) {
       // Set the base memory amount from the provided core constant.
-      $optimal_limit = parse_size(DRUPAL_MINIMUM_PHP_MEMORY_LIMIT);
+      $optimal_limit = Bytes::toInt(DRUPAL_MINIMUM_PHP_MEMORY_LIMIT);
 
       // Add memory based on the chunk size.
       $optimal_limit += xmlsitemap_get_chunk_size() * 500;
@@ -102,7 +103,7 @@ class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
       if (!is_null($new_limit)) {
         $new_limit = $this->getOptimalMemoryLimit();
       }
-      if (parse_size($current_limit) < $new_limit) {
+      if (Bytes::toInt($current_limit) < $new_limit) {
         return @ini_set('memory_limit', $new_limit);
       }
     }

@@ -11,6 +11,7 @@ use Drupal\xmlsitemap\XmlSitemapInterface;
 use Drupal\xmlsitemap\Entity\XmlSitemap;
 use Drupal\xmlsitemap\XmlSitemapGenerationException;
 use Drupal\xmlsitemap\XmlSitemapWriter;
+use Drupal\Component\Utility\Bytes;
 
 /**
  * Given an internal Drupal path, return the alias for the path.
@@ -87,7 +88,7 @@ function _xmlsitemap_get_optimal_memory_limit() {
   $optimal_limit = &drupal_static(__FUNCTION__);
   if (!isset($optimal_limit)) {
     // Set the base memory amount from the provided core constant.
-    $optimal_limit = parse_size(DRUPAL_MINIMUM_PHP_MEMORY_LIMIT);
+    $optimal_limit = Bytes::toInt(DRUPAL_MINIMUM_PHP_MEMORY_LIMIT);
 
     // Add memory based on the chunk size.
     $optimal_limit += xmlsitemap_get_chunk_size() * 500;
@@ -114,7 +115,7 @@ function _xmlsitemap_set_memory_limit($new_limit = NULL) {
     if (!is_null($new_limit)) {
       $new_limit = _xmlsitemap_get_optimal_memory_limit();
     }
-    if (parse_size($current_limit) < $new_limit) {
+    if (Bytes::toInt($current_limit) < $new_limit) {
       return @ini_set('memory_limit', $new_limit);
     }
   }
