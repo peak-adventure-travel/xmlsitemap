@@ -20,7 +20,7 @@ class XmlSitemapListBuilder extends ConfigEntityListBuilder {
    */
   public function buildHeader() {
     $header['label'] = $this->t('XmlSitemap');
-    if (\Drupal::moduleHandler()->moduleExists('language') && \Drupal::moduleHandler()->moduleExists('config_translation')) {
+    if (\Drupal::moduleHandler()->moduleExists('language')) {
       $header['language'] = $this->t('Language');
     }
     $header['id'] = $this->t('Sitemap ID');
@@ -32,7 +32,7 @@ class XmlSitemapListBuilder extends ConfigEntityListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
     $row['label'] = $this->getLabel($entity);
-    if (\Drupal::moduleHandler()->moduleExists('language') && \Drupal::moduleHandler()->moduleExists('config_translation')) {
+    if (\Drupal::moduleHandler()->moduleExists('language')) {
       if (isset($entity->context['language'])) {
         $language = \Drupal::languageManager()->getLanguage($entity->context['language']);
         $row['language'] = $language->getName();

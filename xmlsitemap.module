@@ -2028,7 +2028,7 @@ function xmlsitemap_entity_create_link(EntityInterface $entity) {
  * Implements hook_xmlsitemap_context_info().
  */
 function xmlsitemap_xmlsitemap_context_info() {
-  if (!\Drupal::moduleHandler()->moduleExists('language') || !\Drupal::moduleHandler()->moduleExists('config_translation')) {
+  if (!\Drupal::moduleHandler()->moduleExists('language')) {
     return array();
   }
   $context['language'] = array(
@@ -2043,7 +2043,7 @@ function xmlsitemap_xmlsitemap_context_info() {
  * Implements hook_xmlsitemap_context().
  */
 function xmlsitemap_xmlsitemap_context() {
-  if (!\Drupal::moduleHandler()->moduleExists('language') || !\Drupal::moduleHandler()->moduleExists('config_translation')) {
+  if (!\Drupal::moduleHandler()->moduleExists('language')) {
     return array();
   }
   $language = \Drupal::languageManager()->getCurrentLanguage();
@@ -2056,7 +2056,7 @@ function xmlsitemap_xmlsitemap_context() {
  */
 function xmlsitemap_xmlsitemap_context_url_options(array $context) {
   $options = array();
-  if (!\Drupal::moduleHandler()->moduleExists('language') || !\Drupal::moduleHandler()->moduleExists('config_translation')) {
+  if (!\Drupal::moduleHandler()->moduleExists('language')) {
     return $options;
   }
   if (isset($context['language'])) {
@@ -2069,7 +2069,7 @@ function xmlsitemap_xmlsitemap_context_url_options(array $context) {
  * Implements hook_form_FORM_ID_alter().
  */
 function xmlsitemap_form_xmlsitemap_sitemap_edit_form_alter(&$form, $form_state) {
-  if (!\Drupal::moduleHandler()->moduleExists('language') || !\Drupal::moduleHandler()->moduleExists('config_translation')) {
+  if (!\Drupal::moduleHandler()->moduleExists('language')) {
     return;
   }
   $options = array();
@@ -2093,7 +2093,7 @@ function xmlsitemap_form_xmlsitemap_sitemap_edit_form_alter(&$form, $form_state)
  * Set the regeneration needed flag if settings are changed.
  */
 function xmlsitemap_form_language_admin_overview_form_alter(&$form, $form_state) {
-  if (!\Drupal::moduleHandler()->moduleExists('language') || !\Drupal::moduleHandler()->moduleExists('config_translation')) {
+  if (!\Drupal::moduleHandler()->moduleExists('language')) {
     return;
   }
   array_unshift($form['#submit'], 'xmlsitemap_form_submit_flag_regenerate');
@@ -2105,7 +2105,7 @@ function xmlsitemap_form_language_admin_overview_form_alter(&$form, $form_state)
  * @see i18n_db_rewrite_where()
  */
 function xmlsitemap_query_xmlsitemap_generate_alter(AlterableInterface $query) {
-  if (!\Drupal::moduleHandler()->moduleExists('language') || !\Drupal::moduleHandler()->moduleExists('config_translation')) {
+  if (!\Drupal::moduleHandler()->moduleExists('language')) {
     return;
   }
 
