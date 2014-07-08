@@ -124,7 +124,7 @@ class XmlSitemapLinkBundleSettingsForm extends ConfigFormBase implements Contain
 
     $entity_info = $form['xmlsitemap']['#entity_info'];
     if (!empty($form['xmlsitemap']['#show_message'])) {
-      drupal_set_message(t('XML sitemap settings for the @bundle-label %bundle have been saved.', array('@bundle-label' => drupal_strtolower($entity_info['bundle label']), '%bundle' => $entity_info['bundles'][$bundle]['label'])));
+      drupal_set_message(t('XML sitemap settings for the %bundle have been saved.', array('%bundle' => $entity_info['bundles'][$bundle]['label'])));
     }
 
     // Unset the form values since we have already saved the bundle settings and
