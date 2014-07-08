@@ -169,8 +169,8 @@ function xmlsitemap_schema() {
         'length' => 32,
         'not null' => TRUE,
         'default' => '',
-        //'unsigned' => TRUE,
-        //'default' => 0,
+      //'unsigned' => TRUE,
+      //'default' => 0,
       ),
       'type' => array(
         'description' => 'Primary key with id; the type of item (e.g. node, user, etc.).',
@@ -267,62 +267,6 @@ function xmlsitemap_schema() {
     ),
   );
 
-  /*
-    $schema['xmlsitemap_sitemap'] = array(
-    'fields' => array(
-    'smid' => array(
-    'description' => 'The sitemap ID (the hashed value of {xmlsitemap}.context.',
-    'type' => 'varchar',
-    'length' => 64,
-    'not null' => TRUE,
-    ),
-    'uuid' => array(
-    'description' => 'Unique Key: Universally unique identifier for this entity.',
-    'type' => 'varchar',
-    'length' => 128,
-    'not null' => FALSE,
-    ),
-    'context' => array(
-    'description' => 'Serialized array with the sitemaps context',
-    'type' => 'text',
-    'not null' => TRUE,
-    'serialize' => TRUE,
-    ),
-    'updated' => array(
-    'type' => 'int',
-    'unsigned' => TRUE,
-    'not null' => TRUE,
-    'default' => 0,
-    ),
-    'links' => array(
-    'type' => 'int',
-    'unsigned' => TRUE,
-    'not null' => TRUE,
-    'default' => 0,
-    ),
-    'chunks' => array(
-    'type' => 'int',
-    'unsigned' => TRUE,
-    'not null' => TRUE,
-    'default' => 0,
-    ),
-    'max_filesize' => array(
-    'type' => 'int',
-    'unsigned' => TRUE,
-    'not null' => TRUE,
-    'default' => 0,
-    ),
-    //'queued' => array(
-    //  'type' => 'int',
-    //  'unsigned' => TRUE,
-    //  'not null' => TRUE,
-    //  'default' => 0,
-    //  'description' => 'Time when this sitemap was queued for regeneration, 0 if not queued.',
-    //),
-    ),
-    'primary key' => array('smid'),
-    );
-   */
   return $schema;
 }
 
@@ -347,14 +291,6 @@ function xmlsitemap_install() {
       ))
       ->execute();
 
-  // Insert the default context sitemap.
-  /* db_insert('xmlsitemap_sitemap')
-    ->fields(array(
-    'smid' => xmlsitemap_sitemap_get_context_hash($context),
-    'context' => serialize($context),
-    ))
-    ->execute();
-   */
   \Drupal::state()->setMultiple(array(
     'base_url' => url(NULL, array('absolute' => TRUE)),
     'developer_mode' => 0
@@ -388,9 +324,7 @@ function xmlsitemap_uninstall() {
     \Drupal::config('xmlsitemap.settings')->clear($variable);
   }
 
-  // Remove state variables.
-  \Drupal::state()->deleteMultiple(array('base_url', 'developer_mode', 'xmlsitemap_entity_menu',
-    'xmlsitemap_entity_node', 'xmlsitemap_entity_taxonomy', 'xmlsitemap_entity_user'));
+  \Drupal::state()->deleteMultiple(array('base_url', 'developer_mode'));
 
   // Remove the file cache directory.
   xmlsitemap_clear_directory(NULL, TRUE);
