@@ -36,9 +36,10 @@ class XMLSitemapI18nNodeTest extends XmlSitemapI18nWebTestCase {
       $this->drupalCreateContentType(array('type' => 'article', 'name' => 'Article'));
     }
     
-    \Drupal::state()->set('xmlsitemap_entity_node', 1);
-    \Drupal::state()->set('xmlsitemap_entity_node_bundle_article', 1);
-    \Drupal::state()->set('xmlsitemap_entity_node_bundle_page', 1);
+    \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_entity_node', 1);
+    \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_entity_node_bundle_article', 1);
+    \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_entity_node_bundle_page', 1);
+    \Drupal::config('xmlsitemap.settings')->save();
 
     // allow anonymous user to view user profiles
     $user_role = entity_load('user_role', DRUPAL_ANONYMOUS_RID);
@@ -55,11 +56,11 @@ class XMLSitemapI18nNodeTest extends XmlSitemapI18nWebTestCase {
   public function testNodeLanguageData() {
     $node = $this->drupalCreateNode(array());
 
-    $this->drupalPostForm('node/' . $node->id() . '/edit', array('language' => 'en'), t('Save'));
+    $this->drupalPostForm('node/' . $node->id() . '/edit', array('language' => 'und'), t('Save'));
     $link = $this->assertSitemapLink('node', $node->id());
     $this->assertIdentical($link['language'], 'en');
 
-    $this->drupalPostForm('node/' . $node->id() . '/edit', array('language' => 'fr'), t('Save'));
+    $this->drupalPostForm('node/' . $node->id() . '/edit', array('language' => 'und'), t('Save'));
     $link = $this->assertSitemapLink('node', $node->id());
     $this->assertIdentical($link['language'], 'fr');
   }

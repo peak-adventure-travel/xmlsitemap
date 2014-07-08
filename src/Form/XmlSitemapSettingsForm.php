@@ -28,7 +28,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, array &$form_state) {
-    \Drupal::moduleHandler()->loadInclude('xmlsitemap','inc', 'xmlsitemap.admin');
+    \Drupal::moduleHandler()->loadInclude('xmlsitemap', 'inc', 'xmlsitemap.admin');
     $intervals = array(300, 900, 1800, 3600, 10800, 21600, 43200, 86400, 172800, 259200, 604800);
     $form['minimum_lifetime'] = array(
       '#type' => 'select',
@@ -81,7 +81,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
       '#description' => t('If you have problems running cron or rebuilding the sitemap, you may want to lower this value.'),
     );
     if (!xmlsitemap_check_directory()) {
-      form_set_error('path', t('The directory %directory does not exist or is not writable.', array('%directory' => xmlsitemap_get_directory())));
+      \Drupal::formBuilder()->setErrorByName('path', $form_state, t('The directory %directory does not exist or is not writable.', array('%directory' => xmlsitemap_get_directory())));
     }
     $form['advanced']['path'] = array(
       '#type' => 'textfield',
@@ -128,7 +128,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
     $entities = xmlsitemap_get_link_info(NULL, TRUE);
     \Drupal::moduleHandler()->loadAllIncludes('inc', 'xmlsitemap');
     foreach ($entities as $entity => $entity_info) {
-      if (!\Drupal::state()->get('xmlsitemap_entity_' . $entity, 0) && $entity != 'frontpage') {
+      if (!\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_entity_' . $entity) && $entity != 'frontpage') {
         continue;
       }
       $form[$entity] = array(

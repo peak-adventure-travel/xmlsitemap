@@ -47,9 +47,10 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestHelper {
 
     $this->admin_user = $this->drupalCreateUser(array('administer nodes', 'bypass node access', 'administer content types', 'administer xmlsitemap'));
     $this->normal_user = $this->drupalCreateUser(array('create page content', 'edit any page content', 'access content', 'view own unpublished content'));
-    \Drupal::state()->set('xmlsitemap_entity_node', 1);
-    \Drupal::state()->set('xmlsitemap_entity_node_bundle_article', 1);
-    \Drupal::state()->set('xmlsitemap_entity_node_bundle_page', 1);
+    \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_entity_node', 1);
+    \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_entity_node_bundle_article', 1);
+    \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_entity_node_bundle_page', 1);
+    \Drupal::config('xmlsitemap.settings')->save();
     xmlsitemap_link_bundle_settings_save('node', 'page', array('status' => TRUE, 'priority' => 0.6));
   }
 

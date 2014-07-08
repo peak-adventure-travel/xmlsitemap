@@ -29,8 +29,9 @@ class XmlSitemapTaxonomyFunctionalTest extends XmlSitemapTestHelper {
   public function setUp() {
     parent::setUp();
 
-    \Drupal::state()->set('xmlsitemap_entity_taxonomy_vocabulary', TRUE);
-    \Drupal::state()->set('xmlsitemap_entity_taxonomy_vocabulary_bundle_taxonomy_vocabulary', TRUE);
+    \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_entity_taxonomy_vocabulary', TRUE);
+    \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_entity_taxonomy_vocabulary_bundle_taxonomy_vocabulary', TRUE);
+    \Drupal::config('xmlsitemap.settings')->save();
 
     // allow anonymous user to view user profiles
     $user_role = entity_load('user_role', DRUPAL_ANONYMOUS_RID);

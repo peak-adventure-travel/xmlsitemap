@@ -350,7 +350,7 @@ function xmlsitemap_regenerate_batch_generate_index($smid, array &$context) {
  */
 function xmlsitemap_regenerate_batch_finished($success, $results, $operations, $elapsed) {
   if ($success && \Drupal::config('xmlsitemap.settings')->get('regenerate_needed') == FALSE) {
-    \Drupal::config('xmlsitemap.settings')->set('generated_last', REQUEST_TIME);
+    \Drupal::config('xmlsitemap.settings')->set('generated_last', REQUEST_TIME)->save();
     drupal_set_message(t('The sitemaps were regenerated.'));
     // Show a watchdog message that the sitemap was regenerated.
     watchdog('xmlsitemap', 'Finished XML sitemap generation in @elapsed. Memory usage: @memory-peak.', array(

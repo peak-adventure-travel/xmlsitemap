@@ -33,8 +33,9 @@ class XmlSitemapUserFunctionalTest extends XmlSitemapTestHelper {
     $user_role->save();
 
     // set xmlsitemap_entity_user state variable to TRUE to add user links into sitemap
-    \Drupal::state()->set('xmlsitemap_entity_user', TRUE);
-    \Drupal::state()->set('xmlsitemap_entity_user_bundle_user', TRUE);
+    \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_entity_user', TRUE);
+    \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_entity_user_bundle_user', TRUE);
+    \Drupal::config('xmlsitemap.settings')->save();
     // Save the user settings before creating the users.
     xmlsitemap_link_bundle_settings_save('user', 'user', array('status' => 0, 'priority' => 0.5));
 
