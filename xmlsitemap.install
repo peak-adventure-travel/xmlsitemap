@@ -22,13 +22,14 @@ function xmlsitemap_requirements($phase) {
   $missing_extensions = array_diff($required_extensions, array_filter($required_extensions, 'extension_loaded'));
 
   if (!empty($missing_extensions)) {
+    $items = array('#type' => 'item_list', 'items' => $missing_extensions);
     $requirements['xmlsitemap_php_extensions'] = array(
       'title' => $t('XML sitemap PHP extensions'),
       'value' => $t('Disabled'),
       'severity' => REQUIREMENT_ERROR,
       'description' => $t("The XML sitemap module requires you to enable the PHP extensions in the following list (see the <a href=\"@xmlsitemap_requirements\">module's system requirements page</a> for more information):", array(
         '@xmlsitemap_requirements' => 'http://drupal.org/documentation/modules/xmlsitemap/requirements',
-      )) . theme('item_list', array('items' => $missing_extensions)),
+      )) . drupal_render($items),
     );
   }
 
@@ -62,9 +63,10 @@ function xmlsitemap_requirements($phase) {
         }
       }
       if (!empty($directories)) {
+        $items = array('#type' => 'item_list', 'items' => array_keys($directories));
         $requirements['xmlsitemap_directory']['value'] = $t('Not found or not writable');
         $requirements['xmlsitemap_directory']['severity'] = REQUIREMENT_ERROR;
-        $requirements['xmlsitemap_directory']['description'] = $t('The following directories were not found or are not writable by the server. See <a href="@docpage">@docpage</a> for more information. !directories', array('!directories' => theme('item_list', array('items' => array_keys($directories))), '@docpage' => 'http://drupal.org/node/34025'));
+        $requirements['xmlsitemap_directory']['description'] = $t('The following directories were not found or are not writable by the server. See <a href="@docpage">@docpage</a> for more information. !directories', array('!directories' => drupal_render($items), '@docpage' => 'http://drupal.org/node/34025'));
       }
     }
     $sitemaps = xmlsitemap_sitemap_load_multiple();
