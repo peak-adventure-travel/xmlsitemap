@@ -9,14 +9,13 @@ namespace Drupal\xmlsitemap\Tests;
 
 use Drupal\Core\Language\LanguageInterface;
 
-class XMLSitemapI18nTest extends XMLSitemapI18nWebTestCase {
+class XmlSitemapI18nTest extends XmlSitemapI18nWebTestCase {
 
   public static function getInfo() {
     return array(
       'name' => 'XML sitemap i18n tests',
       'description' => 'Functional and integration tests for the XML sitemap and internationalization modules.',
       'group' => 'XML sitemap',
-      'dependencies' => array('i18n', 'disable-this-test-for-now'),
     );
   }
 
