@@ -266,7 +266,7 @@ function xmlsitemap_regenerate_batch(array $smids = array()) {
   $t = 't';
   $batch = array(
     'operations' => array(),
-    //'error_message' => $t('An error has occurred.'),
+    'error_message' => $t('An error has occurred.'),
     'finished' => 'xmlsitemap_regenerate_batch_finished',
     'title' => t('Regenerating Sitemap'),
     'file' => drupal_get_path('module', 'xmlsitemap') . '/xmlsitemap.generate.inc',
@@ -308,7 +308,7 @@ function xmlsitemap_regenerate_batch_generate($smid, array &$context) {
   }
   $sitemap = &$context['sandbox']['sitemap'];
   $links = xmlsitemap_generate_page($sitemap, $sitemap->getChunks());
-  //$context['message'] = t('Now generating %sitemap-url.', array('%sitemap-url' => url('sitemap.xml', $sitemap->uri['options'] + array('query' => array('page' => $sitemap->getChunks())))));
+  $context['message'] = t('Now generating %sitemap-url.', array('%sitemap-url' => url('sitemap.xml', $sitemap->uri['options'] + array('query' => array('page' => $sitemap->getChunks())))));
 
   if ($links) {
     $sitemap->setLinks($sitemap->getLinks() + $links);
