@@ -177,7 +177,7 @@ function xmlsitemap_generate_chunk(XmlSitemapInterface $sitemap, XmlSitemapWrite
   while ($link = $links->fetchAssoc()) {
     $link['language'] = $link['language'] != LanguageInterface::LANGCODE_NOT_SPECIFIED ? xmlsitemap_language_load($link['language']) : $url_options['language'];
     if ($url_options['alias']) {
-      $link['loc'] = xmlsitemap_get_path_alias($link['loc'], $link['language']->langcode);
+      $link['loc'] = xmlsitemap_get_path_alias($link['loc'], $link['language']->id);
     }
     $link_options = array(
       'language' => $link['language'],
