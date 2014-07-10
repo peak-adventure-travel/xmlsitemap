@@ -31,14 +31,14 @@ class XMLSitemapI18nTest extends XMLSitemapI18nWebTestCase {
     $link_en = $this->addSitemapLink(array('language' => 'en'));
     $link_fr = $this->addSitemapLink(array('language' => 'fr'));
 
-    variable_set('i18n_selection_mode', 'off');
+    \Drupal::config('xmlsitemap.settings')->set('i18n_selection_mode', 'off')->save();
     $this->regenerateSitemap();
     $this->drupalGetSitemap(array('language' => 'en'));
     $this->assertRawSitemapLinks($node, $node_en, $node_fr, $link, $link_en, $link_fr);
     $this->drupalGetSitemap(array('language' => 'fr'));
     $this->assertRawSitemapLinks($node, $node_en, $node_fr, $link, $link_en, $link_fr);
 
-    variable_set('i18n_selection_mode', 'simple');
+    \Drupal::config('xmlsitemap.settings')->set('i18n_selection_mode', 'simple')->save();
     $this->regenerateSitemap();
     $this->drupalGetSitemap(array('language' => 'en'));
     $this->assertRawSitemapLinks($node, $node_en, $link, $link_en);
@@ -47,7 +47,7 @@ class XMLSitemapI18nTest extends XMLSitemapI18nWebTestCase {
     $this->assertRawSitemapLinks($node, $node_fr, $link, $link_fr);
     $this->assertNoRawSitemapLinks($node_en, $link_en);
 
-    variable_set('i18n_selection_mode', 'mixed');
+    \Drupal::config('xmlsitemap.settings')->set('i18n_selection_mode', 'mixed')->save();
     $this->regenerateSitemap();
     $this->drupalGetSitemap(array('language' => 'en'));
     $this->assertRawSitemapLinks($node, $node_en, $link, $link_en);
@@ -55,7 +55,7 @@ class XMLSitemapI18nTest extends XMLSitemapI18nWebTestCase {
     $this->drupalGetSitemap(array('language' => 'fr'));
     $this->assertRawSitemapLinks($node, $node_en, $node_fr, $link, $link_en, $link_fr);
 
-    variable_set('i18n_selection_mode', 'default');
+    \Drupal::config('xmlsitemap.settings')->set('i18n_selection_mode', 'default')->save();
     $this->regenerateSitemap();
     $this->drupalGetSitemap(array('language' => 'en'));
     $this->assertRawSitemapLinks($node, $node_en, $link, $link_en);
@@ -66,7 +66,7 @@ class XMLSitemapI18nTest extends XMLSitemapI18nWebTestCase {
 
     // With strict mode, the language neutral node should not be found, but the
     // language neutral non-node should be.
-    variable_set('i18n_selection_mode', 'strict');
+    \Drupal::config('xmlsitemap.settings')->set('i18n_selection_mode', 'strict')->save();
     $this->regenerateSitemap();
     $this->drupalGetSitemap(array('language' => 'en'));
     $this->assertRawSitemapLinks($node_en, $link, $link_en);
@@ -75,4 +75,5 @@ class XMLSitemapI18nTest extends XMLSitemapI18nWebTestCase {
     $this->assertRawSitemapLinks($node_fr, $link, $link_fr);
     $this->assertNoRawSitemapLinks($node, $node_en, $link_en);
   }
+
 }
