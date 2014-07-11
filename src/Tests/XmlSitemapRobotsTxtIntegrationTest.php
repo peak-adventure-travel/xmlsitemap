@@ -7,12 +7,10 @@
 
 namespace Drupal\xmlsitemap\Tests;
 
-use Drupal\xmlsitemap\Tests\XmlSitemapTestHelper;
-
 /**
  * Tests the robots.txt file existance.
  */
-class XmlSitemapRobotsTxtIntegrationTest extends XmlSitemapTestHelper {
+class XmlSitemapRobotsTxtIntegrationTest extends XmlSitemapTestBase {
 
   public static $modules = array('xmlsitemap', 'robotstxt');
 

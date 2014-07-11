@@ -9,6 +9,9 @@ namespace Drupal\xmlsitemap\Tests;
 
 use Drupal\Core\Language\LanguageInterface;
 
+/**
+ * Tests the generation of multilingual sitemaps.
+ */
 class XmlSitemapI18nTest extends XmlSitemapI18nWebTestCase {
 
   public static function getInfo() {

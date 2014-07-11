@@ -10,7 +10,7 @@ namespace Drupal\xmlsitemap\Tests;
 /**
  * Tests the generation of user links.
  */
-class XmlSitemapUserFunctionalTest extends XmlSitemapTestHelper {
+class XmlSitemapUserFunctionalTest extends XmlSitemapTestBase {
 
   protected $normal_user;
   protected $accounts = array();

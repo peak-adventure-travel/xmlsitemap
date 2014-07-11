@@ -12,7 +12,7 @@ use Drupal\Core\Language\LanguageInterface;
 /**
  * Tests the generation of user links.
  */
-class XmlSitemapNodeFunctionalTest extends XmlSitemapTestHelper {
+class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
 
   public static $modules = array('node', 'xmlsitemap');
   protected $normal_user;
@@ -51,12 +51,12 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestHelper {
     \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_entity_node_bundle_article', 1);
     \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_entity_node_bundle_page', 1);
     \Drupal::config('xmlsitemap.settings')->save();
-    xmlsitemap_link_bundle_settings_save('node', 'page', array('status' => TRUE, 'priority' => 0.6));
+    xmlsitemap_link_bundle_settings_save('node', 'page', array('status' => 1, 'priority' => 0.6));
   }
 
   public function testNodeSettings() {
     $node = $this->drupalCreateNode(array('publish' => 0, 'uid' => $this->normal_user->id()));
-    $this->assertSitemapLinkValues('node', $node->id(), array('access' => 1, 'status' => TRUE, 'priority' => 0.6, 'status_override' => 0, 'priority_override' => 0));
+    $this->assertSitemapLinkValues('node', $node->id(), array('access' => 1, 'status' => 1, 'priority' => 0.6, 'status_override' => 0, 'priority_override' => 0));
 
     $this->drupalLogin($this->normal_user);
     $this->drupalGet('node/' . $node->id() . '/edit');

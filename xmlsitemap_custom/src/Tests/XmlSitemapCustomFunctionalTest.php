@@ -7,12 +7,12 @@
 
 namespace Drupal\xmlsitemap_custom\Tests;
 
-use Drupal\xmlsitemap\Tests\XmlSitemapTestHelper;
+use Drupal\xmlsitemap\Tests\XmlSitemapTestBase;
 
 /**
  * Tests the functionality of xmlsitemap_custom module.
  */
-class XmlSitemapCustomFunctionalTest extends XmlSitemapTestHelper {
+class XmlSitemapCustomFunctionalTest extends XmlSitemapTestBase {
 
   public static $modules = array('xmlsitemap_custom', 'path', 'node');
 

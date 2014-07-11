@@ -12,7 +12,7 @@ use Drupal\system\Entity\Menu;
 /**
  * Tests the generation of menu links.
  */
-class XmlSitemapMenuFunctionalTest extends XmlSitemapTestHelper {
+class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
 
   protected $normal_user;
   protected $menu_items = array();

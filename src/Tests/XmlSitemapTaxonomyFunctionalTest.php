@@ -12,7 +12,7 @@ use Drupal\Core\Language\LanguageInterface;
 /**
  * Tests the generation of taxonomy links.
  */
-class XmlSitemapTaxonomyFunctionalTest extends XmlSitemapTestHelper {
+class XmlSitemapTaxonomyFunctionalTest extends XmlSitemapTestBase {
 
   public static $modules = array('taxonomy', 'xmlsitemap');
   protected $normal_user;

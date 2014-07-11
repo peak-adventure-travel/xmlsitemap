@@ -7,12 +7,12 @@
 
 namespace Drupal\xmlsitemap_engines\Tests;
 
-use Drupal\xmlsitemap\Tests\XmlSitemapTestHelper;
+use Drupal\xmlsitemap\Tests\XmlSitemapTestBase;
 
 /**
  * Test xmlsitemap_engines functionality.
  */
-class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestHelper {
+class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
 
   protected $submit_url;
   public static $modules = array('system', 'path', 'node', 'dblog', 'xmlsitemap', 'xmlsitemap_engines', 'xmlsitemap_engines_test');

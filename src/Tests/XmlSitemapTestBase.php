@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Definition of Drupal\xmlsitemap\Tests\XmlSitemapTestHelper.
+ * Definition of Drupal\xmlsitemap\Tests\XmlSitemapTestBase.
  */
 
 namespace Drupal\xmlsitemap\Tests;
@@ -12,7 +12,7 @@ use Drupal\simpletest\WebTestBase;
 /**
  * Helper test class with some added functions for testing.
  */
-class XmlSitemapTestHelper extends WebTestBase {
+abstract class XmlSitemapTestBase extends WebTestBase {
 
   public static $modules = array('xmlsitemap');
 

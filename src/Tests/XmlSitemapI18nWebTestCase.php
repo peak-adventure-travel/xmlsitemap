@@ -12,7 +12,7 @@ use Drupal\Core\Language\LanguageInterface;
 /**
  * Common base test class for XML sitemap internationalization tests.
  */
-class XmlSitemapI18nWebTestCase extends XmlSitemapTestHelper {
+abstract class XmlSitemapI18nWebTestCase extends XmlSitemapTestBase {
 
   protected $admin_user;
   public static $modules = array('language', 'xmlsitemap', 'locale');
@@ -43,10 +43,6 @@ class XmlSitemapI18nWebTestCase extends XmlSitemapTestHelper {
     $sitemap = \Drupal::entityManager()->getStorage('xmlsitemap')->create(array());
     $sitemap->context = array('language' => 'fr');
     xmlsitemap_sitemap_save($sitemap);
-  }
-  
-  public function testMe() {
-    
   }
 
 }

@@ -7,12 +7,10 @@
 
 namespace Drupal\xmlsitemap\Tests;
 
-use Drupal\xmlsitemap\Tests\XmlSitemapTestHelper;
-
 /**
  * Unit testing class for xmlsitemap.
  */
-class XmlSitemapUnitTest extends XmlSitemapTestHelper {
+class XmlSitemapUnitTest extends XmlSitemapTestBase {
 
   public static $modules = array('xmlsitemap', 'node', 'system');
 

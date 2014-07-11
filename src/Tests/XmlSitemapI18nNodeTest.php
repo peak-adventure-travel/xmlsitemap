@@ -9,6 +9,9 @@ namespace Drupal\xmlsitemap\Tests;
 
 use Drupal\Core\Language\LanguageInterface;
 
+/**
+ * Tests the generation of multilingual nodes.
+ */
 class XmlSitemapI18nNodeTest extends XmlSitemapI18nWebTestCase {
 
   public static $modules = array('xmlsitemap', 'language', 'content_translation', 'node');
