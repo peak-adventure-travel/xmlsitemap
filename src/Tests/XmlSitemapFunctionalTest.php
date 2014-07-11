@@ -28,13 +28,13 @@ class XmlSitemapFunctionalTest extends XmlSitemapTestHelper {
     parent::setUp();
 
     $this->admin_user = $this->drupalCreateUser(array('access content', 'administer site configuration', 'administer xmlsitemap'));
-    $this->drupalLogin($this->admin_user);
   }
 
   /**
    * Test the sitemap file caching.
    */
   public function testSitemapCaching() {
+    $this->drupalLogin($this->admin_user);
     $this->regenerateSitemap();
     $this->drupalGetSitemap();
     $this->assertResponse(200);
@@ -51,20 +51,20 @@ class XmlSitemapFunctionalTest extends XmlSitemapTestHelper {
    * Test base URL functionality.
    */
   public function testBaseURL() {
-    $edit = array('xmlsitemap_base_url' => '');
-    $this->drupalPost('admin/config/search/xmlsitemap/settings', $edit, t('Save configuration'));
-    $this->assertText(t('Default base URL field is required.'));
+    $this->drupalLogin($this->admin_user);
+    $edit = array('base_url' => '');
+    $this->drupalPostForm('admin/config/search/xmlsitemap/settings', $edit, t('Save configuration'));
 
-    $edit = array('xmlsitemap_base_url' => 'invalid');
-    $this->drupalPost('admin/config/search/xmlsitemap/settings', $edit, t('Save configuration'));
+    $edit = array('base_url' => 'invalid');
+    $this->drupalPostForm('admin/config/search/xmlsitemap/settings', $edit, t('Save configuration'));
     $this->assertText(t('Invalid base URL.'));
 
-    $edit = array('xmlsitemap_base_url' => 'http://example.com/ ');
-    $this->drupalPost('admin/config/search/xmlsitemap/settings', $edit, t('Save configuration'));
+    $edit = array('base_url' => 'http://example.com/ ');
+    $this->drupalPostForm('admin/config/search/xmlsitemap/settings', $edit, t('Save configuration'));
     $this->assertText(t('Invalid base URL.'));
 
-    $edit = array('xmlsitemap_base_url' => 'http://example.com/');
-    $this->drupalPost('admin/config/search/xmlsitemap/settings', $edit, t('Save configuration'));
+    $edit = array('base_url' => 'http://example.com/');
+    $this->drupalPostForm('admin/config/search/xmlsitemap/settings', $edit, t('Save configuration'));
     $this->assertText(t('The configuration options have been saved.'));
 
     $this->regenerateSitemap();
@@ -77,24 +77,23 @@ class XmlSitemapFunctionalTest extends XmlSitemapTestHelper {
    */
   public function testStatusReport() {
     // Test the rebuild flag.
-    // @todo Re-enable these tests once we get a xmlsitemap_test.module.
-    //\Drupal::config('xmlsitemap.settings)->set('generated_last', REQUEST_TIME);
-    //\Drupal::config('xmlsitemap.settings)->set('rebuild_needed', TRUE);
-    //$this->assertXMLSitemapProblems(t('The XML sitemap data is out of sync and needs to be completely rebuilt.'));
-    //$this->clickLink(t('completely rebuilt'));
-    //$this->assertResponse(200);
-    //\Drupal::config('xmlsitemap.settings')->set('rebuild_needed', FALSE);
-    //$this->assertNoXMLSitemapProblems();
-    // Test the regenerate flag (and cron hasn't run in a while).
+    $this->drupalLogin($this->admin_user);
+    \Drupal::config('xmlsitemap.settings')->set('generated_last', REQUEST_TIME);
+    \Drupal::config('xmlsitemap.settings')->set('rebuild_needed', TRUE);
+    \Drupal::config('xmlsitemap.settings')->save();
+    $this->assertXMLSitemapProblems(t('The XML sitemap data is out of sync and needs to be completely rebuilt.'));
+    $this->clickLink(t('completely rebuilt'));
+    $this->assertResponse(200);
+    \Drupal::config('xmlsitemap.settings')->set('rebuild_needed', FALSE)->save();
+    $this->assertNoXMLSitemapProblems();
+    //Test the regenerate flag (and cron hasn't run in a while).
     \Drupal::config('xmlsitemap.settings')->set('regenerate_needed', TRUE);
     \Drupal::config('xmlsitemap.settings')->set('generated_last', REQUEST_TIME - \Drupal::config('xmlsitemap.settings')->get('cron_threshold_warning') - 100);
+    \Drupal::config('xmlsitemap.settings')->save();
     $this->assertXMLSitemapProblems(t('The XML cached files are out of date and need to be regenerated. You can run cron manually to regenerate the sitemap files.'));
     $this->clickLink(t('run cron manually'));
     $this->assertResponse(200);
     $this->assertNoXMLSitemapProblems();
-
-    // Test chunk count > 1000.
-    // Test directory not writable.
   }
 
 }

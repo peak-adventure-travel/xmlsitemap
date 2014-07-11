@@ -249,7 +249,7 @@ function xmlsitemap_theme() {
 function _xmlsitemap_rebuild_form_access() {
   module_load_include('generate.inc', 'xmlsitemap');
   $rebuild_types = xmlsitemap_get_rebuildable_link_types();
-  return !empty($rebuild_types) && user_access('administer xmlsitemap');
+  return !empty($rebuild_types) && \Drupal::currentUser()->hasPermission('administer xmlsitemap');
 }
 
 /**
@@ -2233,7 +2233,7 @@ function xmlsitemap_query_xmlsitemap_link_bundle_access_alter(AlterableInterface
  */
 function xmlsitemap_link_frontpage_settings(&$form) {
   module_load_include('admin.inc', 'xmlsitemap');
-  if (user_access('administer site configuration')) {
+  if (\Drupal::currentUser()->hasPermission('administer site configuration')) {
     $form['#description'] = t('The front page path can be changed in the <a href="@url-frontpage">site information configuration</a>.', array('@url-frontpage' => url('admin/config/system/site-information')));
   }
   $form['xmlsitemap_frontpage_priority'] = array(
