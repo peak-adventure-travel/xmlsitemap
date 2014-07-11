@@ -14,7 +14,7 @@ use Drupal\Core\Language\LanguageInterface;
  */
 class XmlSitemapI18nNodeTest extends XmlSitemapI18nWebTestCase {
 
-  public static $modules = array('xmlsitemap', 'language', 'content_translation', 'node');
+  public static $modules = array('xmlsitemap', 'language', 'content_translation', 'node', 'locale', 'config_translation', 'system');
 
   public static function getInfo() {
     return array(
@@ -26,7 +26,7 @@ class XmlSitemapI18nNodeTest extends XmlSitemapI18nWebTestCase {
 
   public function setUp() {
     parent::setUp();
-    
+
     if ($this->profile != 'standard') {
       $this->drupalCreateContentType(array('type' => 'page', 'name' => 'Basic page', 'settings' => array(
           // Set proper default options for the page content type.
@@ -37,7 +37,10 @@ class XmlSitemapI18nNodeTest extends XmlSitemapI18nWebTestCase {
       )));
       $this->drupalCreateContentType(array('type' => 'article', 'name' => 'Article'));
     }
-    
+
+    $this->admin_user = $this->drupalCreateUser(array('administer nodes', 'administer languages', 'administer content types', 'access administration pages', 'create page content', 'edit own page content'));
+    $this->drupalLogin($this->admin_user);
+
     \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_entity_node', 1);
     \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_entity_node_bundle_article', 1);
     \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_entity_node_bundle_page', 1);
@@ -48,21 +51,23 @@ class XmlSitemapI18nNodeTest extends XmlSitemapI18nWebTestCase {
     $user_role->grantPermission('access content');
     $user_role->save();
 
-    $name = language_get_default_configuration_settings_key('node', 'page');
-    //variable_set('language_content_type_page', 1);
-    \Drupal::config('language.settings')->set($name, array('language_show' => TRUE, 'langcode' => 'site_default'))->save();
-    $this->admin_user = $this->drupalCreateUser(array('administer nodes'));
-    $this->drupalLogin($this->admin_user);
+    // Set "Basic page" content type to use multilingual support.
+    $edit = array(
+      'language_configuration[language_show]' => TRUE,
+    );
+    $this->drupalPostForm('admin/structure/types/manage/page', $edit, t('Save content type'));
+    $this->assertRaw(t('The content type %type has been updated.', array('%type' => 'Basic page')), 'Basic page content type has been updated.');
   }
 
   public function testNodeLanguageData() {
+    $this->drupalLogin($this->admin_user);
     $node = $this->drupalCreateNode(array());
 
-    $this->drupalPostForm('node/' . $node->id() . '/edit', array('language' => 'und'), t('Save'));
+    $this->drupalPostForm('node/' . $node->id() . '/edit', array('langcode' => 'en'), t('Save and keep published'));
     $link = $this->assertSitemapLink('node', $node->id());
     $this->assertIdentical($link['language'], 'en');
 
-    $this->drupalPostForm('node/' . $node->id() . '/edit', array('language' => 'und'), t('Save'));
+    $this->drupalPostForm('node/' . $node->id() . '/edit', array('langcode' => 'fr'), t('Save and keep published'));
     $link = $this->assertSitemapLink('node', $node->id());
     $this->assertIdentical($link['language'], 'fr');
   }
