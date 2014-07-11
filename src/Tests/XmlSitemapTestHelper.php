@@ -87,6 +87,7 @@ class XmlSitemapTestHelper extends WebTestBase {
   protected function regenerateSitemap() {
     \Drupal::config('xmlsitemap.settings')->set('regenerate_needed', TRUE);
     \Drupal::config('xmlsitemap.settings')->set('generated_last', 0);
+    \Drupal::config('xmlsitemap.settings')->save();
     $this->cronRun();
     $this->assertTrue(\Drupal::config('xmlsitemap.settings')->get('generated_last') && !\Drupal::config('xmlsitemap.settings')->get('regenerate_needed'), t('XML sitemaps regenerated and flag cleared.'));
   }
@@ -139,7 +140,7 @@ class XmlSitemapTestHelper extends WebTestBase {
       }
       else {
         // Otherwise check simple equality (==).
-        $this->assertEqual($link[$key], $value, t('Equal values for @type @id link field @key.', array('@type' => $entity_type, '@id' => $entity_id, '@key' => $key)));
+        $this->assertEqual($link[$key], $value, t('Equal values for @type @id link field @key - @a - @b.', array('@type' => $entity_type, '@id' => $entity_id, '@key' => $key,'@a' => $link[$key],'@b' => $value)));
       }
     }
   }
@@ -201,7 +202,7 @@ class XmlSitemapTestHelper extends WebTestBase {
     $value = xmlsitemap_var($variable);
 
     if ($reset_if_true && $value) {
-      \Drupal::config('xmlsitemap.settings')->set($variable, FALSE);
+      \Drupal::config('xmlsitemap.settings')->set($variable, FALSE)->save();
     }
 
     return $this->assertEqual($value, $assert_value, "xmlsitemap_$variable is " . ($assert_value ? 'TRUE' : 'FALSE'));
