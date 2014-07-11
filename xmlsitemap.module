@@ -266,7 +266,7 @@ function xmlsitemap_cron() {
 
   // If the minimum sitemap lifetime hasn't been passed, skip.
   $lifetime = REQUEST_TIME - \Drupal::config('xmlsitemap.settings')->get('generated_last');
-  if ($lifetime < \Drupal::config('xmlsitemap.settings')->get('minimum_lifetine')) {
+  if ($lifetime < \Drupal::config('xmlsitemap.settings')->get('minimum_lifetime')) {
     return;
   }
   xmlsitemap_xmlsitemap_index_links(100);
@@ -308,7 +308,7 @@ function xmlsitemap_variables() {
   return array(
     'rebuild_needed' => FALSE,
     'regenerate_needed' => FALSE,
-    'minimum_lifetine' => 0,
+    'minimum_lifetime' => 0,
     'generated_last' => 0,
     'xsl' => 1,
     'prefetch_aliases' => 1,
