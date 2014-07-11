@@ -14,7 +14,7 @@ use Drupal\xmlsitemap\Tests\XmlSitemapTestHelper;
  */
 class XmlSitemapUnitTest extends XmlSitemapTestHelper {
 
-  public static $modules = array('xmlsitemap');
+  public static $modules = array('xmlsitemap', 'node', 'system');
 
   public static function getInfo() {
     return array(
@@ -22,6 +22,12 @@ class XmlSitemapUnitTest extends XmlSitemapTestHelper {
       'description' => 'Unit tests for the XML sitemap module.',
       'group' => 'XML sitemap',
     );
+  }
+
+  public function setUp() {
+    parent::setUp();
+
+    $this->admin_user = $this->drupalCreateUser(array('access content', 'administer site configuration', 'administer xmlsitemap'));
   }
 
   public function testAssertFlag() {
@@ -270,6 +276,7 @@ class XmlSitemapUnitTest extends XmlSitemapTestHelper {
    * Test that duplicate paths are skipped during generation.
    */
   public function testDuplicatePaths() {
+    $this->drupalLogin($this->admin_user);
     $link1 = $this->addSitemapLink(array('loc' => 'duplicate'));
     $link2 = $this->addSitemapLink(array('loc' => 'duplicate'));
     $this->regenerateSitemap();
@@ -281,6 +288,7 @@ class XmlSitemapUnitTest extends XmlSitemapTestHelper {
    * Test that the sitemap will not be genereated before the lifetime expires.
    */
   public function testMinimumLifetime() {
+    $this->drupalLogin($this->admin_user);
     \Drupal::config('xmlsitemap.settings')->set('minimum_lifetime', 300)->save();
     $this->regenerateSitemap();
 
@@ -290,7 +298,7 @@ class XmlSitemapUnitTest extends XmlSitemapTestHelper {
     $this->assertResponse(200);
     $this->assertNoRaw('lifetime-test');
 
-    \Drupal::config('xmlsitemap.settings')->set('generated_last', REQUEST_TIME - 400);
+    \Drupal::config('xmlsitemap.settings')->set('generated_last', REQUEST_TIME - 400)->save();
     $this->cronRun();
     $this->drupalGetSitemap();
     $this->assertRaw('lifetime-test');
