@@ -14,6 +14,8 @@ use Drupal\Core\Language\LanguageInterface;
  */
 class XmlSitemapI18nTest extends XmlSitemapI18nWebTestCase {
 
+  public static $modules = array('language', 'xmlsitemap', 'node', 'locale', 'content_translation', 'system');
+
   public static function getInfo() {
     return array(
       'name' => 'XML sitemap i18n tests',
@@ -22,7 +24,21 @@ class XmlSitemapI18nTest extends XmlSitemapI18nWebTestCase {
     );
   }
 
+  public function setUp() {
+    parent::setUp();
+
+    $this->drupalLogin($this->admin_user);
+    $edit = array(
+      'site_default_language' => 'en',
+    );
+    $this->drupalPostForm('admin/config/regional/settings', $edit, t('Save configuration'));
+    // Enable URL language detection and selection.
+    $edit = array('language_interface[enabled][language-url]' => '1');
+    $this->drupalPostForm('admin/config/regional/language/detection', $edit, t('Save settings'));
+  }
+
   public function testLanguageSelection() {
+    $this->drupalLogin($this->admin_user);
     // Create our three different language nodes.
     $node = $this->addSitemapLink(array('type' => 'node', 'language' => LanguageInterface::LANGCODE_NOT_SPECIFIED));
     $node_en = $this->addSitemapLink(array('type' => 'node', 'language' => 'en'));
@@ -37,7 +53,7 @@ class XmlSitemapI18nTest extends XmlSitemapI18nWebTestCase {
     $this->regenerateSitemap();
     $this->drupalGetSitemap(array('language' => 'en'));
     $this->assertRawSitemapLinks($node, $node_en, $node_fr, $link, $link_en, $link_fr);
-    $this->drupalGetSitemap(array('language' => 'fr'));
+    $this->drupalGet('fr/sitemap.xml');
     $this->assertRawSitemapLinks($node, $node_en, $node_fr, $link, $link_en, $link_fr);
 
     \Drupal::config('xmlsitemap.settings')->set('i18n_selection_mode', 'simple')->save();
@@ -45,7 +61,7 @@ class XmlSitemapI18nTest extends XmlSitemapI18nWebTestCase {
     $this->drupalGetSitemap(array('language' => 'en'));
     $this->assertRawSitemapLinks($node, $node_en, $link, $link_en);
     $this->assertNoRawSitemapLinks($node_fr, $link_fr);
-    $this->drupalGetSitemap(array('language' => 'fr'));
+    $this->drupalGet('fr/sitemap.xml');
     $this->assertRawSitemapLinks($node, $node_fr, $link, $link_fr);
     $this->assertNoRawSitemapLinks($node_en, $link_en);
 
@@ -54,7 +70,7 @@ class XmlSitemapI18nTest extends XmlSitemapI18nWebTestCase {
     $this->drupalGetSitemap(array('language' => 'en'));
     $this->assertRawSitemapLinks($node, $node_en, $link, $link_en);
     $this->assertNoRawSitemapLinks($node_fr, $link_fr);
-    $this->drupalGetSitemap(array('language' => 'fr'));
+    $this->drupalGet('fr/sitemap.xml');
     $this->assertRawSitemapLinks($node, $node_en, $node_fr, $link, $link_en, $link_fr);
 
     \Drupal::config('xmlsitemap.settings')->set('i18n_selection_mode', 'default')->save();
@@ -62,7 +78,7 @@ class XmlSitemapI18nTest extends XmlSitemapI18nWebTestCase {
     $this->drupalGetSitemap(array('language' => 'en'));
     $this->assertRawSitemapLinks($node, $node_en, $link, $link_en);
     $this->assertNoRawSitemapLinks($node_fr, $link_fr);
-    $this->drupalGetSitemap(array('language' => 'fr'));
+    $this->drupalGet('fr/sitemap.xml');
     $this->assertRawSitemapLinks($node, $node_en, $link, $link_en);
     $this->assertNoRawSitemapLinks($node_fr, $link_fr);
 
@@ -73,7 +89,7 @@ class XmlSitemapI18nTest extends XmlSitemapI18nWebTestCase {
     $this->drupalGetSitemap(array('language' => 'en'));
     $this->assertRawSitemapLinks($node_en, $link, $link_en);
     $this->assertNoRawSitemapLinks($node, $node_fr, $link_fr);
-    $this->drupalGetSitemap(array('language' => 'fr'));
+    $this->drupalGet('fr/sitemap.xml');
     $this->assertRawSitemapLinks($node_fr, $link, $link_fr);
     $this->assertNoRawSitemapLinks($node, $node_en, $link_en);
   }
