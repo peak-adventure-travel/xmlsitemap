@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\xmlsitemap\Tests\XmlSitemapI18nTest.
+ * Contains \Drupal\xmlsitemap\Tests\XmlSitemapMultilingualTest.
  */
 
 namespace Drupal\xmlsitemap\Tests;
@@ -12,7 +12,7 @@ use Drupal\Core\Language\LanguageInterface;
 /**
  * Tests the generation of multilingual sitemaps.
  */
-class XmlSitemapI18nTest extends XmlSitemapI18nWebTestCase {
+class XmlSitemapMultilingualTest extends XmlSitemapMultilingualTestBase {
 
   public static $modules = array('language', 'xmlsitemap', 'node', 'locale', 'content_translation', 'system');
 
