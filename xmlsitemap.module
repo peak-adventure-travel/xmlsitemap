@@ -1090,12 +1090,14 @@ function xmlsitemap_link_bundle_rename($entity, $bundle_old, $bundle_new) {
  * Rename a link type.
  */
 function xmlsitemap_link_type_rename($entity_old, $entity_new, $bundles = NULL) {
-  $variables = db_query("SELECT name FROM {variable} WHERE name LIKE :pattern", array(':pattern' => db_like('xmlsitemap_settings_' . $entity_old . '_') . '%'))->fetchCol();
-  foreach ($variables as $variable) {
-    $value = \Drupal::config('xmlsitemap.settings')->get($variable);
-    \Drupal::config('xmlsitemap.settings')->clear($variable);
+  $variables = \Drupal::config('xmlsitemap.settings')->get();
+  foreach ($variables as $key => $value) {
+    if (!strpos($key, "xmlsitemap_settings_{$entity_old}") && !strpos($key, "xmlsitemap_entity_{$entity_old}")) {
+      continue;
+    }
+    \Drupal::config('xmlsitemap.settings')->clear($key);
     if (isset($value)) {
-      $variable_new = str_replace('xmlsitemap_settings_' . $entity_old, 'xmlsitemap_settings_' . $entity_new, $variable);
+      $variable_new = str_replace('xmlsitemap_settings_' . $entity_old, 'xmlsitemap_settings_' . $entity_new, $key);
       \Drupal::config('xmlsitemap.settings')->set($variable_new, $value)->save();
     }
   }
@@ -1128,6 +1130,7 @@ function xmlsitemap_link_bundle_load($entity, $bundle, $load_bundle_info = TRUE)
 
 function xmlsitemap_link_bundle_delete($entity, $bundle, $delete_links = TRUE) {
   \Drupal::config('xmlsitemap.settings')->clear("xmlsitemap_settings_{$entity}_{$bundle}");
+  \Drupal::config('xmlsitemap.settings')->clear("xmlsitemap_entity_{$entity}_bundle_{$bundle}");
   if ($delete_links) {
     xmlsitemap_link_delete_multiple(array('type' => $entity, 'subtype' => $bundle));
   }
