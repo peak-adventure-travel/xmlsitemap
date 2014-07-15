@@ -269,7 +269,7 @@ function xmlsitemap_cron() {
   if ($lifetime < \Drupal::config('xmlsitemap.settings')->get('minimum_lifetime')) {
     return;
   }
-  xmlsitemap_xmlsitemap_index_links(100);
+  xmlsitemap_xmlsitemap_index_links(\Drupal::config('xmlsitemap.settings')->get('batch_limit'));
   // Regenerate the sitemap XML files.
   module_load_include('generate.inc', 'xmlsitemap');
   xmlsitemap_run_unprogressive_batch('xmlsitemap_regenerate_batch');
@@ -1833,20 +1833,20 @@ function xmlsitemap_form_controller(array $form_state) {
 /**
  * Implements hook_form_alter().
  */
-function xmlsitemap_form_alter(array &$form, array &$form_state) {
-  $anonymous_user = new AnonymousUserSession();
+function xmlsitemap_form_alter(array &$form, array &$form_state,$form_id) {
   $form_controller = xmlsitemap_form_controller($form_state);
+  $entity = $form_controller ? $form_controller->getEntity() : NULL;
+  $entity_type = $entity ? $entity->getEntityTypeId() : NULL;
+  $bundle = $entity ? $entity->bundle() : NULL;
+  $anonymous_user = new AnonymousUserSession();
+
   if (!$form_controller) {
     return;
   }
 
-  $entity = $form_controller ? $form_controller->getEntity() : NULL;
   if (!$entity || !$entity->access('view', $anonymous_user)) {
     return;
   }
-
-  $entity_type = $entity->getEntityTypeId();
-  $bundle = $entity->bundle();
 
   // If this entity/bundle can be included in sitemap alter the form
   if (!\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_entity_' . $entity_type . '_bundle_' . $bundle)) {
@@ -1879,6 +1879,7 @@ function xmlsitemap_xmlsitemap_index_links($limit) {
       $entity_bundles[] = $bundle;
     }
     $query = \Drupal::entityManager()->getStorage($entity_type_id)->getQuery();
+    $query->range(0, $limit);
     if ($entity_type->get('type')) {
       $query->condition('type', $entity_bundles, 'IN');
     }
