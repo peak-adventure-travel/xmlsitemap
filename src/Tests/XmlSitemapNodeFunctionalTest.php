@@ -40,13 +40,14 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
       $this->drupalCreateContentType(array('type' => 'article', 'name' => 'Article'));
     }
 
+    $this->admin_user = $this->drupalCreateUser(array('administer nodes', 'bypass node access', 'administer content types', 'administer xmlsitemap'));
+    $this->normal_user = $this->drupalCreateUser(array('create page content', 'edit any page content', 'access content', 'view own unpublished content'));
+
     // allow anonymous user to view user profiles
     $user_role = entity_load('user_role', DRUPAL_ANONYMOUS_RID);
     $user_role->grantPermission('access content');
     $user_role->save();
 
-    $this->admin_user = $this->drupalCreateUser(array('administer nodes', 'bypass node access', 'administer content types', 'administer xmlsitemap'));
-    $this->normal_user = $this->drupalCreateUser(array('create page content', 'edit any page content', 'access content', 'view own unpublished content'));
     \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_entity_node', 1);
     \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_entity_node_bundle_article', 1);
     \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_entity_node_bundle_page', 1);
@@ -56,7 +57,7 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
 
   public function testNodeSettings() {
     $node = $this->drupalCreateNode(array('publish' => 0, 'uid' => $this->normal_user->id()));
-    $this->assertSitemapLinkValues('node', $node->id(), array('access' => 1, 'status' => 1, 'priority' => 0.6, 'status_override' => 0, 'priority_override' => 0));
+    $this->assertSitemapLinkValues('node', $node->id(), array('access' => 1, 'status' => 0, 'priority' => 0.5, 'status_override' => 0, 'priority_override' => 0));
 
     $this->drupalLogin($this->normal_user);
     $this->drupalGet('node/' . $node->id() . '/edit');
@@ -69,7 +70,7 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
     );
     $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save'));
     $this->assertText('Basic page Test node title has been updated.');
-    $this->assertSitemapLinkValues('node', $node->id(), array('access' => 1, 'status' => 0, 'priority' => 0.5, 'status_override' => 0, 'priority_override' => 0));
+    $this->assertSitemapLinkValues('node', $node->id(), array('access' => 1, 'status' => 1, 'priority' => 0.6, 'status_override' => 0, 'priority_override' => 0));
 
     $this->drupalLogin($this->admin_user);
     $this->drupalGet('node/' . $node->id() . '/edit');
@@ -90,7 +91,7 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
     );
     $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
     $this->assertText('Basic page Test node title has been updated.');
-    $this->assertSitemapLinkValues('node', $node->id(), array('access' => 1, 'status' => 1, 'priority' => 0.5, 'status_override' => 0, 'priority_override' => 0));
+    $this->assertSitemapLinkValues('node', $node->id(), array('access' => 1, 'status' => 1, 'priority' => 0.6, 'status_override' => 0, 'priority_override' => 0));
   }
 
   /**
@@ -103,14 +104,14 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
     $this->assertSitemapLinkValues('node', $node_old->id(), array('status' => 0, 'priority' => 0.5));
 
     $edit = array(
-      'xmlsitemap[status]' => 1,
+      'xmlsitemap[status]' => 0,
       'xmlsitemap[priority]' => '0.0',
     );
     $this->drupalPostForm('admin/config/search/xmlsitemap/settings/node/page', $edit, t('Save configuration'));
     $this->assertText('The configuration options have been saved.');
     $node = $this->drupalCreateNode();
-    $this->assertSitemapLinkValues('node', $node->id(), array('status' => 1, 'priority' => 0.0));
-    $this->assertSitemapLinkValues('node', $node_old->id(), array('status' => 1, 'priority' => 0.0));
+    $this->assertSitemapLinkValues('node', $node->id(), array('status' => 0, 'priority' => 0.5));
+    $this->assertSitemapLinkValues('node', $node_old->id(), array('status' => 0, 'priority' => 0.0));
 
     $edit = array(
       'type' => 'page2',
@@ -136,7 +137,7 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
    */
   public function testCron() {
     $limit = 5;
-    \Drupal::config('xmlsitemap.settings')->set('batch_limit', $limit);
+    \Drupal::config('xmlsitemap.settings')->set('batch_limit', $limit)->save();
 
     $nodes = array();
     for ($i = 1; $i <= ($limit + 1); $i++) {
@@ -157,9 +158,9 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
 
     for ($i = 1; $i <= ($limit + 1); $i++) {
       $node = array_pop($nodes);
-      if ($i <= $limit) {
+      if ($i != 1) {
         // The first $limit nodes should be inserted.
-        $this->assertSitemapLinkValues('node', $node->id(), array('access' => 1, 'status' => 1, 'lastmod' => $node->changed));
+        $this->assertSitemapLinkValues('node', $node->id(), array('access' => 1, 'status' => 0));
       }
       else {
         // Any beyond $limit should not be in the sitemap.
