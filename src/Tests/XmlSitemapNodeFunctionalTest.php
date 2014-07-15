@@ -114,18 +114,20 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
     $this->assertSitemapLinkValues('node', $node_old->id(), array('status' => 0, 'priority' => 0.0));
 
     $edit = array(
-      'type' => 'page2',
-      'xmlsitemap[status]' => 1,
-      'xmlsitemap[priority]' => '0.5',
+      'type' => 'page2'
     );
     $this->drupalPostForm('admin/structure/types/manage/page', $edit, t('Save content type'));
     $this->assertText('Changed the content type of 2 posts from page to page2.');
     $this->assertText('The content type Basic page has been updated.');
 
-    $this->assertSitemapLinkValues('node', $node->id(), array('subtype' => 'page2', 'status' => 1, 'priority' => 0.5));
-    $this->assertSitemapLinkValues('node', $node_old->id(), array('subtype' => 'page2', 'status' => 1, 'priority' => 0.5));
+    $this->assertSitemapLinkValues('node', $node->id(), array('subtype' => 'page2', 'status' => 0, 'priority' => 0.5));
+    $this->assertSitemapLinkValues('node', $node_old->id(), array('subtype' => 'page2', 'status' => 0, 'priority' => 0.0));
     $this->assertEqual(count(xmlsitemap_link_load_multiple(array('type' => 'node', 'subtype' => 'page'))), 0);
     $this->assertEqual(count(xmlsitemap_link_load_multiple(array('type' => 'node', 'subtype' => 'page2'))), 2);
+
+    // delete all pages in order to allow content type deletion
+    $node->delete();
+    $node_old->delete();
 
     $this->drupalPostForm('admin/structure/types/manage/page2/delete', array(), t('Delete'));
     $this->assertText('The content type Basic page has been deleted.');
