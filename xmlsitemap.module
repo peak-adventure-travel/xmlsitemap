@@ -273,7 +273,6 @@ function xmlsitemap_cron() {
   // Regenerate the sitemap XML files.
   module_load_include('generate.inc', 'xmlsitemap');
   xmlsitemap_run_unprogressive_batch('xmlsitemap_regenerate_batch');
-
 }
 
 /**
@@ -1078,7 +1077,10 @@ function xmlsitemap_link_bundle_settings_save($entity, $bundle, array $settings,
 function xmlsitemap_link_bundle_rename($entity, $bundle_old, $bundle_new) {
   if ($bundle_old != $bundle_new) {
     $settings = xmlsitemap_link_bundle_load($entity, $bundle_old);
-    \Drupal::config('xmlsitemap.settings')->clear("xmlsitemap_settings_{$entity}_{$bundle_old}")->save();
+    \Drupal::config('xmlsitemap.settings')->clear("xmlsitemap_settings_{$entity}_{$bundle_old}");
+    $old_bundle_value = \Drupal::config('xmlsitemap.settings')->get("xmlsitemap_entity_{$entity}_bundle_{$bundle_old}");
+    \Drupal::config('xmlsitemap.settings')->clear("xmlsitemap_entity_{$entity}_bundle_{$bundle_old}");
+    \Drupal::config('xmlsitemap.settings')->set("xmlsitemap_entity_{$entity}_bundle_{$bundle_new}", $old_bundle_value)->save();
     xmlsitemap_link_bundle_settings_save($entity, $bundle_new, $settings, FALSE);
     xmlsitemap_link_update_multiple(array('subtype' => $bundle_new), array('type' => $entity, 'subtype' => $bundle_old));
   }
@@ -1833,7 +1835,7 @@ function xmlsitemap_form_controller(array $form_state) {
 /**
  * Implements hook_form_alter().
  */
-function xmlsitemap_form_alter(array &$form, array &$form_state,$form_id) {
+function xmlsitemap_form_alter(array &$form, array &$form_state, $form_id) {
   $form_controller = xmlsitemap_form_controller($form_state);
   $entity = $form_controller ? $form_controller->getEntity() : NULL;
   $entity_type = $entity ? $entity->getEntityTypeId() : NULL;
