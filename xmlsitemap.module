@@ -390,13 +390,6 @@ function xmlsitemap_sitemap_load_multiple($smids = array(), array $conditions = 
   $storage = Drupal::entityManager()->getStorage('xmlsitemap');
 
   $sitemaps = $storage->loadMultiple($conditions['smid']);
-  /* $query = db_select('xmlsitemap_sitemap');
-    $query->fields('xmlsitemap_sitemap');
-    foreach ($conditions as $field => $value) {
-    $query->condition($field, $value);
-    }
-    $sitemaps = $query->execute()->fetchAllAssoc('smid');
-   */
   if (count($sitemaps) <= 0) {
     return array();
   }
