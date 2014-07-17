@@ -345,7 +345,6 @@ function xmlsitemap_var($name, $default = NULL) {
   }
 
   return \Drupal::config('xmlsitemap.settings')->get($name);
-  return variable_get($name, isset($default) || !isset($defaults[$name]) ? $default : $defaults[$name]);
 }
 
 /**
@@ -478,11 +477,6 @@ function xmlsitemap_sitemap_delete($smid) {
 function xmlsitemap_sitemap_delete_multiple(array $smids) {
   if (!empty($smids)) {
     $sitemaps = xmlsitemap_sitemap_load_multiple($smids);
-    /*
-      db_delete('xmlsitemap_sitemap')
-      ->condition('smid', $smids)
-      ->execute();
-     */
     foreach ($sitemaps as $sitemap) {
       xmlsitemap_clear_directory($sitemap, TRUE);
       $sitemap->delete();
