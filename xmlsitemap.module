@@ -595,7 +595,7 @@ function xmlsitemap_link_save(array $link) {
   );
 
   // Allow other modules to alter the link before saving.
-  drupal_alter('xmlsitemap_link', $link);
+  \Drupal::moduleHandler()->alter('xmlsitemap_link', $link);
 
   // Temporary validation checks.
   // @todo Remove in final?
@@ -980,7 +980,6 @@ function xmlsitemap_get_link_info($type = NULL, $reset = FALSE) {
           $bundle_info['xmlsitemap'] += xmlsitemap_link_bundle_load($key, $bundle, FALSE);
         }
       }
-      //drupal_alter('xmlsitemap_link_info', $link_info);
       \Drupal::moduleHandler()->alter('xmlsitemap_link_info', $link_info);
       ksort($link_info);
       // Cache by language since this info contains translated strings.
@@ -1632,7 +1631,7 @@ function xmlsitemap_get_current_context() {
 
   if (!isset($context)) {
     $context = \Drupal::moduleHandler()->invokeAll('xmlsitemap_context');
-    drupal_alter('xmlsitemap_context', $context);
+    \Drupal::moduleHandler()->alter('xmlsitemap_context', $context);
     asort($context);
   }
 

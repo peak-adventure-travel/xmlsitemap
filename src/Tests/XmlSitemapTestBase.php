@@ -229,7 +229,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   protected function getWatchdogMessages(array $conditions = array(), $reset = FALSE) {
     static $seen_ids = array();
 
-    if (!module_exists('dblog') || $reset) {
+    if (!\Drupal::moduleHandler()->moduleExists('dblog') || $reset) {
       $seen_ids = array();
       return array();
     }

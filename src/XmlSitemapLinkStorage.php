@@ -34,7 +34,7 @@ class XmlSitemapLinkStorage {
     );
 
     // Allow other modules to alter the link before saving.
-    drupal_alter('xmlsitemap_link', $link);
+    \Drupal::moduleHandler()->alter('xmlsitemap_link', $link);
 
     // Temporary validation checks.
     // @todo Remove in final?

@@ -193,7 +193,7 @@ function xmlsitemap_engines_get_engine_info($engine = NULL) {
       // Fetch the results of all hook_xmlsitemap_engine_info() implementations.
       $engines = \Drupal::moduleHandler()->invokeAll('xmlsitemap_engine_info');
       // Allow other modulse to alter the engine info.
-      drupal_alter('xmlsitemap_engine_info', $engines);
+      \Drupal::moduleHandler()->alter('xmlsitemap_engine_info', $engines);
       // Cache by language since engine names are translated.
       \Drupal::cache()->set('xmlsitemap:engines:' . $language->getId(), $engines);
     }

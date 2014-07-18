@@ -34,7 +34,6 @@ class XmlSitemapRobotsTxtIntegrationTest extends XmlSitemapTestBase {
   public function testRobotsTxt() {
     // Request the un-clean robots.txt path so this will work in case there is
     // still the robots.txt file in the root directory.
-    //$this->drupalGet('', array('query' => array('q' => 'robots.txt')));
     $this->drupalGet('/robots.txt');
     $this->assertRaw('Sitemap: ' . url('sitemap.xml', array('absolute' => TRUE)));
   }
