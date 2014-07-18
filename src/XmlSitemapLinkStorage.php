@@ -56,11 +56,11 @@ class XmlSitemapLinkStorage {
     // Save the link and allow other modules to respond to the link being saved.
     if ($existing) {
       drupal_write_record('xmlsitemap', $link, array('type', 'id'));
-      \Drupal::moduleHandler()->invokeAll('xmlsitemap_link_update', $link);
+      \Drupal::moduleHandler()->invokeAll('xmlsitemap_link_update', array($link));
     }
     else {
       drupal_write_record('xmlsitemap', $link);
-      \Drupal::moduleHandler()->invokeAll('xmlsitemap_link_insert', $link);
+      \Drupal::moduleHandler()->invokeAll('xmlsitemap_link_insert', array($link));
     }
 
     return $link;
@@ -107,7 +107,7 @@ class XmlSitemapLinkStorage {
     }
 
     if ($changed && $flag) {
-      \Drupal::config('xmlsitemap.settings')->set('regenerate_needed', TRUE);
+      \Drupal::config('xmlsitemap.settings')->set('regenerate_needed', TRUE)->save();
     }
 
     return $changed;
@@ -138,7 +138,7 @@ class XmlSitemapLinkStorage {
     $changed = $query->execute()->fetchField();
 
     if ($changed && $flag) {
-      \Drupal::config('xmlsitemap.settings')->set('regenerate_needed', TRUE);
+      \Drupal::config('xmlsitemap.settings')->set('regenerate_needed', TRUE)->save();
     }
 
     return $changed;
@@ -259,7 +259,7 @@ class XmlSitemapLinkStorage {
       $query->condition($field, $value);
     }
 
-    $links = $query->execute()->fetchAllAssoc(\PDO::FETCH_ASSOC);
+    $links = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
 
     return $links;
   }
