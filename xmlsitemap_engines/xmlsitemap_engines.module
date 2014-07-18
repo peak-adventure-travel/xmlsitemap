@@ -31,27 +31,6 @@ function xmlsitemap_engines_help($route_name, RouteMatchInterface $route_match) 
 }
 
 /**
- * Implements hook_menu().
- */
-function xmlsitemap_engines_menu() {
-  $items['admin/config/search/xmlsitemap/engines'] = array(
-    'title' => 'Search Engines',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('xmlsitemap_engines_settings_form'),
-    'access arguments' => array('administer xmlsitemap'),
-    'type' => MENU_LOCAL_TASK,
-    'file' => 'xmlsitemap_engines.admin.inc',
-  );
-  //$items['admin/config/search/xmlsitemap/engines/submit'] = array(
-  //  'page callback' => 'xmlsitemap_engines_submit',
-  //  'access callback' => 'xmlsitemap_engines_submit_access',
-  //  'type' => MENU_CALLBACK,
-  //);
-
-  return $items;
-}
-
-/**
  * Implements hook_cron().
  */
 function xmlsitemap_engines_cron() {
