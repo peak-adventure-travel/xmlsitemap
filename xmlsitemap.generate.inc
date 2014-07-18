@@ -131,7 +131,6 @@ function _xmlsitemap_set_memory_limit($new_limit = NULL) {
  */
 function xmlsitemap_generate_page(XmlSitemapInterface $sitemap, $page) {
   try {
-    module_load_include('xmlsitemap.inc', 'xmlsitemap');
     $writer = new XmlSitemapWriter($sitemap, $page);
     $writer->startDocument();
     $writer->generateXML();

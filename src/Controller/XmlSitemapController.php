@@ -14,8 +14,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class XmlSitemapController extends ControllerBase {
 
   public function renderSitemapXml() {
-    module_load_include('module', 'xmlsitemap');
-    module_load_include('pages.inc', 'xmlsitemap');
     $sitemap = xmlsitemap_sitemap_load_by_context();
     if (!$sitemap) {
       throw new NotFoundHttpException();

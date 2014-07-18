@@ -25,6 +25,7 @@ use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * The maximum number of links in one sitemap chunk file.
@@ -1282,7 +1283,6 @@ function xmlsitemap_restore_user() {
  * @todo Add changefreq overridability.
  */
 function xmlsitemap_add_form_link_options(array &$form, $entity, $bundle, $id) {
-  module_load_include('inc', 'xmlsitemap', 'xmlsitemap.admin');
   $info = xmlsitemap_get_link_info($entity, TRUE);
 
   /* if (!$info || empty($info['bundles'][$bundle])) {
@@ -2134,7 +2134,6 @@ function xmlsitemap_query_xmlsitemap_link_bundle_access_alter(AlterableInterface
  * XML sitemap link type settings callback for frontpage link entity.
  */
 function xmlsitemap_link_frontpage_settings(&$form) {
-  module_load_include('admin.inc', 'xmlsitemap');
   if (\Drupal::currentUser()->hasPermission('administer site configuration')) {
     $form['#description'] = t('The front page path can be changed in the <a href="@url-frontpage">site information configuration</a>.', array('@url-frontpage' => url('admin/config/system/site-information')));
   }
@@ -2165,4 +2164,384 @@ function xmlsitemap_sitemap_multiple_update(array $smids) {
   module_load_include('generate.inc', 'xmlsitemap');
   $batch = xmlsitemap_regenerate_batch($smids);
   batch_set($batch);
+}
+
+/**
+ * Add a table summary for an entity and its bundles.
+ */
+function xmlsitemap_add_form_entity_summary(&$form, $entity, array $entity_info) {
+  $priorities = xmlsitemap_get_priority_options(NULL, FALSE);
+  $statuses = xmlsitemap_get_status_options(NULL);
+  $destination = drupal_get_destination();
+
+  $rows = array();
+  $totals = array('total' => 0, 'indexed' => 0, 'visible' => 0);
+  foreach ($entity_info['bundles'] as $bundle => $bundle_info) {
+    // Fetch current per-bundle link total and indexed counts.
+    $status = xmlsitemap_get_link_type_indexed_status($entity, $bundle);
+    $totals['total'] += $status['total'];
+    $totals['indexed'] += $status['indexed'];
+    $totals['visible'] += $status['visible'];
+
+    $row = array();
+    if (drupal_valid_path("admin/config/search/xmlsitemap/settings/$entity/$bundle")) {
+      $edit_link = xmlsitemap_get_operation_link("admin/config/search/xmlsitemap/settings/$entity/$bundle", array('title' => $bundle_info['label'], 'modal' => TRUE));
+      $row[] = l($edit_link['title'], $edit_link['href'], $edit_link);
+    }
+    else {
+      // Bundle labels are assumed to be un-escaped input.
+      $row[] = check_plain($bundle_info['label']);
+    }
+    $row[] = $statuses[$bundle_info['xmlsitemap']['status'] ? 1 : 0];
+    $row[] = $priorities[number_format($bundle_info['xmlsitemap']['priority'], 1)];
+    $row[] = $status['total'];
+    $row[] = $status['indexed'];
+    $row[] = $status['visible'];
+    $rows[] = $row;
+  }
+
+  if ($rows) {
+    $header = array(
+      isset($entity_info['bundle label']) ? $entity_info['bundle label'] : '',
+      t('Inclusion'),
+      t('Priority'),
+      t('Available'),
+      t('Indexed'),
+      t('Visible'),
+    );
+    $rows[] = array(
+      array(
+        'data' => t('Totals'),
+        'colspan' => 3,
+        'header' => TRUE,
+      ),
+      array(
+        'data' => $totals['total'],
+        'header' => TRUE,
+      ),
+      array(
+        'data' => $totals['indexed'],
+        'header' => TRUE,
+      ),
+      array(
+        'data' => $totals['visible'],
+        'header' => TRUE,
+      ),
+    );
+    $form['summary'] = array(
+      '#theme' => 'table',
+      '#header' => $header,
+      '#rows' => $rows,
+    );
+  }
+}
+
+/**
+ * Add the link type XML sitemap options to the link type's form.
+ *
+ * Caller is responsible for ensuring xmlsitemap_link_bundle_settings_save()
+ * is called during submission.
+ */
+function xmlsitemap_add_link_bundle_settings(array &$form, array &$form_state, $entity, $bundle) {
+  $entity_info = xmlsitemap_get_link_info($entity);
+
+  //if (!isset($bundle) && isset($entity_info['bundle keys']['bundle'])) {
+  //  $bundle_key = $entity_info['bundle keys']['bundle'];
+  //  if (isset($form[$bundle_key]['#value'])) {
+  //    $bundle = $form[$bundle_key]['#value'];
+  //  }
+  //  elseif (isset($form[$bundle_key]['#default_value'])) {
+  //    $bundle = $form[$bundle_key]['#default_value'];
+  //  }
+  //}
+
+  $bundle_info = xmlsitemap_link_bundle_load($entity, $bundle);
+
+  $form['xmlsitemap'] = array(
+    '#type' => 'details',
+    '#title' => t('XML sitemap'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#access' => \Drupal::currentUser()->hasPermission('administer xmlsitemap'),
+    '#group' => 'advanced',
+    '#attached' => array(
+      'js' => array(
+        'vertical-tabs' => drupal_get_path('module', 'xmlsitemap') . '/js/xmlsitemap.js',
+      ),
+    ),
+    '#tree' => TRUE,
+    '#entity' => $entity,
+    '#bundle' => $bundle,
+    '#entity_info' => $entity_info,
+    '#bundle_info' => $bundle_info,
+  );
+
+  // Hack to remove fieldset summary if Vertical tabs is not enabled.
+  if (!isset($form['advanced'])) {
+    unset($form['xmlsitemap']['#attached']['js']['vertical-tabs']);
+  }
+
+  $form['xmlsitemap']['description'] = array(
+    '#prefix' => '<div class="description">',
+    '#suffix' => '</div>',
+    '#markup' => t('Changing these type settings will affect any items of this type that have either inclusion or priority set to default.'),
+  );
+  $form['xmlsitemap']['status'] = array(
+    '#type' => 'select',
+    '#title' => t('Inclusion'),
+    '#options' => xmlsitemap_get_status_options(),
+    '#default_value' => $bundle_info['status'],
+  );
+  $form['xmlsitemap']['priority'] = array(
+    '#type' => 'select',
+    '#title' => t('Default priority'),
+    '#options' => xmlsitemap_get_priority_options(),
+    '#default_value' => $bundle_info['priority'],
+    '#states' => array(
+      'invisible' => array(
+        'select[name="xmlsitemap[status]"]' => array('value' => '0'),
+      ),
+    ),
+  );
+}
+
+/**
+ * Get a list of priority options.
+ *
+ * @param $default
+ *   Include a 'default' option.
+ * @param $guides
+ *   Add helpful indicators for the highest, middle and lowest values.
+ * @return
+ *   An array of options.
+ */
+function xmlsitemap_get_priority_options($default = NULL, $guides = TRUE) {
+  $options = array();
+  $priorities = array(
+    '1.0' => t('1.0'),
+    '0.9' => t('0.9'),
+    '0.8' => t('0.8'),
+    '0.7' => t('0.7'),
+    '0.6' => t('0.6'),
+    '0.5' => t('0.5'),
+    '0.4' => t('0.4'),
+    '0.3' => t('0.3'),
+    '0.2' => t('0.2'),
+    '0.1' => t('0.1'),
+    '0.0' => t('0.0'),
+  );
+
+  if (isset($default)) {
+    $default = number_format($default, 1);
+    $options['default'] = t('Default (@value)', array('@value' => $priorities[$default]));
+  }
+
+  // Add the rest of the options.
+  $options += $priorities;
+
+  if ($guides) {
+    $options['1.0'] .= ' ' . t('(highest)');
+    $options['0.5'] .= ' ' . t('(normal)');
+    $options['0.0'] .= ' ' . t('(lowest)');
+  }
+
+  return $options;
+}
+
+/**
+ * Get a list of priority options.
+ *
+ * @param $default
+ *   Include a 'default' option.
+ * @return
+ *   An array of options.
+ *
+ * @see _xmlsitemap_translation_strings()
+ */
+function xmlsitemap_get_status_options($default = NULL) {
+  $options = array();
+  $statuses = array(
+    1 => t('Included'),
+    0 => t('Excluded'),
+  );
+
+  if (isset($default)) {
+    $default = $default ? 1 : 0;
+    $options['default'] = t('Default (@value)', array('@value' => drupal_strtolower($statuses[$default])));
+  }
+
+  $options += $statuses;
+
+  return $options;
+}
+
+/**
+ * Get the sitemap chunk/page of the current request.
+ */
+function xmlsitemap_get_current_chunk(XmlSitemapInterface $sitemap) {
+  // Check if we should be displaing the index.
+  $query = \Drupal::request()->query;
+  $query_page = $query->get('page');
+  if (!isset($query_page) || !is_numeric($query_page)) {
+    if ($sitemap->getChunks() > 1) {
+      return 'index';
+    }
+    else {
+      return 1;
+    }
+  }
+  else {
+    return (int) $query_page;
+  }
+}
+
+/**
+ * Output the contents of a file to the browser and check caching headers.
+ */
+function xmlsitemap_output_file($file, array $headers = array()) {
+  if (!file_exists($file) || !is_readable($file)) {
+    throw new NotFoundHttpException();
+  }
+  $mtime = filemtime($file);
+  $last_modified = gmdate(DATE_RFC1123, $mtime);
+  $etag = '"' . md5($last_modified) . '"';
+
+  // See if the client has provided the required HTTP headers.
+  $if_modified_since = isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ? stripslashes($_SERVER['HTTP_IF_MODIFIED_SINCE']) : FALSE;
+  $if_none_match = isset($_SERVER['HTTP_IF_NONE_MATCH']) ? stripslashes($_SERVER['HTTP_IF_NONE_MATCH']) : FALSE;
+  if ($if_modified_since && $if_none_match && $if_none_match == $etag && $if_modified_since == $last_modified) {
+    header('HTTP/1.1 304 Not Modified');
+    // All 304 responses must send an etag if the 200 response for the same object contained an etag
+    header('Etag: ' . $etag);
+    exit;
+  }
+
+  $headers += array(
+    'Content-type' => 'text/xml; charset=utf-8',
+    //'Content-length' => filesize($file),
+    'Last-modified' => $last_modified,
+    'Etag' => $etag,
+    'Expires' => gmdate(DATE_RFC1123, $mtime + \Drupal::config('xmlsitemap.settings')->get('minimum_lifetime')),
+    'Cache-Control' => 'must-revalidate',
+    'X-Robots-Tag' => 'noindex, follow',
+  );
+
+  // Transfer the file as output.
+  xmlsitemap_file_transfer($file, $headers);
+}
+
+/**
+ * Modified version of file_transfer() that invokes hook_exit()s afterwards.
+ *
+ * @see file_transfer()
+ */
+function xmlsitemap_file_transfer($uri, $headers) {
+  if (ob_get_level()) {
+    ob_end_clean();
+  }
+
+  foreach ($headers as $name => $value) {
+    drupal_add_http_header($name, $value);
+  }
+  drupal_send_headers();
+
+  // Attempt to increase time to transfer file.
+  drupal_set_time_limit(240);
+  $scheme = file_default_scheme();
+  // Transfer file in 16 KB chunks to save memory usage.
+  if ($scheme && file_stream_wrapper_valid_scheme($scheme) && $fd = fopen($uri, 'rb')) {
+    while (!feof($fd)) {
+      print fread($fd, 1024 * 16);
+    }
+    fclose($fd);
+  }
+  else {
+    throw new NotFoundHttpException();
+  }
+  exit();
+}
+
+/**
+ * Fetch a short blurb string about module maintainership and sponsors.
+ *
+ * This message will be FALSE in 'official' releases.
+ */
+function _xmlsitemap_get_blurb($check_version = TRUE) {
+  static $blurb;
+
+  if (!isset($blurb)) {
+    $blurb = FALSE;
+    if (!$check_version || (($version = _xmlsitemap_get_version()) && preg_match('/dev|unstable|alpha|beta|HEAD/i', $version))) {
+      $sponsors = array(
+        l('Symantec', 'http://www.symantec.com/'),
+        l('WebWise Solutions', 'http://www.webwiseone.com/'),
+        l('Volacci', 'http://www.volacci.com/'),
+        l('lanetro', 'http://www.lanetro.com/'),
+        l('Coupons Dealuxe', 'http://couponsdealuxe.com/'),
+      );
+      // Don't extract the following string for translation.
+      $blurb = '<div class="description"><p>Thank you for helping test the XML sitemap module rewrite. Please consider helping offset developer free time by <a href="http://davereid.chipin.com/">donating</a> or if your company is interested in sponsoring the rewrite or a specific feature, please <a href="http://davereid.net/contact">contact the developer</a>. Thank you to the following current sponsors: ' . implode(', ', $sponsors) . ', and all the individuals that have donated. This message will not be seen in the stable versions.</p></div>';
+      //http://drupalmodules.com/module/xml-sitemap
+    }
+  }
+
+  return $blurb;
+}
+
+function _xmlsitemap_get_version() {
+  static $version;
+  if (!isset($version)) {
+    $modules = _system_rebuild_module_data();
+    $version = $modules['xmlsitemap']->info['version'];
+  }
+  return $version;
+}
+
+/**
+ * Check the status of all hook_requirements() from any xmlsitemap modules.
+ */
+function xmlsitemap_check_status() {
+  $messages = &drupal_static(__FUNCTION__);
+
+  if (!isset($messages)) {
+    // Cache the list of modules that are checked.
+    if ($cache = \Drupal::cache()->get('xmlsitemap:registry:requirements')) {
+      $modules = $cache->data;
+    }
+    else {
+      $modules = array();
+      \Drupal::moduleHandler()->loadAllIncludes('install');
+      foreach (module_implements('requirements') as $module) {
+        if (strpos($module, 'xmlsitemap') !== FALSE) {
+          $modules[] = $module;
+        }
+      }
+      \Drupal::cache()->set('xmlsitemap:registry:requirements', $modules);
+    }
+
+    $messages = array();
+    foreach ($modules as $module) {
+      module_load_install($module);
+      $requirements = module_invoke($module, 'requirements', 'runtime');
+      foreach ($requirements as $requirement) {
+        if (isset($requirement['severity']) && max(REQUIREMENT_OK, $requirement['severity'])) {
+          $messages[] = $requirement['description'];
+        }
+      }
+    }
+
+    if ($messages) {
+      $messages = array(
+        '#type' => 'item_list',
+        '#items' => array($messages)
+      );
+      $message = t('One or more problems were detected with your XML sitemap configuration: !messages', array('!messages' => drupal_render($messages)));
+      if (\Drupal::currentUser()->hasPermission('access site reports')) {
+        $message .= t('Check the <a href="@status-report">status report</a> for more information.', array('@status-report' => url('admin/reports/status')));
+      }
+      drupal_set_message($message, 'warning', FALSE);
+    }
+  }
+
+  return !empty($messages);
 }

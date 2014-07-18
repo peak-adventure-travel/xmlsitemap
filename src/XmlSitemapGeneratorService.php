@@ -114,7 +114,6 @@ class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
    */
   public function generatePage(XmlSitemapInterface $sitemap, $page) {
     try {
-      module_load_include('xmlsitemap.inc', 'xmlsitemap');
       $writer = new XmlSitemapWriter($sitemap, $page);
       $writer->startDocument();
       $writer->generateXML();
