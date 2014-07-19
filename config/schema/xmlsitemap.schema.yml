@@ -4,12 +4,6 @@ xmlsitemap.settings:
     type: mapping
     label: 'XMLSitemap settings'
     mapping:
-        rebuild_needed:
-            type: boolean
-            label: 'Sitemap rebuilt'
-        regenerate_needed: 
-            type: boolean
-            label: 'Regenerate files'
         minimum_lifetime:
             type: integer
             label: 'Minumum lifetime of an xmlsitemap xml file'

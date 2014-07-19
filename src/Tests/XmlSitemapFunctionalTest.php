@@ -77,15 +77,15 @@ class XmlSitemapFunctionalTest extends XmlSitemapTestBase {
     // Test the rebuild flag.
     $this->drupalLogin($this->admin_user);
     \Drupal::config('xmlsitemap.settings')->set('generated_last', REQUEST_TIME);
-    \Drupal::config('xmlsitemap.settings')->set('rebuild_needed', TRUE);
     \Drupal::config('xmlsitemap.settings')->save();
+    \Drupal::state()->set('rebuild_needed', TRUE);
     $this->assertXMLSitemapProblems(t('The XML sitemap data is out of sync and needs to be completely rebuilt.'));
     $this->clickLink(t('completely rebuilt'));
     $this->assertResponse(200);
-    \Drupal::config('xmlsitemap.settings')->set('rebuild_needed', FALSE)->save();
+    \Drupal::state()->set('rebuild_needed', FALSE);
     $this->assertNoXMLSitemapProblems();
     //Test the regenerate flag (and cron hasn't run in a while).
-    \Drupal::config('xmlsitemap.settings')->set('regenerate_needed', TRUE);
+    \Drupal::state()->set('regenerate_needed', TRUE);
     \Drupal::config('xmlsitemap.settings')->set('generated_last', REQUEST_TIME - \Drupal::config('xmlsitemap.settings')->get('cron_threshold_warning') - 100);
     \Drupal::config('xmlsitemap.settings')->save();
     $this->assertXMLSitemapProblems(t('The XML cached files are out of date and need to be regenerated. You can run cron manually to regenerate the sitemap files.'));

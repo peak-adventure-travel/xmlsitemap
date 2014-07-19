@@ -140,7 +140,8 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
   public function testCron() {
     $limit = 5;
     \Drupal::config('xmlsitemap.settings')->set('batch_limit', $limit)->save();
-
+    \Drupal::state()->set('regenerate_needed', TRUE);
+    
     $nodes = array();
     for ($i = 1; $i <= ($limit + 1); $i++) {
       $node = $this->drupalCreateNode();

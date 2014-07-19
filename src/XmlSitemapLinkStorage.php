@@ -49,7 +49,7 @@ class XmlSitemapLinkStorage {
     $existing = db_query_range("SELECT loc, access, status, lastmod, priority, changefreq, changecount, language FROM {xmlsitemap} WHERE type = :type AND id = :id", 0, 1, array(':type' => $link['type'], ':id' => $link['id']))->fetchAssoc();
 
     // Check if this is a changed link and set the regenerate flag if necessary.
-    if (!\Drupal::config('xmlsitemap.settings')->get('regenerate_needed')) {
+    if (!\Drupal::state()->get('regenerate_needed')) {
       self::checkChangedLink($link, $existing, TRUE);
     }
 
@@ -107,7 +107,7 @@ class XmlSitemapLinkStorage {
     }
 
     if ($changed && $flag) {
-      \Drupal::config('xmlsitemap.settings')->set('regenerate_needed', TRUE)->save();
+      \Drupal::state()->set('regenerate_needed', TRUE);
     }
 
     return $changed;
@@ -138,7 +138,7 @@ class XmlSitemapLinkStorage {
     $changed = $query->execute()->fetchField();
 
     if ($changed && $flag) {
-      \Drupal::config('xmlsitemap.settings')->set('regenerate_needed', TRUE)->save();
+      \Drupal::state()->set('regenerate_needed', TRUE);
     }
 
     return $changed;
@@ -183,7 +183,7 @@ class XmlSitemapLinkStorage {
       return FALSE;
     }
 
-    if (!\Drupal::config('xmlsitemap.settings')->get('regenerate_needed')) {
+    if (!\Drupal::state()->get('regenerate_needed')) {
       self::checkChangedLinks($conditions, array(), TRUE);
     }
 
@@ -213,7 +213,7 @@ class XmlSitemapLinkStorage {
   public static function linkUpdateMultiple($updates = array(), $conditions = array(), $check_flag = TRUE) {
     // If we are going to modify a visible sitemap link, we will need to set
     // the regenerate needed flag.
-    if ($check_flag && !\Drupal::config('xmlsitemap.settings')->get('regenerate_needed')) {
+    if ($check_flag && !\Drupal::state()->get('regenerate_needed')) {
       self::checkChangedLinks($conditions, $updates, TRUE);
     }
 

@@ -123,11 +123,11 @@ function xmlsitemap_requirements($phase) {
       'value' => $generated_last ? $t('Last attempted generation on !date (!interval ago).', array('!date' => format_date($generated_last, 'small'), '!interval' => format_interval($generated_ago))) : $t('Cached files have not been generated yet.'),
       'severity' => REQUIREMENT_OK,
     );
-    if (\Drupal::config('xmlsitemap.settings')->get('rebuild_needed')) {
+    if (\Drupal::state()->get('rebuild_needed')) {
       $requirements['xmlsitemap_generated']['severity'] = REQUIREMENT_ERROR;
       $requirements['xmlsitemap_generated']['description'] = $t('The XML sitemap data is out of sync and needs to be <a href="@link-rebuild">completely rebuilt<a>.', array('@link-rebuild' => url('admin/config/search/xmlsitemap/rebuild')));
     }
-    elseif (\Drupal::config('xmlsitemap.settings')->get('regenerate_needed')) {
+    elseif (\Drupal::state()->get('regenerate_needed')) {
       if ($max_filesize == 0) {
         // A maximum sitemap file size of 0 indicates an error in generation.
         $requirements['xmlsitemap_generated']['severity'] = REQUIREMENT_ERROR;
@@ -313,7 +313,7 @@ function xmlsitemap_enable() {
   // Ensure the file cache directory is available and ready.
   xmlsitemap_check_directory();
 
-  \Drupal::config('xmlsitemap.settings')->set('regenerate_needed', TRUE);
+  \Drupal::state()->set('regenerate_needed', TRUE);
 }
 
 /**
@@ -321,12 +321,15 @@ function xmlsitemap_enable() {
  */
 function xmlsitemap_uninstall() {
   // Remove config variables.
-  $variables = array_keys(xmlsitemap_variables());
+  $variables = array_keys(xmlsitemap_config_variables());
   foreach ($variables as $variable) {
     \Drupal::config('xmlsitemap.settings')->clear($variable);
   }
 
-  \Drupal::state()->deleteMultiple(array('base_url', 'developer_mode'));
+  $variables = array_keys(xmlsitemap_state_variables());
+  foreach ($variables as $variable) {
+    \Drupal::state()->delete($variable);
+  }
 
   // Remove the file cache directory.
   xmlsitemap_clear_directory(NULL, TRUE);
@@ -336,12 +339,11 @@ function xmlsitemap_uninstall() {
 
   $state_variables = array();
   foreach ($entities as $entity_id => $entity) {
-    $state_variables[] = 'xmlsitemap_entity_' . $entity_id;
+    \Drupal::config('xmlsitemap.settings')->clear('xmlsitemap_entity_' . $entity_id);
     foreach ($bundles[$entity_id] as $bundle_id => $bundle) {
-      $state_variables[] = 'xmlsitemap_entity' . $entity_id . '_bundle_' . $bundle_id;
+      \Drupal::config('xmlsitemap.settings')->clear('xmlsitemap_entity' . $entity_id . '_bundle_' . $bundle_id);
     }
   }
-  \Drupal::state()->deleteMultiple($state_variables);
 }
 
 /**
@@ -426,8 +428,8 @@ function xmlsitemap_update_6202() {
   \Drupal::config()->clear('languages');
 
   // Ensure that the sitemaps will be refreshed on next cron.
-  \Drupal::config('xmlsitemap.settings')->set('generated_last', 0);
-  \Drupal::config('xmlsitemap.settings')->set('regenerate_needed', TRUE);
+  \Drupal::config('xmlsitemap.settings')->set('generated_last', 0)->save();
+  \Drupal::state()->set('regenerate_needed', TRUE);
 }
 
 /**

@@ -348,7 +348,7 @@ function xmlsitemap_regenerate_batch_generate_index($smid, array &$context) {
  * Batch callback; sitemap regeneration finished.
  */
 function xmlsitemap_regenerate_batch_finished($success, $results, $operations, $elapsed) {
-  if ($success && \Drupal::config('xmlsitemap.settings')->get('regenerate_needed') == FALSE) {
+  if ($success && \Drupal::state()->get('regenerate_needed') == FALSE) {
     \Drupal::config('xmlsitemap.settings')->set('generated_last', REQUEST_TIME)->save();
     drupal_set_message(t('The sitemaps were regenerated.'));
     // Show a watchdog message that the sitemap was regenerated.
@@ -400,8 +400,15 @@ function xmlsitemap_rebuild_batch(array $entities, $save_custom = FALSE) {
  * Batch callback; set an array of variables and their values.
  */
 function xmlsitemap_batch_variable_set(array $variables) {
+  $state_variables = xmlsitemap_state_variables();
+  $config_variables = xmlsitemap_config_variables();
   foreach ($variables as $variable => $value) {
-    \Drupal::config('xmlsitemap.settings')->set($variable, $value);
+    if (isset($state_variables[$variable])) {
+      \Drupal::state()->set($variable, $value);
+    }
+    else {
+      \Drupal::config('xmlsitemap.settings')->set($variable, $value);
+    }
   }
   \Drupal::config('xmlsitemap.settings')->save();
 }
@@ -483,7 +490,7 @@ function xmlsitemap_rebuild_batch_fetch($entity, &$context) {
  * Batch callback; sitemap rebuild finished.
  */
 function xmlsitemap_rebuild_batch_finished($success, $results, $operations, $elapsed) {
-  if ($success && !\Drupal::config('xmlsitemap.settings')->get('rebuild_needed')) {
+  if ($success && !\Drupal::state()->get('rebuild_needed')) {
     drupal_set_message(t('The sitemap links were rebuilt.'));
   }
   else {

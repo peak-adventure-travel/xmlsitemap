@@ -29,7 +29,7 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
   }
 
   public function testAssertFlag() {
-    \Drupal::config('xmlsitemap.settings')->set('rebuild_needed', TRUE)->save();
+    \Drupal::state()->set('rebuild_needed', TRUE);
     $this->assertTrue(xmlsitemap_var('rebuild_needed'));
     $this->assertTrue($this->assertFlag('rebuild_needed', TRUE, FALSE));
     $this->assertTrue(xmlsitemap_var('rebuild_needed'));
@@ -205,7 +205,7 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
     $link1 = $this->addSitemapLink(array('loc' => 'testing1', 'status' => 0));
     $link2 = $this->addSitemapLink(array('loc' => 'testing1', 'status' => 1));
     $link3 = $this->addSitemapLink(array('status' => 0));
-    \Drupal::config('xmlsitemap.settings')->set('regenerate_needed', FALSE)->save();
+    \Drupal::state()->set('regenerate_needed', FALSE);
 
     // Test delete multiple links.
     // Test that the regenerate flag is set when visible links are deleted.
@@ -231,7 +231,7 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
     $links[1] = $this->addSitemapLink(array('subtype' => 'group1'));
     $links[2] = $this->addSitemapLink(array('subtype' => 'group1'));
     $links[3] = $this->addSitemapLink(array('subtype' => 'group2'));
-    \Drupal::config('xmlsitemap.settings')->set('regenerate_needed', FALSE)->save();
+    \Drupal::state()->set('regenerate_needed', FALSE);
     // id | type    | subtype | language | access | status | priority
     // 1  | testing | group1  | ''       | 1      | 1      | 0.5
     // 2  | testing | group1  | ''       | 1      | 1      | 0.5
