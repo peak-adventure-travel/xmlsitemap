@@ -293,10 +293,9 @@ function xmlsitemap_install() {
       ))
       ->execute();
 
-  \Drupal::state()->setMultiple(array(
-    'base_url' => url(NULL, array('absolute' => TRUE)),
-    'developer_mode' => 0
-  ));
+  $state_variables = xmlsitemap_state_variables();
+  \Drupal::state()->setMultiple($state_variables);
+  \Drupal::state()->set('base_url', url(NULL, array('absolute' => TRUE)));
   $context = xmlsitemap_get_current_context();
   $sitemap = \Drupal::entityManager()->getStorage('xmlsitemap')->create(array(
     'id' => xmlsitemap_sitemap_get_context_hash($context),
