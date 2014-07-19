@@ -7,9 +7,6 @@ xmlsitemap.settings:
         minimum_lifetime:
             type: integer
             label: 'Minumum lifetime of an xmlsitemap xml file'
-        generated_last:
-            type: integer
-            label: 'Last generated sitemap'
         xsl:
             type: integer
             label: 'Check XSL functionality'

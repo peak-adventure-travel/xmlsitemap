@@ -85,10 +85,9 @@ abstract class XmlSitemapTestBase extends WebTestBase {
    */
   protected function regenerateSitemap() {
     \Drupal::state()->set('regenerate_needed', TRUE);
-    \Drupal::config('xmlsitemap.settings')->set('generated_last', 0);
-    \Drupal::config('xmlsitemap.settings')->save();
+    \Drupal::state()->set('generated_last', 0);
     $this->cronRun();
-    $this->assertTrue(\Drupal::config('xmlsitemap.settings')->get('generated_last') && !\Drupal::state()->get('regenerate_needed'), t('XML sitemaps regenerated and flag cleared.'));
+    $this->assertTrue(\Drupal::state()->get('generated_last') && !\Drupal::state()->get('regenerate_needed'), t('XML sitemaps regenerated and flag cleared.'));
   }
 
   protected function assertSitemapLink($entity_type, $entity_id = NULL) {

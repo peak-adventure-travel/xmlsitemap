@@ -325,7 +325,7 @@ class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
    */
   public function regenerateBatchFinished($success, $results, $operations, $elapsed) {
     if ($success && !\Drupal::state()->get('regenerate_needed', FALSE)) {
-      \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_generated_last', REQUEST_TIME);
+      \Drupal::state()->set('generated_last', REQUEST_TIME);
       //drupal_set_message(t('The sitemaps were regenerated.'));
       // Show a watchdog message that the sitemap was regenerated.
       watchdog('xmlsitemap', 'Finished XML sitemap generation in @elapsed. Memory usage: @memory-peak.', array(

@@ -116,7 +116,7 @@ function xmlsitemap_requirements($phase) {
     }
 
     // Check when the cached files were last generated.
-    $generated_last = \Drupal::config('xmlsitemap.settings')->get('generated_last');
+    $generated_last = \Drupal::state()->get('generated_last', 0);
     $generated_ago = REQUEST_TIME - $generated_last;
     $requirements['xmlsitemap_generated'] = array(
       'title' => $t('XML sitemap'),

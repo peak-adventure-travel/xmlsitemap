@@ -296,7 +296,7 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
     $this->assertResponse(200);
     $this->assertNoRaw('lifetime-test');
 
-    \Drupal::config('xmlsitemap.settings')->set('generated_last', REQUEST_TIME - 400)->save();
+    \Drupal::state()->set('generated_last', REQUEST_TIME - 400);
     $this->cronRun();
     $this->drupalGetSitemap();
     $this->assertRaw('lifetime-test');

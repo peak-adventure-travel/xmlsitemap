@@ -68,7 +68,7 @@ function xmlsitemap_engines_submit_access() {
   $minimum_lifetime = \Drupal::state()->get('xmlsitemap_engines_minimum_lifetime');
 
   // Skip if sitemap data has not been updated since last submission.
-  if ($submit_updated && \Drupal::config('xmlsitemap.settings')->get('generated_last') <= $submitted_last) {
+  if ($submit_updated && \Drupal::state()->get('generated_last') <= $submitted_last) {
     return FALSE;
   }
 
