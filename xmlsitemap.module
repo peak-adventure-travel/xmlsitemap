@@ -171,12 +171,12 @@ function _xmlsitemap_rebuild_form_access() {
  */
 function xmlsitemap_cron() {
   // If there were no new or changed links, skip.
-  if (!\Drupal::state()->get('regenerate_needed')) {
+  if (!\Drupal::state()->get('xmlsitemap_regenerate_needed')) {
     return;
   }
 
   // If the minimum sitemap lifetime hasn't been passed, skip.
-  $lifetime = REQUEST_TIME - \Drupal::state()->get('generated_last');
+  $lifetime = REQUEST_TIME - \Drupal::state()->get('xmlsitemap_generated_last');
   if ($lifetime < \Drupal::config('xmlsitemap.settings')->get('minimum_lifetime')) {
     return;
   }
@@ -222,8 +222,6 @@ function xmlsitemap_config_variables() {
     'chunk_size' => 'auto',
     'batch_limit' => 100,
     'path' => 'xmlsitemap',
-    'base_url' => $GLOBALS['base_url'],
-    'developer_mode' => 0,
     'frontpage_priority' => 1.0,
     'frontpage_changefreq' => XMLSITEMAP_FREQUENCY_DAILY,
     'lastmod_format' => XMLSITEMAP_LASTMOD_MEDIUM,
@@ -243,11 +241,11 @@ function xmlsitemap_config_variables() {
  */
 function xmlsitemap_state_variables() {
   return array(
-    'rebuild_needed' => FALSE,
-    'regenerate_needed' => TRUE,
-    'base_url' => '',
-    'generated_last' => 0,
-    'developer_mode' => 0
+    'xmlsitemap_rebuild_needed' => FALSE,
+    'xmlsitemap_regenerate_needed' => TRUE,
+    'xmlsitemap_base_url' => '',
+    'xmlsitemap_generated_last' => 0,
+    'xmlsitemap_developer_mode' => 0
   );
 }
 
@@ -376,7 +374,7 @@ function xmlsitemap_sitemap_save(XmlSitemapInterface $sitemap) {
     xmlsitemap_directory_move($old_dir, $new_dir);
 
     // Mark the sitemaps as needing regeneration.
-    \Drupal::state()->set('regenerate_needed', TRUE);
+    \Drupal::state()->set('xmlsitemap_regenerate_needed', TRUE);
   }
   $sitemap->save();
 
@@ -458,7 +456,7 @@ function xmlsitemap_sitemap_uri(XmlSitemapInterface $sitemap) {
   \Drupal::moduleHandler()->alter('xmlsitemap_context_url_options', $uri['options'], $context);
   $uri['options'] += array(
     'absolute' => TRUE,
-    'base_url' => \Drupal::state()->get('base_url')
+    'base_url' => \Drupal::state()->get('xmlsitemap_base_url')
   );
   return $uri;
 }
@@ -535,7 +533,7 @@ function xmlsitemap_link_save(array $link) {
   $existing = db_query_range("SELECT loc, access, status, lastmod, priority, changefreq, changecount, language FROM {xmlsitemap} WHERE type = :type AND id = :id", 0, 1, array(':type' => $link['type'], ':id' => $link['id']))->fetchAssoc();
 
   // Check if this is a changed link and set the regenerate flag if necessary.
-  if (!\Drupal::state()->get('regenerate_needed')) {
+  if (!\Drupal::state()->get('xmlsitemap_regenerate_needed')) {
     _xmlsitemap_check_changed_link($link, $existing, TRUE);
   }
 
@@ -568,7 +566,7 @@ function xmlsitemap_link_save(array $link) {
 function xmlsitemap_link_update_multiple($updates = array(), $conditions = array(), $check_flag = TRUE) {
   // If we are going to modify a visible sitemap link, we will need to set
   // the regenerate needed flag.
-  if ($check_flag && !\Drupal::state()->get('regenerate_needed')) {
+  if ($check_flag && !\Drupal::state()->get('xmlsitemap_regenerate_needed')) {
     _xmlsitemap_check_changed_links($conditions, $updates, TRUE);
   }
 
@@ -621,7 +619,7 @@ function xmlsitemap_link_delete_multiple(array $conditions) {
     return FALSE;
   }
 
-  if (!\Drupal::state()->get('regenerate_needed')) {
+  if (!\Drupal::state()->get('xmlsitemap_regenerate_needed')) {
     _xmlsitemap_check_changed_links($conditions, array(), TRUE);
   }
 
@@ -660,7 +658,7 @@ function _xmlsitemap_check_changed_links(array $conditions = array(), array $upd
   $changed = $query->execute()->fetchField();
 
   if ($changed && $flag) {
-    \Drupal::state()->set('regenerate_needed', TRUE);
+    \Drupal::state()->set('xmlsitemap_regenerate_needed', TRUE);
   }
 
   return $changed;
@@ -707,7 +705,7 @@ function _xmlsitemap_check_changed_link(array $link, $original_link = NULL, $fla
   }
 
   if ($changed && $flag) {
-    \Drupal::state()->set('regenerate_needed', TRUE);
+    \Drupal::state()->set('xmlsitemap_regenerate_needed', TRUE);
   }
 
   return $changed;
@@ -1221,7 +1219,7 @@ function xmlsitemap_form_submit_flag_regenerate($form, $form_state) {
       $value = array_keys(array_filter($value));
     }
     if ($stored_value != 'not_a_variable' && $stored_value != $value) {
-      \Drupal::state()->set('regenerate_needed', TRUE);
+      \Drupal::state()->set('xmlsitemap_regenerate_needed', TRUE);
       drupal_set_message(t('XML sitemap settings have been modified and the files should be regenerated. You can <a href="@run-cron">run cron manually</a> to regenerate the cached files.', array('@run-cron' => url('admin/reports/status/run-cron', array('query' => drupal_get_destination())))), 'warning', FALSE);
       return;
     }

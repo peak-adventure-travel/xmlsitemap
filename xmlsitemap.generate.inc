@@ -61,7 +61,7 @@ function _xmlsitemap_regenerate_before() {
   // Attempt to increase the memory limit.
   _xmlsitemap_set_memory_limit();
 
-  if (\Drupal::state()->get('developer_mode')) {
+  if (\Drupal::state()->get('xmlsitemap_developer_mode')) {
     watchdog('xmlsitemap', 'Starting XML sitemap generation. Memory usage: @memory-peak.', array(
       '@memory-peak' => format_size(memory_get_peak_usage(TRUE)),
         ), WATCHDOG_DEBUG
@@ -151,7 +151,7 @@ function xmlsitemap_generate_chunk(XmlSitemapInterface $sitemap, XmlSitemapWrite
   $url_options = $sitemap->uri['options'];
   $url_options += array(
     'absolute' => TRUE,
-    'base_url' => \Drupal::state()->get('base_url'),
+    'base_url' => \Drupal::state()->get('xmlsitemap_base_url', ''),
     'language' => language_default(),
     'alias' => \Drupal::config('xmlsitemap.settings')->get('prefetch_aliases'),
   );
@@ -272,7 +272,7 @@ function xmlsitemap_regenerate_batch(array $smids = array()) {
   );
 
   // Set the regenerate flag in case something fails during file generation.
-  $batch['operations'][] = array('xmlsitemap_batch_variable_set', array(array('regenerate_needed' => TRUE)));
+  $batch['operations'][] = array('xmlsitemap_batch_variable_set', array(array('xmlsitemap_regenerate_needed' => TRUE)));
 
   // @todo Get rid of this batch operation.
   $batch['operations'][] = array('_xmlsitemap_regenerate_before', array());
@@ -284,7 +284,7 @@ function xmlsitemap_regenerate_batch(array $smids = array()) {
   }
 
   // Clear the regeneration flag.
-  $batch['operations'][] = array('xmlsitemap_batch_variable_set', array(array('regenerate_needed' => FALSE)));
+  $batch['operations'][] = array('xmlsitemap_batch_variable_set', array(array('xmlsitemap_regenerate_needed' => FALSE)));
 
   return $batch;
 }
@@ -348,8 +348,8 @@ function xmlsitemap_regenerate_batch_generate_index($smid, array &$context) {
  * Batch callback; sitemap regeneration finished.
  */
 function xmlsitemap_regenerate_batch_finished($success, $results, $operations, $elapsed) {
-  if ($success && \Drupal::state()->get('regenerate_needed') == FALSE) {
-    \Drupal::state()->set('generated_last', REQUEST_TIME);
+  if ($success && \Drupal::state()->get('xmlsitemap_regenerate_needed') == FALSE) {
+    \Drupal::state()->set('xmlsitemap_generated_last', REQUEST_TIME);
     drupal_set_message(t('The sitemaps were regenerated.'));
     // Show a watchdog message that the sitemap was regenerated.
     watchdog('xmlsitemap', 'Finished XML sitemap generation in @elapsed. Memory usage: @memory-peak.', array(
@@ -375,7 +375,7 @@ function xmlsitemap_rebuild_batch(array $entities, $save_custom = FALSE) {
   );
 
   // Set the rebuild flag in case something fails during the rebuild.
-  $batch['operations'][] = array('xmlsitemap_batch_variable_set', array(array('rebuild_needed' => TRUE)));
+  $batch['operations'][] = array('xmlsitemap_batch_variable_set', array(array('xmlsitemap_rebuild_needed' => TRUE)));
 
   // Purge any links first.
   $batch['operations'][] = array('xmlsitemap_rebuild_batch_clear', array($entities, (bool) $save_custom));
@@ -387,7 +387,7 @@ function xmlsitemap_rebuild_batch(array $entities, $save_custom = FALSE) {
   }
 
   // Clear the rebuild flag.
-  $batch['operations'][] = array('xmlsitemap_batch_variable_set', array(array('rebuild_needed' => FALSE)));
+  $batch['operations'][] = array('xmlsitemap_batch_variable_set', array(array('xmlsitemap_rebuild_needed' => FALSE)));
 
   // Add the regeneration batch.
   $regenerate_batch = xmlsitemap_regenerate_batch();
@@ -490,7 +490,7 @@ function xmlsitemap_rebuild_batch_fetch($entity, &$context) {
  * Batch callback; sitemap rebuild finished.
  */
 function xmlsitemap_rebuild_batch_finished($success, $results, $operations, $elapsed) {
-  if ($success && !\Drupal::state()->get('rebuild_needed')) {
+  if ($success && !\Drupal::state()->get('xmlsitemap_rebuild_needed')) {
     drupal_set_message(t('The sitemap links were rebuilt.'));
   }
   else {

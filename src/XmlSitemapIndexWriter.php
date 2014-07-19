@@ -20,7 +20,7 @@ class XmlSitemapIndexWriter extends XmlSitemapWriter {
 
   public function getRootAttributes() {
     $attributes['xmlns'] = 'http://www.sitemaps.org/schemas/sitemap/0.9';
-    if (\Drupal::state()->get('developer_mode')) {
+    if (\Drupal::state()->get('xmlsitemap_developer_mode')) {
       $attributes['xmlns:xsi'] = 'http://www.w3.org/2001/XMLSchema-instance';
       $attributes['xsi:schemaLocation'] = 'http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd';
     }
@@ -33,8 +33,8 @@ class XmlSitemapIndexWriter extends XmlSitemapWriter {
     $url_options = $this->sitemap->uri['options'];
     $url_options += array(
       'absolute' => TRUE,
-      'base_url' => variable_get('xmlsitemap_base_url', $GLOBALS['base_url']),
-      'language' => language_default(),
+      'xmlsitemap_base_url' => \Drupal::state()->get('xmlsitemap_base_url'),
+      'language' => \Drupal::languageManager()->getDefaultLanguage(),
       'alias' => TRUE,
     );
 

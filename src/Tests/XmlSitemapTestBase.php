@@ -84,10 +84,10 @@ abstract class XmlSitemapTestBase extends WebTestBase {
    * Regenerate the sitemap by setting the regenerate flag and running cron.
    */
   protected function regenerateSitemap() {
-    \Drupal::state()->set('regenerate_needed', TRUE);
-    \Drupal::state()->set('generated_last', 0);
+    \Drupal::state()->set('xmlsitemap_regenerate_needed', TRUE);
+    \Drupal::state()->set('xmlsitemap_generated_last', 0);
     $this->cronRun();
-    $this->assertTrue(\Drupal::state()->get('generated_last') && !\Drupal::state()->get('regenerate_needed'), t('XML sitemaps regenerated and flag cleared.'));
+    $this->assertTrue(\Drupal::state()->get('xmlsitemap_generated_last') && !\Drupal::state()->get('xmlsitemap_regenerate_needed'), t('XML sitemaps regenerated and flag cleared.'));
   }
 
   protected function assertSitemapLink($entity_type, $entity_id = NULL) {

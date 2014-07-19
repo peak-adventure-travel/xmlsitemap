@@ -28,7 +28,6 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, array &$form_state) {
-    \Drupal::moduleHandler()->loadInclude('xmlsitemap', 'inc', 'xmlsitemap.admin');
     $intervals = array(300, 900, 1800, 3600, 10800, 21600, 43200, 86400, 172800, 259200, 604800);
     $form['minimum_lifetime'] = array(
       '#type' => 'select',
@@ -54,7 +53,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
       '#type' => 'details',
       '#title' => t('Advanced settings'),
       '#collapsible' => TRUE,
-      '#collapsed' => !\Drupal::state()->get('developer_mode'),
+      '#collapsed' => !\Drupal::state()->get('xmlsitemap_developer_mode'),
       '#weight' => 10,
     );
     $form['advanced']['gz'] = array(
@@ -93,10 +92,10 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
       '#field_prefix' => file_build_uri(''),
       '#required' => TRUE,
     );
-    $form['advanced']['base_url'] = array(
+    $form['advanced']['xmlsitemap_base_url'] = array(
       '#type' => 'textfield',
       '#title' => t('Default base URL'),
-      '#default_value' => \Drupal::state()->get('base_url'),
+      '#default_value' => \Drupal::state()->get('xmlsitemap_base_url'),
       '#size' => 30,
       '#description' => t('This is the default base URL used for sitemaps and sitemap links.'),
       '#required' => TRUE,
@@ -114,10 +113,10 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
     foreach ($form['advanced']['lastmod_format']['#options'] as $key => &$label) {
       $label .= ' (' . gmdate($key, REQUEST_TIME) . ')';
     }
-    $form['advanced']['developer_mode'] = array(
+    $form['advanced']['xmlsitemap_developer_mode'] = array(
       '#type' => 'checkbox',
       '#title' => t('Enable developer mode to expose additional settings.'),
-      '#default_value' => \Drupal::state()->get('developer_mode'),
+      '#default_value' => \Drupal::state()->get('xmlsitemap_developer_mode'),
     );
 
     $form['xmlsitemap_settings'] = array(
@@ -167,10 +166,10 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
       form_set_error('chunk_size', t('The sitemap page link count of @size will create more than 1,000 sitemap pages. Please increase the link count.', array('@size' => $chunk_size)));
     }
 
-    $base_url = &$form_state['values']['base_url'];
+    $base_url = &$form_state['values']['xmlsitemap_base_url'];
     $base_url = rtrim($base_url, '/');
     if ($base_url != '' && !UrlHelper::isValid($base_url, TRUE)) {
-      \Drupal::formBuilder()->setErrorByName('base_url', $form_state, t('Invalid base URL.'));
+      \Drupal::formBuilder()->setErrorByName('xmlsitemap_base_url', $form_state, t('Invalid base URL.'));
     }
 
     parent::validateForm($form, $form_state);
@@ -183,10 +182,10 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
     // Save any changes to the frontpage link.
     $values = $form_state['values'];
     xmlsitemap_link_save(array('type' => 'frontpage', 'id' => 0, 'loc' => ''));
-    \Drupal::state()->set('developer_mode', $values['developer_mode']);
-    \Drupal::state()->set('base_url', $values['base_url']);
-    unset($values['developer_mode']);
-    unset($values['base_url']);
+    \Drupal::state()->set('xmlsitemap_developer_mode', $values['xmlsitemap_developer_mode']);
+    \Drupal::state()->set('xmlsitemap_base_url', $values['xmlsitemap_base_url']);
+    unset($values['xmlsitemap_developer_mode']);
+    unset($values['xmlsitemap_base_url']);
     foreach ($values as $key => $value) {
       \Drupal::config('xmlsitemap.settings')->set($key, $value);
     }

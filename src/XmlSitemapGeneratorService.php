@@ -54,7 +54,7 @@ class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
     // Attempt to increase the memory limit.
     _xmlsitemap_set_memory_limit();
 
-    if (\Drupal::state()->get('developer_mode')) {
+    if (\Drupal::state()->get('xmlsitemap_developer_mode')) {
       watchdog('xmlsitemap', 'Starting XML sitemap generation. Memory usage: @memory-peak.', array(
         '@memory-peak' => format_size(memory_get_peak_usage(TRUE)),
           ), WATCHDOG_DEBUG
@@ -137,7 +137,7 @@ class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
     $url_options = $sitemap->uri['options'];
     $url_options += array(
       'absolute' => TRUE,
-      'base_url' => \Drupal::state()->get('base_url'),
+      'xmlsitemap_base_url' => \Drupal::state()->get('xmlsitemap_base_url'),
       'language' => language_default(),
       'alias' => \Drupal::config('xmlsitemap.settings')->get('prefetch_aliases'),
     );
@@ -249,7 +249,7 @@ class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
     );
 
     // Set the regenerate flag in case something fails during file generation.
-    $batch['operations'][] = array('xmlsitemap_batch_variable_set', array(array('regenerate_needed' => TRUE)));
+    $batch['operations'][] = array('xmlsitemap_batch_variable_set', array(array('xmlsitemap_regenerate_needed' => TRUE)));
 
     // @todo Get rid of this batch operation.
     $batch['operations'][] = array('_xmlsitemap_regenerate_before', array());
@@ -261,7 +261,7 @@ class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
     }
 
     // Clear the regeneration flag.
-    $batch['operations'][] = array('xmlsitemap_batch_variable_set', array(array('regenerate_needed' => FALSE)));
+    $batch['operations'][] = array('xmlsitemap_batch_variable_set', array(array('xmlsitemap_regenerate_needed' => FALSE)));
 
     return $batch;
   }
@@ -324,8 +324,8 @@ class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
    * {@inheritdoc}
    */
   public function regenerateBatchFinished($success, $results, $operations, $elapsed) {
-    if ($success && !\Drupal::state()->get('regenerate_needed', FALSE)) {
-      \Drupal::state()->set('generated_last', REQUEST_TIME);
+    if ($success && !\Drupal::state()->get('xmlsitemap_regenerate_needed', FALSE)) {
+      \Drupal::state()->set('xmlsitemap_generated_last', REQUEST_TIME);
       //drupal_set_message(t('The sitemaps were regenerated.'));
       // Show a watchdog message that the sitemap was regenerated.
       watchdog('xmlsitemap', 'Finished XML sitemap generation in @elapsed. Memory usage: @memory-peak.', array(

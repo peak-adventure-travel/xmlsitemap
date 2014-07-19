@@ -28,8 +28,8 @@ class XmlSitemapRebuildForm extends ConfigFormBase {
    */
   public function buildForm(array $form, array &$form_state) {
     $request = $this->getRequest();
-    if (!$request->request && !\Drupal::state()->get('rebuild_needed')) {
-      if (!\Drupal::state()->get('regenerate_needed')) {
+    if (!$request->request && !\Drupal::state()->get('xmlsitemap_rebuild_needed')) {
+      if (!\Drupal::state()->get('xmlsitemap_regenerate_needed')) {
         drupal_set_message(t('Your sitemap is up to date and does not need to be rebuilt.'), 'error');
       }
       else {
@@ -49,8 +49,8 @@ class XmlSitemapRebuildForm extends ConfigFormBase {
       '#description' => t('If no link types are selected, the sitemap files will just be regenerated.'),
       '#multiple' => TRUE,
       '#options' => $rebuild_types,
-      '#default_value' => \Drupal::state()->get('rebuild_needed') || !\Drupal::state()->get('developer_mode') ? $rebuild_types : array(),
-      '#access' => \Drupal::state()->get('developer_mode'),
+      '#default_value' => \Drupal::state()->get('xmlsitemap_rebuild_needed') || !\Drupal::state()->get('xmlsitemap_developer_mode') ? $rebuild_types : array(),
+      '#access' => \Drupal::state()->get('xmlsitemap_developer_mode'),
     );
     $form['save_custom'] = array(
       '#type' => 'checkbox',
