@@ -13,6 +13,8 @@ namespace Drupal\xmlsitemap\Tests;
 class XmlSitemapUnitTest extends XmlSitemapTestBase {
 
   public static $modules = array('xmlsitemap', 'node', 'system');
+  protected $state;
+  protected $config;
 
   public static function getInfo() {
     return array(
@@ -26,10 +28,12 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
     parent::setUp();
 
     $this->admin_user = $this->drupalCreateUser(array('access content', 'administer site configuration', 'administer xmlsitemap'));
+    $this->state = $this->container->get('state');
+    $this->config = $this->container->get('config.factory');
   }
 
   public function testAssertFlag() {
-    \Drupal::state()->set('xmlsitemap_rebuild_needed', TRUE);
+    $this->state->set('xmlsitemap_rebuild_needed', TRUE);
     $this->assertTrue(xmlsitemap_var('xmlsitemap_rebuild_needed'));
     $this->assertTrue($this->assertFlag('xmlsitemap_rebuild_needed', TRUE, FALSE));
     $this->assertTrue(xmlsitemap_var('xmlsitemap_rebuild_needed'));
@@ -78,7 +82,7 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
    */
   public function testGetChunkCount() {
     // Set a low chunk size for testing.
-    \Drupal::config('xmlsitemap.settings')->set('chunk_size', 4)->save();
+    $this->config->get('xmlsitemap.settings')->set('chunk_size', 4)->save();
 
     // Make the total number of links just equal to the chunk size.
     $count = db_query("SELECT COUNT(id) FROM {xmlsitemap}")->fetchField();
@@ -205,7 +209,7 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
     $link1 = $this->addSitemapLink(array('loc' => 'testing1', 'status' => 0));
     $link2 = $this->addSitemapLink(array('loc' => 'testing1', 'status' => 1));
     $link3 = $this->addSitemapLink(array('status' => 0));
-    \Drupal::state()->set('xmlsitemap_regenerate_needed', FALSE);
+    $this->state->set('xmlsitemap_regenerate_needed', FALSE);
 
     // Test delete multiple links.
     // Test that the regenerate flag is set when visible links are deleted.
@@ -231,7 +235,7 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
     $links[1] = $this->addSitemapLink(array('subtype' => 'group1'));
     $links[2] = $this->addSitemapLink(array('subtype' => 'group1'));
     $links[3] = $this->addSitemapLink(array('subtype' => 'group2'));
-    \Drupal::state()->set('xmlsitemap_regenerate_needed', FALSE);
+    $this->state->set('xmlsitemap_regenerate_needed', FALSE);
     // id | type    | subtype | language | access | status | priority
     // 1  | testing | group1  | ''       | 1      | 1      | 0.5
     // 2  | testing | group1  | ''       | 1      | 1      | 0.5
@@ -287,7 +291,7 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
    */
   public function testMinimumLifetime() {
     $this->drupalLogin($this->admin_user);
-    \Drupal::config('xmlsitemap.settings')->set('minimum_lifetime', 300)->save();
+    $this->config->get('xmlsitemap.settings')->set('minimum_lifetime', 300)->save();
     $this->regenerateSitemap();
 
     $link = $this->addSitemapLink(array('loc' => 'lifetime-test'));
@@ -296,7 +300,7 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
     $this->assertResponse(200);
     $this->assertNoRaw('lifetime-test');
 
-    \Drupal::state()->set('xmlsitemap_generated_last', REQUEST_TIME - 400);
+    $this->state->set('xmlsitemap_generated_last', REQUEST_TIME - 400);
     $this->cronRun();
     $this->drupalGetSitemap();
     $this->assertRaw('lifetime-test');

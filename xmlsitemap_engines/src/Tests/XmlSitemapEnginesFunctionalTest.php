@@ -17,6 +17,9 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
   protected $submit_url;
   public static $modules = array('system', 'path', 'node', 'dblog', 'xmlsitemap', 'xmlsitemap_engines', 'xmlsitemap_engines_test');
 
+  protected $entityManager;
+  protected $state;
+
   /**
    * {@inheritdoc}
    */
@@ -33,13 +36,14 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
    */
   public function setUp() {
     parent::setUp();
+    $this->entityManager = $this->container->get('entity.manager');
+    $this->state = $this->container->get('state');
     $this->admin_user = $this->drupalCreateUser(array('access content', 'administer xmlsitemap'));
     $this->drupalLogin($this->admin_user);
 
     // @todo For some reason the test client does not have clean URLs while
     // the test runner does, so it causes mismatches in watchdog assertions
     // later.
-    //variable_set('clean_url', 0);
     $this->submit_url = url('ping', array('absolute' => TRUE, 'query' => array('sitemap' => ''))) . '[sitemap]';
   }
 
@@ -47,13 +51,13 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
    * Check if sitemaps are sent to searching engines
    */
   public function submitEngines() {
-    \Drupal::state()->setMultiple(array(
+    $this->state->setMultiple(array(
       'xmlsitemap_engines_submit_last' => REQUEST_TIME - 10000,
       'xmlsitemap_engines_minimum_lifetime' => 0
     ));
-    \Drupal::state()->set('xmlsitemap_generated_last', REQUEST_TIME - 100);
+    $this->state->set('xmlsitemap_generated_last', REQUEST_TIME - 100);
     xmlsitemap_engines_cron();
-    $this->assertTrue(\Drupal::state()->get('xmlsitemap_engines_submit_last') > (REQUEST_TIME - 100), 'Submitted the sitemaps to search engines. {}');
+    $this->assertTrue($this->state->get('xmlsitemap_engines_submit_last') > (REQUEST_TIME - 100), 'Submitted the sitemaps to search engines. {}');
   }
 
   /**
@@ -73,7 +77,7 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
     $sitemaps = array();
 
     $context = array(1);
-    $sitemap = \Drupal::entityManager()->getStorage('xmlsitemap')->create(array(
+    $sitemap = $this->entityManager->getStorage('xmlsitemap')->create(array(
       'id' => xmlsitemap_sitemap_get_context_hash($context),
     ));
     $sitemap->setContext(serialize($context));
@@ -86,7 +90,7 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
     $sitemaps[] = $sitemap;
 
     $context = array(2);
-    $sitemap = \Drupal::entityManager()->getStorage('xmlsitemap')->create(array(
+    $sitemap = $this->entityManager->getStorage('xmlsitemap')->create(array(
       'id' => xmlsitemap_sitemap_get_context_hash($context),
     ));
     $sitemap->setContext(serialize($context));
@@ -129,12 +133,6 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
     $edit = array('xmlsitemap_engines_custom_urls' => $url);
     $this->drupalPostForm('admin/config/search/xmlsitemap/engines', $edit, t('Save configuration'));
     $this->assertText(t('The configuration options have been saved.'));
-
-    //$this->submitEngines();
-    //$this->assertWatchdogMessage(array('type' => 'xmlsitemap', 'message' => 'Submitted the sitemap to %url and received response @code.', 'variables' => array('%url' => $url, '@code' => '404')));
-    //$this->assertWatchdogMessage(array('type' => 'xmlsitemap', 'message' => 'No valid sitemap parameter provided.'));
-    //$this->assertWatchdogMessage(array('type' => 'page not found', 'message' => 'ping'));
-
 
     $edit = array('xmlsitemap_engines_custom_urls' => $this->submit_url);
     $this->drupalPostForm('admin/config/search/xmlsitemap/engines', $edit, t('Save configuration'));

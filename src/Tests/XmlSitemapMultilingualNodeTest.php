@@ -15,6 +15,7 @@ use Drupal\Core\Language\LanguageInterface;
 class XmlSitemapMultilingualNodeTest extends XmlSitemapMultilingualTestBase {
 
   public static $modules = array('xmlsitemap', 'language', 'content_translation', 'node', 'locale', 'config_translation', 'system');
+  protected $config;
 
   public static function getInfo() {
     return array(
@@ -38,13 +39,14 @@ class XmlSitemapMultilingualNodeTest extends XmlSitemapMultilingualTestBase {
       $this->drupalCreateContentType(array('type' => 'article', 'name' => 'Article'));
     }
 
+    $this->config = $this->container->get('config.factory');
     $this->admin_user = $this->drupalCreateUser(array('administer nodes', 'administer languages', 'administer content types', 'access administration pages', 'create page content', 'edit own page content'));
     $this->drupalLogin($this->admin_user);
 
-    \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_entity_node', 1);
-    \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_entity_node_bundle_article', 1);
-    \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_entity_node_bundle_page', 1);
-    \Drupal::config('xmlsitemap.settings')->save();
+    $this->config->get('xmlsitemap.settings')->set('xmlsitemap_entity_node', 1);
+    $this->config->get('xmlsitemap.settings')->set('xmlsitemap_entity_node_bundle_article', 1);
+    $this->config->get('xmlsitemap.settings')->set('xmlsitemap_entity_node_bundle_page', 1);
+    $this->config->get('xmlsitemap.settings')->save();
 
     // allow anonymous user to view user profiles
     $user_role = entity_load('user_role', DRUPAL_ANONYMOUS_RID);

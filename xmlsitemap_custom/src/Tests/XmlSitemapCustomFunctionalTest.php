@@ -16,26 +16,33 @@ class XmlSitemapCustomFunctionalTest extends XmlSitemapTestBase {
 
   public static $modules = array('xmlsitemap_custom', 'path', 'node');
 
+  protected $languageManager;
+
+  protected $aliasStorage;
+
   public static function getInfo() {
     return array(
       'name' => 'XML sitemap custom interface tests',
       'description' => 'Functional tests for the XML sitemap custom module.',
       'group' => 'XML sitemap',
     );
+
   }
 
   public function setUp() {
     parent::setUp();
 
+    $this->languageManager = $this->container->get('language_manager');
+    $this->aliasStorage = $this->container->get('path.alias_storage');
     $this->admin_user = $this->drupalCreateUser(array('access content', 'administer xmlsitemap'));
     $this->drupalLogin($this->admin_user);
   }
 
   public function testCustomLinks() {
-    $language = \Drupal::languageManager()->getCurrentLanguage();
+    $language = $this->languageManager->getCurrentLanguage();
     // Set a path alias for the node page.
     $alias = array('source' => 'system/files', 'alias' => 'public-files');
-    \Drupal::service('path.alias_storage')->save('system/files', 'public-files', $language->getId());
+    $this->aliasStorage->save('system/files', 'public-files', $language->getId());
 
     $this->drupalGet('admin/config/search/xmlsitemap/custom');
     $this->clickLink(t('Add custom link'));
@@ -78,7 +85,7 @@ class XmlSitemapCustomFunctionalTest extends XmlSitemapTestBase {
     // Test a valid file.
     $edit['loc'] = 'core/misc/drupal.js';
     $this->drupalPostForm('admin/config/search/xmlsitemap/custom/add', $edit, t('Save'));
-    $this->assertText(t('The custom link for @link was saved.',array('@link' => $edit['loc'])));
+    $this->assertText(t('The custom link for @link was saved.', array('@link' => $edit['loc'])));
     $links = xmlsitemap_link_load_multiple(array('type' => 'custom', 'loc' => $edit['loc']));
     $this->assertEqual(count($links), 1, t('Custom link saved in the database.'));
 

@@ -16,10 +16,16 @@ abstract class XmlSitemapTestBase extends WebTestBase {
 
   public static $modules = array('xmlsitemap');
   protected $admin_user;
+  protected $state;
+  protected $config;
+  protected $moduleHandler;
 
   public function setUp() {
     array_unshift(self::$modules, 'xmlsitemap');
     parent::setUp();
+    $this->state = $this->container->get('state');
+    $this->config = $this->container->get('config.factory');
+    $this->moduleHandler = $this->container->get('module_handler');
   }
 
   public function tearDown() {
@@ -84,10 +90,10 @@ abstract class XmlSitemapTestBase extends WebTestBase {
    * Regenerate the sitemap by setting the regenerate flag and running cron.
    */
   protected function regenerateSitemap() {
-    \Drupal::state()->set('xmlsitemap_regenerate_needed', TRUE);
-    \Drupal::state()->set('xmlsitemap_generated_last', 0);
+    $this->state->set('xmlsitemap_regenerate_needed', TRUE);
+    $this->state->set('xmlsitemap_generated_last', 0);
     $this->cronRun();
-    $this->assertTrue(\Drupal::state()->get('xmlsitemap_generated_last') && !\Drupal::state()->get('xmlsitemap_regenerate_needed'), t('XML sitemaps regenerated and flag cleared.'));
+    $this->assertTrue($this->state->get('xmlsitemap_generated_last') && !$this->state->get('xmlsitemap_regenerate_needed'), t('XML sitemaps regenerated and flag cleared.'));
   }
 
   protected function assertSitemapLink($entity_type, $entity_id = NULL) {
@@ -202,10 +208,10 @@ abstract class XmlSitemapTestBase extends WebTestBase {
     if ($reset_if_true && $value) {
       $state_variables = xmlsitemap_state_variables();
       if (isset($state_variables[$variable])) {
-        \Drupal::state()->set($variable, FALSE);
+        $this->state->set($variable, FALSE);
       }
       else {
-        \Drupal::config('xmlsitemap.settings')->set($variable, FALSE)->save();
+        $this->config->get('xmlsitemap.settings')->set($variable, FALSE)->save();
       }
     }
 
@@ -233,7 +239,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   protected function getWatchdogMessages(array $conditions = array(), $reset = FALSE) {
     static $seen_ids = array();
 
-    if (!\Drupal::moduleHandler()->moduleExists('dblog') || $reset) {
+    if (!$this->moduleHandler->moduleExists('dblog') || $reset) {
       $seen_ids = array();
       return array();
     }

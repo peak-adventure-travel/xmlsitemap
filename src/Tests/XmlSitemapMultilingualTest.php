@@ -15,6 +15,7 @@ use Drupal\Core\Language\LanguageInterface;
 class XmlSitemapMultilingualTest extends XmlSitemapMultilingualTestBase {
 
   public static $modules = array('language', 'xmlsitemap', 'node', 'locale', 'content_translation', 'system');
+  protected $config;
 
   public static function getInfo() {
     return array(
@@ -27,6 +28,7 @@ class XmlSitemapMultilingualTest extends XmlSitemapMultilingualTestBase {
   public function setUp() {
     parent::setUp();
 
+    $this->config = $this->container->get('config.factory');
     $this->drupalLogin($this->admin_user);
     $edit = array(
       'site_default_language' => 'en',
@@ -49,14 +51,14 @@ class XmlSitemapMultilingualTest extends XmlSitemapMultilingualTestBase {
     $link_en = $this->addSitemapLink(array('language' => 'en'));
     $link_fr = $this->addSitemapLink(array('language' => 'fr'));
 
-    \Drupal::config('xmlsitemap.settings')->set('i18n_selection_mode', 'off')->save();
+    $this->config->get('xmlsitemap.settings')->set('i18n_selection_mode', 'off')->save();
     $this->regenerateSitemap();
     $this->drupalGetSitemap(array('language' => 'en'));
     $this->assertRawSitemapLinks($node, $node_en, $node_fr, $link, $link_en, $link_fr);
     $this->drupalGet('fr/sitemap.xml');
     $this->assertRawSitemapLinks($node, $node_en, $node_fr, $link, $link_en, $link_fr);
 
-    \Drupal::config('xmlsitemap.settings')->set('i18n_selection_mode', 'simple')->save();
+    $this->config->get('xmlsitemap.settings')->set('i18n_selection_mode', 'simple')->save();
     $this->regenerateSitemap();
     $this->drupalGetSitemap(array('language' => 'en'));
     $this->assertRawSitemapLinks($node, $node_en, $link, $link_en);
@@ -65,7 +67,7 @@ class XmlSitemapMultilingualTest extends XmlSitemapMultilingualTestBase {
     $this->assertRawSitemapLinks($node, $node_fr, $link, $link_fr);
     $this->assertNoRawSitemapLinks($node_en, $link_en);
 
-    \Drupal::config('xmlsitemap.settings')->set('i18n_selection_mode', 'mixed')->save();
+    $this->config->get('xmlsitemap.settings')->set('i18n_selection_mode', 'mixed')->save();
     $this->regenerateSitemap();
     $this->drupalGetSitemap(array('language' => 'en'));
     $this->assertRawSitemapLinks($node, $node_en, $link, $link_en);
@@ -73,7 +75,7 @@ class XmlSitemapMultilingualTest extends XmlSitemapMultilingualTestBase {
     $this->drupalGet('fr/sitemap.xml');
     $this->assertRawSitemapLinks($node, $node_en, $node_fr, $link, $link_en, $link_fr);
 
-    \Drupal::config('xmlsitemap.settings')->set('i18n_selection_mode', 'default')->save();
+    $this->config->get('xmlsitemap.settings')->set('i18n_selection_mode', 'default')->save();
     $this->regenerateSitemap();
     $this->drupalGetSitemap(array('language' => 'en'));
     $this->assertRawSitemapLinks($node, $node_en, $link, $link_en);
@@ -84,7 +86,7 @@ class XmlSitemapMultilingualTest extends XmlSitemapMultilingualTestBase {
 
     // With strict mode, the language neutral node should not be found, but the
     // language neutral non-node should be.
-    \Drupal::config('xmlsitemap.settings')->set('i18n_selection_mode', 'strict')->save();
+    $this->config->get('xmlsitemap.settings')->set('i18n_selection_mode', 'strict')->save();
     $this->regenerateSitemap();
     $this->drupalGetSitemap(array('language' => 'en'));
     $this->assertRawSitemapLinks($node_en, $link, $link_en);

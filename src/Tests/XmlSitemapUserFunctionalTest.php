@@ -15,6 +15,7 @@ class XmlSitemapUserFunctionalTest extends XmlSitemapTestBase {
   protected $normal_user;
   protected $accounts = array();
   public static $modules = array('xmlsitemap', 'user', 'node', 'system');
+  protected $config;
 
   public static function getInfo() {
     return array(
@@ -26,6 +27,7 @@ class XmlSitemapUserFunctionalTest extends XmlSitemapTestBase {
 
   public function setUp($modules = array()) {
     parent::setUp();
+    $this->config = $this->container->get('config.factory');
 
     // allow anonymous user to view user profiles
     $user_role = entity_load('user_role', DRUPAL_ANONYMOUS_RID);
@@ -33,9 +35,9 @@ class XmlSitemapUserFunctionalTest extends XmlSitemapTestBase {
     $user_role->save();
 
     // set xmlsitemap_entity_user state variable to TRUE to add user links into sitemap
-    \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_entity_user', TRUE);
-    \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_entity_user_bundle_user', TRUE);
-    \Drupal::config('xmlsitemap.settings')->save();
+    $this->config->get('xmlsitemap.settings')->set('xmlsitemap_entity_user', TRUE);
+    $this->config->get('xmlsitemap.settings')->set('xmlsitemap_entity_user_bundle_user', TRUE);
+    $this->config->get('xmlsitemap.settings')->save();
     // Save the user settings before creating the users.
     xmlsitemap_link_bundle_settings_save('user', 'user', array('status' => 0, 'priority' => 0.5));
 

@@ -13,11 +13,9 @@ namespace Drupal\xmlsitemap\Tests;
 class XmlSitemapFunctionalTest extends XmlSitemapTestBase {
 
   public static $modules = array('xmlsitemap', 'path', 'node', 'system', 'user', 'help', 'menu_test');
-
   protected $state;
-
   protected $config;
-  
+
   public static function getInfo() {
     return array(
       'name' => 'XML sitemap interface tests',
