@@ -9,12 +9,54 @@ namespace Drupal\xmlsitemap_engines\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Component\Utility\UrlHelper;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\State\StateInterface;
+use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 
 /**
  * Configure xmlsitemap engines settings for this site.
  */
 class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
 
+  /**
+   * The form builder service.
+   *
+   * @var \Drupal\Core\Form\FormBuilderInterface
+   */
+  protected $formBuilder;
+
+  /**
+   * The state service.
+   *
+   * @var \Drupal\Core\State\StateInterface
+   */
+  protected $state;
+
+  /**
+   * Constructs a new XmlSitemapCustomAddForm object.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The factory for configuration objects.
+   * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
+   *   The form builder service.
+   * @param \Drupal\Core\Language\LanguageManagerInterface $state
+   *   The language manager service.
+   */
+  public function __construct(ConfigFactoryInterface $config_factory, FormBuilderInterface $form_builder, StateInterface $state) {
+    parent::__construct($config_factory);
+    $this->formBuilder = $form_builder;
+    $this->state = $state;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+        $container->get('config.factory'), $container->get('form_builder'), $container->get('state')
+    );
+  }
   /**
    * {@inheritdoc}
    */
@@ -37,7 +79,7 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
     $form['xmlsitemap_engines_engines'] = array(
       '#type' => 'checkboxes',
       '#title' => t('Submit the sitemap to the following engines'),
-      '#default_value' => \Drupal::state()->get('xmlsitemap_engines_engines'),
+      '#default_value' => $this->state->get('xmlsitemap_engines_engines'),
       '#options' => $engine_options,
     );
     $lifetimes = array(3600, 10800, 21600, 32400, 43200, 86400, 172800, 259200, 604800, 604800 * 2, 604800 * 4);
@@ -45,18 +87,18 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
       '#type' => 'select',
       '#title' => t('Do not submit more often than every'),
       '#options' => array_map('format_interval', array_combine($lifetimes, $lifetimes)),
-      '#default_value' => \Drupal::state()->get('xmlsitemap_engines_minimum_lifetime'),
+      '#default_value' => $this->state->get('xmlsitemap_engines_minimum_lifetime'),
     );
     $form['xmlsitemap_engines_submit_updated'] = array(
       '#type' => 'checkbox',
       '#title' => t('Only submit if the sitemap has been updated since the last submission.'),
-      '#default_value' => \Drupal::state()->get('xmlsitemap_engines_submit_updated'),
+      '#default_value' => $this->state->get('xmlsitemap_engines_submit_updated'),
     );
     $form['xmlsitemap_engines_custom_urls'] = array(
       '#type' => 'textarea',
       '#title' => t('Custom submission URLs'),
       '#description' => t('Enter one URL per line. The token [sitemap] will be replaced with the URL to your sitemap. For example: %example-before would become %example-after.', array('%example-before' => 'http://example.com/ping?[sitemap]', '%example-after' => xmlsitemap_engines_prepare_url('http://example.com/ping?[sitemap]', url('sitemap.xml', array('absolute' => TRUE))))),
-      '#default_value' => \Drupal::state()->get('xmlsitemap_engines_custom_urls'),
+      '#default_value' => $this->state->get('xmlsitemap_engines_custom_urls'),
       '#rows' => 2,
       '#wysiwyg' => FALSE
     );
@@ -74,7 +116,7 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
     foreach ($custom_urls as $custom_url) {
       $url = xmlsitemap_engines_prepare_url($custom_url, '');
       if (!UrlHelper::isValid($url, TRUE)) {
-        \Drupal::formBuilder()->setErrorByName($custom_url, $form_state, t('Invalid URL %url.', array('%url' => $custom_url)));
+        $this->formBuilder->setErrorByName($custom_url, $form_state, t('Invalid URL %url.', array('%url' => $custom_url)));
       }
     }
     $form_state['values']['xmlsitemap_engines_custom_urls'] = implode("\n", $custom_urls);
@@ -93,7 +135,7 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
     );
     $values = $form_state['values'];
     foreach ($keys as $key) {
-      \Drupal::state()->set($key, $values[$key]);
+      $this->state->set($key, $values[$key]);
     }
     parent::submitForm($form, $form_state);
   }

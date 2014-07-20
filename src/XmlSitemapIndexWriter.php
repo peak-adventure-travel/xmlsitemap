@@ -14,7 +14,7 @@ class XmlSitemapIndexWriter extends XmlSitemapWriter {
 
   protected $rootElement = 'sitemapindex';
 
-  function __construct(XmlSitemapInterface $sitemap, $page = 'index') {
+  public function __construct(XmlSitemapInterface $sitemap, $page = 'index') {
     parent::__construct($sitemap, 'index');
   }
 

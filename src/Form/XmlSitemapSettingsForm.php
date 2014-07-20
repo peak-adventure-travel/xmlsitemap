@@ -11,11 +11,54 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Component\Utility\MapArray;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Render\Element;
+use Drupal\Core\State\StateInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Form\FormBuilderInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Configure xmlsitemap settings for this site.
  */
 class XmlSitemapSettingsForm extends ConfigFormBase {
+
+  /**
+   * The state store.
+   *
+   * @var \Drupal\Core\State\StateInterface
+   */
+  protected $state;
+
+  /**
+   * The form builder service.
+   *
+   * @var \Drupal\Core\Form\FormBuilderInterface
+   */
+  protected $formBuilder;
+
+  /**
+   * Constructs a new XmlSitemapSettingsForm object.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The factory for configuration objects.
+   * @param \Drupal\Core\State\StateInterface $state
+   *   The state service.
+   * @param \Drupal\Core\Form\FormBuilderInterface $state
+   *   The form builder service.
+   */
+  public function __construct(ConfigFactoryInterface $config_factory, StateInterface $state, FormBuilderInterface $form_builder) {
+    parent::__construct($config_factory);
+    $this->state = $state;
+    $this->formBuilder = $form_builder;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+        $container->get('config.factory'), $container->get('state'), $container->get('form_builder')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -28,38 +71,39 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, array &$form_state) {
+    $config = $this->config('xmlsitemap.settings');
     $intervals = array(300, 900, 1800, 3600, 10800, 21600, 43200, 86400, 172800, 259200, 604800);
     $form['minimum_lifetime'] = array(
       '#type' => 'select',
       '#title' => t('Minimum sitemap lifetime'),
       '#options' => array(0 => t('No minimum')) + array_map('format_interval', array_combine($intervals, $intervals)),
       '#description' => t('The minimum amount of time that will elapse before the sitemaps are regenerated. The sitemaps will also only be regenerated on cron if any links have been added, updated, or deleted.') . '<br />' . t('Recommended value: %value.', array('%value' => t('1 day'))),
-      '#default_value' => \Drupal::config('xmlsitemap.settings')->get('minimum_lifetime'),
+      '#default_value' => $config->get('minimum_lifetime'),
     );
     $form['xsl'] = array(
       '#type' => 'checkbox',
       '#title' => t('Include a stylesheet in the sitemaps for humans.'),
       '#description' => t('When enabled, this will add formatting and tables with sorting to make it easier to view the XML sitemap data instead of viewing raw XML output. Search engines will ignore this.'),
-      '#default_value' => \Drupal::config('xmlsitemap.settings')->get('xsl'),
+      '#default_value' => $config->get('xsl'),
     );
     $form['prefetch_aliases'] = array(
       '#type' => 'checkbox',
       '#title' => t('Prefetch URL aliases during sitemap generation.'),
       '#description' => t('When enabled, this will fetch all URL aliases at once instead of one at a time during sitemap generation. For medium or large sites, it is recommended to disable this feature as it uses a lot of memory.'),
-      '#default_value' => \Drupal::config('xmlsitemap.settings')->get('prefetch_aliases'),
+      '#default_value' => $config->get('prefetch_aliases'),
     );
 
     $form['advanced'] = array(
       '#type' => 'details',
       '#title' => t('Advanced settings'),
       '#collapsible' => TRUE,
-      '#collapsed' => !\Drupal::state()->get('xmlsitemap_developer_mode'),
+      '#collapsed' => !$this->state->get('xmlsitemap_developer_mode'),
       '#weight' => 10,
     );
     $form['advanced']['gz'] = array(
       '#type' => 'checkbox',
       '#title' => t('Generate additional compressed sitemaps using gzip.'),
-      '#default_value' => \Drupal::config('xmlsitemap.settings')->get('gz'),
+      '#default_value' => $config->get('gz'),
       '#disabled' => !function_exists('gzencode'),
     );
     $chunk_sizes = array(100, 500, 1000, 2500, 5000, 10000, 25000, XMLSITEMAP_MAX_SITEMAP_LINKS);
@@ -80,12 +124,12 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
       '#description' => t('If you have problems running cron or rebuilding the sitemap, you may want to lower this value.'),
     );
     if (!xmlsitemap_check_directory()) {
-      \Drupal::formBuilder()->setErrorByName('path', $form_state, t('The directory %directory does not exist or is not writable.', array('%directory' => xmlsitemap_get_directory())));
+      $this->formBuilder->setErrorByName('path', $form_state, t('The directory %directory does not exist or is not writable.', array('%directory' => xmlsitemap_get_directory())));
     }
     $form['advanced']['path'] = array(
       '#type' => 'textfield',
       '#title' => t('Sitemap cache directory'),
-      '#default_value' => \Drupal::config('xmlsitemap.settings')->get('path'),
+      '#default_value' => $config->get('path'),
       '#size' => 30,
       '#maxlength' => 255,
       '#description' => t('Subdirectory where the sitemap data will be stored. This folder <strong>must not be shared</strong> with any other Drupal site or install using XML sitemap.'),
@@ -95,7 +139,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
     $form['advanced']['xmlsitemap_base_url'] = array(
       '#type' => 'textfield',
       '#title' => t('Default base URL'),
-      '#default_value' => \Drupal::state()->get('xmlsitemap_base_url'),
+      '#default_value' => $this->state->get('xmlsitemap_base_url'),
       '#size' => 30,
       '#description' => t('This is the default base URL used for sitemaps and sitemap links.'),
       '#required' => TRUE,
@@ -108,7 +152,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
         XMLSITEMAP_LASTMOD_MEDIUM => t('Medium'),
         XMLSITEMAP_LASTMOD_LONG => t('Long'),
       ),
-      '#default_value' => \Drupal::config('xmlsitemap.settings')->get('lastmod_format'),
+      '#default_value' => $config->get('lastmod_format'),
     );
     foreach ($form['advanced']['lastmod_format']['#options'] as $key => &$label) {
       $label .= ' (' . gmdate($key, REQUEST_TIME) . ')';
@@ -116,7 +160,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
     $form['advanced']['xmlsitemap_developer_mode'] = array(
       '#type' => 'checkbox',
       '#title' => t('Enable developer mode to expose additional settings.'),
-      '#default_value' => \Drupal::state()->get('xmlsitemap_developer_mode'),
+      '#default_value' => $this->state->get('xmlsitemap_developer_mode'),
     );
 
     $form['xmlsitemap_settings'] = array(
@@ -125,9 +169,8 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
     );
 
     $entities = xmlsitemap_get_link_info(NULL, TRUE);
-    \Drupal::moduleHandler()->loadAllIncludes('inc', 'xmlsitemap');
     foreach ($entities as $entity => $entity_info) {
-      if (!\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_entity_' . $entity) && $entity != 'frontpage') {
+      if (!$config->get('xmlsitemap_entity_' . $entity) && $entity != 'frontpage') {
         continue;
       }
       $form[$entity] = array(
@@ -169,7 +212,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
     $base_url = &$form_state['values']['xmlsitemap_base_url'];
     $base_url = rtrim($base_url, '/');
     if ($base_url != '' && !UrlHelper::isValid($base_url, TRUE)) {
-      \Drupal::formBuilder()->setErrorByName('xmlsitemap_base_url', $form_state, t('Invalid base URL.'));
+      $this->formBuilder->setErrorByName('xmlsitemap_base_url', $form_state, t('Invalid base URL.'));
     }
 
     parent::validateForm($form, $form_state);
@@ -180,16 +223,17 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, array &$form_state) {
     // Save any changes to the frontpage link.
+    $config = $this->config('xmlsitemap.settings');
     $values = $form_state['values'];
     xmlsitemap_link_save(array('type' => 'frontpage', 'id' => 0, 'loc' => ''));
-    \Drupal::state()->set('xmlsitemap_developer_mode', $values['xmlsitemap_developer_mode']);
-    \Drupal::state()->set('xmlsitemap_base_url', $values['xmlsitemap_base_url']);
+    $this->state->set('xmlsitemap_developer_mode', $values['xmlsitemap_developer_mode']);
+    $this->state->set('xmlsitemap_base_url', $values['xmlsitemap_base_url']);
     unset($values['xmlsitemap_developer_mode']);
     unset($values['xmlsitemap_base_url']);
     foreach ($values as $key => $value) {
-      \Drupal::config('xmlsitemap.settings')->set($key, $value);
+      $config->set($key, $value);
     }
-    \Drupal::config('xmlsitemap.settings')->save();
+    $config->save();
 
     parent::submitForm($form, $form_state);
   }

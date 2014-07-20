@@ -10,8 +10,39 @@ namespace Drupal\xmlsitemap\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\State\StateInterface;
 
 class XmlSitemapController extends ControllerBase {
+
+  /**
+   * The state store.
+   *
+   * @var \Drupal\Core\State\StateInterface
+   */
+  protected $state;
+
+  /**
+   * Constructs a new XmlSitemapController object.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The factory for configuration objects.
+   * @param \Drupal\Core\State\StateInterface $state
+   *   The state service.
+   */
+  public function __construct(ConfigFactoryInterface $config_factory, StateInterface $state) {
+    $this->state = $state;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+        $container->get('config.factory'), $container->get('state')
+    );
+  }
 
   public function renderSitemapXml() {
     $sitemap = xmlsitemap_sitemap_load_by_context();
@@ -22,7 +53,7 @@ class XmlSitemapController extends ControllerBase {
     $file = xmlsitemap_sitemap_get_file($sitemap, $chunk);
 
     // Provide debugging information if enabled.
-    if (\Drupal::state()->get('xmlsitemap_developer_mode')) {
+    if ($this->state->get('xmlsitemap_developer_mode')) {
       $output = array();
       $context = xmlsitemap_get_current_context();
       $output[] = "Current context: " . print_r($context, TRUE);

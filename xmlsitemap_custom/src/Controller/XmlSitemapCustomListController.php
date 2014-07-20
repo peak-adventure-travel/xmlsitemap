@@ -7,11 +7,45 @@
 
 namespace Drupal\xmlsitemap_custom\Controller;
 
+use Drupal\Core\Controller\ControllerBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
+
 /**
  * Builds the list table for all custom links.
  */
-class XmlSitemapCustomListController {
+class XmlSitemapCustomListController extends ControllerBase {
 
+  /**
+   * The language manager.
+   *
+   * @var \Drupal\language\ConfigurableLanguageManagerInterface
+   */
+  protected $languageManager;
+
+  /**
+   * Constructs a new XmlSitemapController object.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The factory for configuration objects.
+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   *   The language manager service.
+   */
+  public function __construct(ConfigFactoryInterface $config_factory, LanguageManagerInterface $language_manager) {
+    $this->languageManager = $language_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+        $container->get('config.factory'), $container->get('language_manager')
+    );
+  }
+  
   public function render() {
     $build['xmlsitemap_add_custom'] = array(
       '#type' => 'link',
@@ -37,7 +71,7 @@ class XmlSitemapCustomListController {
     $result = $query->execute();
 
     foreach ($result as $link) {
-      $language = \Drupal::languageManager()->getLanguage($link->language);
+      $language = $this->languageManager->getLanguage($link->language);
       $row = array();
       $row['loc'] = l($link->loc, $link->loc);
       $row['priority'] = number_format($link->priority, 1);

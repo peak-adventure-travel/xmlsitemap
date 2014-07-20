@@ -40,7 +40,7 @@ class XmlSitemapLinkBundleSettingsForm extends ConfigFormBase implements Contain
   }
 
   /**
-   * Constructs a ContentLanguageSettingsForm object.
+   * Constructs a XmlSitemapLinkBundleSettingsForm object.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
@@ -69,7 +69,6 @@ class XmlSitemapLinkBundleSettingsForm extends ConfigFormBase implements Contain
     $this->bundle_type = $bundle;
     $request = $this->getRequest();
 
-    \Drupal::moduleHandler()->loadInclude('xmlsitemap', 'inc', 'xmlsitemap.admin');
     if (!$request->isXmlHttpRequest() && $admin_path = xmlsitemap_get_bundle_path($entity, $bundle)) {
       // If this is a non-ajax form, redirect to the bundle administration page.
       $destination = drupal_get_destination();

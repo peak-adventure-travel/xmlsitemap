@@ -10,11 +10,43 @@ namespace Drupal\xmlsitemap\Form;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Component\Utility\MapArray;
 use Drupal\Component\Utility\UrlHelper;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\State\StateInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Configure xmlsitemap settings for this site.
  */
 class XmlSitemapRebuildForm extends ConfigFormBase {
+
+  /**
+   * The state store.
+   *
+   * @var \Drupal\Core\State\StateInterface
+   */
+  protected $state;
+
+  /**
+   * Constructs a new XmlSitemapRebuildForm object.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The factory for configuration objects.
+   * @param \Drupal\Core\State\StateInterface $state
+   *   The state service.
+   */
+  public function __construct(ConfigFactoryInterface $config_factory, StateInterface $state) {
+    parent::__construct($config_factory);
+    $this->state = $state;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+        $container->get('config.factory'), $container->get('state')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -28,12 +60,12 @@ class XmlSitemapRebuildForm extends ConfigFormBase {
    */
   public function buildForm(array $form, array &$form_state) {
     $request = $this->getRequest();
-    if (!$request->request && !\Drupal::state()->get('xmlsitemap_rebuild_needed')) {
-      if (!\Drupal::state()->get('xmlsitemap_regenerate_needed')) {
+    if (!$request->request && !$this->state->get('xmlsitemap_rebuild_needed')) {
+      if (!$this->state->get('xmlsitemap_regenerate_needed')) {
         drupal_set_message(t('Your sitemap is up to date and does not need to be rebuilt.'), 'error');
       }
       else {
-        $request->query->set('destination','admin/config/search/xmlsitemap');
+        $request->query->set('destination', 'admin/config/search/xmlsitemap');
         drupal_set_message(t('A rebuild is not necessary. If you are just wanting to regenerate the XML sitemap files, you can <a href="@link-cron">run cron manually</a>.', array('@link-cron' => url('admin/reports/status/run-cron', array('query' => drupal_get_destination())))), 'warning');
         $this->setRequest($request);
       }
@@ -49,8 +81,8 @@ class XmlSitemapRebuildForm extends ConfigFormBase {
       '#description' => t('If no link types are selected, the sitemap files will just be regenerated.'),
       '#multiple' => TRUE,
       '#options' => $rebuild_types,
-      '#default_value' => \Drupal::state()->get('xmlsitemap_rebuild_needed') || !\Drupal::state()->get('xmlsitemap_developer_mode') ? $rebuild_types : array(),
-      '#access' => \Drupal::state()->get('xmlsitemap_developer_mode'),
+      '#default_value' => $this->state->get('xmlsitemap_rebuild_needed') || !$this->state->get('xmlsitemap_developer_mode') ? $rebuild_types : array(),
+      '#access' => $this->state->get('xmlsitemap_developer_mode'),
     );
     $form['save_custom'] = array(
       '#type' => 'checkbox',

@@ -36,7 +36,7 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
   }
 
   /**
-   * Constructs a ContentLanguageSettingsForm object.
+   * Constructs a XmlSitemapEntitiesSettingsForm object.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
@@ -61,6 +61,7 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
    * {@inheritdoc}
    */
   public function buildForm(array $form, array &$form_state) {
+    $config = $this->config('xmlsitemap.settings');
     $entity_types = $this->entityManager->getDefinitions();
     $labels = array();
     $default = array();
@@ -74,7 +75,7 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
 
       $labels[$entity_type_id] = $entity_type->getLabel() ? : $entity_type_id;
 
-      if (\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_entity_' . $entity_type_id)) {
+      if ($config->get('xmlsitemap_entity_' . $entity_type_id)) {
         $default[] = $entity_type_id;
       }
     }
@@ -116,7 +117,7 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
           '#label' => $bundle_info['label'],
           'bundle' => array(
             '#type' => 'checkbox',
-            '#default_value' => \Drupal::config('xmlsitemap.settings')->get('xmlsitemap_entity_' . $entity_type_id . '_bundle_' . $bundle)
+            '#default_value' => $config->get('xmlsitemap_entity_' . $entity_type_id . '_bundle_' . $bundle)
           ),
         );
       }
@@ -131,11 +132,12 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
   public function submitForm(array &$form, array &$form_state) {
     $bundles = $this->entityManager->getAllBundleInfo();
     $entity_values = $form_state['values']['entity_types'];
+    $config = $this->config('xmlsitemap.settings');
     foreach ($entity_values as $key => $value) {
-      \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_entity_' . $key, $value)->save();
+      $config->set('xmlsitemap_entity_' . $key, $value)->save();
       if ($value) {
         foreach ($bundles[$key] as $bundle_key => $bundle_value) {
-          \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_entity_' . $key . '_bundle_' . $bundle_key, $form_state['values']['settings'][$key][$bundle_key]['settings']['bundle'])->save();
+          $config->set('xmlsitemap_entity_' . $key . '_bundle_' . $bundle_key, $form_state['values']['settings'][$key][$bundle_key]['settings']['bundle'])->save();
           if (!$form_state['values']['settings'][$key][$bundle_key]['settings']['bundle']) {
             xmlsitemap_link_bundle_delete($key, $bundle_key, TRUE);
           }
@@ -143,7 +145,7 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
       }
       else {
         foreach ($bundles[$key] as $bundle_key => $bundle_value) {
-          \Drupal::config('xmlsitemap.settings')->set('xmlsitemap_entity_' . $key . '_bundle_' . $bundle_key, 0)->save();
+          $config->set('xmlsitemap_entity_' . $key . '_bundle_' . $bundle_key, 0)->save();
           xmlsitemap_link_bundle_delete($key, $bundle_key, TRUE);
         }
       }

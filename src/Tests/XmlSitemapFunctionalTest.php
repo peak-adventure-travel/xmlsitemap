@@ -12,8 +12,12 @@ namespace Drupal\xmlsitemap\Tests;
  */
 class XmlSitemapFunctionalTest extends XmlSitemapTestBase {
 
-  public static $modules = array('xmlsitemap', 'path', 'node', 'system');
+  public static $modules = array('xmlsitemap', 'path', 'node', 'system', 'user', 'help', 'menu_test');
 
+  protected $state;
+
+  protected $config;
+  
   public static function getInfo() {
     return array(
       'name' => 'XML sitemap interface tests',
@@ -25,7 +29,9 @@ class XmlSitemapFunctionalTest extends XmlSitemapTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->admin_user = $this->drupalCreateUser(array('access content', 'administer site configuration', 'administer xmlsitemap', 'access administration pages', 'access site reports'));
+    $this->admin_user = $this->drupalCreateUser(array('access content', 'administer site configuration', 'administer xmlsitemap', 'access administration pages', 'access site reports', 'administer permissions', 'view the administration theme'));
+    $this->state = $this->container->get('state');
+    $this->config = $this->container->get('config.factory');
   }
 
   /**
@@ -76,16 +82,16 @@ class XmlSitemapFunctionalTest extends XmlSitemapTestBase {
   public function testStatusReport() {
     // Test the rebuild flag.
     $this->drupalLogin($this->admin_user);
-    \Drupal::state()->set('xmlsitemap_generated_last', REQUEST_TIME);
-    \Drupal::state()->set('xmlsitemap_rebuild_needed', TRUE);
+    $this->state->set('xmlsitemap_generated_last', REQUEST_TIME);
+    $this->state->set('xmlsitemap_rebuild_needed', TRUE);
     $this->assertXMLSitemapProblems(t('The XML sitemap data is out of sync and needs to be completely rebuilt.'));
     $this->clickLink(t('completely rebuilt'));
     $this->assertResponse(200);
-    \Drupal::state()->set('xmlsitemap_rebuild_needed', FALSE);
+    $this->state->set('xmlsitemap_rebuild_needed', FALSE);
     $this->assertNoXMLSitemapProblems();
     //Test the regenerate flag (and cron hasn't run in a while).
-    \Drupal::state()->set('xmlsitemap_regenerate_needed', TRUE);
-    \Drupal::state()->set('xmlsitemap_generated_last', REQUEST_TIME - \Drupal::config('xmlsitemap.settings')->get('cron_threshold_warning') - 100);
+    $this->state->set('xmlsitemap_regenerate_needed', TRUE);
+    $this->state->set('xmlsitemap_generated_last', REQUEST_TIME - $this->config->get('xmlsitemap.settings')->get('cron_threshold_warning') - 100);
     $this->assertXMLSitemapProblems(t('The XML cached files are out of date and need to be regenerated. You can run cron manually to regenerate the sitemap files.'));
     $this->clickLink(t('run cron manually'));
     $this->assertResponse(200);

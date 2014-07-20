@@ -8,13 +8,68 @@
 namespace Drupal\xmlsitemap_custom\Form;
 
 use Drupal\Core\Form\FormBase;
+use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\xmlsitemap\XmlSitemapLinkStorage;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\Path\AliasManagerInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 
-class XmlSitemapCustomAddForm extends FormBase {
+class XmlSitemapCustomAddForm extends ConfigFormBase {
+
+  /**
+   * The language manager.
+   *
+   * @var \Drupal\language\ConfigurableLanguageManagerInterface
+   */
+  protected $languageManager;
+
+  /**
+   * The form builder service.
+   *
+   * @var \Drupal\Core\Form\FormBuilderInterface
+   */
+  protected $formBuilder;
+
+  /**
+   * The alias manager service.
+   *
+   * @var \Drupal\Core\Path\AliasManagerInterface
+   */
+  protected $aliasManager;
+
+  /**
+   * Constructs a new XmlSitemapCustomAddForm object.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The factory for configuration objects.
+   * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
+   *   The form builder service.
+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   *   The language manager service.
+   * @param \Drupal\Core\Path\AliasManagerInterface $alias_manager
+   *   The path alias manager service.
+   */
+  public function __construct(ConfigFactoryInterface $config_factory, FormBuilderInterface $form_builder, LanguageManagerInterface $language_manager, AliasManagerInterface $alias_manager) {
+    parent::__construct($config_factory);
+    $this->languageManager = $language_manager;
+    $this->formBuilder = $form_builder;
+    $this->aliasManager = $alias_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+        $container->get('config.factory'), $container->get('form_builder'), $container->get('language_manager'), $container->get('path.alias_manager')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -27,7 +82,6 @@ class XmlSitemapCustomAddForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, array &$form_state) {
-    \Drupal::moduleHandler()->loadInclude('xmlsitemap', 'inc', 'xmlsitemap.admin');
     $query = db_select('xmlsitemap', 'x');
     $query->addExpression('MAX(id)');
     $id = $query->execute()->fetchField();
@@ -72,7 +126,7 @@ class XmlSitemapCustomAddForm extends FormBase {
       '#default_value' => $link['changefreq'],
       '#description' => t('How frequently the page is likely to change. This value provides general information to search engines and may not correlate exactly to how often they crawl the page.'),
     );
-    $languages = \Drupal::languageManager()->getLanguages();
+    $languages = $this->languageManager->getLanguages();
     $languages_list = array();
     foreach ($languages as $key => $value) {
       $languages_list[$key] = $value->getName();
@@ -109,7 +163,7 @@ class XmlSitemapCustomAddForm extends FormBase {
 
     // Make sure we trim and normalize the path first.
     $link['loc'] = trim($link['loc']);
-    $link['loc'] = \Drupal::service('path.alias_manager')->getPathByAlias($link['loc'], $link['language']);
+    $link['loc'] = $this->aliasManager->getPathByAlias($link['loc'], $link['language']);
     $query = db_select('xmlsitemap');
     $query->fields('xmlsitemap');
     $query->condition('type', 'custom');
@@ -119,14 +173,14 @@ class XmlSitemapCustomAddForm extends FormBase {
     $query->condition('language', $link['language']);
     $result = $query->execute()->fetchAssoc();
     if ($result != FALSE) {
-      \Drupal::formBuilder()->setErrorByName('loc', $form_state, t('There is already an existing link in the sitemap with the path %link.', array('%link' => $link['loc'])));
+      $this->formBuilder->setErrorByName('loc', $form_state, t('There is already an existing link in the sitemap with the path %link.', array('%link' => $link['loc'])));
     }
     try {
       $client = new Client();
       $res = $client->get(url(NULL, array('absolute' => TRUE)) . $link['loc']);
     }
     catch (ClientException $e) {
-      \Drupal::formBuilder()->setErrorByName('loc', $form_state, t('The custom link @link is either invalid or it cannot be accessed by anonymous users.', array('@link' => $link['loc'])));
+      $this->formBuilder->setErrorByName('loc', $form_state, t('The custom link @link is either invalid or it cannot be accessed by anonymous users.', array('@link' => $link['loc'])));
     }
 
     parent::validateForm($form, $form_state);
