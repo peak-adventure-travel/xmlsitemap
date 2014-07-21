@@ -32,8 +32,8 @@ class XmlSitemapCustomFunctionalTest extends XmlSitemapTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->languageManager = $this->container->get('language_manager');
-    $this->aliasStorage = $this->container->get('path.alias_storage');
+    $this->languageManager = \Drupal::languageManager();
+    $this->aliasStorage = \Drupal::service('path.alias_storage');
     $this->admin_user = $this->drupalCreateUser(array('access content', 'administer xmlsitemap'));
     $this->drupalLogin($this->admin_user);
   }

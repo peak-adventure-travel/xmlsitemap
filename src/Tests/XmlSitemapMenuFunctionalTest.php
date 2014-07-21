@@ -32,9 +32,9 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->state = $this->container->get('state');
-    $this->entityManager = $this->container->get('entity.manager');
-    $this->config = $this->container->get('config.factory');
+    $this->state = \Drupal::state();
+    $this->entityManager = \Drupal::entityManager();
+    $this->config = \Drupal::configFactory()->get('xmlsitemap.settings');
     if ($this->profile != 'standard') {
       $this->drupalCreateContentType(array('type' => 'page', 'name' => 'Basic page', 'settings' => array(
           // Set proper default options for the page content type.
@@ -53,15 +53,15 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
     $user_role->save();
 
     $bundles = $this->entityManager->getAllBundleInfo();
-    $this->config->get('xmlsitemap.settings')->set('xmlsitemap_entity_menu_link', TRUE);
-    $this->config->get('xmlsitemap.settings')->set('xmlsitemap_entity_menu', TRUE);
+    $this->config->set('xmlsitemap_entity_menu_link', TRUE);
+    $this->config->set('xmlsitemap_entity_menu', TRUE);
     foreach ($bundles['menu_link'] as $bundle_id => $bundle) {
-      $this->config->get('xmlsitemap.settings')->set('xmlsitemap_entity_menu_link_bundle_' . $bundle_id, TRUE);
+      $this->config->set('xmlsitemap_entity_menu_link_bundle_' . $bundle_id, TRUE);
     }
     foreach ($bundles['menu'] as $bundle_id => $bundle) {
-      $this->config->get('xmlsitemap.settings')->set('xmlsitemap_entity_menu_bundle_' . $bundle_id, TRUE);
+      $this->config->set('xmlsitemap_entity_menu_bundle_' . $bundle_id, TRUE);
     }
-    $this->config->get('xmlsitemap.settings')->save();
+    $this->config->save();
 
     $this->admin_user = $this->drupalCreateUser(array('administer menu', 'administer xmlsitemap'));
     $this->normal_user = $this->drupalCreateUser(array('access content'));
@@ -78,9 +78,9 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
     );
     $this->drupalPostForm('admin/structure/menu/add', $edit, 'Save');
 
-    $this->config->get('xmlsitemap.settings')->set('xmlsitemap_entity_menu_bundle_' . $edit['id'], TRUE);
-    $this->config->get('xmlsitemap.settings')->set('xmlsitemap_entity_menu_link_bundle_' . $edit['id'], TRUE);
-    $this->config->get('xmlsitemap.settings')->save();
+    $this->config->set('xmlsitemap_entity_menu_bundle_' . $edit['id'], TRUE);
+    $this->config->set('xmlsitemap_entity_menu_link_bundle_' . $edit['id'], TRUE);
+    $this->config->save();
 
     $menu = Menu::load($edit['id']);
 
@@ -96,13 +96,13 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
 
   public function tearDown() {
     $bundles = $this->entityManager->getAllBundleInfo();
-    $this->config->get('xmlsitemap.settings')->delete('xmlsitemap_entity_menu_link');
-    $this->config->get('xmlsitemap.settings')->delete('xmlsitemap_entity_menu');
+    $this->config->delete('xmlsitemap_entity_menu_link');
+    $this->config->delete('xmlsitemap_entity_menu');
     foreach ($bundles['menu_link'] as $bundle_id => $bundle) {
-      $this->config->get('xmlsitemap.settings')->delete('xmlsitemap_entity_menu_link_bundle_' . $bundle_id);
+      $this->config->delete('xmlsitemap_entity_menu_link_bundle_' . $bundle_id);
     }
     foreach ($bundles['menu'] as $bundle_id => $bundle) {
-      $this->config->get('xmlsitemap.settings')->delete('xmlsitemap_entity_menu_bundle_' . $bundle_id);
+      $this->config->delete('xmlsitemap_entity_menu_bundle_' . $bundle_id);
     }
 
     parent::tearDown();

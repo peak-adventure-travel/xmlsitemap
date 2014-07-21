@@ -49,11 +49,11 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
     $user_role->grantPermission('access content');
     $user_role->save();
 
-    $this->config = $this->container->get('config.factory');
-    $this->config->get('xmlsitemap.settings')->set('xmlsitemap_entity_node', 1);
-    $this->config->get('xmlsitemap.settings')->set('xmlsitemap_entity_node_bundle_article', 1);
-    $this->config->get('xmlsitemap.settings')->set('xmlsitemap_entity_node_bundle_page', 1);
-    $this->config->get('xmlsitemap.settings')->save();
+    $this->config = \Drupal::configFactory()->get('xmlsitemap.settings');
+    $this->config->set('xmlsitemap_entity_node', 1);
+    $this->config->set('xmlsitemap_entity_node_bundle_article', 1);
+    $this->config->set('xmlsitemap_entity_node_bundle_page', 1);
+    $this->config->save();
     xmlsitemap_link_bundle_settings_save('node', 'page', array('status' => 1, 'priority' => 0.6));
   }
 
@@ -141,7 +141,7 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
    */
   public function testCron() {
     $limit = 5;
-    $this->config->get('xmlsitemap.settings')->set('batch_limit', $limit)->save();
+    $this->config->set('batch_limit', $limit)->save();
 
     $nodes = array();
     for ($i = 1; $i <= ($limit + 1); $i++) {

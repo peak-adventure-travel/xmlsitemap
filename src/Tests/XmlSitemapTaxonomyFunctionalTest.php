@@ -30,10 +30,10 @@ class XmlSitemapTaxonomyFunctionalTest extends XmlSitemapTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->config = $this->container->get('config.factory');
-    $this->config->get('xmlsitemap.settings')->set('xmlsitemap_entity_taxonomy_vocabulary', TRUE);
-    $this->config->get('xmlsitemap.settings')->set('xmlsitemap_entity_taxonomy_vocabulary_bundle_taxonomy_vocabulary', TRUE);
-    $this->config->get('xmlsitemap.settings')->save();
+    $this->config = \Drupal::configFactory()->get('xmlsitemap.settings');
+    $this->config->set('xmlsitemap_entity_taxonomy_vocabulary', TRUE);
+    $this->config->set('xmlsitemap_entity_taxonomy_vocabulary_bundle_taxonomy_vocabulary', TRUE);
+    $this->config->save();
 
     // allow anonymous user to view user profiles
     $user_role = entity_load('user_role', DRUPAL_ANONYMOUS_RID);

@@ -28,8 +28,8 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
     parent::setUp();
 
     $this->admin_user = $this->drupalCreateUser(array('access content', 'administer site configuration', 'administer xmlsitemap'));
-    $this->state = $this->container->get('state');
-    $this->config = $this->container->get('config.factory');
+    $this->state = \Drupal::state();
+    $this->config = \Drupal::configFactory()->get('xmlsitemap.settings');
   }
 
   public function testAssertFlag() {
@@ -82,7 +82,7 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
    */
   public function testGetChunkCount() {
     // Set a low chunk size for testing.
-    $this->config->get('xmlsitemap.settings')->set('chunk_size', 4)->save();
+    $this->config->set('chunk_size', 4)->save();
 
     // Make the total number of links just equal to the chunk size.
     $count = db_query("SELECT COUNT(id) FROM {xmlsitemap}")->fetchField();
@@ -291,7 +291,7 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
    */
   public function testMinimumLifetime() {
     $this->drupalLogin($this->admin_user);
-    $this->config->get('xmlsitemap.settings')->set('minimum_lifetime', 300)->save();
+    $this->config->set('minimum_lifetime', 300)->save();
     $this->regenerateSitemap();
 
     $link = $this->addSitemapLink(array('loc' => 'lifetime-test'));

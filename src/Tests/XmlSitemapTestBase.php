@@ -23,9 +23,9 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   public function setUp() {
     array_unshift(self::$modules, 'xmlsitemap');
     parent::setUp();
-    $this->state = $this->container->get('state');
-    $this->config = $this->container->get('config.factory');
-    $this->moduleHandler = $this->container->get('module_handler');
+    $this->state = \Drupal::state();
+    $this->config = \Drupal::configFactory()->get('xmlsitemap.settings');
+    $this->moduleHandler = \Drupal::moduleHandler();
   }
 
   public function tearDown() {
@@ -211,7 +211,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
         $this->state->set($variable, FALSE);
       }
       else {
-        $this->config->get('xmlsitemap.settings')->set($variable, FALSE)->save();
+        $this->config->set($variable, FALSE)->save();
       }
     }
 

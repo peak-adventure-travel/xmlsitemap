@@ -27,8 +27,8 @@ abstract class XmlSitemapMultilingualTestBase extends XmlSitemapTestBase {
     // Call parent::setUp() allowing test cases to pass further modules.
     parent::setUp();
 
-    $this->languageManager = $this->container->get('language_manager');
-    $this->entityManager = $this->container->get('entity.manager');
+    $this->languageManager = \Drupal::languageManager();
+    $this->entityManager = \Drupal::entityManager();
     $this->admin_user = $this->drupalCreateUser(array('administer languages', 'access administration pages', 'administer site configuration', 'administer xmlsitemap', 'access content'));
     $this->drupalLogin($this->admin_user);
 

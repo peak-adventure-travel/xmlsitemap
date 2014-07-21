@@ -36,8 +36,8 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
    */
   public function setUp() {
     parent::setUp();
-    $this->entityManager = $this->container->get('entity.manager');
-    $this->state = $this->container->get('state');
+    $this->entityManager = \Drupal::entityManager();
+    $this->state = \Drupal::state();
     $this->admin_user = $this->drupalCreateUser(array('access content', 'administer xmlsitemap'));
     $this->drupalLogin($this->admin_user);
 

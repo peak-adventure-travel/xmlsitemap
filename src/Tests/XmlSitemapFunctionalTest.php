@@ -28,8 +28,8 @@ class XmlSitemapFunctionalTest extends XmlSitemapTestBase {
     parent::setUp();
 
     $this->admin_user = $this->drupalCreateUser(array('access content', 'administer site configuration', 'administer xmlsitemap', 'access administration pages', 'access site reports', 'administer permissions', 'view the administration theme'));
-    $this->state = $this->container->get('state');
-    $this->config = $this->container->get('config.factory');
+    $this->state = \Drupal::state();
+    $this->config = \Drupal::configFactory()->get('xmlsitemap.settings');
   }
 
   /**
@@ -82,6 +82,8 @@ class XmlSitemapFunctionalTest extends XmlSitemapTestBase {
     $this->drupalLogin($this->admin_user);
     $this->state->set('xmlsitemap_generated_last', REQUEST_TIME);
     $this->state->set('xmlsitemap_rebuild_needed', TRUE);
+    $this->drupalGet('admin/config/search/xmlsitemap/rebuild');
+    $this->assertText("This action rebuilds your site's XML sitemap and regenerates the cached files, and may be a lengthy process. If you just installed XML sitemap, this can be helpful to import all your site's content into the sitemap. Otherwise, this should only be used in emergencies.");
     $this->assertXMLSitemapProblems(t('The XML sitemap data is out of sync and needs to be completely rebuilt.'));
     $this->clickLink(t('completely rebuilt'));
     $this->assertResponse(200);
@@ -89,7 +91,7 @@ class XmlSitemapFunctionalTest extends XmlSitemapTestBase {
     $this->assertNoXMLSitemapProblems();
     //Test the regenerate flag (and cron hasn't run in a while).
     $this->state->set('xmlsitemap_regenerate_needed', TRUE);
-    $this->state->set('xmlsitemap_generated_last', REQUEST_TIME - $this->config->get('xmlsitemap.settings')->get('cron_threshold_warning') - 100);
+    $this->state->set('xmlsitemap_generated_last', REQUEST_TIME - $this->config->get('cron_threshold_warning') - 100);
     $this->assertXMLSitemapProblems(t('The XML cached files are out of date and need to be regenerated. You can run cron manually to regenerate the sitemap files.'));
     $this->clickLink(t('run cron manually'));
     $this->assertResponse(200);
