@@ -12,7 +12,7 @@ namespace Drupal\xmlsitemap\Tests;
  */
 class XmlSitemapFunctionalTest extends XmlSitemapTestBase {
 
-  public static $modules = array('xmlsitemap', 'path', 'node', 'system', 'user', 'help', 'menu_test');
+  public static $modules = array('xmlsitemap', 'path', 'node', 'system', 'user', 'help', 'block');
   protected $state;
   protected $config;
 
@@ -30,6 +30,7 @@ class XmlSitemapFunctionalTest extends XmlSitemapTestBase {
     $this->admin_user = $this->drupalCreateUser(array('access content', 'administer site configuration', 'administer xmlsitemap', 'access administration pages', 'access site reports', 'administer permissions', 'view the administration theme'));
     $this->state = \Drupal::state();
     $this->config = \Drupal::configFactory()->get('xmlsitemap.settings');
+    $this->drupalPlaceBlock('system_help_block', array('region' => 'help'));
   }
 
   /**
@@ -82,8 +83,6 @@ class XmlSitemapFunctionalTest extends XmlSitemapTestBase {
     $this->drupalLogin($this->admin_user);
     $this->state->set('xmlsitemap_generated_last', REQUEST_TIME);
     $this->state->set('xmlsitemap_rebuild_needed', TRUE);
-    $this->drupalGet('admin/config/search/xmlsitemap/rebuild');
-    $this->assertText("This action rebuilds your site's XML sitemap and regenerates the cached files, and may be a lengthy process. If you just installed XML sitemap, this can be helpful to import all your site's content into the sitemap. Otherwise, this should only be used in emergencies.");
     $this->assertXMLSitemapProblems(t('The XML sitemap data is out of sync and needs to be completely rebuilt.'));
     $this->clickLink(t('completely rebuilt'));
     $this->assertResponse(200);

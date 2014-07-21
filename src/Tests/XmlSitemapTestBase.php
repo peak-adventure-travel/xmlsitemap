@@ -222,6 +222,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
     $this->drupalGet('admin/config/search/xmlsitemap');
     $this->assertText(t('One or more problems were detected with your XML sitemap configuration'));
     if ($problem_text) {
+      $this->clickLink(t('status report'));
       $this->assertText($problem_text);
     }
   }
