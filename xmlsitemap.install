@@ -144,7 +144,7 @@ function xmlsitemap_requirements($phase) {
     }
     $anonymous_accout = new AnonymousUserSession();
 
-    if (!$anonymous_accout->hasPermission('access user profiles')) {
+    if (!$anonymous_accout->hasPermission('access user profiles') && \Drupal::config('xmlsitemap.settings')->get('xmlsitemap_entity_user')) {
       $requirements['xmlsitemap_user_anonymous_permission'] = array(
         'title' => $t('XML sitemap user'),
         'value' => $t('Anonymous access to user profiles'),
