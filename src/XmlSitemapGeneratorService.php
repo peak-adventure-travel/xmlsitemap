@@ -9,6 +9,9 @@ namespace Drupal\xmlsitemap;
 
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Component\Utility\Bytes;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\State\StateInterface;
 
 /**
  * XmlSitemap generator service.
@@ -18,6 +21,43 @@ class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
   public static $aliases;
   public static $last_language;
   public static $memory_start;
+
+  /**
+   * The xmlsitemap.settings config object.
+   *
+   * @var \Drupal\Core\Config\Config
+   */
+  protected $config;
+
+  /**
+   * The entity manager object.
+   *
+   * @var \Drupal\Core\Entity\EntityManager
+   */
+  protected $entityManager;
+
+  /**
+   * The state object.
+   *
+   * @var \Drupal\Core\State\State
+   */
+  protected $state;
+
+  /**
+   * Constructs a XmlSitemapGeneratorService object.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory object.
+   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   *   The entity manager handler.
+   * @param \Drupal\Core\State\StateInterface $state
+   *   The state handler.
+   */
+  public function __construct(ConfigFactoryInterface $config_factory, EntityManagerInterface $entity_manager, \Drupal\Core\State\StateInterface $state) {
+    $this->config = $config_factory->get('xmlsitemap.settings');
+    $this->entityManager = $entity_manager;
+    $this->state = $state;
+  }
 
   /**
    * {@inheritdoc}
@@ -54,7 +94,7 @@ class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
     // Attempt to increase the memory limit.
     _xmlsitemap_set_memory_limit();
 
-    if (\Drupal::state()->get('xmlsitemap_developer_mode')) {
+    if ($this->state->get('xmlsitemap_developer_mode')) {
       watchdog('xmlsitemap', 'Starting XML sitemap generation. Memory usage: @memory-peak.', array(
         '@memory-peak' => format_size(memory_get_peak_usage(TRUE)),
           ), WATCHDOG_DEBUG
@@ -86,7 +126,7 @@ class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
       $optimal_limit += xmlsitemap_get_chunk_size() * 500;
 
       // Add memory for storing the url aliases.
-      if (\Drupal::config()->get('prefetch_aliases')) {
+      if ($this->config->get('prefetch_aliases')) {
         $aliases = db_query("SELECT COUNT(pid) FROM {url_alias}")->fetchField();
         $optimal_limit += $aliases * 250;
       }
@@ -132,14 +172,14 @@ class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
    * {@inheritdoc}
    */
   public function generateChunk(XmlSitemapInterface $sitemap, XmlSitemapWriter $writer, $chunk) {
-    $lastmod_format = \Drupal::config('xmlsitemap.settings')->get('lastmod_format');
+    $lastmod_format = $this->config->get('lastmod_format');
 
     $url_options = $sitemap->uri['options'];
     $url_options += array(
       'absolute' => TRUE,
-      'xmlsitemap_base_url' => \Drupal::state()->get('xmlsitemap_base_url'),
+      'xmlsitemap_base_url' => $this->state->get('xmlsitemap_base_url'),
       'language' => language_default(),
-      'alias' => \Drupal::config('xmlsitemap.settings')->get('prefetch_aliases'),
+      'alias' => $this->config->get('prefetch_aliases'),
     );
 
     $last_url = '';
@@ -233,7 +273,7 @@ class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
    */
   public function regenerateBatch(array $smids = array()) {
     if (empty($smids)) {
-      $sitemaps = \Drupal::entityManager()->getStorage('xmlsitemap')->loadMultiple();
+      $sitemaps = $this->entityManager->getStorage('xmlsitemap')->loadMultiple();
       foreach ($sitemaps as $sitemap) {
         $smids[] = $sitemap->id();
       }
@@ -324,8 +364,8 @@ class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
    * {@inheritdoc}
    */
   public function regenerateBatchFinished($success, $results, $operations, $elapsed) {
-    if ($success && !\Drupal::state()->get('xmlsitemap_regenerate_needed', FALSE)) {
-      \Drupal::state()->set('xmlsitemap_generated_last', REQUEST_TIME);
+    if ($success && !$this->state->get('xmlsitemap_regenerate_needed', FALSE)) {
+      $this->state->set('xmlsitemap_generated_last', REQUEST_TIME);
       //drupal_set_message(t('The sitemaps were regenerated.'));
       // Show a watchdog message that the sitemap was regenerated.
       watchdog('xmlsitemap', 'Finished XML sitemap generation in @elapsed. Memory usage: @memory-peak.', array(
