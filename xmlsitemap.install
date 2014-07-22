@@ -260,7 +260,7 @@ function xmlsitemap_schema() {
         'default' => 0,
       ),
     ),
-    'primary key' => array('id', 'type', 'language'),
+    'primary key' => array('id', 'type'),
     'indexes' => array(
       'loc' => array('loc'),
       'access_status_loc' => array('access', 'status', 'loc'),
