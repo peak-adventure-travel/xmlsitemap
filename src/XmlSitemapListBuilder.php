@@ -64,6 +64,14 @@ class XmlSitemapListBuilder extends ConfigEntityListBuilder {
   /**
    * {@inheritdoc}
    */
+  public function render() {
+    xmlsitemap_check_status();
+    return parent::render();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function buildHeader() {
     $header['label'] = $this->t('XmlSitemap');
     if ($this->moduleHandler->moduleExists('language')) {
