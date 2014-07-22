@@ -2190,6 +2190,9 @@ function xmlsitemap_add_form_entity_summary(&$form, $entity, array $entity_info)
   $totals = array('total' => 0, 'indexed' => 0, 'visible' => 0);
   foreach ($entity_info['bundles'] as $bundle => $bundle_info) {
     // Fetch current per-bundle link total and indexed counts.
+    if (!\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_entity_' . $entity . '_bundle_' . $bundle)) {
+      continue;
+    }
     $status = xmlsitemap_get_link_type_indexed_status($entity, $bundle);
     $totals['total'] += $status['total'];
     $totals['indexed'] += $status['indexed'];
