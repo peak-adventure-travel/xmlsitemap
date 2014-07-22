@@ -530,7 +530,7 @@ function xmlsitemap_link_save(array $link) {
     $link['changecount'] = 0;
   }
 
-  $existing = db_query_range("SELECT loc, access, status, lastmod, priority, changefreq, changecount, language FROM {xmlsitemap} WHERE type = :type AND id = :id", 0, 1, array(':type' => $link['type'], ':id' => $link['id']))->fetchAssoc();
+  $existing = db_query_range("SELECT loc, access, status, lastmod, priority, changefreq, changecount, language FROM {xmlsitemap} WHERE type = :type AND id = :id AND language = :language", 0, 1, array(':type' => $link['type'], ':id' => $link['id'], ':language' => $link['language']))->fetchAssoc();
 
   // Check if this is a changed link and set the regenerate flag if necessary.
   if (!\Drupal::state()->get('xmlsitemap_regenerate_needed')) {
@@ -539,7 +539,7 @@ function xmlsitemap_link_save(array $link) {
 
   // Save the link and allow other modules to respond to the link being saved.
   if ($existing) {
-    drupal_write_record('xmlsitemap', $link, array('type', 'id'));
+    drupal_write_record('xmlsitemap', $link, array('type', 'id', 'language'));
     \Drupal::moduleHandler()->invokeAll('xmlsitemap_link_update', array($link));
   }
   else {
