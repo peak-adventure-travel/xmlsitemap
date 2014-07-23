@@ -45,7 +45,7 @@ class XmlSitemapCustomListController extends ControllerBase {
         $container->get('config.factory'), $container->get('language_manager')
     );
   }
-  
+
   public function render() {
     $build['xmlsitemap_add_custom'] = array(
       '#type' => 'link',
@@ -80,19 +80,19 @@ class XmlSitemapCustomListController extends ControllerBase {
         $row['language'] = t($language->name);
       }
       $operations['edit'] = array(
-         'title' => t('Edit'),
-         'route_name' => 'xmlsitemap_custom.edit',
-         'route_parameters' => array(
-           'link' => $link->id
-         )
-       );
+        'title' => t('Edit'),
+        'route_name' => 'xmlsitemap_custom.edit',
+        'route_parameters' => array(
+          'link' => $link->id
+        )
+      );
       $operations['delete'] = array(
-         'title' => t('Delete'),
-         'route_name' => 'xmlsitemap_custom.delete',
-         'route_parameters' => array(
-           'link' => $link->id
-         )
-       );
+        'title' => t('Delete'),
+        'route_name' => 'xmlsitemap_custom.delete',
+        'route_parameters' => array(
+          'link' => $link->id
+        )
+      );
       $row['operations'] = array(
         'data' => array(
           '#type' => 'operations',
@@ -110,7 +110,7 @@ class XmlSitemapCustomListController extends ControllerBase {
       '#theme' => 'table',
       '#header' => $header,
       '#rows' => $rows,
-      '#empty' => t('No custom links available.') . ' ' . l(t('Add custom link'), 'admin/config/search/xmlsitemap/custom/add', array('query' => $destination)),
+      '#empty' => $this->t('No custom links available. <a href="@custom_link">Add custom link</a>', array('@custom_link' => url('admin/config/search/xmlsitemap/custom/add', array('query' => $destination))))
     );
     $build['xmlsitemap_custom_pager'] = array('#theme' => 'pager');
 
