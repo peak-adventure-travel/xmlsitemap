@@ -934,16 +934,22 @@ function xmlsitemap_get_link_type_indexed_status($entity_type, $bundle = '') {
   $status['indexed'] = db_query("SELECT COUNT(id) FROM {xmlsitemap} WHERE type = :entity AND subtype = :bundle", array(':entity' => $entity_type, ':bundle' => $bundle))->fetchField();
   $status['visible'] = db_query("SELECT COUNT(id) FROM {xmlsitemap} WHERE type = :entity AND subtype = :bundle AND status = 1 AND access = 1", array(':entity' => $entity_type, ':bundle' => $bundle))->fetchField();
 
-  $entity_query_object = \Drupal::entityQuery($entity_type);
-  $entity_query_object->addTag('xmlsitemap_link_bundle_access');
-  $entity_query_object->addTag('xmlsitemap_link_indexed_status');
-  $entity_query_object->addMetaData('entity', $entity_type);
-  $entity_query_object->addMetaData('type', $bundle);
-  $entity_query_object->addMetaData('entity_info', $info);
-  //$entity_query_object->condition('bundle', $bundle);
-  //$entity_query_object->condition('id', 0, '>');
-  $entity_query_object->count();
-  $status['total'] = $entity_query_object->execute();
+  try {
+    $entity_query_object = \Drupal::entityQuery($entity_type);
+    $entity_query_object->addTag('xmlsitemap_link_bundle_access');
+    $entity_query_object->addTag('xmlsitemap_link_indexed_status');
+    $entity_query_object->addMetaData('entity', $entity_type);
+    $entity_query_object->addMetaData('type', $bundle);
+    $entity_query_object->addMetaData('entity_info', $info);
+    //$entity_query_object->condition('bundle', $bundle);
+    //$entity_query_object->condition('id', 0, '>');
+    $entity_query_object->count();
+    $status['total'] = $entity_query_object->execute();
+    return $status;
+  }
+  catch (Exception $e) {
+    $status['total'] = 0;
+  }
   return $status;
 }
 
