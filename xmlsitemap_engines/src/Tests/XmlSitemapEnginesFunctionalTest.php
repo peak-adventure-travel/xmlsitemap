@@ -53,9 +53,9 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
   public function submitEngines() {
     $this->state->setMultiple(array(
       'xmlsitemap_engines_submit_last' => REQUEST_TIME - 10000,
-      'xmlsitemap_engines_minimum_lifetime' => 0
+      'xmlsitemap_generated_last' => REQUEST_TIME - 100
     ));
-    $this->state->set('xmlsitemap_generated_last', REQUEST_TIME - 100);
+    \Drupal::config('xmlsitemap_engines.settings')->set('xmlsitemap_engines_minimum_lifetime', 0)->save();
     xmlsitemap_engines_cron();
     $this->assertTrue($this->state->get('xmlsitemap_engines_submit_last') > (REQUEST_TIME - 100), 'Submitted the sitemaps to search engines. {}');
   }

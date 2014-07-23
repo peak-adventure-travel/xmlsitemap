@@ -57,6 +57,7 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
         $container->get('config.factory'), $container->get('form_builder'), $container->get('state')
     );
   }
+
   /**
    * {@inheritdoc}
    */
@@ -79,7 +80,7 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
     $form['xmlsitemap_engines_engines'] = array(
       '#type' => 'checkboxes',
       '#title' => t('Submit the sitemap to the following engines'),
-      '#default_value' => $this->state->get('xmlsitemap_engines_engines'),
+      '#default_value' => $this->config('xmlsitemap_engines.settings')->get('xmlsitemap_engines_engines'),
       '#options' => $engine_options,
     );
     $lifetimes = array(3600, 10800, 21600, 32400, 43200, 86400, 172800, 259200, 604800, 604800 * 2, 604800 * 4);
@@ -87,7 +88,7 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
       '#type' => 'select',
       '#title' => t('Do not submit more often than every'),
       '#options' => array_map('format_interval', array_combine($lifetimes, $lifetimes)),
-      '#default_value' => $this->state->get('xmlsitemap_engines_minimum_lifetime'),
+      '#default_value' => $this->config('xmlsitemap_engines.settings')->get('xmlsitemap_engines_minimum_lifetime'),
     );
     $form['xmlsitemap_engines_submit_updated'] = array(
       '#type' => 'checkbox',
@@ -98,7 +99,7 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
       '#type' => 'textarea',
       '#title' => t('Custom submission URLs'),
       '#description' => t('Enter one URL per line. The token [sitemap] will be replaced with the URL to your sitemap. For example: %example-before would become %example-after.', array('%example-before' => 'http://example.com/ping?[sitemap]', '%example-after' => xmlsitemap_engines_prepare_url('http://example.com/ping?[sitemap]', url('sitemap.xml', array('absolute' => TRUE))))),
-      '#default_value' => $this->state->get('xmlsitemap_engines_custom_urls'),
+      '#default_value' => $this->config('xmlsitemap_engines.settings')->get('xmlsitemap_engines_custom_urls'),
       '#rows' => 2,
       '#wysiwyg' => FALSE
     );
@@ -127,6 +128,8 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, array &$form_state) {
+    $state_variables = xmlsitemap_engines_state_variables();
+    $config_variables = xmlsitemap_engines_config_variables();
     $keys = array(
       'xmlsitemap_engines_engines',
       'xmlsitemap_engines_minimum_lifetime',
@@ -135,8 +138,14 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
     );
     $values = $form_state['values'];
     foreach ($keys as $key) {
-      $this->state->set($key, $values[$key]);
+      if (isset($state_variables[$key])) {
+        $this->state->set($key, $values[$key]);
+      }
+      else {
+        $this->config('xmlsitemap_engines.settings')->set($key, $values[$key]);
+      }
     }
+    $this->config('xmlsitemap_engines.settings')->save();
     parent::submitForm($form, $form_state);
   }
 

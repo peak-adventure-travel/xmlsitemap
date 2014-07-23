@@ -9,20 +9,24 @@
  * Implements hook_install().
  */
 function xmlsitemap_engines_install() {
-  $variables = xmlsitemap_engines_variables();
-  \Drupal::state()->setMultiple($variables);
+  $state_variables = xmlsitemap_engines_state_variables();
+  \Drupal::state()->setMultiple($state_variables);
+  $config_variables = xmlsitemap_engines_config_variables();
+  foreach ($config_variables as $key => $value) {
+    \Drupal::config('xmlsitemap_engines.settings')->set($key, $value);
+  }
+  \Drupal::config('xmlsitemap_engines.settings')->save();
 }
 
 /**
  * Implements hook_uninstall().
  */
 function xmlsitemap_engines_uninstall() {
-  \Drupal::state()->deleteMultiple(array(
-    'xmlsitemap_engines_engines',
-    'xmlsitemap_engines_custom_urls',
-    'xmlsitemap_engines_minimum_lifetime',
-    'xmlsitemap_engines_submit_last',
-    'xmlsitemap_engines_submit_updated'
-  ));
+  $state_variables = xmlsitemap_engines_state_variables();
+  \Drupal::state()->deleteMultiple($state_variables);
+  $config_variables = xmlsitemap_engines_config_variables();
+  foreach ($config_variables as $key => $value) {
+    \Drupal::config('xmlsitemap_engines.settings')->clear($key);
+  }
+  \Drupal::config('xmlsitemap_engines.settings')->delete();
 }
-
