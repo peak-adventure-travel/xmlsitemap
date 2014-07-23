@@ -4,12 +4,12 @@ xmlsitemap_engines.settings:
     type: mapping
     label: 'XMLSitemap engines settings'
     mapping:
-        xmlsitemap_engines_engines:
+        engines:
             type: mapping
             label: 'Engines that will receive the sitemap'
-        xmlsitemap_engines_custom_urls:
+        custom_urls:
             type: mapping
             label: 'Url engines'
-        xmlsitemap_engines_minimum_lifetime:
+        minimum_lifetime:
             type: integer
             label: 'Minumum lifetime for sitemaps'

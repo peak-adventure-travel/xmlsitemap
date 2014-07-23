@@ -55,7 +55,7 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
       'xmlsitemap_engines_submit_last' => REQUEST_TIME - 10000,
       'xmlsitemap_generated_last' => REQUEST_TIME - 100
     ));
-    \Drupal::config('xmlsitemap_engines.settings')->set('xmlsitemap_engines_minimum_lifetime', 0)->save();
+    \Drupal::config('xmlsitemap_engines.settings')->set('minimum_lifetime', 0)->save();
     xmlsitemap_engines_cron();
     $this->assertTrue($this->state->get('xmlsitemap_engines_submit_last') > (REQUEST_TIME - 100), 'Submitted the sitemaps to search engines. {}');
   }
@@ -111,7 +111,7 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
    * Check if ping works
    */
   public function testPing() {
-    $edit = array('xmlsitemap_engines_engines[simpletest]' => TRUE);
+    $edit = array('engines[simpletest]' => TRUE);
     $this->drupalPostForm('admin/config/search/xmlsitemap/engines', $edit, t('Save configuration'));
     $this->assertText(t('The configuration options have been saved.'));
 
@@ -124,17 +124,17 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
    * Check if custom urls are functional
    */
   public function testCustomURL() {
-    $edit = array('xmlsitemap_engines_custom_urls' => 'an-invalid-url');
+    $edit = array('custom_urls' => 'an-invalid-url');
     $this->drupalPostForm('admin/config/search/xmlsitemap/engines', $edit, t('Save configuration'));
     $this->assertText('Invalid URL an-invalid-url.');
     $this->assertNoText('The configuration options have been saved.');
 
     $url = url('ping', array('absolute' => TRUE));
-    $edit = array('xmlsitemap_engines_custom_urls' => $url);
+    $edit = array('custom_urls' => $url);
     $this->drupalPostForm('admin/config/search/xmlsitemap/engines', $edit, t('Save configuration'));
     $this->assertText(t('The configuration options have been saved.'));
 
-    $edit = array('xmlsitemap_engines_custom_urls' => $this->submit_url);
+    $edit = array('custom_urls' => $this->submit_url);
     $this->drupalPostForm('admin/config/search/xmlsitemap/engines', $edit, t('Save configuration'));
     $this->assertText(t('The configuration options have been saved.'));
 
