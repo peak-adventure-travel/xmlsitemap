@@ -282,44 +282,6 @@ class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
   /**
    * {@inheritdoc}
    */
-  public function regenerateBatch(array $smids = array()) {
-    if (empty($smids)) {
-      $sitemaps = $this->entityManager->getStorage('xmlsitemap')->loadMultiple();
-      foreach ($sitemaps as $sitemap) {
-        $smids[] = $sitemap->id();
-      }
-    }
-
-    $t = 't';
-    $batch = array(
-      'operations' => array(),
-      //'error_message' => $t('An error has occurred.'),
-      'finished' => 'xmlsitemap_regenerate_batch_finished',
-      'title' => t('Regenerating Sitemap'),
-      'file' => drupal_get_path('module', 'xmlsitemap') . '/xmlsitemap.generate.inc',
-    );
-
-    // Set the regenerate flag in case something fails during file generation.
-    $batch['operations'][] = array('xmlsitemap_batch_variable_set', array(array('xmlsitemap_regenerate_needed' => TRUE)));
-
-    // @todo Get rid of this batch operation.
-    $batch['operations'][] = array('_xmlsitemap_regenerate_before', array());
-
-    // Generate all the sitemap pages for each context.
-    foreach ($smids as $smid) {
-      $batch['operations'][] = array('xmlsitemap_regenerate_batch_generate', array($smid));
-      $batch['operations'][] = array('xmlsitemap_regenerate_batch_generate_index', array($smid));
-    }
-
-    // Clear the regeneration flag.
-    $batch['operations'][] = array('xmlsitemap_batch_variable_set', array(array('xmlsitemap_regenerate_needed' => FALSE)));
-
-    return $batch;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function regenerateBatchGenerate($smid, array &$context) {
     if (!isset($context['sandbox']['sitemap'])) {
       $sitemap = xmlsitemap_sitemap_load($smid);
@@ -388,39 +350,6 @@ class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
     else {
       drupal_set_message(t('The sitemaps were not successfully regenerated.'), 'error');
     }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function rebuildBatch(array $entities, $save_custom = FALSE) {
-    $batch = array(
-      'operations' => array(),
-      'finished' => 'xmlsitemap_rebuild_batch_finished',
-      'title' => t('Rebuilding Sitemap'),
-      'file' => drupal_get_path('module', 'xmlsitemap') . '/xmlsitemap.generate.inc',
-    );
-
-    // Set the rebuild flag in case something fails during the rebuild.
-    $batch['operations'][] = array('xmlsitemap_batch_variable_set', array(array('xmlsitemap_rebuild_needed' => TRUE)));
-
-    // Purge any links first.
-    $batch['operations'][] = array('xmlsitemap_rebuild_batch_clear', array($entities, (bool) $save_custom));
-
-    // Fetch all the sitemap links and save them to the {xmlsitemap} table.
-    foreach ($entities as $entity) {
-      $info = xmlsitemap_get_link_info($entity);
-      $batch['operations'][] = array($info['xmlsitemap']['rebuild callback'], array($entity));
-    }
-
-    // Clear the rebuild flag.
-    $batch['operations'][] = array('xmlsitemap_batch_variable_set', array(array('xmlsitemap_rebuild_needed' => FALSE)));
-
-    // Add the regeneration batch.
-    $regenerate_batch = xmlsitemap_regenerate_batch();
-    $batch['operations'] = array_merge($batch['operations'], $regenerate_batch['operations']);
-
-    return $batch;
   }
 
   /**

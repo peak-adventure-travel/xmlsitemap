@@ -89,15 +89,6 @@ interface XmlSitemapGeneratorInterface {
   public function generateIndex(XmlSitemapInterface $sitemap);
 
   /**
-   * Batch information callback for regenerating the sitemap files.
-   *
-   * @param $smids
-   *   An optional array of XML sitemap IDs. If not provided, it will load all
-   *   existing XML sitemaps.
-   */
-  public function regenerateBatch(array $smids = array());
-
-  /**
    * Batch callback; generate all pages of a sitemap.
    */
   public function regenerateBatchGenerate($smid, array &$context);
@@ -111,11 +102,6 @@ interface XmlSitemapGeneratorInterface {
    * Batch callback; sitemap regeneration finished.
    */
   public function regenerateBatchFinished($success, $results, $operations, $elapsed);
-
-  /**
-   * Batch information callback for rebuilding the sitemap data.
-   */
-  public function rebuildBatch(array $entities, $save_custom = FALSE);
 
   /**
    * Batch callback; clear sitemap links for entites.
