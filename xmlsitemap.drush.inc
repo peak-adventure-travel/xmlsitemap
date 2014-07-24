@@ -37,8 +37,6 @@ function xmlsitemap_drush_command() {
  * Regenerate the sitemap files from existing data.
  */
 function drush_xmlsitemap_regenerate() {
-  module_load_include('generate.inc', 'xmlsitemap');
-
   // Run the batch process.
   xmlsitemap_run_unprogressive_batch('xmlsitemap_regenerate_batch');
 
@@ -53,8 +51,6 @@ function drush_xmlsitemap_regenerate() {
  * Dump and rebuild all the sitemap data, then regenerate the files.
  */
 function drush_xmlsitemap_rebuild() {
-  module_load_include('generate.inc', 'xmlsitemap');
-
   // Build a list of rebuildable link types.
   $rebuild_types = xmlsitemap_get_rebuildable_link_types();
 

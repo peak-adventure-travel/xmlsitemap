@@ -72,7 +72,6 @@ class XmlSitemapRebuildForm extends ConfigFormBase {
     }
 
     // Build a list of rebuildable link types.
-    module_load_include('generate.inc', 'xmlsitemap');
     $rebuild_types = xmlsitemap_get_rebuildable_link_types();
     $rebuild_types = array_combine($rebuild_types, $rebuild_types);
     $form['entities'] = array(
@@ -97,7 +96,6 @@ class XmlSitemapRebuildForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, array &$form_state) {
     // Save any changes to the frontpage link.
-    module_load_include('generate.inc', 'xmlsitemap');
     $batch = xmlsitemap_rebuild_batch($form_state['values']['entities'], $form_state['values']['save_custom']);
     batch_set($batch);
     $form_state['redirect'] = 'admin/config/search/xmlsitemap';
