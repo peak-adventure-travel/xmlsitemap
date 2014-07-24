@@ -12,7 +12,7 @@ namespace Drupal\xmlsitemap\Tests;
  */
 class XmlSitemapFunctionalTest extends XmlSitemapTestBase {
 
-  public static $modules = array('xmlsitemap', 'path', 'node', 'system', 'user', 'help', 'block');
+  public static $modules = array('xmlsitemap', 'path', 'node', 'system', 'user', 'help');
   protected $state;
   protected $config;
 
@@ -30,7 +30,6 @@ class XmlSitemapFunctionalTest extends XmlSitemapTestBase {
     $this->admin_user = $this->drupalCreateUser(array('access content', 'administer site configuration', 'administer xmlsitemap', 'access administration pages', 'access site reports', 'administer permissions', 'view the administration theme'));
     $this->state = \Drupal::state();
     $this->config = \Drupal::configFactory()->get('xmlsitemap.settings');
-    $this->drupalPlaceBlock('system_help_block', array('region' => 'help'));
   }
 
   /**
