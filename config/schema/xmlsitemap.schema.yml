@@ -29,7 +29,7 @@ xmlsitemap.settings:
             type: integer
             label: 'Change frequency for frontpage'
         lastmod_format:
-            type: integer
+            type: string
             label: 'Last modified xmlsitemap format'
         gz:
             type: boolean
