@@ -76,7 +76,7 @@ class XmlSitemapWriter extends \XMLWriter {
   }
 
   public function generateXML() {
-    return xmlsitemap_generate_chunk($this->sitemap, $this, $this->sitemap_page);
+    return \Drupal::service('xmlsitemap_generator')->generateChunk($this->sitemap, $this, $this->sitemap_page);
   }
 
   public function startElement($name, $root = FALSE) {

@@ -66,7 +66,7 @@ interface XmlSitemapGeneratorInterface {
    * @param $page
    *   An integer of the specific page of the sitemap to generate.
    */
-  public function generatePage(stdClass $sitemap, $page);
+  public function generatePage(XmlSitemapInterface $sitemap, $page);
 
   /**
    * Generate one chunk of the sitemap.
@@ -78,7 +78,7 @@ interface XmlSitemapGeneratorInterface {
    * @param $page
    *   An integer of the specific page of the sitemap to generate.
    */
-  public function generateChunk(stdClass $sitemap, XmlSitemapWriter $writer, $chunk);
+  public function generateChunk(XmlSitemapInterface $sitemap, XmlSitemapWriter $writer, $chunk);
 
   /**
    * Generate the index sitemap.
@@ -86,7 +86,7 @@ interface XmlSitemapGeneratorInterface {
    * @param $sitemap
    *   An unserialized data array for an XML sitemap.
    */
-  public function generateIndex(stdClass $sitemap);
+  public function generateIndex(XmlSitemapInterface $sitemap);
 
   /**
    * Batch information callback for regenerating the sitemap files.
@@ -131,9 +131,9 @@ interface XmlSitemapGeneratorInterface {
    * Batch callback; sitemap rebuild finished.
    */
   public function rebuildBatchFinished($success, $results, $operations, $elapsed);
-  
+
   /**
-   * Get all rebuldable link types
+   * Set variables during the batch process
    */
-  function getRebuildableLinkTypes();
+  public function batchVariableSet(array $variables);
 }
