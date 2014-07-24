@@ -38,6 +38,7 @@ function xmlsitemap_drush_command() {
  */
 function drush_xmlsitemap_regenerate() {
   // Run the batch process.
+  Timer::start('xmlsitemap_regenerate');
   xmlsitemap_run_unprogressive_batch('xmlsitemap_regenerate_batch');
 
   $vars = array(
@@ -45,6 +46,7 @@ function drush_xmlsitemap_regenerate() {
     '@memory-peak' => format_size(memory_get_peak_usage(TRUE)),
   );
   drush_print(dt('XML sitemap files regenerated in @timer ms. Peak memory usage: @memory-peak.', $vars));
+  Timer::stop('xmlsitemap_regenerate');
 }
 
 /**
@@ -52,6 +54,7 @@ function drush_xmlsitemap_regenerate() {
  */
 function drush_xmlsitemap_rebuild() {
   // Build a list of rebuildable link types.
+  Timer::start('xmlsitemap_rebuild');
   $rebuild_types = xmlsitemap_get_rebuildable_link_types();
 
   // Run the batch process.
@@ -62,6 +65,7 @@ function drush_xmlsitemap_rebuild() {
     '@memory-peak' => format_size(memory_get_peak_usage(TRUE)),
   );
   drush_print(dt('XML sitemap files rebuilt in @timer ms. Peak memory usage: @memory-peak.', $vars));
+  Timer::stop('xmlsitemap_rebuild');
 }
 
 /**
