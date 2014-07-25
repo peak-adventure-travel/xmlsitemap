@@ -25,25 +25,17 @@ class XmlSitemapRobotsTxtIntegrationTest extends XmlSitemapTestBase {
 
   public function setUp() {
     parent::setUp();
-
-    if (file_exists('robots.txt')) {
-      file_unmanaged_move('robots.txt','robots_temp.txt');
-    }
   }
 
   public function testRobotsTxt() {
     // Request the un-clean robots.txt path so this will work in case there is
     // still the robots.txt file in the root directory.
+    if (file_exists(DRUPAL_ROOT . '/robots.txt')) {
+      $this->error(t('Unable to proceed with configured robots.txt tests: A local file already exists at @s, so the menu override in this module will never run.', array('@s' => DRUPAL_ROOT . '/robots.txt')));
+      return;
+    }
     $this->drupalGet('/robots.txt');
     $this->assertRaw('Sitemap: ' . url('sitemap.xml', array('absolute' => TRUE)));
-  }
-
-  public function tearDown() {
-    parent::tearDown();
-
-    if (file_exists('robots_temp.txt')) {
-      file_unmanaged_move('robots_temp.txt', 'robots.txt');
-    }
   }
 
 }
