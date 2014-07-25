@@ -32,7 +32,7 @@ class XmlSitemapDeleteForm extends EntityConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getCancelRoute() {
+  public function getCancelUrl() {
     return new Url('xmlsitemap.admin_search_list');
   }
 

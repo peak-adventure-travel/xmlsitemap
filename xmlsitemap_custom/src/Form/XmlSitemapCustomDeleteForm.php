@@ -52,7 +52,7 @@ class XmlSitemapCustomDeleteForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getCancelRoute() {
+  public function getCancelUrl() {
     return new Url('xmlsitemap_custom.list');
   }
 
