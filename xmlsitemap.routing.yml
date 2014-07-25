@@ -76,7 +76,7 @@ xmlsitemap.sitemap_xml:
     _controller: '\Drupal\xmlsitemap\Controller\XmlSitemapController::renderSitemapXml'
     _title: 'Sitemap XML'
   requirements:
-    _permission: 'administer xmlsitemap'
+    _access: 'TRUE'
     
 xmlsitemap.sitemap_xsl:
   path: '/sitemap.xsl'
@@ -84,9 +84,4 @@ xmlsitemap.sitemap_xsl:
     _controller: '\Drupal\xmlsitemap\Controller\XmlSitemapController::renderSitemapXsl'
     _title: 'Sitemap XSL'
   requirements:
-    _permission: 'administer xmlsitemap'
-    
-    
-    
-
-    
+    _access: 'TRUE'
