@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Render\Element;
 
 class XmlSitemapForm extends EntityForm {
 
@@ -43,7 +44,7 @@ class XmlSitemapForm extends EntityForm {
     $form['context'] = array(
       '#tree' => TRUE,
     );
-    $visible_children = element_get_visible_children($form['context']);
+    $visible_children = Element::getVisibleChildren($form['context']);
     if (empty($visible_children)) {
       $form['context']['empty'] = array(
         '#type' => 'markup',
