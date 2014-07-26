@@ -11,9 +11,11 @@ use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\State\StateInterface;
 
+/**
+ * Returns responses for xmlsitemap.sitemap_xml and xmlsitemap.sitemap_xsl routes.
+ */
 class XmlSitemapController extends ControllerBase {
 
   /**
@@ -26,12 +28,10 @@ class XmlSitemapController extends ControllerBase {
   /**
    * Constructs a new XmlSitemapController object.
    *
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The factory for configuration objects.
    * @param \Drupal\Core\State\StateInterface $state
    *   The state service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, StateInterface $state) {
+  public function __construct(StateInterface $state) {
     $this->state = $state;
   }
 
@@ -40,10 +40,18 @@ class XmlSitemapController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-        $container->get('config.factory'), $container->get('state')
+        $container->get('state')
     );
   }
 
+  /**
+   * Provides the sitemap in XML format.
+   *
+   * @throws NotFoundHttpException
+   *
+   * @return \Symfony\Component\HttpFoundation\Response
+   *  The sitemap in XML format or plain text if xmlsitemap_developer_mode flag is set.
+   */
   public function renderSitemapXml() {
     $sitemap = xmlsitemap_sitemap_load_by_context();
     if (!$sitemap) {
@@ -66,6 +74,12 @@ class XmlSitemapController extends ControllerBase {
     xmlsitemap_output_file($file);
   }
 
+  /**
+   * Provides the sitemap in XSL format.
+   *
+   * @return \Symfony\Component\HttpFoundation\Response
+   *  Response object in XSL format.
+   */
   public function renderSitemapXsl() {
     // Read the XSL content from the file.
     $module_path = drupal_get_path('module', 'xmlsitemap');
