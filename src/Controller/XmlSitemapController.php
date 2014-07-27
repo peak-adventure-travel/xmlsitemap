@@ -71,7 +71,8 @@ class XmlSitemapController extends ControllerBase {
       $output[] = "Cache file exists: " . (file_exists($file) ? 'Yes' : 'No');
       return new Response(implode('<br />', $output));
     }
-    xmlsitemap_output_file($file);
+    $response = new Response();
+    return xmlsitemap_output_file($response, $file);
   }
 
   /**
@@ -105,9 +106,10 @@ class XmlSitemapController extends ControllerBase {
     $xsl_content = strtr($xsl_content, $replacements);
 
     // Output the XSL content.
-    drupal_add_http_header('Content-type', 'application/xml; charset=utf-8');
-    drupal_add_http_header('X-Robots-Tag', 'noindex, follow');
-    return new Response($xsl_content);
+    $response = new Response($xsl_content);
+    $response->headers->set('Content-type', 'application/xml; charset=utf-8');
+    $response->headers->set('X-Robots-Tag', 'noindex, follow');
+    return $response;
   }
 
 }

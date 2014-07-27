@@ -27,6 +27,7 @@ use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Drupal\Component\Utility\Bytes;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * The maximum number of links in one sitemap chunk file.
@@ -132,7 +133,7 @@ function xmlsitemap_help($route_name, RouteMatchInterface $route_match) {
 }
 
 /**
- * Implements hook_perm().
+ * Implements hook_permission().
  */
 function xmlsitemap_permission() {
   $permissions['administer xmlsitemap'] = array(
@@ -2415,7 +2416,7 @@ function xmlsitemap_get_current_chunk(XmlSitemapInterface $sitemap) {
 /**
  * Output the contents of a file to the browser and check caching headers.
  */
-function xmlsitemap_output_file($file, array $headers = array()) {
+function xmlsitemap_output_file(Response $response, $file, array $headers = array()) {
   if (!file_exists($file) || !is_readable($file)) {
     throw new NotFoundHttpException();
   }
@@ -2427,24 +2428,23 @@ function xmlsitemap_output_file($file, array $headers = array()) {
   $if_modified_since = isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ? stripslashes($_SERVER['HTTP_IF_MODIFIED_SINCE']) : FALSE;
   $if_none_match = isset($_SERVER['HTTP_IF_NONE_MATCH']) ? stripslashes($_SERVER['HTTP_IF_NONE_MATCH']) : FALSE;
   if ($if_modified_since && $if_none_match && $if_none_match == $etag && $if_modified_since == $last_modified) {
-    header('HTTP/1.1 304 Not Modified');
+    $response->setNotModified();
     // All 304 responses must send an etag if the 200 response for the same object contained an etag
-    header('Etag: ' . $etag);
-    exit;
+    $response->headers->set('Etag', $etag);
+    return $response;
   }
 
   $headers += array(
     'Content-type' => 'text/xml; charset=utf-8',
-    //'Content-length' => filesize($file),
+    'Content-length' => filesize($file),
     'Last-modified' => $last_modified,
     'Etag' => $etag,
     'Expires' => gmdate(DATE_RFC1123, $mtime + \Drupal::config('xmlsitemap.settings')->get('minimum_lifetime')),
     'Cache-Control' => 'must-revalidate',
     'X-Robots-Tag' => 'noindex, follow',
   );
-
-  // Transfer the file as output.
-  xmlsitemap_file_transfer($file, $headers);
+  $response = xmlsitemap_file_transfer($response, $file, $headers);
+  return $response;
 }
 
 /**
@@ -2452,30 +2452,31 @@ function xmlsitemap_output_file($file, array $headers = array()) {
  *
  * @see file_transfer()
  */
-function xmlsitemap_file_transfer($uri, $headers) {
+function xmlsitemap_file_transfer(Response $response, $uri, $headers) {
   if (ob_get_level()) {
     ob_end_clean();
   }
 
   foreach ($headers as $name => $value) {
-    drupal_add_http_header($name, $value);
+    $response->headers->set($name, $value);
   }
-  drupal_send_headers();
-
+  $response->sendHeaders();
+  $content = '';
   // Attempt to increase time to transfer file.
   drupal_set_time_limit(240);
   $scheme = file_default_scheme();
   // Transfer file in 16 KB chunks to save memory usage.
   if ($scheme && file_stream_wrapper_valid_scheme($scheme) && $fd = fopen($uri, 'rb')) {
     while (!feof($fd)) {
-      print fread($fd, 1024 * 16);
+      $content .= fread($fd, 1024 * 16);
     }
     fclose($fd);
+    $response->setContent($content);
   }
   else {
     throw new NotFoundHttpException();
   }
-  exit();
+  return $response;
 }
 
 /**
