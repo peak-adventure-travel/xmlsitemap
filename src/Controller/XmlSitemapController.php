@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\State\StateInterface;
+use Drupal\Core\Template\TwigEnvironment;
 
 /**
  * Returns responses for xmlsitemap.sitemap_xml and xmlsitemap.sitemap_xsl routes.
@@ -26,13 +27,21 @@ class XmlSitemapController extends ControllerBase {
   protected $state;
 
   /**
+   * The twig loader object.
+   *
+   * @var \Drupal\Core\Template\TwigEnvironment
+   */
+  protected $twig;
+
+  /**
    * Constructs a new XmlSitemapController object.
    *
    * @param \Drupal\Core\State\StateInterface $state
    *   The state service.
    */
-  public function __construct(StateInterface $state) {
+  public function __construct(StateInterface $state, TwigEnvironment $twig) {
     $this->state = $state;
+    $this->twig = $twig;
   }
 
   /**
@@ -40,7 +49,7 @@ class XmlSitemapController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-        $container->get('state')
+        $container->get('state'), $container->get('twig')
     );
   }
 
@@ -62,14 +71,16 @@ class XmlSitemapController extends ControllerBase {
 
     // Provide debugging information if enabled.
     if ($this->state->get('xmlsitemap_developer_mode')) {
-      $output = array();
-      $context = xmlsitemap_get_current_context();
-      $output[] = "Current context: " . print_r($context, TRUE);
-      $output[] = "Sitemap: " . print_r($sitemap, TRUE);
-      $output[] = "Chunk: $chunk";
-      $output[] = "Cache file location: $file";
-      $output[] = "Cache file exists: " . (file_exists($file) ? 'Yes' : 'No');
-      return new Response(implode('<br />', $output));
+      $module_path = drupal_get_path('module', 'xmlsitemap');
+      $template = $this->twig->loadTemplate($module_path . '/templates/sitemap-developer-mode.html.twig');
+      $elements = array(
+        'current_context' => print_r($context, TRUE),
+        'sitemap' => print_r($sitemap, TRUE),
+        'chunk' => $chunk,
+        'cache_file_location' => $file,
+        'cache_file_exists' => file_exists($file) ? 'Yes' : 'No'
+      );
+      return new Response($template->render($elements));
     }
     $response = new Response();
     return xmlsitemap_output_file($response, $file);
