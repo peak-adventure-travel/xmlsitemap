@@ -2425,8 +2425,9 @@ function xmlsitemap_output_file(Response $response, $file, array $headers = arra
   $etag = '"' . md5($last_modified) . '"';
 
   // See if the client has provided the required HTTP headers.
-  $if_modified_since = isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ? stripslashes($_SERVER['HTTP_IF_MODIFIED_SINCE']) : FALSE;
-  $if_none_match = isset($_SERVER['HTTP_IF_NONE_MATCH']) ? stripslashes($_SERVER['HTTP_IF_NONE_MATCH']) : FALSE;
+  $request = \Drupal::request();
+  $if_modified_since = $request->server->has('HTTP_IF_MODIFIED_SINCE') ? stripslashes($request->server->get('HTTP_IF_MODIFIED_SINCE')) : FALSE;
+  $if_none_match = $request->server->has('HTTP_IF_NONE_MATCH') ? stripslashes($request->server->get('HTTP_IF_NONE_MATCH')) : FALSE;
   if ($if_modified_since && $if_none_match && $if_none_match == $etag && $if_modified_since == $last_modified) {
     $response->setNotModified();
     // All 304 responses must send an etag if the 200 response for the same object contained an etag
