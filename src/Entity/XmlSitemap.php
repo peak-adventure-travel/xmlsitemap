@@ -17,6 +17,7 @@ use Drupal\xmlsitemap\XmlSitemapInterface;
  *   id = "xmlsitemap",
  *   label = @Translation("XmlSitemap"),
  *   controllers = {
+ *     "storage" = "Drupal\xmlsitemap\XmlSitemapStorage",
  *     "list_builder" = "Drupal\xmlsitemap\XmlSitemapListBuilder",
  *     "form" = {
  *       "add" = "Drupal\xmlsitemap\Form\XmlSitemapForm",
