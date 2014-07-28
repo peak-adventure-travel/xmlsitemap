@@ -15,10 +15,7 @@ use Drupal\Core\Language\Language;
  */
 abstract class XmlSitemapMultilingualTestBase extends XmlSitemapTestBase {
 
-  protected $admin_user;
   public static $modules = array('language', 'xmlsitemap', 'node', 'locale', 'content_translation', 'system');
-  protected $languageManager;
-  protected $entityManager;
 
   /**
    * Set up an administrative user account and testing keys.
@@ -27,8 +24,6 @@ abstract class XmlSitemapMultilingualTestBase extends XmlSitemapTestBase {
     // Call parent::setUp() allowing test cases to pass further modules.
     parent::setUp();
 
-    $this->languageManager = \Drupal::languageManager();
-    $this->entityManager = \Drupal::entityManager();
     $this->admin_user = $this->drupalCreateUser(array('administer languages', 'access administration pages', 'administer site configuration', 'administer xmlsitemap', 'access content'));
     $this->drupalLogin($this->admin_user);
 

@@ -13,8 +13,6 @@ namespace Drupal\xmlsitemap\Tests;
 class XmlSitemapUnitTest extends XmlSitemapTestBase {
 
   public static $modules = array('xmlsitemap', 'node', 'system');
-  protected $state;
-  protected $config;
 
   public static function getInfo() {
     return array(
@@ -28,8 +26,6 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
     parent::setUp();
 
     $this->admin_user = $this->drupalCreateUser(array('access content', 'administer site configuration', 'administer xmlsitemap'));
-    $this->state = \Drupal::state();
-    $this->config = \Drupal::configFactory()->get('xmlsitemap.settings');
   }
 
   public function testAssertFlag() {

@@ -15,9 +15,7 @@ use Drupal\Core\Language\LanguageInterface;
 class XmlSitemapTaxonomyFunctionalTest extends XmlSitemapTestBase {
 
   public static $modules = array('taxonomy', 'xmlsitemap');
-  protected $normal_user;
   protected $nodes = array();
-  protected $config;
 
   public static function getInfo() {
     return array(
@@ -30,7 +28,6 @@ class XmlSitemapTaxonomyFunctionalTest extends XmlSitemapTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->config = \Drupal::configFactory()->get('xmlsitemap.settings');
     $this->config->set('xmlsitemap_entity_taxonomy_vocabulary', TRUE);
     $this->config->set('xmlsitemap_entity_taxonomy_vocabulary_bundle_taxonomy_vocabulary', TRUE);
     $this->config->save();

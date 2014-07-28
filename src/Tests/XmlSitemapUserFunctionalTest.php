@@ -12,10 +12,8 @@ namespace Drupal\xmlsitemap\Tests;
  */
 class XmlSitemapUserFunctionalTest extends XmlSitemapTestBase {
 
-  protected $normal_user;
   protected $accounts = array();
   public static $modules = array('xmlsitemap', 'user', 'node', 'system');
-  protected $config;
 
   public static function getInfo() {
     return array(
@@ -27,7 +25,6 @@ class XmlSitemapUserFunctionalTest extends XmlSitemapTestBase {
 
   public function setUp($modules = array()) {
     parent::setUp();
-    $this->config = \Drupal::configFactory()->get('xmlsitemap.settings');
 
     // allow anonymous user to view user profiles
     $user_role = entity_load('user_role', DRUPAL_ANONYMOUS_RID);

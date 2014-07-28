@@ -16,8 +16,6 @@ class XmlSitemapCustomFunctionalTest extends XmlSitemapTestBase {
 
   public static $modules = array('xmlsitemap_custom', 'path', 'node');
 
-  protected $languageManager;
-
   protected $aliasStorage;
 
   public static function getInfo() {
@@ -32,7 +30,6 @@ class XmlSitemapCustomFunctionalTest extends XmlSitemapTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->languageManager = \Drupal::languageManager();
     $this->aliasStorage = \Drupal::service('path.alias_storage');
     $this->admin_user = $this->drupalCreateUser(array('access content', 'administer xmlsitemap'));
     $this->drupalLogin($this->admin_user);

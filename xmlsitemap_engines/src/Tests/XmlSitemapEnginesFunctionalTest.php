@@ -17,9 +17,6 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
   protected $submit_url;
   public static $modules = array('system', 'path', 'node', 'dblog', 'xmlsitemap', 'xmlsitemap_engines', 'xmlsitemap_engines_test');
 
-  protected $entityManager;
-  protected $state;
-
   /**
    * {@inheritdoc}
    */
@@ -36,8 +33,6 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
    */
   public function setUp() {
     parent::setUp();
-    $this->entityManager = \Drupal::entityManager();
-    $this->state = \Drupal::state();
     $this->admin_user = $this->drupalCreateUser(array('access content', 'administer xmlsitemap'));
     $this->drupalLogin($this->admin_user);
 

@@ -24,6 +24,13 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   protected $admin_user;
 
   /**
+   * The normal user account.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $normal_user;
+
+  /**
    * The state store.
    *
    * @var \Drupal\Core\State\StateInterface
@@ -51,6 +58,13 @@ abstract class XmlSitemapTestBase extends WebTestBase {
    */
   protected $entityManager;
 
+  /**
+   * The language manager object.
+   *
+   * @var \Drupal\Core\Language\LanguageManagerInterface
+   */
+  protected $languageManager;
+
   public function setUp() {
     array_unshift(self::$modules, 'xmlsitemap');
     parent::setUp();
@@ -58,6 +72,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
     $this->config = \Drupal::configFactory()->get('xmlsitemap.settings');
     $this->moduleHandler = \Drupal::moduleHandler();
     $this->entityManager = \Drupal::entityManager();
+    $this->languageManager = \Drupal::languageManager();
   }
 
   public function tearDown() {

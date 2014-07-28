@@ -15,7 +15,6 @@ use Drupal\Core\Language\LanguageInterface;
 class XmlSitemapMultilingualTest extends XmlSitemapMultilingualTestBase {
 
   public static $modules = array('language', 'xmlsitemap', 'node', 'locale', 'content_translation', 'system');
-  protected $config;
 
   public static function getInfo() {
     return array(
@@ -28,7 +27,6 @@ class XmlSitemapMultilingualTest extends XmlSitemapMultilingualTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->config = \Drupal::configFactory()->get('xmlsitemap.settings');
     $this->drupalLogin($this->admin_user);
     $edit = array(
       'site_default_language' => 'en',

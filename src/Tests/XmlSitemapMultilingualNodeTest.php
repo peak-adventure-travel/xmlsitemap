@@ -15,7 +15,6 @@ use Drupal\Core\Language\LanguageInterface;
 class XmlSitemapMultilingualNodeTest extends XmlSitemapMultilingualTestBase {
 
   public static $modules = array('xmlsitemap', 'language', 'content_translation', 'node', 'locale', 'config_translation', 'system');
-  protected $config;
 
   public static function getInfo() {
     return array(
@@ -39,7 +38,6 @@ class XmlSitemapMultilingualNodeTest extends XmlSitemapMultilingualTestBase {
       $this->drupalCreateContentType(array('type' => 'article', 'name' => 'Article'));
     }
 
-    $this->config = \Drupal::configFactory()->get('xmlsitemap.settings');
     $this->admin_user = $this->drupalCreateUser(array('administer nodes', 'administer languages', 'administer content types', 'access administration pages', 'create page content', 'edit own page content'));
     $this->drupalLogin($this->admin_user);
 

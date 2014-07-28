@@ -129,6 +129,9 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
     return $form;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, array &$form_state) {
     $bundles = $this->entityManager->getAllBundleInfo();
     $entity_values = $form_state['values']['entity_types'];

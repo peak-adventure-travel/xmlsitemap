@@ -19,8 +19,6 @@ use Drupal\Tests\UnitTestCase;
 class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
 
   public static $modules = array('system', 'xmlsitemap', 'entity_test');
-  protected $normal_user;
-  protected $config;
 
   public static function getInfo() {
     return array(
@@ -32,8 +30,6 @@ class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
 
   public function setUp() {
     parent::setUp();
-
-    $this->config = \Drupal::configFactory()->get('xmlsitemap.settings');
 
     $this->admin_user = $this->drupalCreateUser(array('administer entity_test content', 'administer xmlsitemap'));
 

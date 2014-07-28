@@ -15,9 +15,8 @@ use Drupal\Core\Language\LanguageInterface;
 class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
 
   public static $modules = array('node', 'xmlsitemap', 'taxonomy');
-  protected $normal_user;
+
   protected $nodes = array();
-  protected $config;
 
   public static function getInfo() {
     return array(
@@ -49,7 +48,6 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
     $user_role->grantPermission('access content');
     $user_role->save();
 
-    $this->config = \Drupal::configFactory()->get('xmlsitemap.settings');
     $this->config->set('xmlsitemap_entity_node', 1);
     $this->config->set('xmlsitemap_entity_node_bundle_article', 1);
     $this->config->set('xmlsitemap_entity_node_bundle_page', 1);

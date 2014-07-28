@@ -12,6 +12,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Drupal\Component\Utility\UrlHelper;
 
+/**
+ * Returns responses for xmlsitemap_engines_test.ping route.
+ */
 class XmlSitemapEnginesTestController extends ControllerBase {
 
   public function render() {

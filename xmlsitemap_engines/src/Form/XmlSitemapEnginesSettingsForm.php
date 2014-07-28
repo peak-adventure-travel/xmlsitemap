@@ -40,8 +40,8 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
    *   The factory for configuration objects.
    * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
    *   The form builder service.
-   * @param \Drupal\Core\Language\LanguageManagerInterface $state
-   *   The language manager service.
+   * @param \Drupal\Core\State\StateInterface $state
+   *   The state store service.
    */
   public function __construct(ConfigFactoryInterface $config_factory, FormBuilderInterface $form_builder, StateInterface $state) {
     parent::__construct($config_factory);

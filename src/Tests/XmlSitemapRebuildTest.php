@@ -13,7 +13,6 @@ namespace Drupal\xmlsitemap\Tests;
 class XmlSitemapRebuildTest extends XmlSitemapTestBase {
 
   public static $modules = array('xmlsitemap', 'path', 'node', 'system', 'user', 'help', 'block');
-  protected $config;
 
   public static function getInfo() {
     return array(
@@ -26,7 +25,6 @@ class XmlSitemapRebuildTest extends XmlSitemapTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->config = \Drupal::configFactory()->get('xmlsitemap.settings');
     $this->admin_user = $this->drupalCreateUser(array('administer xmlsitemap', 'access administration pages', 'access site reports', 'administer users', 'administer permissions'));
 
     $this->drupalPlaceBlock('system_help_block', array('region' => 'help'));

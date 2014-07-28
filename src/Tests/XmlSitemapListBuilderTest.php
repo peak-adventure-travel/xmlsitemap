@@ -17,7 +17,6 @@ use Drupal\Tests\Core\Entity\EntityListBuilderTest;
 class XmlSitemapListBuilderTest extends XmlSitemapTestBase {
 
   public static $modules = array('language', 'xmlsitemap', 'node', 'locale', 'content_translation', 'system');
-  protected $languageManager;
 
   public static function getInfo() {
     return array(

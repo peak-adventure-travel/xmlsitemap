@@ -27,13 +27,23 @@ class XmlSitemapWriter extends \XMLWriter {
    * @param $page
    *   The current page of the sitemap being generated.
    */
-  function __construct(XmlSitemapInterface $sitemap, $page) {
+  public function __construct(XmlSitemapInterface $sitemap, $page) {
     $this->sitemap = $sitemap;
     $this->sitemap_page = $page;
     $this->uri = xmlsitemap_sitemap_get_file($sitemap, $page);
     $this->openUri($this->uri);
   }
 
+  /**
+   * Opens and uri.
+   *
+   * @param string $uri
+   *  Uri to be opened.
+   *
+   * @throws XmlSitemapGenerationException
+   *
+   * @return bool
+   */
   public function openUri($uri) {
     $return = parent::openUri($uri);
     if (!$return) {

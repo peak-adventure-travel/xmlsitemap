@@ -17,9 +17,6 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
   protected $normal_user;
   protected $menu_items = array();
   public static $modules = array('node', 'xmlsitemap', 'menu_link', 'menu_ui');
-  protected $state;
-  protected $config;
-  protected $entityManager;
 
   public static function getInfo() {
     return array(
@@ -32,9 +29,6 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->state = \Drupal::state();
-    $this->entityManager = \Drupal::entityManager();
-    $this->config = \Drupal::configFactory()->get('xmlsitemap.settings');
     if ($this->profile != 'standard') {
       $this->drupalCreateContentType(array('type' => 'page', 'name' => 'Basic page', 'settings' => array(
           // Set proper default options for the page content type.
