@@ -7,15 +7,18 @@
 
 namespace Drupal\xmlsitemap\Tests;
 
-use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Language\Language;
-use Drupal\Tests\Core\Entity\EntityListBuilderTest;
 
 /**
  * Tests the sitemaps list builder.
  */
 class XmlSitemapListBuilderTest extends XmlSitemapTestBase {
 
+  /**
+   * Modules to enable.
+   *
+   * @var array
+   */
   public static $modules = array('language', 'xmlsitemap', 'node', 'locale', 'content_translation', 'system');
 
   public static function getInfo() {
@@ -26,6 +29,9 @@ class XmlSitemapListBuilderTest extends XmlSitemapTestBase {
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function setUp() {
     parent::setUp();
 
@@ -59,6 +65,9 @@ class XmlSitemapListBuilderTest extends XmlSitemapTestBase {
     $this->drupalPostForm('admin/config/regional/language/detection', $edit, t('Save settings'));
   }
 
+  /**
+   * Test if the default sitemap exists.
+   */
   public function testDefaultSitemap() {
     $this->drupalLogin($this->admin_user);
     $context = array();
@@ -68,6 +77,9 @@ class XmlSitemapListBuilderTest extends XmlSitemapTestBase {
     $this->assertText($id);
   }
 
+  /**
+   * Test if multiple sitemaps exist and have consistent information.
+   */
   public function testMoreSitemaps() {
     $this->drupalLogin($this->admin_user);
     $edit = array(

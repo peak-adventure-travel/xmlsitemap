@@ -12,6 +12,11 @@ namespace Drupal\xmlsitemap\Tests;
  */
 class XmlSitemapRobotsTxtIntegrationTest extends XmlSitemapTestBase {
 
+  /**
+   * Modules to enable.
+   *
+   * @var array
+   */
   public static $modules = array('xmlsitemap', 'robotstxt');
 
   public static function getInfo() {
@@ -23,10 +28,16 @@ class XmlSitemapRobotsTxtIntegrationTest extends XmlSitemapTestBase {
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function setUp() {
     parent::setUp();
   }
 
+  /**
+   * Test if sitemap link is included in robots.txt file.
+   */
   public function testRobotsTxt() {
     // Request the un-clean robots.txt path so this will work in case there is
     // still the robots.txt file in the root directory.

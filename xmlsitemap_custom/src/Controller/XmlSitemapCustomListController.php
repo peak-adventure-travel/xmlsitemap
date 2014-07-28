@@ -10,7 +10,6 @@ namespace Drupal\xmlsitemap_custom\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 
 /**
@@ -46,6 +45,12 @@ class XmlSitemapCustomListController extends ControllerBase {
     );
   }
 
+  /**
+   * Renders a list with all custom links.
+   *
+   * @return array
+   *   The list to be rendered.
+   */
   public function render() {
     $build['xmlsitemap_add_custom'] = array(
       '#type' => 'link',

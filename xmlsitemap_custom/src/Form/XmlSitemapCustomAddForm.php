@@ -7,10 +7,8 @@
 
 namespace Drupal\xmlsitemap_custom\Form;
 
-use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Language\LanguageInterface;
-use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\xmlsitemap\XmlSitemapLinkStorage;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
@@ -20,6 +18,9 @@ use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Path\AliasManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 
+/**
+ * Provides a form for adding a custom link.
+ */
 class XmlSitemapCustomAddForm extends ConfigFormBase {
 
   /**

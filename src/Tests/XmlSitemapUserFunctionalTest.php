@@ -13,6 +13,12 @@ namespace Drupal\xmlsitemap\Tests;
 class XmlSitemapUserFunctionalTest extends XmlSitemapTestBase {
 
   protected $accounts = array();
+
+  /**
+   * Modules to enable.
+   *
+   * @var array
+   */
   public static $modules = array('xmlsitemap', 'user', 'node', 'system');
 
   public static function getInfo() {
@@ -23,6 +29,9 @@ class XmlSitemapUserFunctionalTest extends XmlSitemapTestBase {
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function setUp($modules = array()) {
     parent::setUp();
 
@@ -47,6 +56,9 @@ class XmlSitemapUserFunctionalTest extends XmlSitemapTestBase {
     $account->save();
   }
 
+  /**
+   * Test sitemap link for a blocked user
+   */
   public function testBlockedUser() {
     $this->drupalLogin($this->admin_user);
     $this->assertSitemapLinkNotVisible('user', $this->normal_user->id());

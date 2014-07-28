@@ -8,7 +8,6 @@
 namespace Drupal\xmlsitemap\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
-use Drupal\Component\Utility\MapArray;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Render\Element;
 use Drupal\Core\State\StateInterface;

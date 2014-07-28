@@ -2,20 +2,26 @@
 
 /**
  * @file
- * Contains \Drupal\xmlsitemap_custom\Form\XmlSitemapCustomAddForm.
+ * Contains \Drupal\xmlsitemap_custom\Form\XmlSitemapCustomDeleteForm.
  */
 
 namespace Drupal\xmlsitemap_custom\Form;
 
 use Drupal\Core\Form\ConfirmFormBase;
-use Drupal\Core\Language\LanguageInterface;
-use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\Core\Url;
 use Drupal\xmlsitemap\XmlSitemapLinkStorage;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
+/**
+ * Provides a form for deleting a custom link.
+ */
 class XmlSitemapCustomDeleteForm extends ConfirmFormBase {
 
+  /**
+   * The path of the custom link.
+   *
+   * @var string
+   */
   protected $custom_link;
 
   /**
@@ -25,6 +31,9 @@ class XmlSitemapCustomDeleteForm extends ConfirmFormBase {
     return 'xmlsitemap_custom_delete';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, array &$form_state, $link = '') {
     $query = db_select('xmlsitemap');
     $query->fields('xmlsitemap');
@@ -33,7 +42,7 @@ class XmlSitemapCustomDeleteForm extends ConfirmFormBase {
     $result = $query->execute();
     $link = $result->fetchAssoc();
     if (!$link) {
-      drupal_set_message(t('No valid custom link specified.'),'error');
+      drupal_set_message(t('No valid custom link specified.'), 'error');
       return new RedirectResponse('/admin/config/search/xmlsitemap/custom/');
     }
     else {

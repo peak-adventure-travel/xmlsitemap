@@ -14,8 +14,18 @@ use Drupal\Core\Language\LanguageInterface;
  */
 class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
 
+  /**
+   * Modules to enable.
+   *
+   * @var array
+   */
   public static $modules = array('node', 'xmlsitemap', 'taxonomy');
 
+  /**
+   * Nodes created during the test for testCron() method.
+   *
+   * @var array
+   */
   protected $nodes = array();
 
   public static function getInfo() {
@@ -26,6 +36,9 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function setUp() {
     parent::setUp();
 
@@ -254,4 +267,5 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
       }
     }
   }
+
 }

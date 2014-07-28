@@ -7,15 +7,17 @@
 
 namespace Drupal\xmlsitemap\Tests;
 
-use Drupal\Core\Language\LanguageInterface;
-
 /**
  * Tests the generation of taxonomy links.
  */
 class XmlSitemapTaxonomyFunctionalTest extends XmlSitemapTestBase {
 
+  /**
+   * Modules to enable.
+   *
+   * @var array
+   */
   public static $modules = array('taxonomy', 'xmlsitemap');
-  protected $nodes = array();
 
   public static function getInfo() {
     return array(
@@ -25,6 +27,9 @@ class XmlSitemapTaxonomyFunctionalTest extends XmlSitemapTestBase {
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function setUp() {
     parent::setUp();
 
@@ -41,6 +46,9 @@ class XmlSitemapTaxonomyFunctionalTest extends XmlSitemapTestBase {
     $this->normal_user = $this->drupalCreateUser(array('access content'));
   }
 
+  /**
+   * Test xmlsitemap settings for taxonomies.
+   */
   public function testTaxonomySettings() {
     $this->drupalLogin($this->admin_user);
 

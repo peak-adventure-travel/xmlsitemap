@@ -14,7 +14,18 @@ use Drupal\xmlsitemap\Tests\XmlSitemapTestBase;
  */
 class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
 
+  /**
+   * The path of the custom link.
+   *
+   * @var string
+   */
   protected $submit_url;
+
+  /**
+   * Modules to enable.
+   *
+   * @var array
+   */
   public static $modules = array('system', 'path', 'node', 'dblog', 'xmlsitemap', 'xmlsitemap_engines', 'xmlsitemap_engines_test');
 
   /**

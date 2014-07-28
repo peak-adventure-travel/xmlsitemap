@@ -14,6 +14,11 @@ use Drupal\Core\Language\LanguageInterface;
  */
 class XmlSitemapMultilingualTest extends XmlSitemapMultilingualTestBase {
 
+  /**
+   * Modules to enable.
+   *
+   * @var array
+   */
   public static $modules = array('language', 'xmlsitemap', 'node', 'locale', 'content_translation', 'system');
 
   public static function getInfo() {
@@ -24,6 +29,9 @@ class XmlSitemapMultilingualTest extends XmlSitemapMultilingualTestBase {
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function setUp() {
     parent::setUp();
 
@@ -37,6 +45,9 @@ class XmlSitemapMultilingualTest extends XmlSitemapMultilingualTestBase {
     $this->drupalPostForm('admin/config/regional/language/detection', $edit, t('Save settings'));
   }
 
+  /**
+   * Test how links are included in a sitemap depending on the i18n_selection_mode config variable
+   */
   public function testLanguageSelection() {
     $this->drupalLogin($this->admin_user);
     // Create our three different language nodes.

@@ -14,6 +14,11 @@ use Drupal\simpletest\WebTestBase;
  */
 abstract class XmlSitemapTestBase extends WebTestBase {
 
+  /**
+   * Modules to enable.
+   *
+   * @var array
+   */
   public static $modules = array('xmlsitemap');
 
   /**
@@ -65,6 +70,9 @@ abstract class XmlSitemapTestBase extends WebTestBase {
    */
   protected $languageManager;
 
+  /**
+   * {@inheritdoc}
+   */
   public function setUp() {
     array_unshift(self::$modules, 'xmlsitemap');
     parent::setUp();
@@ -75,6 +83,9 @@ abstract class XmlSitemapTestBase extends WebTestBase {
     $this->languageManager = \Drupal::languageManager();
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function tearDown() {
     // Capture any (remaining) watchdog errors.
     $this->assertNoWatchdogErrors();

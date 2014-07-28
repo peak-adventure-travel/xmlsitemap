@@ -17,6 +17,15 @@ use Drupal\Component\Utility\UrlHelper;
  */
 class XmlSitemapEnginesTestController extends ControllerBase {
 
+  /**
+   * Response for the xmlsitemap_engines_test.ping route.
+   *
+   * @throws NotFoundHttpException
+   *  Throw a NotFoundHttpException if query url is not valid.
+   *
+   * @return \Symfony\Component\HttpFoundation\Response
+   *  A response with 200 code if the url query is valid.
+   */
   public function render() {
     $query = \Drupal::request()->query->get('sitemap');
     if (empty($query) || !UrlHelper::isValid($query)) {

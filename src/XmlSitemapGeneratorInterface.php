@@ -7,8 +7,6 @@
 
 namespace Drupal\xmlsitemap;
 
-use Drupal\Core\Language\LanguageInterface;
-
 /**
  * Provides an interface defining a XmlSitemapGenerator service.
  */

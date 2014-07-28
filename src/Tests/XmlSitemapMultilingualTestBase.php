@@ -7,7 +7,6 @@
 
 namespace Drupal\xmlsitemap\Tests;
 
-use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Language\Language;
 
 /**
@@ -15,6 +14,11 @@ use Drupal\Core\Language\Language;
  */
 abstract class XmlSitemapMultilingualTestBase extends XmlSitemapTestBase {
 
+  /**
+   * Modules to enable.
+   *
+   * @var array
+   */
   public static $modules = array('language', 'xmlsitemap', 'node', 'locale', 'content_translation', 'system');
 
   /**

@@ -12,6 +12,11 @@ namespace Drupal\xmlsitemap\Tests;
  */
 class XmlSitemapUnitTest extends XmlSitemapTestBase {
 
+  /**
+   * Modules to enable.
+   *
+   * @var array
+   */
   public static $modules = array('xmlsitemap', 'node', 'system');
 
   public static function getInfo() {
@@ -22,12 +27,18 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function setUp() {
     parent::setUp();
 
     $this->admin_user = $this->drupalCreateUser(array('access content', 'administer site configuration', 'administer xmlsitemap'));
   }
 
+  /**
+   * Tests for xmlsitemap flags.
+   */
   public function testAssertFlag() {
     $this->state->set('xmlsitemap_rebuild_needed', TRUE);
     $this->assertTrue(xmlsitemap_var('xmlsitemap_rebuild_needed'));

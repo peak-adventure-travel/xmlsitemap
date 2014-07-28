@@ -12,6 +12,11 @@ namespace Drupal\xmlsitemap\Tests;
  */
 class XmlSitemapFunctionalTest extends XmlSitemapTestBase {
 
+  /**
+   * Modules to enable.
+   *
+   * @var array
+   */
   public static $modules = array('xmlsitemap', 'path', 'node', 'system', 'user', 'help');
 
   public static function getInfo() {
@@ -22,6 +27,9 @@ class XmlSitemapFunctionalTest extends XmlSitemapTestBase {
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function setUp() {
     parent::setUp();
 

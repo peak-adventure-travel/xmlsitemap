@@ -7,13 +7,16 @@
 
 namespace Drupal\xmlsitemap\Tests;
 
-use Drupal\Core\Language\LanguageInterface;
-
 /**
  * Tests the generation of multilingual nodes.
  */
 class XmlSitemapMultilingualNodeTest extends XmlSitemapMultilingualTestBase {
 
+  /**
+   * Modules to enable.
+   *
+   * @var array
+   */
   public static $modules = array('xmlsitemap', 'language', 'content_translation', 'node', 'locale', 'config_translation', 'system');
 
   public static function getInfo() {
@@ -24,6 +27,9 @@ class XmlSitemapMultilingualNodeTest extends XmlSitemapMultilingualTestBase {
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function setUp() {
     parent::setUp();
 
@@ -59,6 +65,9 @@ class XmlSitemapMultilingualNodeTest extends XmlSitemapMultilingualTestBase {
     $this->assertRaw(t('The content type %type has been updated.', array('%type' => 'Basic page')), 'Basic page content type has been updated.');
   }
 
+  /**
+   * Test language for sitemap node links.
+   */
   public function testNodeLanguageData() {
     $this->drupalLogin($this->admin_user);
     $node = $this->drupalCreateNode(array());

@@ -7,17 +7,16 @@
 
 namespace Drupal\xmlsitemap\Tests;
 
-use Drupal\Core\DependencyInjection\ContainerBuilder;
-use Drupal\Core\Field\FieldDefinition;
-use Drupal\Core\Field\FieldItemBase;
-use Drupal\Core\Language\Language;
-use Drupal\Tests\UnitTestCase;
-
 /**
  * Tests the generation of a random content entity links.
  */
 class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
 
+  /**
+   * Modules to enable.
+   *
+   * @var array
+   */
   public static $modules = array('system', 'xmlsitemap', 'entity_test');
 
   public static function getInfo() {
@@ -28,6 +27,9 @@ class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function setUp() {
     parent::setUp();
 
@@ -40,6 +42,9 @@ class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
     $user_role->save();
   }
 
+  /**
+   * Test the form at admin/config/search/xmlsitemap/entities/settings
+   */
   public function testEntitiesSettingsForms() {
     $this->drupalLogin($this->admin_user);
     $this->drupalGet('admin/config/search/xmlsitemap/entities/settings');
@@ -59,6 +64,9 @@ class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
     $this->assertSitemapLinkValues('entity_test', $entity->id(), array('status' => 0, 'priority' => 0.5));
   }
 
+  /**
+   * Test the form at admin/config/search/xmlsitemap/settings/{entity_type_id}/{bundle_id}
+   */
   public function testEntityLinkBundleSettingsForm() {
     $this->config->set('xmlsitemap_entity_entity_test', 1);
     $this->config->set('xmlsitemap_entity_entity_test_bundle_entity_test', 1);

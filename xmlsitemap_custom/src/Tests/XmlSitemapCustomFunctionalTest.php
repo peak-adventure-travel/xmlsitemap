@@ -14,8 +14,18 @@ use Drupal\xmlsitemap\Tests\XmlSitemapTestBase;
  */
 class XmlSitemapCustomFunctionalTest extends XmlSitemapTestBase {
 
+  /**
+   * Modules to enable.
+   *
+   * @var array
+   */
   public static $modules = array('xmlsitemap_custom', 'path', 'node');
 
+  /**
+   * The alias storage handler.
+   *
+   * @var \Drupal\Core\Path\AliasStorageInterface
+   */
   protected $aliasStorage;
 
   public static function getInfo() {
@@ -24,9 +34,11 @@ class XmlSitemapCustomFunctionalTest extends XmlSitemapTestBase {
       'description' => 'Functional tests for the XML sitemap custom module.',
       'group' => 'XML sitemap',
     );
-
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function setUp() {
     parent::setUp();
 
@@ -35,6 +47,9 @@ class XmlSitemapCustomFunctionalTest extends XmlSitemapTestBase {
     $this->drupalLogin($this->admin_user);
   }
 
+  /**
+   * Test adding custom links with wrong/private/correct paths.
+   */
   public function testCustomLinks() {
     $language = $this->languageManager->getCurrentLanguage();
     // Set a path alias for the node page.

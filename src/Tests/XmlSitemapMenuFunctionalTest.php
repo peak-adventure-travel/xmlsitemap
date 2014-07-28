@@ -14,8 +14,11 @@ use Drupal\system\Entity\Menu;
  */
 class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
 
-  protected $normal_user;
-  protected $menu_items = array();
+  /**
+   * Modules to enable.
+   *
+   * @var array
+   */
   public static $modules = array('node', 'xmlsitemap', 'menu_link', 'menu_ui');
 
   public static function getInfo() {
@@ -26,6 +29,9 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function setUp() {
     parent::setUp();
 
@@ -61,6 +67,9 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
     $this->normal_user = $this->drupalCreateUser(array('access content'));
   }
 
+  /**
+   * Test xmlsitemap settings for menu entity.
+   */
   public function testMenuSettings() {
     $this->drupalLogin($this->admin_user);
 
@@ -88,6 +97,9 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
     $this->drupalPostForm(NULL, $edit, 'Save');
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function tearDown() {
     $bundles = $this->entityManager->getAllBundleInfo();
     $this->config->delete('xmlsitemap_entity_menu_link');

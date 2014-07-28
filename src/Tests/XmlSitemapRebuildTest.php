@@ -12,6 +12,11 @@ namespace Drupal\xmlsitemap\Tests;
  */
 class XmlSitemapRebuildTest extends XmlSitemapTestBase {
 
+  /**
+   * Modules to enable.
+   *
+   * @var array
+   */
   public static $modules = array('xmlsitemap', 'path', 'node', 'system', 'user', 'help', 'block');
 
   public static function getInfo() {
@@ -22,6 +27,9 @@ class XmlSitemapRebuildTest extends XmlSitemapTestBase {
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function setUp() {
     parent::setUp();
 
@@ -35,6 +43,9 @@ class XmlSitemapRebuildTest extends XmlSitemapTestBase {
     $user_role->save();
   }
 
+  /**
+   * Test sitemap rebuild process.
+   */
   public function testSimpleRebuild() {
     $this->drupalLogin($this->admin_user);
     $this->drupalGet('admin/config/search/xmlsitemap/rebuild');
@@ -45,6 +56,9 @@ class XmlSitemapRebuildTest extends XmlSitemapTestBase {
     $this->assertText('The sitemap links were rebuilt.');
   }
 
+  /**
+   * Test if user links are included in sitemap after rebuild.
+   */
   public function testUserLinksRebuild() {
     $this->config->set('xmlsitemap_entity_user', 1);
     $this->config->set('xmlsitemap_entity_user_bundle_user', 1);

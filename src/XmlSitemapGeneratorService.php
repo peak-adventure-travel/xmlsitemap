@@ -13,7 +13,6 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\State\StateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\Core\Language\Language;
 
 /**
  * XmlSitemap generator service.
