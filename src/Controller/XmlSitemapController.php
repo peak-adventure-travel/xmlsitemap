@@ -13,6 +13,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\State\StateInterface;
 use Drupal\Core\Template\TwigEnvironment;
+use Drupal\Core\Entity\EntityManagerInterface;
 
 /**
  * Returns responses for xmlsitemap.sitemap_xml and xmlsitemap.sitemap_xsl routes.
@@ -34,14 +35,22 @@ class XmlSitemapController extends ControllerBase {
   protected $twig;
 
   /**
+   * The entity manager object.
+   *
+   * @var \Drupal\Core\Entity\EntityManagerInterface
+   */
+  protected $entityManager;
+
+  /**
    * Constructs a new XmlSitemapController object.
    *
    * @param \Drupal\Core\State\StateInterface $state
    *   The state service.
    */
-  public function __construct(StateInterface $state, TwigEnvironment $twig) {
+  public function __construct(StateInterface $state, TwigEnvironment $twig, EntityManagerInterface $entity_manager) {
     $this->state = $state;
     $this->twig = $twig;
+    $this->entityManager = $entity_manager;
   }
 
   /**
@@ -49,7 +58,7 @@ class XmlSitemapController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-        $container->get('state'), $container->get('twig')
+        $container->get('state'), $container->get('twig'), $container->get('entity.manager')
     );
   }
 
@@ -62,7 +71,7 @@ class XmlSitemapController extends ControllerBase {
    *  The sitemap in XML format or plain text if xmlsitemap_developer_mode flag is set.
    */
   public function renderSitemapXml() {
-    $sitemap = xmlsitemap_sitemap_load_by_context();
+    $sitemap = $this->entityManager->getStorage('xmlsitemap')->loadByContext();
     if (!$sitemap) {
       throw new NotFoundHttpException();
     }

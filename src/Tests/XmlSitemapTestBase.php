@@ -15,10 +15,41 @@ use Drupal\simpletest\WebTestBase;
 abstract class XmlSitemapTestBase extends WebTestBase {
 
   public static $modules = array('xmlsitemap');
+
+  /**
+   * The admin user account.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
   protected $admin_user;
+
+  /**
+   * The state store.
+   *
+   * @var \Drupal\Core\State\StateInterface
+   */
   protected $state;
+
+  /**
+   * The xmlsitemap.settings configuration object.
+   *
+   * @var \Drupal\Core\Config\Config
+   */
   protected $config;
+
+  /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
   protected $moduleHandler;
+
+  /**
+   * The entity manager object.
+   *
+   * @var \Drupal\Core\Entity\EntityManagerInterface
+   */
+  protected $entityManager;
 
   public function setUp() {
     array_unshift(self::$modules, 'xmlsitemap');
@@ -26,6 +57,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
     $this->state = \Drupal::state();
     $this->config = \Drupal::configFactory()->get('xmlsitemap.settings');
     $this->moduleHandler = \Drupal::moduleHandler();
+    $this->entityManager = \Drupal::entityManager();
   }
 
   public function tearDown() {
@@ -78,7 +110,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
    *   The retrieved HTML string, also available as $this->drupalGetContent()
    */
   protected function drupalGetSitemap(array $context = array(), array $options = array(), array $headers = array()) {
-    $sitemap = xmlsitemap_sitemap_load_by_context($context);
+    $sitemap = $this->entityManager->getStorage('xmlsitemap')->loadByContext($context);
     if (!$sitemap) {
       return $this->fail('Could not load sitemap by context.');
     }

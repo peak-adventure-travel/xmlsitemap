@@ -202,7 +202,8 @@ function xmlsitemap_modules_disabled(array $modules) {
  * Implements hook_robotstxt().
  */
 function xmlsitemap_robotstxt() {
-  if ($sitemap = xmlsitemap_sitemap_load_by_context()) {
+  $sitemap_storage = \Drupal::entityManager()->getStorage('xmlsitemap');
+  if ($sitemap = $sitemap_storage->loadByContext()) {
     $uri = xmlsitemap_sitemap_uri($sitemap);
     $robotstxt[] = 'Sitemap: ' . url($uri['path'], $uri['options']);
     return $robotstxt;
@@ -319,28 +320,6 @@ function xmlsitemap_sitemap_load_multiple($smids = array(), array $conditions = 
   }
 
   return $sitemaps;
-}
-
-/**
- * Load an XML sitemap array from the database based on its context.
- *
- * @param $context
- *   An optional XML sitemap context array to use to find the correct XML
- *   sitemap. If not provided, the current site's context will be used.
- *
- * @see xmlsitemap_get_current_context()
- */
-function xmlsitemap_sitemap_load_by_context(array $context = NULL) {
-  if (!isset($context)) {
-    $context = xmlsitemap_get_current_context();
-  }
-  $sitemaps = \Drupal::entityManager()->getStorage('xmlsitemap')->loadMultiple();
-  foreach ($sitemaps as $sitemap) {
-    if ($sitemap->context == $context) {
-      return $sitemap;
-    }
-  }
-  return NULL;
 }
 
 /**
