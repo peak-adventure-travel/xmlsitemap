@@ -361,7 +361,7 @@ function _xmlsitemap_sitemap_rehash_all() {
   foreach ($sitemaps as $sitemap) {
     $context = $sitemap->context;
     $hash = xmlsitemap_sitemap_get_context_hash($context);
-    if ($hash != $sitemap->smid) {
+    if ($hash != $sitemap->id()) {
       xmlsitemap_sitemap_save($sitemap);
     }
   }

@@ -1203,69 +1203,6 @@ function xmlsitemap_form_submit_flag_regenerate($form, $form_state) {
 }
 
 /**
- * Set the current user stored in $GLOBALS['user'].
- *
- * @todo Remove when http://drupal.org/node/287292 is fixed.
- */
-function xmlsitemap_switch_user($new_user = NULL) {
-  $user = \Drupal::currentUser();
-  $user_original = &drupal_static(__FUNCTION__);
-
-  if (!isset($new_user)) {
-    if (isset($user_original)) {
-      // Restore the original user.
-      $user = $user_original;
-      $user_original = NULL;
-      \Drupal::service('session_manager')->save();
-    }
-    else {
-      return FALSE;
-    }
-  }
-  elseif (is_numeric($new_user) && $user->id() != $new_user) {
-    // Get the full user object.
-    if (!$new_user) {
-      $new_user = drupal_anonymous_user();
-    }
-    elseif (!$new_user = user_load($new_user)) {
-      return FALSE;
-    }
-
-    // Backup the original user object.
-    if (!isset($user_original)) {
-      $user_original = $user;
-      \Drupal::service('session_manager')->save();
-    }
-
-    $user = $new_user;
-  }
-  elseif (is_object($new_user) && $user->id() != $new_user->id()) {
-    // Backup the original user object.
-    if (!isset($user_original)) {
-      $user_original = $user;
-      \Drupal::service('session_manager')->save();
-    }
-
-    $user = $new_user;
-  }
-  else {
-    return FALSE;
-  }
-
-  return $user;
-}
-
-/**
- * Restore the user that was originally loaded.
- *
- * @return
- *  Current user.
- */
-function xmlsitemap_restore_user() {
-  return xmlsitemap_switch_user();
-}
-
-/**
  * Add a link's XML sitemap options to the link's form.
  *
  * @todo Add changefreq overridability.
