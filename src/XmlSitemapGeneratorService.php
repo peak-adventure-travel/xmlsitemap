@@ -19,8 +19,25 @@ use Drupal\Core\Language\LanguageManagerInterface;
  */
 class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
 
+  /**
+   * Aliases for links.
+   *
+   * @var array
+   */
   public static $aliases;
+
+  /**
+   * Last used language.
+   *
+   * @var string
+   */
   public static $last_language;
+
+  /**
+   * Memory used before generation process.
+   *
+   * @var integer
+   */
   public static $memory_start;
 
   /**

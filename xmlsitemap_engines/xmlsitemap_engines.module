@@ -203,6 +203,9 @@ function xmlsitemap_engines_xmlsitemap_engine_info() {
   return $engines;
 }
 
+/**
+ * Internal default config variables.
+ */
 function xmlsitemap_engines_config_variables() {
   $variables = array(
     'engines' => array(),
@@ -212,6 +215,9 @@ function xmlsitemap_engines_config_variables() {
   return $variables;
 }
 
+/**
+ * Internal default state variables.
+ */
 function xmlsitemap_engines_state_variables() {
   $variables = array(
     'xmlsitemap_engines_submit_last' => 0,

@@ -12,19 +12,54 @@ namespace Drupal\xmlsitemap;
  */
 class XmlSitemapWriter extends \XMLWriter {
 
+  /**
+   * Document URI.
+   *
+   * @var string
+   */
   protected $uri = NULL;
+
+  /**
+   * Counter for the sitemap elements.
+   *
+   * @var integer
+   */
   protected $sitemapElementCount = 0;
+
+  /**
+   * Flush counter for sitemap links.
+   *
+   * @var integer
+   */
   protected $linkCountFlush = 500;
+
+  /**
+   * Sitemap object to be written.
+   *
+   * @var \Drupal\xmlsitemap\XmlSitemapInterface
+   */
   protected $sitemap = NULL;
+
+  /**
+   * Sitemap page to be written.
+   *
+   * @var string
+   */
   protected $sitemap_page = NULL;
+
+  /**
+   * Name of the root element of the document.
+   *
+   * @var string
+   */
   protected $rootElement = 'urlset';
 
   /**
-   * Constructor.
+   * Constructors and XmlSitemapWriter object.
    *
-   * @param $sitemap
+   * @param \Drupal\xmlsitemap\XmlSitemapInterface $sitemap
    *   The sitemap array.
-   * @param $page
+   * @param string $page
    *   The current page of the sitemap being generated.
    */
   public function __construct(XmlSitemapInterface $sitemap, $page) {
@@ -38,11 +73,13 @@ class XmlSitemapWriter extends \XMLWriter {
    * Opens and uri.
    *
    * @param string $uri
-   *  Uri to be opened.
+   *   Uri to be opened.
    *
    * @throws XmlSitemapGenerationException
+   *   Throws exception when uri cannot be opened.
    *
    * @return bool
+   *   Returns TRUE when uri was successful opened.
    */
   public function openUri($uri) {
     $return = parent::openUri($uri);
@@ -52,6 +89,21 @@ class XmlSitemapWriter extends \XMLWriter {
     return $return;
   }
 
+  /**
+   * Starts an XML document.
+   *
+   * @param string $version
+   *   The version number of the document.
+   * @param string $encoding
+   *   The encoding of the document.
+   * @param string $standalone
+   *   Yes or No.
+   * @throws XmlSitemapGenerationException
+   *   Throws exception when document cannot be started.
+   *
+   * @return bool
+   *   Returns TRUE on success.
+   */
   public function startDocument($version = '1.0', $encoding = 'UTF-8', $standalone = NULL) {
     $this->setIndent(FALSE);
     $result = parent::startDocument($version, $encoding);
@@ -66,7 +118,10 @@ class XmlSitemapWriter extends \XMLWriter {
   }
 
   /**
-   * Add the XML stylesheet to the XML page.
+   * Adds the XML stylesheet to the XML page.
+   *
+   * @return bool
+   *   Returns TRUE on success.
    */
   public function writeXSL() {
     $this->writePi('xml-stylesheet', 'type="text/xsl" href="' . url('sitemap.xsl') . '"');
@@ -75,6 +130,9 @@ class XmlSitemapWriter extends \XMLWriter {
 
   /**
    * Return an array of attributes for the root element of the XML.
+   *
+   * @return array
+   *   Returns root attributes.
    */
   public function getRootAttributes() {
     $attributes['xmlns'] = 'http://www.sitemaps.org/schemas/sitemap/0.9';
@@ -85,10 +143,25 @@ class XmlSitemapWriter extends \XMLWriter {
     return $attributes;
   }
 
+  /**
+   * Generate one chunk of the sitemap.
+   *
+   * @return integer
+   *   Number of XML elements written.
+   */
   public function generateXML() {
     return \Drupal::service('xmlsitemap_generator')->generateChunk($this->sitemap, $this, $this->sitemap_page);
   }
 
+  /**
+   * Creates start element tag.
+   *
+   * @param string $name
+   *   Element name.
+   *
+   * @param bool $root
+   *   Specify if it is root element or not.
+   */
   public function startElement($name, $root = FALSE) {
     parent::startElement($name);
 
@@ -101,11 +174,11 @@ class XmlSitemapWriter extends \XMLWriter {
   }
 
   /**
-   * Write an full XML sitemap element tag.
+   * Writes an full XML sitemap element tag.
    *
-   * @param $name
+   * @param string $name
    *   The element name.
-   * @param $element
+   * @param array $element
    *   An array of the elements properties and values.
    */
   public function writeSitemapElement($name, array &$element) {
@@ -121,11 +194,11 @@ class XmlSitemapWriter extends \XMLWriter {
   }
 
   /**
-   * Write full element tag including support for nested elements.
+   * Writes full element tag including support for nested elements.
    *
-   * @param $name
+   * @param string $name
    *   The element name.
-   * @param $content
+   * @param string $content
    *   The element contents or an array of the elements' sub-elements.
    */
   public function writeElement($name, $content = '') {
@@ -141,14 +214,34 @@ class XmlSitemapWriter extends \XMLWriter {
     }
   }
 
+  /**
+   * Getter of the document uri.
+   *
+   * @return string
+   *   Document uri.
+   */
   public function getURI() {
     return $this->uri;
   }
 
+  /**
+   * Getter of the element count.
+   *
+   * @return int
+   *   Element counters.
+   */
   public function getSitemapElementCount() {
     return $this->sitemapElementCount;
   }
 
+  /**
+   * Ends an XML document.
+   *
+   * @throws XmlSitemapGenerationException
+   *
+   * @return bool
+   *   Returns TRUE on success.
+   */
   public function endDocument() {
     $return = parent::endDocument();
 
@@ -156,10 +249,10 @@ class XmlSitemapWriter extends \XMLWriter {
       throw new XmlSitemapGenerationException(t('Unknown error occurred while writing to file @file.', array('@file' => $this->uri)));
     }
 
-    //if (xmlsitemap_var('gz')) {
-    //  $file_gz = $file . '.gz';
-    //  file_put_contents($file_gz, gzencode(file_get_contents($file), 9));
-    //}
+    if (xmlsitemap_var('gz')) {
+      $file_gz = $file . '.gz';
+      file_put_contents($file_gz, gzencode(file_get_contents($file), 9));
+    }
 
     if (!filesize($this->uri)) {
       throw new XmlSitemapGenerationException(t('Generated @file resulted in an empty file.', array('@file' => $this->uri)));

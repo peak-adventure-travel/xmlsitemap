@@ -12,12 +12,23 @@ namespace Drupal\xmlsitemap;
  */
 class XmlSitemapIndexWriter extends XmlSitemapWriter {
 
+  /**
+   * Name of the root element of the document.
+   *
+   * @var string
+   */
   protected $rootElement = 'sitemapindex';
 
+  /**
+   * {@inheritdoc}
+   */
   public function __construct(XmlSitemapInterface $sitemap, $page = 'index') {
     parent::__construct($sitemap, 'index');
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getRootAttributes() {
     $attributes['xmlns'] = 'http://www.sitemaps.org/schemas/sitemap/0.9';
     if (\Drupal::state()->get('xmlsitemap_developer_mode')) {
@@ -27,6 +38,9 @@ class XmlSitemapIndexWriter extends XmlSitemapWriter {
     return $attributes;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function generateXML() {
     $lastmod_format = \Drupal::config('xmlsitemap.settings')->get('lastmod_format');
 

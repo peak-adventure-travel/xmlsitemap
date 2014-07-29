@@ -36,6 +36,8 @@ interface XmlSitemapGeneratorInterface {
    *
    * @param bool $start
    *
+   * @return integer
+   *   Used memory.
    */
   public function getMemoryUsage($start = FALSE);
 
@@ -44,6 +46,9 @@ interface XmlSitemapGeneratorInterface {
    *
    * This function just makes a guess. It does not take into account
    * the currently loaded modules.
+   *
+   * @return integer
+   *   Optimal memory limit.
    */
   public function getOptimalMemoryLimit();
 
@@ -67,13 +72,13 @@ interface XmlSitemapGeneratorInterface {
   public function generatePage(XmlSitemapInterface $sitemap, $page);
 
   /**
-   * Generate one chunk of the sitemap.
+   * Generates one chunk of the sitemap.
    *
-   * @param $sitemap
+   * @param \Drupal\xmlsitemap\XmlSitemapInterface $sitemap
    *   An unserialized data array for an XML sitemap.
-   * @param XmlSitemapWriter $writer
+   * @param \Drupal\xmlsitemap\XmlSitemapWriter $writer
    *   XML writer object
-   * @param $page
+   * @param integer $page
    *   An integer of the specific page of the sitemap to generate.
    */
   public function generateChunk(XmlSitemapInterface $sitemap, XmlSitemapWriter $writer, $chunk);
@@ -88,36 +93,79 @@ interface XmlSitemapGeneratorInterface {
 
   /**
    * Batch callback; generate all pages of a sitemap.
+   *
+   * @param string $smid
+   *   Sitemap id.
+   * @param array $context
+   *   Sitemap context.
    */
   public function regenerateBatchGenerate($smid, array &$context);
 
   /**
    * Batch callback; generate the index page of a sitemap.
+   *
+   * @param string $smid
+   *   Sitemap id.
+   * @param array $context
+   *   Sitemap context.
    */
   public function regenerateBatchGenerateIndex($smid, array &$context);
 
   /**
    * Batch callback; sitemap regeneration finished.
+   *
+   * @param bool $success
+   *   Checks if regeneration batch process was successful.
+   * @param array $results
+   *   Results for the regeneration process.
+   * @param array $operations
+   *   Operations performed.
+   * @param integer $elapsed
+   *   Time elapsed.
    */
   public function regenerateBatchFinished($success, $results, $operations, $elapsed);
 
   /**
    * Batch callback; clear sitemap links for entites.
+   *
+   * @param array $entities
+   *   Entities to rebuild.
+   * @param bool $save_custom
+   *   Save custom data.
+   * @param array $context
+   *   Context to be rebuilt.
    */
   public function rebuildBatchClear(array $entities, $save_custom, &$context);
 
   /**
    * Batch callback; fetch and add the sitemap links for a specific entity.
+   *
+   * @param string $entity
+   *   Entity type to be rebuilt.
+   * @param array $context
+   *   Context to be rebuilt.
    */
   public function rebuildBatchFetch($entity, &$context);
 
   /**
    * Batch callback; sitemap rebuild finished.
+   *
+   * @param bool $success
+   *   Checks if regeneration batch process was successful.
+   * @param array $results
+   *   Results for the regeneration process.
+   * @param array $operations
+   *   Operations performed.
+   * @param integer $elapsed
+   *   Time elapsed.
    */
   public function rebuildBatchFinished($success, $results, $operations, $elapsed);
 
   /**
-   * Set variables during the batch process
+   * Set variables during the batch process.
+   *
+   * @param array $variables
+   *   Variables to be set.
    */
   public function batchVariableSet(array $variables);
 }
