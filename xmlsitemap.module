@@ -1009,6 +1009,7 @@ function xmlsitemap_link_bundle_load($entity, $bundle, $load_bundle_info = TRUE)
   $info += array(
     'status' => XMLSITEMAP_STATUS_DEFAULT,
     'priority' => XMLSITEMAP_PRIORITY_DEFAULT,
+    'changefreq' => 0
   );
   return $info;
 }
@@ -1227,6 +1228,7 @@ function xmlsitemap_add_form_link_options(array &$form, $entity, $bundle, $id) {
     'priority' => $bundle_info['priority'],
     'priority_default' => $bundle_info['priority'],
     'priority_override' => 0,
+    'changefreq' => $bundle_info['changefreq']
   );
 
   $currentUser = \Drupal::currentUser();
@@ -1302,7 +1304,7 @@ function xmlsitemap_add_form_link_options(array &$form, $entity, $bundle, $id) {
     '#type' => 'select',
     '#title' => t('Change frequency'),
     '#options' => xmlsitemap_get_changefreq_options(),
-    '#default_value' => XMLSITEMAP_FREQUENCY_ALWAYS,
+    '#default_value' => $link['changefreq'],
     '#description' => t('Select the frequency of changes.'),
     '#states' => array(
       'invisible' => array(
@@ -1842,6 +1844,7 @@ function xmlsitemap_entity_create_link(EntityInterface $entity) {
     'priority' => $settings['priority'],
     'priority_default' => $settings['priority'],
     'priority_override' => 0,
+    'changefreq' => isset($settings['changefreq']) ? $settings['changefreq'] : 0
   );
 
   $url = $entity->url();
@@ -2224,6 +2227,17 @@ function xmlsitemap_add_link_bundle_settings(array &$form, array &$form_state, $
     '#title' => t('Default priority'),
     '#options' => xmlsitemap_get_priority_options(),
     '#default_value' => $bundle_info['priority'],
+    '#states' => array(
+      'invisible' => array(
+        'select[name="xmlsitemap[status]"]' => array('value' => '0'),
+      ),
+    ),
+  );
+  $form['xmlsitemap']['changefreq'] = array(
+    '#type' => 'select',
+    '#title' => t('Default change frequency'),
+    '#options' => xmlsitemap_get_changefreq_options(),
+    '#default_value' => $bundle_info['changefreq'],
     '#states' => array(
       'invisible' => array(
         'select[name="xmlsitemap[status]"]' => array('value' => '0'),

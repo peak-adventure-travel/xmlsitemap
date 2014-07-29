@@ -61,7 +61,7 @@ class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
       'bundle' => 'entity_test',
     ));
     $entity->save();
-    $this->assertSitemapLinkValues('entity_test', $entity->id(), array('status' => 0, 'priority' => 0.5));
+    $this->assertSitemapLinkValues('entity_test', $entity->id(), array('status' => 0, 'priority' => 0.5, 'changefreq' => 0));
   }
 
   /**
@@ -77,16 +77,18 @@ class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
     $this->assertResponse(200);
     $this->assertField('xmlsitemap[status]');
     $this->assertField('xmlsitemap[priority]');
+    $this->assertField('xmlsitemap[changefreq]');
     $edit = array(
       'xmlsitemap[status]' => 0,
-      'xmlsitemap[priority]' => 0.3
+      'xmlsitemap[priority]' => 0.3,
+      'xmlsitemap[changefreq]' => XMLSITEMAP_FREQUENCY_WEEKLY
     );
     $this->drupalPostForm(NULL, $edit, t('Save configuration'));
     $entity = entity_create('entity_test', array(
       'bundle' => 'entity_test'
     ));
     $entity->save();
-    $this->assertSitemapLinkValues('entity_test', $entity->id(), array('status' => 0, 'priority' => 0.3));
+    $this->assertSitemapLinkValues('entity_test', $entity->id(), array('status' => 0, 'priority' => 0.3, 'changefreq' => XMLSITEMAP_FREQUENCY_WEEKLY));
 
     $this->regenerateSitemap();
     $this->drupalGet('sitemap.xml');
@@ -99,14 +101,15 @@ class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
 
     $edit = array(
       'xmlsitemap[status]' => 1,
-      'xmlsitemap[priority]' => 0.6
+      'xmlsitemap[priority]' => 0.6,
+      'xmlsitemap[changefreq]' => XMLSITEMAP_FREQUENCY_YEARLY
     );
     $this->drupalPostForm('admin/config/search/xmlsitemap/settings/entity_test/entity_test', $edit, t('Save configuration'));
     $entity = entity_create('entity_test', array(
       'bundle' => 'entity_test'
     ));
     $entity->save();
-    $this->assertSitemapLinkValues('entity_test', $entity->id(), array('status' => 1, 'priority' => 0.6));
+    $this->assertSitemapLinkValues('entity_test', $entity->id(), array('status' => 1, 'priority' => 0.6, 'changefreq' => XMLSITEMAP_FREQUENCY_YEARLY));
 
     $this->regenerateSitemap();
     $this->drupalGet('sitemap.xml');

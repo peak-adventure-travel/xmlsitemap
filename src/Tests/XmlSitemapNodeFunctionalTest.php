@@ -67,7 +67,7 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
     $this->config->set('xmlsitemap_entity_taxonomy_vocabulary', 1);
     $this->config->set('xmlsitemap_entity_taxonomy_term', 1);
     $this->config->save();
-    xmlsitemap_link_bundle_settings_save('node', 'page', array('status' => 1, 'priority' => 0.6));
+    xmlsitemap_link_bundle_settings_save('node', 'page', array('status' => 1, 'priority' => 0.6, 'changefreq' => XMLSITEMAP_FREQUENCY_WEEKLY));
 
     // Add a vocabulary so we can test different view modes.
     $vocabulary = entity_create('taxonomy_vocabulary', array(
@@ -137,24 +137,24 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
 
     $tags = entity_load_multiple('taxonomy_term');
     foreach ($tags as $tag) {
-      $this->assertSitemapLinkValues('taxonomy_term', $tag->id(), array('status' => 0, 'priority' => 0.5));
+      $this->assertSitemapLinkValues('taxonomy_term', $tag->id(), array('status' => 0, 'priority' => 0.5, 'changefreq' => 0));
       $tag->delete();
     }
 
-    xmlsitemap_link_bundle_settings_save('taxonomy_term', 'tags', array('status' => 1, 'priority' => 0.2));
+    xmlsitemap_link_bundle_settings_save('taxonomy_term', 'tags', array('status' => 1, 'priority' => 0.2, 'changefreq' => XMLSITEMAP_FREQUENCY_HOURLY));
 
     $this->drupalPostForm('node/add/page', $edit, t('Save and publish'));
 
     $tags = entity_load_multiple('taxonomy_term');
     foreach ($tags as $tag) {
-      $this->assertSitemapLinkValues('taxonomy_term', $tag->id(), array('status' => 1, 'priority' => 0.2));
+      $this->assertSitemapLinkValues('taxonomy_term', $tag->id(), array('status' => 1, 'priority' => 0.2, 'changefreq' => XMLSITEMAP_FREQUENCY_HOURLY));
       $tag->delete();
     }
   }
 
   public function testNodeSettings() {
     $node = $this->drupalCreateNode(array('publish' => 0, 'uid' => $this->normal_user->id()));
-    $this->assertSitemapLinkValues('node', $node->id(), array('access' => 1, 'status' => 1, 'priority' => 0.6, 'status_override' => 0, 'priority_override' => 0));
+    $this->assertSitemapLinkValues('node', $node->id(), array('access' => 1, 'status' => 1, 'priority' => 0.6, 'status_override' => 0, 'priority_override' => 0, 'changefreq' => XMLSITEMAP_FREQUENCY_WEEKLY));
 
     $this->drupalLogin($this->normal_user);
     $this->drupalGet('node/' . $node->id() . '/edit');
@@ -167,20 +167,21 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
     );
     $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save'));
     $this->assertText('Basic page Test node title has been updated.');
-    $this->assertSitemapLinkValues('node', $node->id(), array('access' => 1, 'status' => 1, 'priority' => 0.6, 'status_override' => 0, 'priority_override' => 0));
+    $this->assertSitemapLinkValues('node', $node->id(), array('access' => 1, 'status' => 1, 'priority' => 0.6, 'status_override' => 0, 'priority_override' => 0, 'changefreq' => XMLSITEMAP_FREQUENCY_WEEKLY));
 
     $this->drupalLogin($this->admin_user);
     $this->drupalGet('node/' . $node->id() . '/edit');
     $this->assertField('xmlsitemap[status]');
     $this->assertField('xmlsitemap[priority]');
-
+    $this->assertField('xmlsitemap[changefreq]');
     $edit = array(
       'xmlsitemap[status]' => 1,
-      'xmlsitemap[priority]' => 0.9
+      'xmlsitemap[priority]' => 0.9,
+      'xmlsitemap[changefreq]' => XMLSITEMAP_FREQUENCY_ALWAYS
     );
     $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
     $this->assertText('Basic page Test node title has been updated.');
-    $this->assertSitemapLinkValues('node', $node->id(), array('access' => 1, 'status' => 1, 'priority' => 0.9, 'status_override' => 1, 'priority_override' => 1));
+    $this->assertSitemapLinkValues('node', $node->id(), array('access' => 1, 'status' => 1, 'priority' => 0.9, 'status_override' => 1, 'priority_override' => 1, 'changefreq' => XMLSITEMAP_FREQUENCY_ALWAYS));
 
     $edit = array(
       'xmlsitemap[status]' => 'default',
@@ -198,7 +199,7 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
     $this->drupalLogin($this->admin_user);
 
     $node_old = $this->drupalCreateNode();
-    $this->assertSitemapLinkValues('node', $node_old->id(), array('status' => 1, 'priority' => 0.6));
+    $this->assertSitemapLinkValues('node', $node_old->id(), array('status' => 1, 'priority' => 0.6, 'changefreq' => XMLSITEMAP_FREQUENCY_WEEKLY));
 
     $edit = array(
       'xmlsitemap[status]' => 0,

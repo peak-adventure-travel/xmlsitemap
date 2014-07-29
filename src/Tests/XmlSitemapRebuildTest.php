@@ -63,13 +63,13 @@ class XmlSitemapRebuildTest extends XmlSitemapTestBase {
     $this->config->set('xmlsitemap_entity_user', 1);
     $this->config->set('xmlsitemap_entity_user_bundle_user', 1);
     $this->config->save();
-    xmlsitemap_link_bundle_settings_save('user', 'user', array('status' => 1, 'priority' => 0.4));
+    xmlsitemap_link_bundle_settings_save('user', 'user', array('status' => 1, 'priority' => 0.4, 'changefreq' => XMLSITEMAP_FREQUENCY_MONTHLY));
 
     $dummy_user = $this->drupalCreateUser(array());
     $this->drupalLogin($this->admin_user);
     $this->drupalPostForm('admin/config/search/xmlsitemap/rebuild', array(), t('Save configuration'));
     $this->assertText('The sitemap links were rebuilt.');
-    $this->assertSitemapLinkValues('user', $dummy_user->id(), array('status' => 1, 'priority' => 0.4));
+    $this->assertSitemapLinkValues('user', $dummy_user->id(), array('status' => 1, 'priority' => 0.4, 'changefreq' => XMLSITEMAP_FREQUENCY_MONTHLY));
     $this->drupalGet('sitemap.xml');
     $this->assertRaw("user/{$dummy_user->id()}");
   }
