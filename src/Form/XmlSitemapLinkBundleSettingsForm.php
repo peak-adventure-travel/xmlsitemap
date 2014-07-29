@@ -13,6 +13,7 @@ use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Configure what entities will be included in sitemap
@@ -64,8 +65,12 @@ class XmlSitemapLinkBundleSettingsForm extends ConfigFormBase implements Contain
   public function buildForm(array $form, array &$form_state, $entity = NULL, $bundle = NULL) {
     $this->entity_type = $entity;
     $this->bundle_type = $bundle;
+    $config = $this->config('xmlsitemap.settings');
     $request = $this->getRequest();
 
+    if (!$config->get("xmlsitemap_entity_{$entity}") || !$config->get("xmlsitemap_entity_{$entity}_bundle_{$bundle}")) {
+      throw new NotFoundHttpException();
+    }
     if (!$request->isXmlHttpRequest() && $admin_path = xmlsitemap_get_bundle_path($entity, $bundle)) {
       // If this is a non-ajax form, redirect to the bundle administration page.
       $destination = drupal_get_destination();
