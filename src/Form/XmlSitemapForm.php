@@ -7,7 +7,6 @@
 
 namespace Drupal\xmlsitemap\Form;
 
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Language\LanguageInterface;

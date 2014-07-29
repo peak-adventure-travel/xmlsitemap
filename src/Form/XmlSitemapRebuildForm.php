@@ -8,8 +8,6 @@
 namespace Drupal\xmlsitemap\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
-use Drupal\Component\Utility\MapArray;
-use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\State\StateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;

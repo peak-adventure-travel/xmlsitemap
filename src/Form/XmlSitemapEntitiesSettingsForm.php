@@ -11,7 +11,6 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
