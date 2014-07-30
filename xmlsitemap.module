@@ -25,44 +25,46 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * The maximum number of links in one sitemap chunk file.
  */
-define('XMLSITEMAP_MAX_SITEMAP_LINKS', 50000);
-
+const XMLSITEMAP_MAX_SITEMAP_LINKS = 50000;
 /**
  * The maximum filesize of a sitemap chunk file.
  */
-define('XMLSITEMAP_MAX_SITEMAP_FILESIZE', 10485760);
+const XMLSITEMAP_MAX_SITEMAP_FILESIZE = 10485760;
 
-define('XMLSITEMAP_FREQUENCY_YEARLY', 31449600); // 60 * 60 * 24 * 7 * 52
-define('XMLSITEMAP_FREQUENCY_MONTHLY', 2419200); // 60 * 60 * 24 * 7 * 4
-define('XMLSITEMAP_FREQUENCY_WEEKLY', 604800); // 60 * 60 * 24 * 7
-define('XMLSITEMAP_FREQUENCY_DAILY', 86400); // 60 * 60 * 24
-define('XMLSITEMAP_FREQUENCY_HOURLY', 3600); // 60 * 60
-define('XMLSITEMAP_FREQUENCY_ALWAYS', 60);
+/**
+ * Xmlsitemap Frequencies
+ */
+const XMLSITEMAP_FREQUENCY_YEARLY = 31449600; // 60 * 60 * 24 * 7 * 52
+const XMLSITEMAP_FREQUENCY_MONTHLY = 2419200; // 60 * 60 * 24 * 7 * 4
+const XMLSITEMAP_FREQUENCY_WEEKLY = 604800; // 60 * 60 * 24 * 7
+const XMLSITEMAP_FREQUENCY_DAILY = 86400; // 60 * 60 * 24
+const XMLSITEMAP_FREQUENCY_HOURLY = 3600; // 60 * 60
+const XMLSITEMAP_FREQUENCY_ALWAYS = 60;
 
 /**
  * Short lastmod timestamp format.
  */
-define('XMLSITEMAP_LASTMOD_SHORT', 'Y-m-d');
+const XMLSITEMAP_LASTMOD_SHORT = 'Y-m-d';
 
 /**
  * Medium lastmod timestamp format.
  */
-define('XMLSITEMAP_LASTMOD_MEDIUM', 'Y-m-d\TH:i\Z');
+const XMLSITEMAP_LASTMOD_MEDIUM = 'Y-m-d\TH:i\Z';
 
 /**
  * Long lastmod timestamp format.
  */
-define('XMLSITEMAP_LASTMOD_LONG', 'c');
+const XMLSITEMAP_LASTMOD_LONG = 'c';
 
 /**
  * The default inclusion status for link types in the sitemaps.
  */
-define('XMLSITEMAP_STATUS_DEFAULT', 0);
+const XMLSITEMAP_STATUS_DEFAULT = 0;
 
 /**
  * The default priority for link types in the sitemaps.
  */
-define('XMLSITEMAP_PRIORITY_DEFAULT', 0.5);
+const XMLSITEMAP_PRIORITY_DEFAULT = 0.5;
 
 /**
  * Implements hook_hook_info().
