@@ -2,6 +2,7 @@
 
 use Drupal\Core\Routing\RouteMatchInterface;
 use GuzzleHttp\Exception\RequestException;
+use Drupal\Core\Cache\Cache;
 
 /**
  * Implements hook_hook_info().
@@ -57,11 +58,6 @@ function xmlsitemap_engines_submit_access() {
   if (!xmlsitemap_engines_can_submit()) {
     return FALSE;
   }
-
-  // Allow manual submissions to run.
-  //if ($_GET['q'] == 'admin/config/search/xmlsitemap/engines/submit' && user_access('administer xmlsitemap')) {
-  //  return TRUE;
-  //}
 
   $submit_updated = \Drupal::state()->get('xmlsitemap_engines_submit_updated');
   $submitted_last = \Drupal::state()->get('xmlsitemap_engines_submit_last');
@@ -174,7 +170,7 @@ function xmlsitemap_engines_get_engine_info($engine = NULL) {
       // Allow other modulse to alter the engine info.
       \Drupal::moduleHandler()->alter('xmlsitemap_engine_info', $engines);
       // Cache by language since engine names are translated.
-      \Drupal::cache()->set('xmlsitemap:engines:' . $language->getId(), $engines);
+      \Drupal::cache()->set('xmlsitemap:engines:' . $language->getId(), $engines, Cache::PERMANENT, array('xmlsitemap'));
     }
   }
 

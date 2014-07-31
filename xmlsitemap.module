@@ -19,6 +19,7 @@ use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
+use Drupal\Core\Cache\Cache;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -184,17 +185,17 @@ function xmlsitemap_cron() {
 }
 
 /**
- * Implements hook_modules_enabled().
+ * Implements hook_modules_installed().
  */
-function xmlsitemap_modules_enabled(array $modules) {
-  cache_clear_all('xmlsitemap:', 'cache', TRUE);
+function xmlsitemap_modules_installed(array $modules) {
+  \Drupal::cache()->deleteTags(array('xmlsitemap'));
 }
 
 /**
- * Implements hook_modules_disabled().
+ * Implements hook_modules_uninstalled().
  */
-function xmlsitemap_modules_disabled(array $modules) {
-  cache_clear_all('xmlsitemap:', 'cache', TRUE);
+function xmlsitemap_modules_uninstalled(array $modules) {
+  \Drupal::cache()->deleteTags(array('xmlsitemap'));
 }
 
 /**
@@ -659,7 +660,7 @@ function xmlsitemap_get_link_info($type = NULL, $reset = FALSE) {
       \Drupal::moduleHandler()->alter('xmlsitemap_link_info', $link_info);
       ksort($link_info);
       // Cache by language since this info contains translated strings.
-      \Drupal::cache()->set($cid, $link_info);
+      \Drupal::cache()->set($cid, $link_info, Cache::PERMANENT, array('xmlsitemap'));
     }
   }
 
@@ -1353,7 +1354,7 @@ function xmlsitemap_get_context_info($context = NULL, $reset = FALSE) {
     \Drupal::moduleHandler()->alter('xmlsitemap_context_info', $info);
     ksort($info);
     // Cache by language since this info contains translated strings.
-    \Drupal::cache()->set('xmlsitemap:context_info:' . $language->getId(), $info);
+    \Drupal::cache()->set('xmlsitemap:context_info:' . $language->getId(), $info, Cache::PERMANENT, array('xmlsitemap'));
   }
 
   if (isset($context)) {
@@ -2389,7 +2390,7 @@ function xmlsitemap_check_status() {
           $modules[] = $module;
         }
       }
-      \Drupal::cache()->set('xmlsitemap:registry:requirements', $modules);
+      \Drupal::cache()->set('xmlsitemap:registry:requirements', $modules, Cache::PERMANENT, array('xmlsitemap'));
     }
 
     $messages = array();
