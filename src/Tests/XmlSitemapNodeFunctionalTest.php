@@ -220,8 +220,8 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
 
     $this->assertSitemapLinkValues('node', $node->id(), array('subtype' => 'page2', 'status' => 0, 'priority' => 0.0));
     $this->assertSitemapLinkValues('node', $node_old->id(), array('subtype' => 'page2', 'status' => 0, 'priority' => 0.0));
-    $this->assertEqual(count(xmlsitemap_link_load_multiple(array('type' => 'node', 'subtype' => 'page'))), 0);
-    $this->assertEqual(count(xmlsitemap_link_load_multiple(array('type' => 'node', 'subtype' => 'page2'))), 2);
+    $this->assertEqual(count($this->linkStorage->loadMultiple(array('type' => 'node', 'subtype' => 'page'))), 0);
+    $this->assertEqual(count($this->linkStorage->loadMultiple(array('type' => 'node', 'subtype' => 'page2'))), 2);
 
     // delete all pages in order to allow content type deletion
     $node->delete();
@@ -229,7 +229,7 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
 
     $this->drupalPostForm('admin/structure/types/manage/page2/delete', array(), t('Delete'));
     $this->assertText('The content type Basic page has been deleted.');
-    $this->assertFalse(xmlsitemap_link_load_multiple(array('type' => 'node', 'subtype' => 'page2')), 'Nodes with deleted node type removed from {xmlsitemap}.');
+    $this->assertFalse($this->linkStorage->loadMultiple(array('type' => 'node', 'subtype' => 'page2')), 'Nodes with deleted node type removed from {xmlsitemap}.');
   }
 
   /**

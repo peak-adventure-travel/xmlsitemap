@@ -14,6 +14,7 @@ use Drupal\Core\State\StateInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\xmlsitemap\XmlSitemapLinkStorageInterface;
 
 /**
  * Configure xmlsitemap settings for this site.
@@ -35,6 +36,13 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
   protected $formBuilder;
 
   /**
+   * The xmlsitemap.link_storage service.
+   *
+   * @var \Drupal\xmlsitemap\XmlSitemapLinkInterface
+   */
+  protected $linkStorage;
+
+  /**
    * Constructs a new XmlSitemapSettingsForm object.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
@@ -44,10 +52,11 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
    * @param \Drupal\Core\Form\FormBuilderInterface $state
    *   The form builder service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, StateInterface $state, FormBuilderInterface $form_builder) {
+  public function __construct(ConfigFactoryInterface $config_factory, StateInterface $state, FormBuilderInterface $form_builder, XmlSitemapLinkStorageInterface $link_storage) {
     parent::__construct($config_factory);
     $this->state = $state;
     $this->formBuilder = $form_builder;
+    $this->linkStorage = $link_storage;
   }
 
   /**
@@ -55,7 +64,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-        $container->get('config.factory'), $container->get('state'), $container->get('form_builder')
+        $container->get('config.factory'), $container->get('state'), $container->get('form_builder'), $container->get('xmlsitemap.link_storage')
     );
   }
 
@@ -230,7 +239,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
       $config->set('frontpage_priority', $frontpage_priority);
       $config->set('frontpage_changefreq', $frontpage_changefreq);
       $config->save();
-      xmlsitemap_link_save(array('type' => 'frontpage', 'id' => 0, 'loc' => '', 'priority' => $frontpage_priority, 'changefreq' => $frontpage_changefreq));
+      $this->linkStorage->save(array('type' => 'frontpage', 'id' => 0, 'loc' => '', 'priority' => $frontpage_priority, 'changefreq' => $frontpage_changefreq));
     }
     $this->state->set('xmlsitemap_developer_mode', $values['xmlsitemap_developer_mode']);
     $this->state->set('xmlsitemap_base_url', $values['xmlsitemap_base_url']);

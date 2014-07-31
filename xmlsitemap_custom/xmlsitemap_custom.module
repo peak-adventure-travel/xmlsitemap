@@ -6,10 +6,10 @@
  * @param $id
  *   The sitemap link ID of the custom link to load.
  *
- * @see xmlsitemap_link_load()
+ * @see \Drupal\xmlsitemap\XmlSitemapLinkStorageInterface::load()
  */
 function xmlsitemap_custom_load($id) {
-  return xmlsitemap_link_load('custom', $id);
+  return \Drupal::service('xmlsitemap.link_storage')->load('custom', $id);
 }
 
 /**

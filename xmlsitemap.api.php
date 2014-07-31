@@ -75,7 +75,7 @@ function hook_xmlsitemap_link_alter(&$link) {
  *
  * @param $link
  *   Associative array defining an XML sitemap link as passed into
- *   xmlsitemap_link_save().
+ *   \Drupal\xmlsitemap\XmlSitemapLinkStorageInterface::save().
  *
  * @see hook_xmlsitemap_link_update()
  */
@@ -94,7 +94,7 @@ function hook_xmlsitemap_link_insert(array $link) {
  *
  * @param $link
  *   Associative array defining an XML sitemap link as passed into
- *   xmlsitemap_link_save().
+ *   \Drupal\xmlsitemap\XmlSitemapLinkStorageInterface::save().
  *
  * @see hook_xmlsitemap_link_insert()
  */
@@ -112,7 +112,7 @@ function hook_xmlsitemap_link_update(array $link) {
  * Index links for the XML sitemaps.
  */
 function hook_xmlsitemap_index_links($limit) {
-
+  
 }
 
 /**
@@ -167,14 +167,14 @@ function hook_xmlsitemap_context_alter(&$context) {
  * Provide options for the url() function based on an XML sitemap context.
  */
 function hook_xmlsitemap_context_url_options(array $context) {
-
+  
 }
 
 /**
  * Alter the url() options based on an XML sitemap context.
  */
 function hook_xmlsitemap_context_url_options_alter(array &$options, array $context) {
-
+  
 }
 
 /**
@@ -204,7 +204,7 @@ function hook_query_xmlsitemap_generate_alter(QueryAlterableInterface $query) {
  * Provide information about XML sitemap bulk operations.
  */
 function hook_xmlsitemap_sitemap_operations() {
-
+  
 }
 
 /**

@@ -71,6 +71,13 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   protected $languageManager;
 
   /**
+   * The xmlsitemap link storage handler.
+   *
+   * @var \Drupal\xmlsitemap\XmlSitemapLinkStorageInterface
+   */
+  protected $linkStorage;
+
+  /**
    * {@inheritdoc}
    */
   public function setUp() {
@@ -81,6 +88,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
     $this->moduleHandler = \Drupal::moduleHandler();
     $this->entityManager = \Drupal::entityManager();
     $this->languageManager = \Drupal::languageManager();
+    $this->linkStorage = \Drupal::service('xmlsitemap.link_storage');
   }
 
   /**
@@ -156,11 +164,11 @@ abstract class XmlSitemapTestBase extends WebTestBase {
 
   protected function assertSitemapLink($entity_type, $entity_id = NULL) {
     if (is_array($entity_type)) {
-      $links = xmlsitemap_link_load_multiple($entity_type);
+      $links = $this->linkStorage->loadMultiple($entity_type);
       $link = $links ? reset($links) : FALSE;
     }
     else {
-      $link = xmlsitemap_link_load($entity_type, $entity_id);
+      $link = $this->linkStorage->load($entity_type, $entity_id);
     }
     $this->assertTrue(is_array($link), 'Link loaded.');
     return $link;
@@ -168,28 +176,28 @@ abstract class XmlSitemapTestBase extends WebTestBase {
 
   protected function assertNoSitemapLink($entity_type, $entity_id = NULL) {
     if (is_array($entity_type)) {
-      $links = xmlsitemap_link_load_multiple($entity_type);
+      $links = $this->linkStorage->loadMultiple($entity_type);
       $link = $links ? reset($links) : FALSE;
     }
     else {
-      $link = xmlsitemap_link_load($entity_type, $entity_id);
+      $link = $this->linkStorage->load($entity_type, $entity_id);
     }
     $this->assertFalse($link, 'Link not loaded.');
     return $link;
   }
 
   protected function assertSitemapLinkVisible($entity_type, $entity_id) {
-    $link = xmlsitemap_link_load($entity_type, $entity_id);
+    $link = $this->linkStorage->load($entity_type, $entity_id);
     $this->assertTrue($link && $link['access'] && $link['status'], t('Sitemap link @type @id is visible.', array('@type' => $entity_type, '@id' => $entity_id)));
   }
 
   protected function assertSitemapLinkNotVisible($entity_type, $entity_id) {
-    $link = xmlsitemap_link_load($entity_type, $entity_id);
+    $link = $this->linkStorage->load($entity_type, $entity_id);
     $this->assertTrue($link && !($link['access'] && $link['status']), t('Sitemap link @type @id is not visible.', array('@type' => $entity_type, '@id' => $entity_id)));
   }
 
   protected function assertSitemapLinkValues($entity_type, $entity_id, array $conditions) {
-    $link = xmlsitemap_link_load($entity_type, $entity_id);
+    $link = $this->linkStorage->load($entity_type, $entity_id);
 
     if (!$link) {
       return $this->fail(t('Could not load sitemap link for @type @id.', array('@type' => $entity_type, '@id' => $entity_id)));
@@ -208,7 +216,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   }
 
   protected function assertNotSitemapLinkValues($entity_type, $entity_id, array $conditions) {
-    $link = xmlsitemap_link_load($entity_type, $entity_id);
+    $link = $this->linkStorage->load($entity_type, $entity_id);
 
     if (!$link) {
       return $this->fail(t('Could not load sitemap link for @type @id.', array('@type' => $entity_type, '@id' => $entity_id)));
@@ -256,7 +264,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
     $link += array('loc' => $link['type'] . '-' . $link['id']);
 
     $last_id = max($last_id, $link['id']) + 1;
-    xmlsitemap_link_save($link);
+    $this->linkStorage->save($link);
     return $link;
   }
 

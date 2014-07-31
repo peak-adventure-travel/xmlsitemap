@@ -8,19 +8,79 @@
 namespace Drupal\xmlsitemap;
 
 use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\State\StateInterface;
+use Drupal\Core\Entity\EntityInterface;
 
 /**
- * Provides a class to save/update/delete/load xmlsitemap links.
+ * XmlSitemap link storage service class.
  */
-class XmlSitemapLinkStorage {
+class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
 
   /**
-   * Saves or updates a sitemap link.
+   * The state store.
    *
-   * @param $link
-   *   An array with a sitemap link.
+   * @var \Drupal\Core\State\StateInterface
    */
-  public static function linkSave(array $link) {
+  protected $state;
+
+  /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
+   * Constructs a XmlSitemapGeneratorService object.
+   *
+   * @param \Drupal\Core\State\StateInterface $state
+   *   The state handler.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
+   */
+  public function __construct(StateInterface $state, ModuleHandlerInterface $module_handler) {
+    $this->state = $state;
+    $this->moduleHandler = $module_handler;
+  }
+
+  public function create(EntityInterface $entity) {
+    if (!isset($entity->xmlsitemap)) {
+      $entity->xmlsitemap = array();
+      if ($entity->id() && $link = $this->load($entity->getEntityTypeId(), $entity->id())) {
+        $entity->xmlsitemap = $link;
+      }
+    }
+
+    $settings = xmlsitemap_link_bundle_load($entity->getEntityTypeId(), $entity->bundle());
+    $uri = $entity->url();
+    $entity->xmlsitemap += array(
+      'type' => $entity->getEntityTypeId(),
+      'id' => (string) $entity->id(),
+      'subtype' => $entity->bundle(),
+      'status' => $settings['status'],
+      'status_default' => $settings['status'],
+      'status_override' => 0,
+      'priority' => $settings['priority'],
+      'priority_default' => $settings['priority'],
+      'priority_override' => 0,
+      'changefreq' => isset($settings['changefreq']) ? $settings['changefreq'] : 0
+    );
+
+    $url = $entity->url();
+    // The following values must always be checked because they are volatile.
+    $entity->xmlsitemap['loc'] = $uri;
+    $entity->xmlsitemap['access'] = isset($url) ? 1 : 0;
+    $language = $entity->language();
+    $entity->xmlsitemap['language'] = !empty($language) ? $language->getId() : LanguageInterface::LANGCODE_NOT_SPECIFIED;
+
+    return $entity->xmlsitemap;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function save(array $link) {
     $link += array(
       'access' => 1,
       'status' => 1,
@@ -34,7 +94,7 @@ class XmlSitemapLinkStorage {
     );
 
     // Allow other modules to alter the link before saving.
-    \Drupal::moduleHandler()->alter('xmlsitemap_link', $link);
+    $this->moduleHandler->alter('xmlsitemap_link', $link);
 
     // Temporary validation checks.
     // @todo Remove in final?
@@ -49,39 +109,27 @@ class XmlSitemapLinkStorage {
     $existing = db_query_range("SELECT loc, access, status, lastmod, priority, changefreq, changecount, language FROM {xmlsitemap} WHERE type = :type AND id = :id", 0, 1, array(':type' => $link['type'], ':id' => $link['id']))->fetchAssoc();
 
     // Check if this is a changed link and set the regenerate flag if necessary.
-    if (!\Drupal::state()->get('xmlsitemap_regenerate_needed')) {
-      self::checkChangedLink($link, $existing, TRUE);
+    if (!$this->state->get('xmlsitemap_regenerate_needed')) {
+      $this->checkChangedLink($link, $existing, TRUE);
     }
 
     // Save the link and allow other modules to respond to the link being saved.
     if ($existing) {
       drupal_write_record('xmlsitemap', $link, array('type', 'id'));
-      \Drupal::moduleHandler()->invokeAll('xmlsitemap_link_update', array($link));
+      $this->moduleHandler->invokeAll('xmlsitemap_link_update', array($link));
     }
     else {
-      drupal_write_record('xmlsitemap', $link);
-      \Drupal::moduleHandler()->invokeAll('xmlsitemap_link_insert', array($link));
+      $result = drupal_write_record('xmlsitemap', $link);
+      $this->moduleHandler->invokeAll('xmlsitemap_link_insert', array($link));
     }
 
     return $link;
   }
 
   /**
-   * Check if there is sitemap link is changed from the existing data.
-   *
-   * @param $link
-   *   An array of the sitemap link.
-   * @param $original_link
-   *   An optional array of the existing data. This should only contain the
-   *   fields necessary for comparison. If not provided the existing data will be
-   *   loaded from the database.
-   * @param $flag
-   *   An optional boolean that if TRUE, will set the regenerate needed flag if
-   *   there is a match. Defaults to FALSE.
-   * @return
-   *   TRUE if the link is changed, or FALSE otherwise.
+   * {@inheritdoc}
    */
-  public static function checkChangedLink(array $link, $original_link = NULL, $flag = FALSE) {
+  public function checkChangedLink(array $link, $original_link = NULL, $flag = FALSE) {
     $changed = FALSE;
 
     if ($original_link === NULL) {
@@ -107,24 +155,16 @@ class XmlSitemapLinkStorage {
     }
 
     if ($changed && $flag) {
-      \Drupal::state()->set('xmlsitemap_regenerate_needed', TRUE);
+      $this->state->set('xmlsitemap_regenerate_needed', TRUE);
     }
 
     return $changed;
   }
 
   /**
-   * Check if there is a visible sitemap link given a certain set of conditions.
-   *
-   * @param $conditions
-   *   An array of values to match keyed by field.
-   * @param $flag
-   *   An optional boolean that if TRUE, will set the regenerate needed flag if
-   *   there is a match. Defaults to FALSE.
-   * @return
-   *   TRUE if there is a visible link, or FALSE otherwise.
+   * {@inheritdoc}
    */
-  public static function checkChangedLinks(array $conditions = array(), array $updates = array(), $flag = FALSE) {
+  public function checkChangedLinks(array $conditions = array(), array $updates = array(), $flag = FALSE) {
     // If we are changing status or access, check for negative current values.
     $conditions['status'] = (!empty($updates['status']) && empty($conditions['status'])) ? 0 : 1;
     $conditions['access'] = (!empty($updates['access']) && empty($conditions['access'])) ? 0 : 1;
@@ -138,43 +178,24 @@ class XmlSitemapLinkStorage {
     $changed = $query->execute()->fetchField();
 
     if ($changed && $flag) {
-      \Drupal::state()->set('xmlsitemap_regenerate_needed', TRUE);
+      $this->state->set('xmlsitemap_regenerate_needed', TRUE);
     }
 
     return $changed;
   }
 
   /**
-   * Delete a specific sitemap link from the database.
-   *
-   * If a visible sitemap link was deleted, this will automatically set the
-   * regenerate needed flag.
-   *
-   * @param $entity_type
-   *   A string with the entity type.
-   * @param $entity_id
-   *   An integer with the entity ID.
-   * @return
-   *   The number of links that were deleted.
+   * {@inheritdoc}
    */
-  public static function linkDelete($entity_type, $entity_id) {
+  public function delete($entity_type, $entity_id) {
     $conditions = array('type' => $entity_type, 'id' => $entity_id);
-    return self::linkDeleteMultiple($conditions);
+    return $this->deleteMultiple($conditions);
   }
 
   /**
-   * Delete multiple sitemap links from the database.
-   *
-   * If visible sitemap links were deleted, this will automatically set the
-   * regenerate needed flag.
-   *
-   * @param $conditions
-   *   An array of conditions on the {xmlsitemap} table in the form
-   *   'field' => $value.
-   * @return
-   *   The number of links that were deleted.
+   * {@inheritdoc}
    */
-  public static function linkDeleteMultiple(array $conditions) {
+  public function deleteMultiple(array $conditions) {
     // Because this function is called from sub-module uninstall hooks, we have
     // to manually check if the table exists since it could have been removed
     // in xmlsitemap_uninstall().
@@ -183,8 +204,8 @@ class XmlSitemapLinkStorage {
       return FALSE;
     }
 
-    if (!\Drupal::state()->get('xmlsitemap_regenerate_needed')) {
-      self::checkChangedLinks($conditions, array(), TRUE);
+    if (!$this->state->get('xmlsitemap_regenerate_needed')) {
+      $this->checkChangedLinks($conditions, array(), TRUE);
     }
 
     // @todo Add a hook_xmlsitemap_link_delete() hook invoked here.
@@ -198,23 +219,13 @@ class XmlSitemapLinkStorage {
   }
 
   /**
-   * Perform a mass update of sitemap data.
-   *
-   * If visible links are updated, this will automatically set the regenerate
-   * needed flag to TRUE.
-   *
-   * @param $updates
-   *   An array of values to update fields to, keyed by field name.
-   * @param $conditions
-   *   An array of values to match keyed by field.
-   * @return
-   *   The number of links that were updated.
+   * {@inheritdoc}
    */
-  public static function linkUpdateMultiple($updates = array(), $conditions = array(), $check_flag = TRUE) {
+  public function updateMultiple($updates = array(), $conditions = array(), $check_flag = TRUE) {
     // If we are going to modify a visible sitemap link, we will need to set
     // the regenerate needed flag.
-    if ($check_flag && !\Drupal::state()->get('xmlsitemap_regenerate_needed')) {
-      self::checkChangedLinks($conditions, $updates, TRUE);
+    if ($check_flag && !$this->state->get('xmlsitemap_regenerate_needed')) {
+      $this->checkChangedLinks($conditions, $updates, TRUE);
     }
 
     // Process updates.
@@ -228,30 +239,17 @@ class XmlSitemapLinkStorage {
   }
 
   /**
-   * Load a specific sitemap link from the database.
-   *
-   * @param $entity_type
-   *   A string with the entity type.
-   * @param $entity_id
-   *   An integer with the entity ID.
-   * @return
-   *   A sitemap link (array) or FALSE if the conditions were not found.
+   * {@inheritdoc}
    */
-  public static function linkLoad($entity_type, $entity_id) {
-    $link = self::linkLoadMultiple(array('type' => $entity_type, 'id' => $entity_id));
+  public function load($entity_type, $entity_id) {
+    $link = $this->loadMultiple(array('type' => $entity_type, 'id' => $entity_id));
     return $link ? reset($link) : FALSE;
   }
 
   /**
-   * Load sitemap links from the database.
-   *
-   * @param $conditions
-   *   An array of conditions on the {xmlsitemap} table in the form
-   *   'field' => $value.
-   * @return
-   *   An array of sitemap link arrays.
+   * {@inheritdoc}
    */
-  public static function linkLoadMultiple(array $conditions = array()) {
+  public function loadMultiple(array $conditions = array()) {
     $query = db_select('xmlsitemap');
     $query->fields('xmlsitemap');
 

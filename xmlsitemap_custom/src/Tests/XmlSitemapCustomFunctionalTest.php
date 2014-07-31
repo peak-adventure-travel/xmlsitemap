@@ -27,6 +27,13 @@ class XmlSitemapCustomFunctionalTest extends XmlSitemapTestBase {
    * @var \Drupal\Core\Path\AliasStorageInterface
    */
   protected $aliasStorage;
+  
+  /**
+   * The xmlsitemap link storage handler.
+   *
+   * @var \Drupal\xmlsitemap\XmlSitemapLinkStorageInterface
+   */
+  protected $linkStorage;
 
   public static function getInfo() {
     return array(
@@ -43,6 +50,7 @@ class XmlSitemapCustomFunctionalTest extends XmlSitemapTestBase {
     parent::setUp();
 
     $this->aliasStorage = \Drupal::service('path.alias_storage');
+    $this->linkStorage = \Drupal::service('xmlsitemap.link_storage');
     $this->admin_user = $this->drupalCreateUser(array('access content', 'administer xmlsitemap'));
     $this->drupalLogin($this->admin_user);
   }
@@ -98,14 +106,14 @@ class XmlSitemapCustomFunctionalTest extends XmlSitemapTestBase {
     $edit['loc'] = 'core/misc/drupal.js';
     $this->drupalPostForm('admin/config/search/xmlsitemap/custom/add', $edit, t('Save'));
     $this->assertText(t('The custom link for @link was saved.', array('@link' => $edit['loc'])));
-    $links = xmlsitemap_link_load_multiple(array('type' => 'custom', 'loc' => $edit['loc']));
+    $links = $this->linkStorage->loadMultiple(array('type' => 'custom', 'loc' => $edit['loc']));
     $this->assertEqual(count($links), 1, t('Custom link saved in the database.'));
 
     //Test a duplicate url.
     $edit['loc'] = 'core/misc/drupal.js';
     $this->drupalPostForm('admin/config/search/xmlsitemap/custom/add', $edit, t('Save'));
     $this->assertText(t('There is already an existing link in the sitemap with the path @link.', array('@link' => $edit['loc'])));
-    $links = xmlsitemap_link_load_multiple(array('type' => 'custom', 'loc' => $edit['loc']));
+    $links = $this->linkStorage->loadMultiple(array('type' => 'custom', 'loc' => $edit['loc']));
     $this->assertEqual(count($links), 1, t('Custom link saved in the database.'));
   }
 

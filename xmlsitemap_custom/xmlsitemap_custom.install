@@ -11,5 +11,5 @@ use Drupal\xmlsitemap\XmlSitemapLinkStorage;
  */
 function xmlsitemap_custom_uninstall() {
   \Drupal::moduleHandler()->load('xmlsitemap');
-  XmlSitemapLinkStorage::linkDeleteMultiple(array('type' => 'custom'));
+  \Drupal::service('xmlsitemap.link_storage')->deleteMultiple(array('type' => 'custom'));
 }

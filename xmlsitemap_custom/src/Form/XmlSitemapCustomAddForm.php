@@ -9,7 +9,6 @@ namespace Drupal\xmlsitemap_custom\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Language\LanguageInterface;
-use Drupal\xmlsitemap\XmlSitemapLinkStorage;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -17,6 +16,7 @@ use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Path\AliasManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\xmlsitemap\XmlSitemapLinkStorageInterface;
 
 /**
  * Provides a form for adding a custom link.
@@ -45,6 +45,13 @@ class XmlSitemapCustomAddForm extends ConfigFormBase {
   protected $aliasManager;
 
   /**
+   * The xmlsitemap link storage handler.
+   *
+   * @var \Drupal\xmlsitemap\XmlSitemapLinkStorageInterface
+   */
+  protected $linkStorage;
+
+  /**
    * Constructs a new XmlSitemapCustomAddForm object.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
@@ -55,12 +62,15 @@ class XmlSitemapCustomAddForm extends ConfigFormBase {
    *   The language manager service.
    * @param \Drupal\Core\Path\AliasManagerInterface $alias_manager
    *   The path alias manager service.
+   * @param \Drupal\xmlsitemap\XmlSitemapLinkStorageInterface $link_storage
+   *   The xmlsitemap link storage service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, FormBuilderInterface $form_builder, LanguageManagerInterface $language_manager, AliasManagerInterface $alias_manager) {
+  public function __construct(ConfigFactoryInterface $config_factory, FormBuilderInterface $form_builder, LanguageManagerInterface $language_manager, AliasManagerInterface $alias_manager, XmlSitemapLinkStorageInterface $link_storage) {
     parent::__construct($config_factory);
     $this->languageManager = $language_manager;
     $this->formBuilder = $form_builder;
     $this->aliasManager = $alias_manager;
+    $this->linkStorage = $link_storage;
   }
 
   /**
@@ -68,7 +78,7 @@ class XmlSitemapCustomAddForm extends ConfigFormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-        $container->get('config.factory'), $container->get('form_builder'), $container->get('language_manager'), $container->get('path.alias_manager')
+        $container->get('config.factory'), $container->get('form_builder'), $container->get('language_manager'), $container->get('path.alias_manager'), $container->get('xmlsitemap.link_storage')
     );
   }
 
@@ -192,7 +202,7 @@ class XmlSitemapCustomAddForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, array &$form_state) {
     $link = $form_state['values'];
-    XmlSitemapLinkStorage::linkSave($link);
+    $this->linkStorage->save($link);
     drupal_set_message(t('The custom link for %loc was saved.', array('%loc' => $link['loc'])));
 
     $form_state['redirect_route']['route_name'] = 'xmlsitemap_custom.list';

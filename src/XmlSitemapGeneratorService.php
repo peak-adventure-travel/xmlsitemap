@@ -15,7 +15,7 @@ use Drupal\Core\State\StateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 
 /**
- * XmlSitemap generator service.
+ * XmlSitemap generator service class.
  */
 class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
 
