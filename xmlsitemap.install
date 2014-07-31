@@ -303,15 +303,8 @@ function xmlsitemap_install() {
   $sitemap->context = xmlsitemap_get_current_context();
   $sitemap = $sitemap->setLabel(\Drupal::state()->get('xmlsitemap_base_url'));
   $sitemap->save();
-}
 
-/**
- * Implements hook_enable().
- */
-function xmlsitemap_enable() {
-  // Ensure the file cache directory is available and ready.
   xmlsitemap_check_directory();
-
   \Drupal::state()->set('xmlsitemap_regenerate_needed', TRUE);
 }
 
