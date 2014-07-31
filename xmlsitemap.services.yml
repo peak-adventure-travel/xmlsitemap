@@ -1,6 +1,6 @@
 services:
   xmlsitemap_generator:
-    class: Drupal\xmlsitemap\XmlSitemapGeneratorService
+    class: Drupal\xmlsitemap\XmlSitemapGenerator
     arguments: ['@config.factory', '@entity.manager', '@state', '@language_manager']
     tags:
       - { name: xmlsitemap_generator }

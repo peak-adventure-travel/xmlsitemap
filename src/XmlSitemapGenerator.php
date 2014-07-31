@@ -17,7 +17,7 @@ use Drupal\Core\Language\LanguageManagerInterface;
 /**
  * XmlSitemap generator service class.
  */
-class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
+class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
 
   /**
    * Aliases for links.
@@ -69,7 +69,7 @@ class XmlSitemapGeneratorService implements XmlSitemapGeneratorInterface {
   protected $state;
 
   /**
-   * Constructs a XmlSitemapGeneratorService object.
+   * Constructs a XmlSitemapGenerator object.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory object.

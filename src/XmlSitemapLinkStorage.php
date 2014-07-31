@@ -32,7 +32,7 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
   protected $moduleHandler;
 
   /**
-   * Constructs a XmlSitemapGeneratorService object.
+   * Constructs a XmlSitemapLinkStorage object.
    *
    * @param \Drupal\Core\State\StateInterface $state
    *   The state handler.
