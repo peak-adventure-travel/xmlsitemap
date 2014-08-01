@@ -51,24 +51,36 @@ class XmlSitemapTaxonomyFunctionalTest extends XmlSitemapTestBase {
    */
   public function testTaxonomySettings() {
     $this->drupalLogin($this->admin_user);
-
+    $this->drupalGet('admin/structure/taxonomy/add');
+    $this->assertField('xmlsitemap[status]');
+    $this->assertField('xmlsitemap[priority]');
     $edit = array(
       'name' => $this->randomName(),
       'vid' => drupal_strtolower($this->randomName()),
       'xmlsitemap[status]' => '1',
       'xmlsitemap[priority]' => '1.0',
     );
-    $this->drupalPostForm('admin/structure/taxonomy/add', $edit, 'Save');
+    $this->drupalPostForm(NULL, $edit, t('Save'));
     $this->assertText("Created new vocabulary {$edit['name']}.");
 
     $vocabulary = taxonomy_vocabulary_load($edit['vid']);
 
+    $this->config->set('xmlsitemap_entity_taxonomy_term', TRUE);
+    $this->config->set('xmlsitemap_entity_taxonomy_term_bundle_' . $vocabulary->id(), TRUE);
+    $this->config->save();
+
+    $this->drupalGet('admin/structure/taxonomy/manage/' . $vocabulary->id() . '/add');
+    $this->assertResponse(200);
+    $this->assertField('xmlsitemap[status]');
+    $this->assertField('xmlsitemap[priority]');
+    $this->assertField('xmlsitemap[changefreq]');
+
     $edit = array(
-      'name' => $this->randomName(),
+      'name[0][value]' => $this->randomName(),
       'xmlsitemap[status]' => 'default',
       'xmlsitemap[priority]' => 'default',
     );
-    $this->drupalPostForm("admin/structure/taxonomy/manage/{$vocabulary->id()}", $edit, 'Save');
+    $this->drupalPostForm(NULL, $edit, t('Save'));
   }
 
 }
