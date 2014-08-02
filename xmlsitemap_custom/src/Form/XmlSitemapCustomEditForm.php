@@ -17,6 +17,7 @@ use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Path\AliasManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\xmlsitemap\XmlSitemapLinkStorageInterface;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Provides a form for editing a custom link.
@@ -99,7 +100,7 @@ class XmlSitemapCustomEditForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state, $link = '') {
+  public function buildForm(array $form, FormStateInterface $form_state, $link = '') {
     $query = db_select('xmlsitemap');
     $query->fields('xmlsitemap');
     $query->condition('type', 'custom');
@@ -188,7 +189,7 @@ class XmlSitemapCustomEditForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, array &$form_state) {
+  public function validateForm(array &$form, FormStateInterface $form_state) {
     $link = &$form_state['values'];
     $link['loc'] = trim($link['loc']);
     $link['loc'] = $this->aliasManager->getPathByAlias($link['loc'], $link['language']);
@@ -205,7 +206,7 @@ class XmlSitemapCustomEditForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, array &$form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     $link = $form_state['values'];
     $this->linkStorage->save($link);
     drupal_set_message(t('The custom link for %loc was saved.', array('%loc' => $link['loc'])));

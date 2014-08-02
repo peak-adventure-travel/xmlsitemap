@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Form\FormStateInterface;
 
 class XmlSitemapForm extends EntityForm {
 
@@ -24,7 +25,7 @@ class XmlSitemapForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  public function form(array $form, array &$form_state) {
+  public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
     if ($this->entity->getContext() == NULL) {
       $this->entity->context = array();
@@ -57,7 +58,7 @@ class XmlSitemapForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  public function save(array $form, array &$form_state) {
+  public function save(array $form, FormStateInterface $form_state) {
     if (!isset($form_state['values']['context'])) {
       $form_state['values']['context'] = xmlsitemap_get_current_context();
     }
@@ -92,7 +93,7 @@ class XmlSitemapForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  public function delete(array $form, array &$form_state) {
+  public function delete(array $form, FormStateInterface $form_state) {
     $destination = array();
     $request = $this->getRequest();
     if ($request->query->has('destination')) {

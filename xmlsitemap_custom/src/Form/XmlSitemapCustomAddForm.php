@@ -16,6 +16,7 @@ use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Path\AliasManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\xmlsitemap\XmlSitemapLinkStorageInterface;
 
 /**
@@ -92,7 +93,7 @@ class XmlSitemapCustomAddForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state) {
     $query = db_select('xmlsitemap', 'x');
     $query->addExpression('MAX(id)');
     $id = $query->execute()->fetchField();
@@ -169,7 +170,7 @@ class XmlSitemapCustomAddForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, array &$form_state) {
+  public function validateForm(array &$form, FormStateInterface $form_state) {
     $link = &$form_state['values'];
 
     // Make sure we trim and normalize the path first.
@@ -200,7 +201,7 @@ class XmlSitemapCustomAddForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, array &$form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     $link = $form_state['values'];
     $this->linkStorage->save($link);
     drupal_set_message(t('The custom link for %loc was saved.', array('%loc' => $link['loc'])));

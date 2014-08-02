@@ -13,8 +13,9 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\State\StateInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormBuilderInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\xmlsitemap\XmlSitemapLinkStorageInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Configure xmlsitemap settings for this site.
@@ -78,7 +79,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('xmlsitemap.settings');
     $intervals = array(300, 900, 1800, 3600, 10800, 21600, 43200, 86400, 172800, 259200, 604800);
     $form['minimum_lifetime'] = array(
@@ -210,7 +211,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, array &$form_state) {
+  public function validateForm(array &$form, FormStateInterface $form_state) {
     // Check that the chunk size will not create more than 1000 chunks.
     $chunk_size = $form_state['values']['chunk_size'];
     if ($chunk_size != 'auto' && $chunk_size != 50000 && (xmlsitemap_get_link_count() / $chunk_size) > 1000) {
@@ -229,7 +230,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, array &$form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     // Save any changes to the frontpage link.
     $config = $this->config('xmlsitemap.settings');
     $values = $form_state['values'];

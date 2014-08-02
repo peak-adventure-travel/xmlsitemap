@@ -13,6 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\State\StateInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Configure xmlsitemap engines settings for this site.
@@ -68,7 +69,7 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state) {
     // Build the list of support engines for the checkboxes options.
     $engines = xmlsitemap_engines_get_engine_info();
     $engine_options = array();
@@ -112,7 +113,7 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, array &$form_state) {
+  public function validateForm(array &$form, FormStateInterface $form_state) {
     $custom_urls = preg_split('/[\r\n]+/', $form_state['values']['custom_urls'], -1, PREG_SPLIT_NO_EMPTY);
     foreach ($custom_urls as $custom_url) {
       $url = xmlsitemap_engines_prepare_url($custom_url, '');
@@ -127,7 +128,7 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, array &$form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     $state_variables = xmlsitemap_engines_state_variables();
     $config_variables = xmlsitemap_engines_config_variables();
     $keys = array(

@@ -19,7 +19,7 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
    *
    * @var array
    */
-  public static $modules = array('node', 'xmlsitemap', 'menu_link', 'menu_ui');
+  public static $modules = array('node', 'xmlsitemap','menu_link_content', 'menu_ui');
 
   public static function getInfo() {
     return array(

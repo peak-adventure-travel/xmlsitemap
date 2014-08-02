@@ -13,6 +13,7 @@ use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -59,7 +60,7 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('xmlsitemap.settings');
     $entity_types = $this->entityManager->getDefinitions();
     $labels = array();
@@ -131,7 +132,7 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, array &$form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     $bundles = $this->entityManager->getAllBundleInfo();
     $entity_values = $form_state['values']['entity_types'];
     $config = $this->config('xmlsitemap.settings');

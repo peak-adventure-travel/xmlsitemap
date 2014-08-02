@@ -10,6 +10,7 @@ namespace Drupal\xmlsitemap\Form;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\State\StateInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -56,7 +57,7 @@ class XmlSitemapRebuildForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state) {
     $request = $this->getRequest();
     if (!$request->request && !$this->state->get('xmlsitemap_rebuild_needed')) {
       if (!$this->state->get('xmlsitemap_regenerate_needed')) {
@@ -92,7 +93,7 @@ class XmlSitemapRebuildForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, array &$form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     // Save any changes to the frontpage link.
     $batch = xmlsitemap_rebuild_batch($form_state['values']['entities'], $form_state['values']['save_custom']);
     batch_set($batch);

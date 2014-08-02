@@ -70,7 +70,7 @@ class XmlSitemapListBuilderTest extends XmlSitemapTestBase {
    */
   public function testDefaultSitemap() {
     $this->drupalLogin($this->admin_user);
-    $context = array('language' => 'en');
+    $context = array();
     $id = xmlsitemap_sitemap_get_context_hash($context);
 
     $this->drupalGet('admin/config/search/xmlsitemap');
@@ -89,7 +89,7 @@ class XmlSitemapListBuilderTest extends XmlSitemapTestBase {
     $this->drupalPostForm('admin/config/search/xmlsitemap/add', $edit, t('Save'));
     $context = array('language' => 'en');
     $id = xmlsitemap_sitemap_get_context_hash($context);
-    $this->assertText(t('There is another sitemap saved with the same context.'));
+    $this->assertText(t('Saved the English sitemap.'));
     $this->assertText($id);
 
     $edit = array(
@@ -110,7 +110,7 @@ class XmlSitemapListBuilderTest extends XmlSitemapTestBase {
       'context[language]' => 'und'
     );
     $this->drupalPostForm('admin/config/search/xmlsitemap/add', $edit, t('Save'));
-    $this->assertText(t('Saved the Undefined sitemap.'));
+    $this->assertText(t('There is another sitemap saved with the same context.'));
 
     $sitemaps = entity_load_multiple('xmlsitemap');
     foreach ($sitemaps as $sitemap) {

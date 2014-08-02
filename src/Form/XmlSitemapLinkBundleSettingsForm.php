@@ -11,6 +11,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -62,7 +63,7 @@ class XmlSitemapLinkBundleSettingsForm extends ConfigFormBase implements Contain
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state, $entity = NULL, $bundle = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, $entity = NULL, $bundle = NULL) {
     $this->entity_type = $entity;
     $this->bundle_type = $bundle;
     $config = $this->config('xmlsitemap.settings');
@@ -104,7 +105,7 @@ class XmlSitemapLinkBundleSettingsForm extends ConfigFormBase implements Contain
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, array &$form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     $entity = $form['xmlsitemap']['#entity'];
     $bundle = $form['xmlsitemap']['#bundle'];
 
