@@ -35,10 +35,9 @@ class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
 
     $this->admin_user = $this->drupalCreateUser(array('administer entity_test content', 'administer xmlsitemap'));
 
-    // allow anonymous user to view user profiles
+    // allow anonymous user to view entity
     $user_role = entity_load('user_role', DRUPAL_ANONYMOUS_RID);
     $user_role->grantPermission('view test entity');
-    $user_role->grantPermission('view test entity translations');
     $user_role->save();
   }
 
@@ -61,7 +60,7 @@ class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
       'bundle' => 'entity_test',
     ));
     $entity->save();
-    $this->assertSitemapLinkValues('entity_test', $entity->id(), array('status' => 0, 'priority' => 0.5, 'changefreq' => 0));
+    $this->assertSitemapLinkValues('entity_test', $entity->id(), array('status' => 0, 'priority' => 0.5, 'changefreq' => 0, 'access' => 1));
   }
 
   /**
@@ -88,7 +87,7 @@ class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
       'bundle' => 'entity_test'
     ));
     $entity->save();
-    $this->assertSitemapLinkValues('entity_test', $entity->id(), array('status' => 0, 'priority' => 0.3, 'changefreq' => XMLSITEMAP_FREQUENCY_WEEKLY));
+    $this->assertSitemapLinkValues('entity_test', $entity->id(), array('status' => 0, 'priority' => 0.3, 'changefreq' => XMLSITEMAP_FREQUENCY_WEEKLY, 'access' => 1));
 
     $this->regenerateSitemap();
     $this->drupalGet('sitemap.xml');
@@ -109,7 +108,7 @@ class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
       'bundle' => 'entity_test'
     ));
     $entity->save();
-    $this->assertSitemapLinkValues('entity_test', $entity->id(), array('status' => 1, 'priority' => 0.6, 'changefreq' => XMLSITEMAP_FREQUENCY_YEARLY));
+    $this->assertSitemapLinkValues('entity_test', $entity->id(), array('status' => 1, 'priority' => 0.6, 'changefreq' => XMLSITEMAP_FREQUENCY_YEARLY, 'access' => 1));
 
     $this->regenerateSitemap();
     $this->drupalGet('sitemap.xml');
@@ -119,6 +118,23 @@ class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
     $id = $entity->id();
     $entity->delete();
     $this->assertNoSitemapLink('entity_test', $id);
+  }
+
+  public function testUserCannotViewEntity() {
+    // allow anonymous user to view entity
+    $user_role = entity_load('user_role', DRUPAL_ANONYMOUS_RID);
+    $user_role->revokePermission('view test entity');
+    $user_role->save();
+
+    $this->config->set('xmlsitemap_entity_entity_test', 1);
+    $this->config->set('xmlsitemap_entity_entity_test_bundle_entity_test', 1);
+    $this->config->save();
+
+    $entity = entity_create('entity_test', array(
+      'bundle' => 'entity_test'
+    ));
+    $entity->save();
+    $this->assertSitemapLinkValues('entity_test', $entity->id(), array('status' => 0, 'priority' => 0.5, 'changefreq' => 0, 'access' => 0));
   }
 
 }

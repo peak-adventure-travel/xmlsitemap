@@ -73,11 +73,11 @@ class XmlSitemapMultilingualNodeTest extends XmlSitemapMultilingualTestBase {
     $node = $this->drupalCreateNode(array());
 
     $this->drupalPostForm('node/' . $node->id() . '/edit', array('langcode' => 'en'), t('Save and keep published'));
-    $link = $this->assertSitemapLink('node', $node->id());
+    $link = $this->assertSitemapLink('node', $node->id(), array('status' => 0, 'access' => 1));
     $this->assertIdentical($link['language'], 'en');
 
     $this->drupalPostForm('node/' . $node->id() . '/edit', array('langcode' => 'fr'), t('Save and keep published'));
-    $link = $this->assertSitemapLink('node', $node->id());
+    $link = $this->assertSitemapLink('node', $node->id(), array('status' => 0, 'access' => 1));
     $this->assertIdentical($link['language'], 'fr');
   }
 

@@ -69,7 +69,7 @@ class XmlSitemapRebuildTest extends XmlSitemapTestBase {
     $this->drupalLogin($this->admin_user);
     $this->drupalPostForm('admin/config/search/xmlsitemap/rebuild', array(), t('Save configuration'));
     $this->assertText('The sitemap links were rebuilt.');
-    $this->assertSitemapLinkValues('user', $dummy_user->id(), array('status' => 1, 'priority' => 0.4, 'changefreq' => XMLSITEMAP_FREQUENCY_MONTHLY));
+    $this->assertSitemapLinkValues('user', $dummy_user->id(), array('status' => 1, 'priority' => 0.4, 'changefreq' => XMLSITEMAP_FREQUENCY_MONTHLY, 'access' => 1));
     $this->drupalGet('sitemap.xml');
     $this->assertRaw("user/{$dummy_user->id()}");
   }
