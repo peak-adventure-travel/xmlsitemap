@@ -11,6 +11,7 @@ use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\State\StateInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Session\AnonymousUserSession;
 
 /**
  * XmlSitemap link storage service class.
@@ -32,6 +33,13 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
   protected $moduleHandler;
 
   /**
+   * The anonymous user object.
+   *
+   * @var \Drupal\Core\Session\AnonymousUserSession
+   */
+  protected $anonymousUser;
+
+  /**
    * Constructs a XmlSitemapLinkStorage object.
    *
    * @param \Drupal\Core\State\StateInterface $state
@@ -42,6 +50,7 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
   public function __construct(StateInterface $state, ModuleHandlerInterface $module_handler) {
     $this->state = $state;
     $this->moduleHandler = $module_handler;
+    $this->anonymousUser = new AnonymousUserSession();
   }
 
   public function create(EntityInterface $entity) {
@@ -70,7 +79,7 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
     $url = $entity->url();
     // The following values must always be checked because they are volatile.
     $entity->xmlsitemap['loc'] = $uri;
-    $entity->xmlsitemap['access'] = isset($url) ? 1 : 0;
+    $entity->xmlsitemap['access'] = isset($url) && $entity->access('view', $this->anonymousUser);
     $language = $entity->language();
     $entity->xmlsitemap['language'] = !empty($language) ? $language->getId() : LanguageInterface::LANGCODE_NOT_SPECIFIED;
 

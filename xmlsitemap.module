@@ -1581,10 +1581,6 @@ function xmlsitemap_form_alter(array &$form, FormStateInterface $form_state, $fo
     return;
   }
 
-  if (!$entity || !$entity->access('view', $anonymous_user)) {
-    return;
-  }
-
   // If this entity/bundle can be included in sitemap alter the form
   if (!\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_entity_' . $entity_type . '_bundle_' . $bundle)) {
     return;
@@ -1637,9 +1633,6 @@ function xmlsitemap_xmlsitemap_process_entity_links($entity_type, array $ids) {
   $entities = entity_load_multiple($entity_type, $ids);
   $anonymous_user = new AnonymousUserSession();
   foreach ($entities as $entity) {
-    if (!$entity->access('view', $anonymous_user)) {
-      continue;
-    }
     $link_storage = \Drupal::service('xmlsitemap.link_storage');
     $link = $link_storage->create($entity);
     $link_storage->save($link);
@@ -1658,9 +1651,6 @@ function xmlsitemap_entity_presave(EntityInterface $entity) {
   $anonymous_user = new AnonymousUserSession();
 
   if (!\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_entity_' . $entity_type . '_bundle_' . $bundle)) {
-    return;
-  }
-  if (!$entity->access('view', $anonymous_user)) {
     return;
   }
 
@@ -1686,9 +1676,6 @@ function xmlsitemap_entity_insert(EntityInterface $entity) {
   if (!\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_entity_' . $entity_type . '_bundle_' . $bundle)) {
     return;
   }
-  if (!$entity->access('view', $anonymous_user)) {
-    return;
-  }
 
   $link_storage = \Drupal::service('xmlsitemap.link_storage');
   $link = $link_storage->create($entity);
@@ -1707,9 +1694,6 @@ function xmlsitemap_entity_update(EntityInterface $entity) {
   $anonymous_user = new AnonymousUserSession();
 
   if (!\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_entity_' . $entity_type . '_bundle_' . $bundle)) {
-    return;
-  }
-  if (!$entity->access('view', $anonymous_user)) {
     return;
   }
 
