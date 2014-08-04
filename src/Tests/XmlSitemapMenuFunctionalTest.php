@@ -19,7 +19,7 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
    *
    * @var array
    */
-  public static $modules = array('node', 'xmlsitemap', 'menu_link_content', 'menu_ui');
+  public static $modules = array('node', 'xmlsitemap', 'menu_link_content', 'menu_ui', 'system');
 
   public static function getInfo() {
     return array(
@@ -63,7 +63,7 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
     }
     $this->config->save();
 
-    $this->admin_user = $this->drupalCreateUser(array('administer menu', 'administer xmlsitemap'));
+    $this->admin_user = $this->drupalCreateUser(array('administer menu', 'administer xmlsitemap', 'access administration pages'));
     $this->normal_user = $this->drupalCreateUser(array('access content'));
   }
 
@@ -85,14 +85,18 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
     $this->config->set('xmlsitemap_entity_menu_link_bundle_' . $edit['id'], TRUE);
     $this->config->save();
 
-    $menu = Menu::load($edit['id']);
+    $this->drupalGet('admin/structure/menu/manage/' . $edit['id']);
 
+    $menu_id = $edit['id'];
     $this->clickLink('Add link');
     $edit = array(
-      'title[0][value]' => $this->randomName(),
       'url' => 'node',
-      'xmlsitemap[status]' => 1,
-      'xmlsitemap[priority]' => 0.9,
+      'title[0][value]' => $this->randomName(),
+      'description[0][value]' => '',
+      'enabled' => 1,
+      'expanded[value]' => FALSE,
+      'menu_parent' =>  $menu_id . ':',
+      'weight[0][value]' => 0,
     );
     $this->drupalPostForm(NULL, $edit, 'Save');
   }
