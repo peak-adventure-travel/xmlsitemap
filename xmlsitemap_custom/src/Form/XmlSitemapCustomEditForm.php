@@ -12,7 +12,6 @@ use Drupal\Core\Language\LanguageInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Path\AliasManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -39,13 +38,6 @@ class XmlSitemapCustomEditForm extends ConfigFormBase {
   protected $languageManager;
 
   /**
-   * The form builder service.
-   *
-   * @var \Drupal\Core\Form\FormBuilderInterface
-   */
-  protected $formBuilder;
-
-  /**
    * The alias manager service.
    *
    * @var \Drupal\Core\Path\AliasManagerInterface
@@ -64,8 +56,6 @@ class XmlSitemapCustomEditForm extends ConfigFormBase {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The factory for configuration objects.
-   * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
-   *   The form builder service.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   The language manager service.
    * @param \Drupal\Core\Path\AliasManagerInterface $alias_manager
@@ -73,10 +63,9 @@ class XmlSitemapCustomEditForm extends ConfigFormBase {
    * @param \Drupal\xmlsitemap\XmlSitemapLinkStorageInterface $link_storage
    *   The xmlsitemap link storage service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, FormBuilderInterface $form_builder, LanguageManagerInterface $language_manager, AliasManagerInterface $alias_manager, XmlSitemapLinkStorageInterface $link_storage) {
+  public function __construct(ConfigFactoryInterface $config_factory, LanguageManagerInterface $language_manager, AliasManagerInterface $alias_manager, XmlSitemapLinkStorageInterface $link_storage) {
     parent::__construct($config_factory);
     $this->languageManager = $language_manager;
-    $this->formBuilder = $form_builder;
     $this->aliasManager = $alias_manager;
     $this->linkStorage = $link_storage;
   }
@@ -86,7 +75,7 @@ class XmlSitemapCustomEditForm extends ConfigFormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-        $container->get('config.factory'), $container->get('form_builder'), $container->get('language_manager'), $container->get('path.alias_manager'), $container->get('xmlsitemap.link_storage')
+        $container->get('config.factory'), $container->get('language_manager'), $container->get('path.alias_manager'), $container->get('xmlsitemap.link_storage')
     );
   }
 
@@ -198,7 +187,7 @@ class XmlSitemapCustomEditForm extends ConfigFormBase {
       $res = $client->get(url(NULL, array('absolute' => TRUE)) . $link['loc']);
     }
     catch (ClientException $e) {
-      $this->formBuilder->setErrorByName('loc', $form_state, t('The custom link @link is either invalid or it cannot be accessed by anonymous users.', array('@link' => $link['loc'])));
+      $form_state->setErrorByName('loc', t('The custom link @link is either invalid or it cannot be accessed by anonymous users.', array('@link' => $link['loc'])));
     }
     parent::validateForm($form, $form_state);
   }

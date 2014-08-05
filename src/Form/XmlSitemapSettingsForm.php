@@ -12,8 +12,8 @@ use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Render\Element;
 use Drupal\Core\State\StateInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Datetime\Date;
 use Drupal\xmlsitemap\XmlSitemapLinkStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -30,11 +30,11 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
   protected $state;
 
   /**
-   * The form builder service.
+   * The date service.
    *
-   * @var \Drupal\Core\Form\FormBuilderInterface
+   * @var \Drupal\Core\Datetime\Date
    */
-  protected $formBuilder;
+  protected $date;
 
   /**
    * The xmlsitemap.link_storage service.
@@ -50,13 +50,15 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
    *   The factory for configuration objects.
    * @param \Drupal\Core\State\StateInterface $state
    *   The state service.
-   * @param \Drupal\Core\Form\FormBuilderInterface $state
-   *   The form builder service.
+   * @param \Drupal\Core\Datetime\Date $date
+   *   The date service.
+   * @param \Drupal\xmlsitemap\XmlSitemapLinkStorageInterface $link_storage
+   *   The xmlsitemap link storage service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, StateInterface $state, FormBuilderInterface $form_builder, XmlSitemapLinkStorageInterface $link_storage) {
+  public function __construct(ConfigFactoryInterface $config_factory, StateInterface $state, Date $date, XmlSitemapLinkStorageInterface $link_storage) {
     parent::__construct($config_factory);
     $this->state = $state;
-    $this->formBuilder = $form_builder;
+    $this->date = $date;
     $this->linkStorage = $link_storage;
   }
 
@@ -65,7 +67,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-        $container->get('config.factory'), $container->get('state'), $container->get('form_builder'), $container->get('xmlsitemap.link_storage')
+        $container->get('config.factory'), $container->get('state'), $container->get('date'), $container->get('xmlsitemap.link_storage')
     );
   }
 
@@ -82,10 +84,15 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('xmlsitemap.settings');
     $intervals = array(300, 900, 1800, 3600, 10800, 21600, 43200, 86400, 172800, 259200, 604800);
+    $intervals = array_combine($intervals, $intervals);
+    $format_intervals = array();
+    foreach ($intervals as $key => $value) {
+      $format_intervals[$key] = $this->date->formatInterval($key);
+    }
     $form['minimum_lifetime'] = array(
       '#type' => 'select',
       '#title' => t('Minimum sitemap lifetime'),
-      '#options' => array(0 => t('No minimum')) + array_map('format_interval', array_combine($intervals, $intervals)),
+      '#options' => array(0 => t('No minimum')) + $format_intervals,
       '#description' => t('The minimum amount of time that will elapse before the sitemaps are regenerated. The sitemaps will also only be regenerated on cron if any links have been added, updated, or deleted.') . '<br />' . t('Recommended value: %value.', array('%value' => t('1 day'))),
       '#default_value' => $config->get('minimum_lifetime'),
     );
@@ -133,7 +140,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
       '#description' => t('If you have problems running cron or rebuilding the sitemap, you may want to lower this value.'),
     );
     if (!xmlsitemap_check_directory()) {
-      $this->formBuilder->setErrorByName('path', $form_state, t('The directory %directory does not exist or is not writable.', array('%directory' => xmlsitemap_get_directory())));
+      $form_state->setErrorByName('path', t('The directory %directory does not exist or is not writable.', array('%directory' => xmlsitemap_get_directory())));
     }
     $form['advanced']['path'] = array(
       '#type' => 'textfield',
@@ -215,13 +222,13 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
     // Check that the chunk size will not create more than 1000 chunks.
     $chunk_size = $form_state['values']['chunk_size'];
     if ($chunk_size != 'auto' && $chunk_size != 50000 && (xmlsitemap_get_link_count() / $chunk_size) > 1000) {
-      form_set_error('chunk_size', t('The sitemap page link count of @size will create more than 1,000 sitemap pages. Please increase the link count.', array('@size' => $chunk_size)));
+      $form_state->setErrorByName('chunk_size', t('The sitemap page link count of @size will create more than 1,000 sitemap pages. Please increase the link count.', array('@size' => $chunk_size)));
     }
 
     $base_url = &$form_state['values']['xmlsitemap_base_url'];
     $base_url = rtrim($base_url, '/');
     if ($base_url != '' && !UrlHelper::isValid($base_url, TRUE)) {
-      $this->formBuilder->setErrorByName('xmlsitemap_base_url', $form_state, t('Invalid base URL.'));
+      $form_state->setErrorByName('xmlsitemap_base_url', t('Invalid base URL.'));
     }
 
     parent::validateForm($form, $form_state);

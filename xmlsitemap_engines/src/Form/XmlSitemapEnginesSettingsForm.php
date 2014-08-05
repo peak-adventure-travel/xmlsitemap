@@ -11,21 +11,14 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Component\Utility\UrlHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\State\StateInterface;
-use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Datetime\Date;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Configure xmlsitemap engines settings for this site.
  */
 class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
-
-  /**
-   * The form builder service.
-   *
-   * @var \Drupal\Core\Form\FormBuilderInterface
-   */
-  protected $formBuilder;
 
   /**
    * The state service.
@@ -35,18 +28,25 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
   protected $state;
 
   /**
+   * The date service.
+   *
+   * @var \Drupal\Core\Datetime\Date
+   */
+  protected $date;
+
+  /**
    * Constructs a new XmlSitemapCustomAddForm object.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The factory for configuration objects.
-   * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
-   *   The form builder service.
+   * @param \Drupal\Core\Datetime\Date $date
+   *   The date service.
    * @param \Drupal\Core\State\StateInterface $state
    *   The state store service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, FormBuilderInterface $form_builder, StateInterface $state) {
+  public function __construct(ConfigFactoryInterface $config_factory, Date $date, StateInterface $state) {
     parent::__construct($config_factory);
-    $this->formBuilder = $form_builder;
+    $this->date = $date;
     $this->state = $state;
   }
 
@@ -55,7 +55,7 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-        $container->get('config.factory'), $container->get('form_builder'), $container->get('state')
+        $container->get('config.factory'), $container->get('date'), $container->get('state')
     );
   }
 
@@ -85,10 +85,15 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
       '#options' => $engine_options,
     );
     $lifetimes = array(3600, 10800, 21600, 32400, 43200, 86400, 172800, 259200, 604800, 604800 * 2, 604800 * 4);
+    $lifetimes = array_combine($lifetimes, $lifetimes);
+    $format_lifetimes = array();
+    foreach ($lifetimes as $value) {
+      $format_lifetimes[$value] = $this->date->formatInterval($value);
+    }
     $form['minimum_lifetime'] = array(
       '#type' => 'select',
       '#title' => t('Do not submit more often than every'),
-      '#options' => array_map('format_interval', array_combine($lifetimes, $lifetimes)),
+      '#options' => $format_lifetimes,
       '#default_value' => $this->config('xmlsitemap_engines.settings')->get('minimum_lifetime'),
     );
     $form['xmlsitemap_engines_submit_updated'] = array(
@@ -118,7 +123,7 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
     foreach ($custom_urls as $custom_url) {
       $url = xmlsitemap_engines_prepare_url($custom_url, '');
       if (!UrlHelper::isValid($url, TRUE)) {
-        $this->formBuilder->setErrorByName($custom_url, $form_state, t('Invalid URL %url.', array('%url' => $custom_url)));
+        $form_state->setErrorByName($custom_url, t('Invalid URL %url.', array('%url' => $custom_url)));
       }
     }
     $form_state['values']['custom_urls'] = implode("\n", $custom_urls);
