@@ -55,12 +55,6 @@ xmlsitemap.settings:
         languages:
             type: mapping
             label: 'Languages for xmlsitemap'
-        max_chunks:
-            type: undefined
-            label: 'Max chunks'
-        max_filesize:
-            type: undefined
-            label: 'Maximul size of xml file'
 
 xmlsitemap.*:
     type: config_entity

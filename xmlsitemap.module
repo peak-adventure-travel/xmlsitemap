@@ -233,9 +233,7 @@ function xmlsitemap_config_variables() {
     'regenerate_last' => NULL,
     'custom_links' => NULL,
     'priority_default' => NULL,
-    'languages' => NULL,
-    'max_chunks' => NULL,
-    'max_filesize' => NULL,
+    'languages' => NULL
   );
 }
 
@@ -251,7 +249,9 @@ function xmlsitemap_state_variables() {
     'xmlsitemap_regenerate_needed' => TRUE,
     'xmlsitemap_base_url' => '',
     'xmlsitemap_generated_last' => 0,
-    'xmlsitemap_developer_mode' => 0
+    'xmlsitemap_developer_mode' => 0,
+    'max_chunks' => NULL,
+    'max_filesize' => NULL
   );
 }
 
@@ -1074,7 +1074,7 @@ function xmlsitemap_calculate_changefreq($timestamps) {
  * This function needs to be called before system_settings_form_submit() or any
  * calls to variable_set().
  */
-function xmlsitemap_form_submit_flag_regenerate(array $form,  FormStateInterface $form_state) {
+function xmlsitemap_form_submit_flag_regenerate(array $form, FormStateInterface $form_state) {
   foreach ($form_state['values'] as $variable => $value) {
     if (\Drupal::config('xmlsitemap.settings')->get($variable) == NULL) {
       $stored_value = 'not_a_variable';
@@ -1231,7 +1231,7 @@ function xmlsitemap_add_form_link_options(array &$form, $entity, $bundle, $id) {
 /**
  * Submit callback for the entity form to save.
  */
-function xmlsitemap_process_form_link_options(array $form,  FormStateInterface $form_state) {
+function xmlsitemap_process_form_link_options(array $form, FormStateInterface $form_state) {
   $link = &$form_state['values']['xmlsitemap'];
   $fields = array('status' => XMLSITEMAP_STATUS_DEFAULT, 'priority' => XMLSITEMAP_PRIORITY_DEFAULT);
 
