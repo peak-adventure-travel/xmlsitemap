@@ -144,7 +144,7 @@ function xmlsitemap_requirements($phase) {
     }
     $anonymous_accout = new AnonymousUserSession();
 
-    if (!$anonymous_accout->hasPermission('access user profiles') && \Drupal::config('xmlsitemap.settings')->get('xmlsitemap_entity_user')) {
+    if (!$anonymous_accout->hasPermission('access user profiles') && xmlsitemap_link_bundle_check_enabled('user', 'user')) {
       $requirements['xmlsitemap_user_anonymous_permission'] = array(
         'title' => $t('XML sitemap user'),
         'value' => $t('Anonymous access to user profiles'),
@@ -331,9 +331,8 @@ function xmlsitemap_uninstall() {
 
   $state_variables = array();
   foreach ($entities as $entity_id => $entity) {
-    \Drupal::config('xmlsitemap.settings')->clear('xmlsitemap_entity_' . $entity_id);
     foreach ($bundles[$entity_id] as $bundle_id => $bundle) {
-      \Drupal::config('xmlsitemap.settings')->clear('xmlsitemap_entity' . $entity_id . '_bundle_' . $bundle_id);
+      xmlsitemap_link_bundle_delete($entity_id, $bundle_id);
     }
   }
 }

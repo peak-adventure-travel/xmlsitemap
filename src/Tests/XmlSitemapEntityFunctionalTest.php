@@ -67,9 +67,7 @@ class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
    * Test the form at admin/config/search/xmlsitemap/settings/{entity_type_id}/{bundle_id}
    */
   public function testEntityLinkBundleSettingsForm() {
-    $this->config->set('xmlsitemap_entity_entity_test', 1);
-    $this->config->set('xmlsitemap_entity_entity_test_bundle_entity_test', 1);
-    $this->config->save();
+    xmlsitemap_link_bundle_enable('entity_test', 'entity_test');
     $this->drupalLogin($this->admin_user);
     // set priority and inclusion for entity_test - entity_test
     $this->drupalGet('admin/config/search/xmlsitemap/settings/entity_test/entity_test');
@@ -126,9 +124,7 @@ class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
     $user_role->revokePermission('view test entity');
     $user_role->save();
 
-    $this->config->set('xmlsitemap_entity_entity_test', 1);
-    $this->config->set('xmlsitemap_entity_entity_test_bundle_entity_test', 1);
-    $this->config->save();
+    xmlsitemap_link_bundle_enable('entity_test', 'entity_test');
 
     $entity = entity_create('entity_test', array(
       'bundle' => 'entity_test'

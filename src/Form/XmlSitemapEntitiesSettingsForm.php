@@ -74,10 +74,6 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
       }
 
       $labels[$entity_type_id] = $entity_type->getLabel() ? : $entity_type_id;
-
-      if ($config->get('xmlsitemap_entity_' . $entity_type_id)) {
-        $default[] = $entity_type_id;
-      }
     }
 
     asort($labels);
@@ -117,12 +113,15 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
           '#label' => $bundle_info['label'],
           'bundle' => array(
             '#type' => 'checkbox',
-            '#default_value' => $config->get('xmlsitemap_entity_' . $entity_type_id . '_bundle_' . $bundle)
+            '#default_value' => xmlsitemap_link_bundle_check_enabled($entity_type_id, $bundle)
           ),
         );
+        if (xmlsitemap_link_bundle_check_enabled($entity_type_id, $bundle)) {
+          $default[$entity_type_id] = $entity_type_id;
+        }
       }
     }
-
+    $form['entity_types']['#default_value'] = $default;
     $form = parent::buildForm($form, $form_state);
     $form['actions']['submit']['#value'] = $this->t('Save');
 
@@ -137,18 +136,20 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
     $entity_values = $form_state['values']['entity_types'];
     $config = $this->config('xmlsitemap.settings');
     foreach ($entity_values as $key => $value) {
-      $config->set('xmlsitemap_entity_' . $key, $value)->save();
       if ($value) {
         foreach ($bundles[$key] as $bundle_key => $bundle_value) {
-          $config->set('xmlsitemap_entity_' . $key . '_bundle_' . $bundle_key, $form_state['values']['settings'][$key][$bundle_key]['settings']['bundle'])->save();
           if (!$form_state['values']['settings'][$key][$bundle_key]['settings']['bundle']) {
             xmlsitemap_link_bundle_delete($key, $bundle_key, TRUE);
+          }
+          else {
+            if (!xmlsitemap_link_bundle_check_enabled($key, $bundle_key)) {
+              xmlsitemap_link_bundle_enable($key, $bundle_key);
+            }
           }
         }
       }
       else {
         foreach ($bundles[$key] as $bundle_key => $bundle_value) {
-          $config->set('xmlsitemap_entity_' . $key . '_bundle_' . $bundle_key, 0)->save();
           xmlsitemap_link_bundle_delete($key, $bundle_key, TRUE);
         }
       }

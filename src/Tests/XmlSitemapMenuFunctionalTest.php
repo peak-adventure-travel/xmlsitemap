@@ -53,15 +53,12 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
     $user_role->save();
 
     $bundles = $this->entityManager->getAllBundleInfo();
-    $this->config->set('xmlsitemap_entity_menu_link_content', TRUE);
-    $this->config->set('xmlsitemap_entity_menu', TRUE);
     foreach ($bundles['menu_link_content'] as $bundle_id => $bundle) {
-      $this->config->set('xmlsitemap_entity_menu_link_content_bundle_' . $bundle_id, TRUE);
+      xmlsitemap_link_bundle_enable('menu_link_content', $bundle_id);
     }
     foreach ($bundles['menu'] as $bundle_id => $bundle) {
-      $this->config->set('xmlsitemap_entity_menu_bundle_' . $bundle_id, TRUE);
+      xmlsitemap_link_bundle_enable('menu', $bundle_id);
     }
-    $this->config->save();
 
     $this->admin_user = $this->drupalCreateUser(array('administer menu', 'administer xmlsitemap', 'access administration pages'));
     $this->normal_user = $this->drupalCreateUser(array('access content'));
@@ -81,9 +78,7 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
     );
     $this->drupalPostForm('admin/structure/menu/add', $edit, 'Save');
 
-    $this->config->set('xmlsitemap_entity_menu_bundle_' . $edit['id'], TRUE);
-    $this->config->set('xmlsitemap_entity_menu_link_bundle_' . $edit['id'], TRUE);
-    $this->config->save();
+    xmlsitemap_link_bundle_settings_save('menu', $edit['id'], array('status' => 0, 'priority' => 0.5, 'changefreq' => 0));
 
     $this->drupalGet('admin/structure/menu/manage/' . $edit['id']);
 
@@ -95,7 +90,7 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
       'description[0][value]' => '',
       'enabled' => 1,
       'expanded[value]' => FALSE,
-      'menu_parent' =>  $menu_id . ':',
+      'menu_parent' => $menu_id . ':',
       'weight[0][value]' => 0,
     );
     $this->drupalPostForm(NULL, $edit, 'Save');
@@ -106,13 +101,11 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
    */
   public function tearDown() {
     $bundles = $this->entityManager->getAllBundleInfo();
-    $this->config->delete('xmlsitemap_entity_menu_link_content');
-    $this->config->delete('xmlsitemap_entity_menu');
     foreach ($bundles['menu_link_content'] as $bundle_id => $bundle) {
-      $this->config->delete('xmlsitemap_entity_menu_link_content_bundle_' . $bundle_id);
+      xmlsitemap_link_bundle_delete('menu_link_content', $bundle_id);
     }
     foreach ($bundles['menu'] as $bundle_id => $bundle) {
-      $this->config->delete('xmlsitemap_entity_menu_bundle_' . $bundle_id);
+      xmlsitemap_link_bundle_delete('menu', $bundle_id);
     }
 
     parent::tearDown();

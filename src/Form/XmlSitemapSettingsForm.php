@@ -186,9 +186,6 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
 
     $entities = xmlsitemap_get_link_info(NULL, TRUE);
     foreach ($entities as $entity => $entity_info) {
-      if (!$config->get('xmlsitemap_entity_' . $entity) && $entity != 'frontpage') {
-        continue;
-      }
       $form[$entity] = array(
         '#type' => 'details',
         '#title' => $entity_info['label'],

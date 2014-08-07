@@ -69,7 +69,7 @@ class XmlSitemapLinkBundleSettingsForm extends ConfigFormBase implements Contain
     $config = $this->config('xmlsitemap.settings');
     $request = $this->getRequest();
 
-    if (!$config->get("xmlsitemap_entity_{$entity}") || !$config->get("xmlsitemap_entity_{$entity}_bundle_{$bundle}")) {
+    if (!xmlsitemap_link_bundle_check_enabled($entity, $bundle)) {
       throw new NotFoundHttpException();
     }
     if (!$request->isXmlHttpRequest() && $admin_path = xmlsitemap_get_bundle_path($entity, $bundle)) {

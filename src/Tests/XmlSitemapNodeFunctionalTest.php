@@ -61,9 +61,8 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
     $user_role->grantPermission('access content');
     $user_role->save();
 
-    $this->config->set('xmlsitemap_entity_node', 1);
-    $this->config->set('xmlsitemap_entity_node_bundle_article', 1);
-    $this->config->set('xmlsitemap_entity_node_bundle_page', 1);
+    xmlsitemap_link_bundle_enable('node', 'article');
+    xmlsitemap_link_bundle_enable('node', 'page');
     $this->config->set('xmlsitemap_entity_taxonomy_vocabulary', 1);
     $this->config->set('xmlsitemap_entity_taxonomy_term', 1);
     $this->config->save();
@@ -79,8 +78,7 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
     ));
     $vocabulary->save();
 
-    $this->config->set('xmlsitemap_entity_taxonomy_term_bundle_tags', 1)->save();
-
+    xmlsitemap_link_bundle_enable('taxonomy_term', 'tags');
     // Set up a field and instance.
     $field_name = 'tags';
     entity_create('field_storage_config', array(

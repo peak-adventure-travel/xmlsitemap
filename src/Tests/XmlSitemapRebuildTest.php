@@ -60,9 +60,6 @@ class XmlSitemapRebuildTest extends XmlSitemapTestBase {
    * Test if user links are included in sitemap after rebuild.
    */
   public function testUserLinksRebuild() {
-    $this->config->set('xmlsitemap_entity_user', 1);
-    $this->config->set('xmlsitemap_entity_user_bundle_user', 1);
-    $this->config->save();
     xmlsitemap_link_bundle_settings_save('user', 'user', array('status' => 1, 'priority' => 0.4, 'changefreq' => XMLSITEMAP_FREQUENCY_MONTHLY));
 
     $dummy_user = $this->drupalCreateUser(array());

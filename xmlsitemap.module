@@ -19,6 +19,7 @@ use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
+use Drupal\Core\Entity\Query\QueryException;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -27,47 +28,47 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * The maximum number of links in one sitemap chunk file.
  */
-const XMLSITEMAP_MAX_SITEMAP_LINKS = 50000;
+    const XMLSITEMAP_MAX_SITEMAP_LINKS = 50000;
 
 /**
  * The maximum filesize of a sitemap chunk file.
  */
-const XMLSITEMAP_MAX_SITEMAP_FILESIZE = 10485760;
+    const XMLSITEMAP_MAX_SITEMAP_FILESIZE = 10485760;
 
 /**
  * Xmlsitemap Frequencies
  */
-const XMLSITEMAP_FREQUENCY_YEARLY = 31449600; // 60 * 60 * 24 * 7 * 52
-const XMLSITEMAP_FREQUENCY_MONTHLY = 2419200; // 60 * 60 * 24 * 7 * 4
-const XMLSITEMAP_FREQUENCY_WEEKLY = 604800; // 60 * 60 * 24 * 7
-const XMLSITEMAP_FREQUENCY_DAILY = 86400; // 60 * 60 * 24
-const XMLSITEMAP_FREQUENCY_HOURLY = 3600; // 60 * 60
-const XMLSITEMAP_FREQUENCY_ALWAYS = 60;
+    const XMLSITEMAP_FREQUENCY_YEARLY = 31449600; // 60 * 60 * 24 * 7 * 52
+    const XMLSITEMAP_FREQUENCY_MONTHLY = 2419200; // 60 * 60 * 24 * 7 * 4
+    const XMLSITEMAP_FREQUENCY_WEEKLY = 604800; // 60 * 60 * 24 * 7
+    const XMLSITEMAP_FREQUENCY_DAILY = 86400; // 60 * 60 * 24
+    const XMLSITEMAP_FREQUENCY_HOURLY = 3600; // 60 * 60
+    const XMLSITEMAP_FREQUENCY_ALWAYS = 60;
 
 /**
  * Short lastmod timestamp format.
  */
-const XMLSITEMAP_LASTMOD_SHORT = 'Y-m-d';
+    const XMLSITEMAP_LASTMOD_SHORT = 'Y-m-d';
 
 /**
  * Medium lastmod timestamp format.
  */
-const XMLSITEMAP_LASTMOD_MEDIUM = 'Y-m-d\TH:i\Z';
+    const XMLSITEMAP_LASTMOD_MEDIUM = 'Y-m-d\TH:i\Z';
 
 /**
  * Long lastmod timestamp format.
  */
-const XMLSITEMAP_LASTMOD_LONG = 'c';
+    const XMLSITEMAP_LASTMOD_LONG = 'c';
 
 /**
  * The default inclusion status for link types in the sitemaps.
  */
-const XMLSITEMAP_STATUS_DEFAULT = 0;
+    const XMLSITEMAP_STATUS_DEFAULT = 0;
 
 /**
  * The default priority for link types in the sitemaps.
  */
-const XMLSITEMAP_PRIORITY_DEFAULT = 0.5;
+    const XMLSITEMAP_PRIORITY_DEFAULT = 0.5;
 
 /**
  * Implements hook_hook_info().
@@ -790,13 +791,12 @@ function xmlsitemap_link_bundle_settings_save($entity, $bundle, array $settings,
  */
 function xmlsitemap_link_bundle_rename($entity, $bundle_old, $bundle_new) {
   if ($bundle_old != $bundle_new) {
-    $settings = xmlsitemap_link_bundle_load($entity, $bundle_old);
-    \Drupal::config("xmlsitemap.settings.{$entity}.{$bundle_old}")->delete();
-    $old_bundle_value = \Drupal::config('xmlsitemap.settings')->get("xmlsitemap_entity_{$entity}_bundle_{$bundle_old}");
-    \Drupal::config('xmlsitemap.settings')->clear("xmlsitemap_entity_{$entity}_bundle_{$bundle_old}");
-    \Drupal::config('xmlsitemap.settings')->set("xmlsitemap_entity_{$entity}_bundle_{$bundle_new}", $old_bundle_value)->save();
-    xmlsitemap_link_bundle_settings_save($entity, $bundle_new, $settings, FALSE);
-    \Drupal::service('xmlsitemap.link_storage')->updateMultiple(array('subtype' => $bundle_new), array('type' => $entity, 'subtype' => $bundle_old));
+    if (!\Drupal::config("xmlsitemap.settings.{$entity}.{$bundle_old}")->isNew()) {
+      $settings = xmlsitemap_link_bundle_load($entity, $bundle_old);
+      \Drupal::config("xmlsitemap.settings.{$entity}.{$bundle_old}")->delete();
+      xmlsitemap_link_bundle_settings_save($entity, $bundle_new, $settings, FALSE);
+      \Drupal::service('xmlsitemap.link_storage')->updateMultiple(array('subtype' => $bundle_new), array('type' => $entity, 'subtype' => $bundle_old));
+    }
   }
 }
 
@@ -874,7 +874,6 @@ function xmlsitemap_link_bundle_load($entity, $bundle, $load_bundle_info = TRUE)
  */
 function xmlsitemap_link_bundle_delete($entity, $bundle, $delete_links = TRUE) {
   \Drupal::config("xmlsitemap.settings.{$entity}.{$bundle}")->delete();
-  \Drupal::config('xmlsitemap.settings')->clear("xmlsitemap_entity_{$entity}_bundle_{$bundle}");
   if ($delete_links) {
     \Drupal::service('xmlsitemap.link_storage')->deleteMultiple(array('type' => $entity, 'subtype' => $bundle));
   }
@@ -1484,7 +1483,7 @@ function xmlsitemap_get_operation_link($url, $options = array()) {
  * Implements hook_entity_info_alter().
  */
 function xmlsitemap_entity_info_alter(&$entity_info) {
-  if (!\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_entity_user')) {
+  if (!\Drupal::config('xmlsitemap.settings.user.user')->isNew()) {
     return $entity_info;
   }
   $entity_info['user']['bundle label'] = t('User');
@@ -1586,7 +1585,7 @@ function xmlsitemap_form_alter(array &$form, FormStateInterface $form_state, $fo
   }
 
   // If this entity/bundle can be included in sitemap alter the form
-  if (!\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_entity_' . $entity_type . '_bundle_' . $bundle)) {
+  if (\Drupal::config("xmlsitemap.settings.{$entity_type}.{$bundle}")->isNew()) {
     return;
   }
 
@@ -1606,22 +1605,27 @@ function xmlsitemap_xmlsitemap_index_links($limit) {
   $bundles = \Drupal::entityManager()->getAllBundleInfo();
   foreach ($entity_types as $entity_type_id => $entity_type) {
     $entity_bundles = array();
-    if (!\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_entity_' . $entity_type_id)) {
-      continue;
-    }
     foreach ($bundles[$entity_type_id] as $bundle => $bundle_info) {
-      if (!\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_entity_' . $entity_type_id . '_bundle_' . $bundle)) {
+      if (!xmlsitemap_link_bundle_check_enabled($entity_type_id, $bundle)) {
         continue;
       }
       $entity_bundles[] = $bundle;
     }
-    $query = \Drupal::entityManager()->getStorage($entity_type_id)->getQuery();
-    $query->range(0, $limit);
-    if ($entity_type->get('type')) {
-      $query->condition('type', $entity_bundles, 'IN');
+    if (empty($entity_bundles)) {
+      continue;
     }
-    $ids = $query->execute();
-    xmlsitemap_xmlsitemap_process_entity_links($entity_type_id, $ids);
+    try {
+      $query = \Drupal::entityManager()->getStorage($entity_type_id)->getQuery();
+      $query->range(0, $limit);
+      if ($entity_type->get('type')) {
+        $query->condition('type', $entity_bundles, 'IN');
+      }
+      $ids = $query->execute();
+      xmlsitemap_xmlsitemap_process_entity_links($entity_type_id, $ids);
+    }
+    catch (QueryException $e) {
+  
+    }
   }
 }
 
@@ -1654,7 +1658,7 @@ function xmlsitemap_entity_presave(EntityInterface $entity) {
   $bundle = $entity->bundle();
   $anonymous_user = new AnonymousUserSession();
 
-  if (!\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_entity_' . $entity_type . '_bundle_' . $bundle)) {
+  if (!xmlsitemap_link_bundle_check_enabled($entity_type, $bundle)) {
     return;
   }
 
@@ -1677,7 +1681,7 @@ function xmlsitemap_entity_insert(EntityInterface $entity) {
   $bundle = $entity->bundle();
   $anonymous_user = new AnonymousUserSession();
 
-  if (!\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_entity_' . $entity_type . '_bundle_' . $bundle)) {
+  if (!xmlsitemap_link_bundle_check_enabled($entity_type, $bundle)) {
     return;
   }
 
@@ -1697,7 +1701,7 @@ function xmlsitemap_entity_update(EntityInterface $entity) {
   $bundle = $entity->bundle();
   $anonymous_user = new AnonymousUserSession();
 
-  if (!\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_entity_' . $entity_type . '_bundle_' . $bundle)) {
+  if (!xmlsitemap_link_bundle_check_enabled($entity_type, $bundle)) {
     return;
   }
 
@@ -1980,7 +1984,7 @@ function xmlsitemap_add_form_entity_summary(&$form, $entity, array $entity_info)
   $totals = array('total' => 0, 'indexed' => 0, 'visible' => 0);
   foreach ($entity_info['bundles'] as $bundle => $bundle_info) {
     // Fetch current per-bundle link total and indexed counts.
-    if (!\Drupal::config('xmlsitemap.settings')->get('xmlsitemap_entity_' . $entity . '_bundle_' . $bundle)) {
+    if (!xmlsitemap_link_bundle_check_enabled($entity, $bundle)) {
       continue;
     }
     $status = xmlsitemap_get_link_type_indexed_status($entity, $bundle);
@@ -2664,4 +2668,42 @@ function xmlsitemap_get_rebuildable_link_types() {
   }
 
   return $rebuild_types;
+}
+
+/**
+ * Enable an entity bundle and create specific xmlsitemap settings config object.
+ *
+ * @param string $entity_type_id
+ *   Entity type id.
+ * @param string $bundle_id
+ *   Bundle id.
+ *
+ * @return bool
+ *   Returns TRUE if operation was successful.
+ */
+function xmlsitemap_link_bundle_enable($entity_type_id, $bundle_id) {
+  if (\Drupal::config("xmlsitemap.settings.{$entity_type_id}.{$bundle_id}")->isNew()) {
+    $settings = array(
+      'status' => XMLSITEMAP_STATUS_DEFAULT,
+      'priority' => XMLSITEMAP_PRIORITY_DEFAULT,
+      'changefreq' => 0
+    );
+    xmlsitemap_link_bundle_settings_save($entity_type_id, $bundle_id, $settings);
+  }
+  return TRUE;
+}
+
+/**
+ * Check if a bundle is enabled and config object xmlsitemap.settings object exists.
+ *
+ * @param string $entity_type_id
+ *   Entity type id.
+ * @param string $bundle_id
+ *   Bundle id.
+ *
+ * @return bool
+ *   Returns TRUE if bundle is enabled, FALSE otherwise.
+ */
+function xmlsitemap_link_bundle_check_enabled($entity_type_id, $bundle_id) {
+  return !\Drupal::config("xmlsitemap.settings.{$entity_type_id}.{$bundle_id}")->isNew();
 }

@@ -47,10 +47,9 @@ class XmlSitemapMultilingualNodeTest extends XmlSitemapMultilingualTestBase {
     $this->admin_user = $this->drupalCreateUser(array('administer nodes', 'administer languages', 'administer content types', 'access administration pages', 'create page content', 'edit own page content'));
     $this->drupalLogin($this->admin_user);
 
-    $this->config->set('xmlsitemap_entity_node', 1);
-    $this->config->set('xmlsitemap_entity_node_bundle_article', 1);
-    $this->config->set('xmlsitemap_entity_node_bundle_page', 1);
-    $this->config->save();
+    xmlsitemap_link_bundle_enable('node', 'article');
+
+    xmlsitemap_link_bundle_enable('node', 'page');
 
     // allow anonymous user to view user profiles
     $user_role = entity_load('user_role', DRUPAL_ANONYMOUS_RID);

@@ -33,9 +33,7 @@ class XmlSitemapTaxonomyFunctionalTest extends XmlSitemapTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->config->set('xmlsitemap_entity_taxonomy_vocabulary', TRUE);
-    $this->config->set('xmlsitemap_entity_taxonomy_vocabulary_bundle_taxonomy_vocabulary', TRUE);
-    $this->config->save();
+    xmlsitemap_link_bundle_enable('taxonomy_vocabulary', 'taxonomy_vocabulary');
 
     // allow anonymous user to view user profiles
     $user_role = entity_load('user_role', DRUPAL_ANONYMOUS_RID);
@@ -65,9 +63,7 @@ class XmlSitemapTaxonomyFunctionalTest extends XmlSitemapTestBase {
 
     $vocabulary = taxonomy_vocabulary_load($edit['vid']);
 
-    $this->config->set('xmlsitemap_entity_taxonomy_term', TRUE);
-    $this->config->set('xmlsitemap_entity_taxonomy_term_bundle_' . $vocabulary->id(), TRUE);
-    $this->config->save();
+    xmlsitemap_link_bundle_enable('taxonomy_term', $vocabulary->id());
 
     $this->drupalGet('admin/structure/taxonomy/manage/' . $vocabulary->id() . '/add');
     $this->assertResponse(200);
