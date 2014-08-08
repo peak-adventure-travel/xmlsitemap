@@ -71,7 +71,7 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
     // Add a vocabulary so we can test different view modes.
     $vocabulary = entity_create('taxonomy_vocabulary', array(
       'name' => 'Tags',
-      'description' => $this->randomName(),
+      'description' => $this->randomMachineName(),
       'vid' => 'tags',
       'langcode' => LanguageInterface::LANGCODE_NOT_SPECIFIED,
       'help' => '',
@@ -128,8 +128,8 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
 
     // Fill in node creation form and preview node.
     $edit = array();
-    $edit[$title_key] = $this->randomName(8);
-    $edit[$body_key] = $this->randomName(16);
+    $edit[$title_key] = $this->randomMachineName(8);
+    $edit[$body_key] = $this->randomMachineName(16);
     $edit['tags'] = 'tag1, tag2, tag3';
     $this->drupalPostForm('node/add/page', $edit, t('Save and publish'));
 

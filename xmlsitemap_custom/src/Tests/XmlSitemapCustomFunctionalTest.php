@@ -92,7 +92,7 @@ class XmlSitemapCustomFunctionalTest extends XmlSitemapTestBase {
    */
   public function testCustomFileLinks() {
     // Test an invalid file.
-    $edit['loc'] = $this->randomName();
+    $edit['loc'] = $this->randomMachineName();
     $this->drupalPostForm('admin/config/search/xmlsitemap/custom/add', $edit, t('Save'));
     $this->assertText(t('The custom link @link is either invalid or it cannot be accessed by anonymous users.', array('@link' => $edit['loc'])));
     $this->assertNoSitemapLink(array('type' => 'custom', 'loc' => $edit['loc']));

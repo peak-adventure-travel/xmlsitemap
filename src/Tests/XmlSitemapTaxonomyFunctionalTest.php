@@ -53,8 +53,8 @@ class XmlSitemapTaxonomyFunctionalTest extends XmlSitemapTestBase {
     $this->assertField('xmlsitemap[status]');
     $this->assertField('xmlsitemap[priority]');
     $edit = array(
-      'name' => $this->randomName(),
-      'vid' => drupal_strtolower($this->randomName()),
+      'name' => $this->randomMachineName(),
+      'vid' => drupal_strtolower($this->randomMachineName()),
       'xmlsitemap[status]' => '1',
       'xmlsitemap[priority]' => '1.0',
     );
@@ -72,7 +72,7 @@ class XmlSitemapTaxonomyFunctionalTest extends XmlSitemapTestBase {
     $this->assertField('xmlsitemap[changefreq]');
 
     $edit = array(
-      'name[0][value]' => $this->randomName(),
+      'name[0][value]' => $this->randomMachineName(),
       'xmlsitemap[status]' => 'default',
       'xmlsitemap[priority]' => 'default',
     );

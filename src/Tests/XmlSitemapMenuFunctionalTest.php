@@ -71,8 +71,8 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
     $this->drupalLogin($this->admin_user);
 
     $edit = array(
-      'label' => $this->randomName(),
-      'id' => drupal_strtolower($this->randomName()),
+      'label' => $this->randomMachineName(),
+      'id' => drupal_strtolower($this->randomMachineName()),
       'xmlsitemap[status]' => '1',
       'xmlsitemap[priority]' => '1.0',
     );
@@ -86,7 +86,7 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
     $this->clickLink('Add link');
     $edit = array(
       'url' => 'node',
-      'title[0][value]' => $this->randomName(),
+      'title[0][value]' => $this->randomMachineName(),
       'description[0][value]' => '',
       'enabled' => 1,
       'expanded[value]' => FALSE,
