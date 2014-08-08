@@ -12,7 +12,7 @@ use Drupal\Component\Utility\UrlHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\State\StateInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Datetime\Date;
+use Drupal\Core\Datetime\DateFormatter;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -28,9 +28,9 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
   protected $state;
 
   /**
-   * The date service.
+   * The date formatter service.
    *
-   * @var \Drupal\Core\Datetime\Date
+   * @var \Drupal\Core\Datetime\DateFormatter
    */
   protected $date;
 
@@ -39,12 +39,12 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The factory for configuration objects.
-   * @param \Drupal\Core\Datetime\Date $date
+   * @param \Drupal\Core\Datetime\DateFormatter $date
    *   The date service.
    * @param \Drupal\Core\State\StateInterface $state
    *   The state store service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, Date $date, StateInterface $state) {
+  public function __construct(ConfigFactoryInterface $config_factory, DateFormatter $date, StateInterface $state) {
     parent::__construct($config_factory);
     $this->date = $date;
     $this->state = $state;
@@ -55,7 +55,7 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-        $container->get('config.factory'), $container->get('date'), $container->get('state')
+        $container->get('config.factory'), $container->get('date.formatter'), $container->get('state')
     );
   }
 

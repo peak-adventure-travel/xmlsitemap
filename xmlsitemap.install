@@ -120,7 +120,7 @@ function xmlsitemap_requirements($phase) {
     $generated_ago = REQUEST_TIME - $generated_last;
     $requirements['xmlsitemap_generated'] = array(
       'title' => $t('XML sitemap'),
-      'value' => $generated_last ? $t('Last attempted generation on !date (!interval ago).', array('!date' => format_date($generated_last, 'small'), '!interval' => \Drupal::service('date')->formatInterval($generated_ago))) : $t('Cached files have not been generated yet.'),
+      'value' => $generated_last ? $t('Last attempted generation on !date (!interval ago).', array('!date' => format_date($generated_last, 'small'), '!interval' => \Drupal::service('date.formatter')->formatInterval($generated_ago))) : $t('Cached files have not been generated yet.'),
       'severity' => REQUIREMENT_OK,
     );
     if (\Drupal::state()->get('xmlsitemap_rebuild_needed')) {

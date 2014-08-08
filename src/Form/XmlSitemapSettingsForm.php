@@ -13,7 +13,7 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\State\StateInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Datetime\Date;
+use Drupal\Core\Datetime\DateFormatter;
 use Drupal\xmlsitemap\XmlSitemapLinkStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -32,7 +32,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
   /**
    * The date service.
    *
-   * @var \Drupal\Core\Datetime\Date
+   * @var \Drupal\Core\Datetime\DateFormatter
    */
   protected $date;
 
@@ -50,12 +50,12 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
    *   The factory for configuration objects.
    * @param \Drupal\Core\State\StateInterface $state
    *   The state service.
-   * @param \Drupal\Core\Datetime\Date $date
-   *   The date service.
+   * @param \Drupal\Core\Datetime\DateFormatter $date
+   *   The date formatter service.
    * @param \Drupal\xmlsitemap\XmlSitemapLinkStorageInterface $link_storage
    *   The xmlsitemap link storage service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, StateInterface $state, Date $date, XmlSitemapLinkStorageInterface $link_storage) {
+  public function __construct(ConfigFactoryInterface $config_factory, StateInterface $state, DateFormatter $date, XmlSitemapLinkStorageInterface $link_storage) {
     parent::__construct($config_factory);
     $this->state = $state;
     $this->date = $date;
@@ -67,7 +67,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-        $container->get('config.factory'), $container->get('state'), $container->get('date'), $container->get('xmlsitemap.link_storage')
+        $container->get('config.factory'), $container->get('state'), $container->get('date.formatter'), $container->get('xmlsitemap.link_storage')
     );
   }
 
