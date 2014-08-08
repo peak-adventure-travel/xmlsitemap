@@ -97,8 +97,8 @@ class XmlSitemapRebuildForm extends ConfigFormBase {
     // Save any changes to the frontpage link.
     $batch = xmlsitemap_rebuild_batch($form_state['values']['entities'], $form_state['values']['save_custom']);
     batch_set($batch);
-    $form_state['redirect'] = 'admin/config/search/xmlsitemap';
 
+    $form_state->setRedirect('xmlsitemap.admin_search');
     parent::submitForm($form, $form_state);
   }
 

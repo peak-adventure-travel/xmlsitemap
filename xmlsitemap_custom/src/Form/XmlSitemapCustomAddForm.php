@@ -195,7 +195,7 @@ class XmlSitemapCustomAddForm extends ConfigFormBase {
     $this->linkStorage->save($link);
     drupal_set_message(t('The custom link for %loc was saved.', array('%loc' => $link['loc'])));
 
-    $form_state['redirect_route']['route_name'] = 'xmlsitemap_custom.list';
+    $form_state->setRedirect('xmlsitemap_custom.list');
   }
 
 }

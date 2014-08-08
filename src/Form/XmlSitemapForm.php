@@ -87,7 +87,7 @@ class XmlSitemapForm extends EntityForm {
       drupal_set_message($this->t('There is another sitemap saved with the same context.'), 'error');
     }
 
-    $form_state['redirect'] = 'admin/config/search/xmlsitemap';
+    $form_state->setRedirect('xmlsitemap.admin_search');
   }
 
   /**
@@ -100,7 +100,7 @@ class XmlSitemapForm extends EntityForm {
       $destination = drupal_get_destination();
       $request->query->remove('destination');
     }
-    $form_state['redirect'] = array('admin/config/search/xmlsitemap/' . $this->entity->id() . '/delete', array('query' => $destination));
+    $form_state->setRedirect('xmlsitemap.admin_delete', array('xmlsitemap' => $this->entity->id()));
   }
 
 }
