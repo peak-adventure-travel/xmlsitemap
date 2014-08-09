@@ -111,6 +111,7 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
         $form['settings'][$entity_type_id][$bundle]['settings'] = array(
           '#type' => 'item',
           '#label' => $bundle_info['label'],
+          '#settings_link' => l('Configure', 'admin/config/search/xmlsitemap/settings/' . $entity_type_id . '/' . $bundle, array('query' => drupal_get_destination())),
           'bundle' => array(
             '#type' => 'checkbox',
             '#default_value' => xmlsitemap_link_bundle_check_enabled($entity_type_id, $bundle)
