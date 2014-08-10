@@ -38,7 +38,7 @@ class XmlSitemapForm extends EntityForm {
       '#title' => $this->t('Label'),
       '#maxlength' => 255,
       '#default_value' => $xmlsitemap->label(),
-      '#description' => $this->t("Label for the Example."),
+      '#description' => $this->t('Label for the Example.'),
       '#required' => TRUE,
     );
     $form['context'] = array(

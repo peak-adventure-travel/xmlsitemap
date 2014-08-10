@@ -189,7 +189,6 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
     catch (Exception $e) {
       watchdog_exception('xmlsitemap', $e);
       throw $e;
-      return FALSE;
     }
 
     return $writer->getSitemapElementCount();

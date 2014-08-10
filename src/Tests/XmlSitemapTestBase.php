@@ -354,7 +354,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
 
     if ($verbose) {
       array_unshift($verbose, '<h2>Watchdog messages</h2>');
-      $this->verbose(implode("<br />", $verbose), 'Watchdog messages from test run');
+      $this->verbose(implode('<br />', $verbose), 'Watchdog messages from test run');
     }
 
     // Clear the seen watchdog messages since we've failed on any errors.

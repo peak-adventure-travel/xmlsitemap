@@ -27,7 +27,7 @@ interface XmlSitemapLinkStorageInterface {
   /**
    * Saves or updates a sitemap link.
    *
-   * @param $link
+   * @param array $link
    *   An array with a sitemap link.
    */
   public function save(array $link);
@@ -35,13 +35,13 @@ interface XmlSitemapLinkStorageInterface {
   /**
    * Check if there is sitemap link is changed from the existing data.
    *
-   * @param $link
+   * @param array $link
    *   An array of the sitemap link.
-   * @param $original_link
+   * @param array $original_link
    *   An optional array of the existing data. This should only contain the
    *   fields necessary for comparison. If not provided the existing data will be
    *   loaded from the database.
-   * @param $flag
+   * @param bool $flag
    *   An optional boolean that if TRUE, will set the regenerate needed flag if
    *   there is a match. Defaults to FALSE.
    * @return
@@ -52,11 +52,14 @@ interface XmlSitemapLinkStorageInterface {
   /**
    * Check if there is a visible sitemap link given a certain set of conditions.
    *
-   * @param $conditions
+   * @param array $conditions
    *   An array of values to match keyed by field.
-   * @param $flag
+   * @param array $updates
+   *   Updates to be made.
+   * @param bool $flag
    *   An optional boolean that if TRUE, will set the regenerate needed flag if
    *   there is a match. Defaults to FALSE.
+   *
    * @return
    *   TRUE if there is a visible link, or FALSE otherwise.
    */
@@ -68,10 +71,11 @@ interface XmlSitemapLinkStorageInterface {
    * If a visible sitemap link was deleted, this will automatically set the
    * regenerate needed flag.
    *
-   * @param $entity_type
+   * @param string $entity_type
    *   A string with the entity type.
    * @param $entity_id
-   *   An integer with the entity ID.
+   *   Entity ID to be deleted.
+   *
    * @return
    *   The number of links that were deleted.
    */
@@ -79,13 +83,13 @@ interface XmlSitemapLinkStorageInterface {
 
   /**
    * Delete multiple sitemap links from the database.
-   *
    * If visible sitemap links were deleted, this will automatically set the
    * regenerate needed flag.
    *
-   * @param $conditions
+   * @param array $conditions
    *   An array of conditions on the {xmlsitemap} table in the form
    *   'field' => $value.
+   *
    * @return
    *   The number of links that were deleted.
    */
@@ -93,14 +97,14 @@ interface XmlSitemapLinkStorageInterface {
 
   /**
    * Perform a mass update of sitemap data.
-   *
    * If visible links are updated, this will automatically set the regenerate
    * needed flag to TRUE.
    *
-   * @param $updates
+   * @param array $updates
    *   An array of values to update fields to, keyed by field name.
-   * @param $conditions
+   * @param array $conditions
    *   An array of values to match keyed by field.
+   *
    * @return
    *   The number of links that were updated.
    */
@@ -109,10 +113,11 @@ interface XmlSitemapLinkStorageInterface {
   /**
    * Load a specific sitemap link from the database.
    *
-   * @param $entity_type
-   *   A string with the entity type.
+   * @param string $entity_type
+   *   A string with the entity type id.
    * @param $entity_id
-   *   An integer with the entity ID.
+   *   Entity ID.
+   *
    * @return
    *   A sitemap link (array) or FALSE if the conditions were not found.
    */
@@ -121,9 +126,10 @@ interface XmlSitemapLinkStorageInterface {
   /**
    * Load sitemap links from the database.
    *
-   * @param $conditions
+   * @param array $conditions
    *   An array of conditions on the {xmlsitemap} table in the form
    *   'field' => $value.
+   *
    * @return
    *   An array of sitemap link arrays.
    */

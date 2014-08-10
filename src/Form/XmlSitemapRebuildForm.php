@@ -75,7 +75,7 @@ class XmlSitemapRebuildForm extends ConfigFormBase {
     $rebuild_types = array_combine($rebuild_types, $rebuild_types);
     $form['entities'] = array(
       '#type' => 'select',
-      '#title' => t("Select which link types you would like to rebuild"),
+      '#title' => t('Select which link types you would like to rebuild'),
       '#description' => t('If no link types are selected, the sitemap files will just be regenerated.'),
       '#multiple' => TRUE,
       '#options' => $rebuild_types,
