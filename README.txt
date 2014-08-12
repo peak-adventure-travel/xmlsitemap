@@ -18,6 +18,7 @@ Current Maintainer: Dave Reid <http://drupal.org/user/53892>
 Co-maintainer: Kiam <http://drupal.org/user/55077>
 Co-maintainer: Earnie <http://drupal.org/user/86710>
 Co-maintainer: Darren Oh <http://drupal.org/user/30772>
+Co-maintainer: Andrei-Marius Dincu <http://drupal.org/user/2628879>
 Original Author: Matthew Loar <http://drupal.org/user/24879>
 
 XML Sitemap automatically creates a sitemap that conforms to the sitemaps.org
