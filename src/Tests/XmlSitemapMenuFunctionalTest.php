@@ -88,7 +88,7 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
       'url' => 'node',
       'title[0][value]' => $this->randomMachineName(),
       'description[0][value]' => '',
-      'enabled' => 1,
+      'enabled[value]' => 1,
       'expanded[value]' => FALSE,
       'menu_parent' => $menu_id . ':',
       'weight[0][value]' => 0,
