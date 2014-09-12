@@ -254,10 +254,6 @@ class XmlSitemapWriter extends \XMLWriter {
       file_put_contents($file_gz, gzencode(file_get_contents($file), 9));
     }
 
-    if (!filesize($this->uri)) {
-      throw new XmlSitemapGenerationException(t('Generated @file resulted in an empty file.', array('@file' => $this->uri)));
-    }
-
     return $return;
   }
 
