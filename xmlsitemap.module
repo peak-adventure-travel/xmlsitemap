@@ -132,16 +132,6 @@ function xmlsitemap_help($route_name, RouteMatchInterface $route_match) {
 }
 
 /**
- * Implements hook_permission().
- */
-function xmlsitemap_permission() {
-  $permissions['administer xmlsitemap'] = array(
-    'title' => t('Administer XML sitemap settings.'),
-  );
-  return $permissions;
-}
-
-/**
  * Implements hook_theme().
  */
 function xmlsitemap_theme() {
