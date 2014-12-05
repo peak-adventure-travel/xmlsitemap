@@ -150,7 +150,7 @@ class XMLSitemapWriter extends XMLWriter {
       $this->endElement();
     }
     else {
-      parent::writeElement($name, $content);
+      parent::writeElement($name, check_plain((string) $content));
     }
   }
 
