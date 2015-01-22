@@ -1068,14 +1068,15 @@ function xmlsitemap_calculate_changefreq($timestamps) {
  * calls to variable_set().
  */
 function xmlsitemap_form_submit_flag_regenerate(array $form, FormStateInterface $form_state) {
-  foreach ($form_state['values'] as $variable => $value) {
+  $values = $form_state->getValues();
+  foreach ($values as $variable => $value) {
     if (\Drupal::config('xmlsitemap.settings')->get($variable) == NULL) {
       $stored_value = 'not_a_variable';
     }
     else {
       $stored_value = \Drupal::config('xmlsitemap.settings')->get($variable);
     }
-    if (is_array($value) && !empty($form_state['values']['array_filter'])) {
+    if (is_array($value) && !$form_state->isValueEmpty('array_filter')) {
       $value = array_keys(array_filter($value));
     }
     if ($stored_value != 'not_a_variable' && $stored_value != $value) {
@@ -1225,7 +1226,7 @@ function xmlsitemap_add_form_link_options(array &$form, $entity, $bundle, $id) {
  * Submit callback for the entity form to save.
  */
 function xmlsitemap_process_form_link_options(array $form, FormStateInterface $form_state) {
-  $link = &$form_state['values']['xmlsitemap'];
+  $link = $form_state->getValue('xmlsitemap');
   $fields = array('status' => XMLSITEMAP_STATUS_DEFAULT, 'priority' => XMLSITEMAP_PRIORITY_DEFAULT);
 
   foreach ($fields as $field => $default) {
@@ -1237,9 +1238,10 @@ function xmlsitemap_process_form_link_options(array $form, FormStateInterface $f
       $link[$field . '_override'] = 1;
     }
   }
+  $form_state->setValue('xmlsitemap', $link);
 
-  $entity = $form_state['controller']->getEntity();
-  $entity->xmlsitemap = $form_state['values']['xmlsitemap'];
+  $entity = $form_state->getFormObject()->getEntity();
+  $entity->xmlsitemap = $form_state->getValue('xmlsitemap');
 }
 
 /**
@@ -1255,14 +1257,14 @@ function xmlsitemap_link_bundle_settings_form_submit($form, &$form_state) {
     $entity_info = $form['xmlsitemap']['#entity_info'];
     if (isset($entity_info['bundle keys']['bundle'])) {
       $bundle_key = $entity_info['bundle keys']['bundle'];
-      if (isset($form_state['values'][$bundle_key])) {
-        $bundle = $form_state['values'][$bundle_key];
+      if ($form_state->hasValue($bundle_key)) {
+        $bundle = $form_state->getValue($bundle_key);
         $form['xmlsitemap']['#bundle'] = $bundle;
       }
     }
   }
 
-  xmlsitemap_link_bundle_settings_save($entity, $bundle, $form_state['values']['xmlsitemap']);
+  xmlsitemap_link_bundle_settings_save($entity, $bundle, $form_state->getValue('xmlsitemap'));
 
   $entity_info = $form['xmlsitemap']['#entity_info'];
   if (!empty($form['xmlsitemap']['#show_message'])) {
@@ -1272,7 +1274,7 @@ function xmlsitemap_link_bundle_settings_form_submit($form, &$form_state) {
   // Unset the form values since we have already saved the bundle settings and
   // we don't want these values to get saved as variables in-case this form
   // also uses system_settings_form().
-  unset($form_state['values']['xmlsitemap']);
+  $form_state->unsetValue('xmlsitemap');
 }
 
 /**
@@ -1565,7 +1567,7 @@ function theme_xmlsitemap_content_settings_table($variables) {
  *   entity form.
  */
 function xmlsitemap_form_controller(FormStateInterface $form_state) {
-  return isset($form_state['controller']) && $form_state['controller'] instanceof EntityForm ? $form_state['controller'] : FALSE;
+  return (null != $form_state->getFormObject()) && $form_state->getFormObject() instanceof EntityForm ? $form_state->getFormObject() : FALSE;
 }
 
 /**

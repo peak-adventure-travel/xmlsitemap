@@ -119,14 +119,16 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    $custom_urls = preg_split('/[\r\n]+/', $form_state['values']['custom_urls'], -1, PREG_SPLIT_NO_EMPTY);
+    $custom_urls = $form_state->getValue('custom_urls');
+    $custom_urls = preg_split('/[\r\n]+/', $custom_urls, -1, PREG_SPLIT_NO_EMPTY);
     foreach ($custom_urls as $custom_url) {
       $url = xmlsitemap_engines_prepare_url($custom_url, '');
       if (!UrlHelper::isValid($url, TRUE)) {
         $form_state->setErrorByName($custom_url, t('Invalid URL %url.', array('%url' => $custom_url)));
       }
     }
-    $form_state['values']['custom_urls'] = implode("\n", $custom_urls);
+    $custom_urls = implode("\n", $custom_urls);
+    $form_state->setValue('custom_urls', $custom_ruls);
     parent::validateForm($form, $form_state);
   }
 
@@ -142,7 +144,7 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
       'xmlsitemap_engines_submit_updated',
       'custom_urls'
     );
-    $values = $form_state['values'];
+    $values = $form_state->getValues();
     foreach ($keys as $key) {
       if (isset($state_variables[$key])) {
         $this->state->set($key, $values[$key]);

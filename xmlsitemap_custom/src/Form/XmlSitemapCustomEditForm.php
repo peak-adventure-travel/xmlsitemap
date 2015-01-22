@@ -179,9 +179,10 @@ class XmlSitemapCustomEditForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    $link = &$form_state['values'];
+    $link = $form_state->getValues();
     $link['loc'] = trim($link['loc']);
     $link['loc'] = $this->aliasManager->getPathByAlias($link['loc'], $link['language']);
+    $form_state->setValue('loc', $link['loc']);
     try {
       $client = new Client();
       $res = $client->get(url(NULL, array('absolute' => TRUE)) . $link['loc']);
@@ -196,7 +197,7 @@ class XmlSitemapCustomEditForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $link = $form_state['values'];
+    $link = $form_state->getValues();
     $this->linkStorage->save($link);
     drupal_set_message(t('The custom link for %loc was saved.', array('%loc' => $link['loc'])));
 

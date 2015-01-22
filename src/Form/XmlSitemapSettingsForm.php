@@ -217,13 +217,14 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     // Check that the chunk size will not create more than 1000 chunks.
-    $chunk_size = $form_state['values']['chunk_size'];
+    $chunk_size = $form_state->getValue('chunk_size');
     if ($chunk_size != 'auto' && $chunk_size != 50000 && (xmlsitemap_get_link_count() / $chunk_size) > 1000) {
       $form_state->setErrorByName('chunk_size', t('The sitemap page link count of @size will create more than 1,000 sitemap pages. Please increase the link count.', array('@size' => $chunk_size)));
     }
 
-    $base_url = &$form_state['values']['xmlsitemap_base_url'];
+    $base_url = $form_state->getValue('xmlsitemap_base_url');
     $base_url = rtrim($base_url, '/');
+    $form_state->setValue('xmlsitemap_base_url', $base_url);
     if ($base_url != '' && !UrlHelper::isValid($base_url, TRUE)) {
       $form_state->setErrorByName('xmlsitemap_base_url', t('Invalid base URL.'));
     }
@@ -237,7 +238,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     // Save any changes to the frontpage link.
     $config = $this->config('xmlsitemap.settings');
-    $values = $form_state['values'];
+    $values = $form_state->getValues();
     if (isset($form['frontpage'])) {
       $frontpage_priority = $values['xmlsitemap_frontpage_priority'];
       $frontpage_changefreq = $values['xmlsitemap_frontpage_changefreq'];

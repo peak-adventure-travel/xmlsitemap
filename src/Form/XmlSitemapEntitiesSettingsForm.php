@@ -134,12 +134,13 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $bundles = $this->entityManager->getAllBundleInfo();
-    $entity_values = $form_state['values']['entity_types'];
+    $entity_values = $form_state->getValue('entity_types');
     $config = $this->config('xmlsitemap.settings');
+    $settings = $form_state->getValue('settings');
     foreach ($entity_values as $key => $value) {
       if ($value) {
         foreach ($bundles[$key] as $bundle_key => $bundle_value) {
-          if (!$form_state['values']['settings'][$key][$bundle_key]['settings']['bundle']) {
+          if (!$settings[$key][$bundle_key]['settings']['bundle']) {
             xmlsitemap_link_bundle_delete($key, $bundle_key, TRUE);
           }
           else {
@@ -157,5 +158,4 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
     }
     parent::submitForm($form, $form_state);
   }
-
 }

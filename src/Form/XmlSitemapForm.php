@@ -59,15 +59,18 @@ class XmlSitemapForm extends EntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
-    if (!isset($form_state['values']['context'])) {
-      $form_state['values']['context'] = xmlsitemap_get_current_context();
+    if (!$form_state->hasValue('context')) {
+      $form_state->setValue('context', xmlsitemap_get_current_context());
     }
-    if (isset($form_state['values']['context']['language']) && $form_state['values']['context']['language'] == LanguageInterface::LANGCODE_NOT_SPECIFIED) {
-      unset($form_state['values']['context']['language']);
+    if ($form_state->hasValue(['context', 'language'])) {
+      $language = $form_state->getValue(['context', 'language']);
+      if ($language == LanguageInterface::LANGCODE_NOT_SPECIFIED) {
+        $form_state->unsetValue(['context', 'language']);
+      }
     }
-    $this->entity->context = $form_state['values']['context'];
-    $context = $form_state['values']['context'];
-    $this->entity->label = $form_state['values']['label'];
+    $context = $form_state->getValue('context');
+    $this->entity->context = $context;
+    $this->entity->label = $form_state->getValue('label');
     $this->entity->id = xmlsitemap_sitemap_get_context_hash($context);
 
     try {

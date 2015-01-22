@@ -112,14 +112,15 @@ class XmlSitemapLinkBundleSettingsForm extends ConfigFormBase implements Contain
       $entity_info = $form['xmlsitemap']['#entity_info'];
       if (isset($entity_info['bundle keys']['bundle'])) {
         $bundle_key = $entity_info['bundle keys']['bundle'];
-        if (isset($form_state['values'][$bundle_key])) {
-          $bundle = $form_state['values'][$bundle_key];
+        if ($form_state->hasValue($bundle_key)) {
+          $bundle = $form_state->getValue($bundle_key);
           $form['xmlsitemap']['#bundle'] = $bundle;
         }
       }
     }
 
-    xmlsitemap_link_bundle_settings_save($this->entity_type, $this->bundle_type, $form_state['values']['xmlsitemap'], TRUE);
+    $xmlsitemap = $form_state->getValue('xmlsitemap');
+    xmlsitemap_link_bundle_settings_save($this->entity_type, $this->bundle_type, $xmlsitemap, TRUE);
 
     $entity_info = $form['xmlsitemap']['#entity_info'];
     if (!empty($form['xmlsitemap']['#show_message'])) {
@@ -127,9 +128,9 @@ class XmlSitemapLinkBundleSettingsForm extends ConfigFormBase implements Contain
     }
 
     // Unset the form values since we have already saved the bundle settings and
-    // we don't want these values to get saved as variables in-case this form
-    // also uses system_settings_form().
-    unset($form_state['values']['xmlsitemap']);
+    // we don't want these values to get saved as configuration, depending on how
+    // the form saves the form values.
+    $form_state->unsetValue('xmlsitemap');
     parent::submitForm($form, $form_state);
   }
 
