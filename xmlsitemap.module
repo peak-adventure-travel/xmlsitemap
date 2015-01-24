@@ -470,7 +470,7 @@ function xmlsitemap_check_directory(XmlSitemapInterface $sitemap = NULL) {
   $directory = xmlsitemap_get_directory($sitemap);
   $result = file_prepare_directory($directory, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS);
   if (!$result) {
-    watchdog('file system', 'The directory %directory does not exist or is not writable.', array('%directory' => $directory), WATCHDOG_ERROR);
+    \Drupal::logger('file system')->error('The directory %directory does not exist or is not writable.', array('%directory' => $directory));
   }
   return $result;
 }
