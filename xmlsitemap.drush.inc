@@ -27,7 +27,7 @@ function xmlsitemap_drush_command() {
     'callback' => 'drush_xmlsitemap_index',
     'drupal dependencies' => array('xmlsitemap'),
     'options' => array(
-      '--limit' => 'The limit of links of each type to process.'
+      'limit' => 'The limit of links of each type to process.'
     )
   );
   return $items;
