@@ -2380,7 +2380,7 @@ function xmlsitemap_check_status() {
     else {
       $modules = array();
       \Drupal::moduleHandler()->loadAllIncludes('install');
-      foreach (module_implements('requirements') as $module) {
+      foreach (\Drupal::moduleHandler()->getImplementations('requirements'); as $module) {
         if (strpos($module, 'xmlsitemap') !== FALSE) {
           $modules[] = $module;
         }
