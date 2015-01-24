@@ -10,7 +10,7 @@ namespace Drupal\xmlsitemap;
 use Drupal\Core\Config\Entity\ConfigEntityStorageInterface;
 
 /**
- * Defines a common interface for xmlsitemap entity controller classes.
+ * Defines a common interface for xmlsitemap entity handler classes.
  */
 interface XmlSitemapStorageInterface extends ConfigEntityStorageInterface {
 

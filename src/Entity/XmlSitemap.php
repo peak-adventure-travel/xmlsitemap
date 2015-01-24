@@ -16,7 +16,7 @@ use Drupal\xmlsitemap\XmlSitemapInterface;
  * @ConfigEntityType(
  *   id = "xmlsitemap",
  *   label = @Translation("XmlSitemap"),
- *   controllers = {
+ *   handlers = {
  *     "storage" = "Drupal\xmlsitemap\XmlSitemapStorage",
  *     "list_builder" = "Drupal\xmlsitemap\XmlSitemapListBuilder",
  *     "form" = {
