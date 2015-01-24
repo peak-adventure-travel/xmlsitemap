@@ -181,14 +181,14 @@ function xmlsitemap_cron() {
  * Implements hook_modules_installed().
  */
 function xmlsitemap_modules_installed(array $modules) {
-  \Drupal::cache()->deleteTags(array('xmlsitemap'));
+  Cache::invalidateTags(array('xmlsitemap'));
 }
 
 /**
  * Implements hook_modules_uninstalled().
  */
 function xmlsitemap_modules_uninstalled(array $modules) {
-  \Drupal::cache()->deleteTags(array('xmlsitemap'));
+  Cache::invalidateTags(array('xmlsitemap'));
 }
 
 /**
