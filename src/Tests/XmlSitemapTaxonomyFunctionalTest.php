@@ -61,7 +61,7 @@ class XmlSitemapTaxonomyFunctionalTest extends XmlSitemapTestBase {
     $this->drupalPostForm(NULL, $edit, t('Save'));
     $this->assertText("Created new vocabulary {$edit['name']}.");
 
-    $vocabulary = taxonomy_vocabulary_load($edit['vid']);
+    $vocabulary = \Drupal\taxonomy\Entity\Vocabulary::load($edit['vid']);
 
     xmlsitemap_link_bundle_enable('taxonomy_term', $vocabulary->id());
 
