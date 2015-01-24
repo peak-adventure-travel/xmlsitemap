@@ -2391,7 +2391,7 @@ function xmlsitemap_check_status() {
     $messages = array();
     foreach ($modules as $module) {
       module_load_install($module);
-      $requirements = module_invoke($module, 'requirements', 'runtime');
+      $requirements = \Drupal::moduleHandler()->invoke($module, 'requirements', 'runtime');
       foreach ($requirements as $requirement) {
         if (isset($requirement['severity']) && max(REQUIREMENT_OK, $requirement['severity'])) {
           $messages[] = $requirement['description'];
