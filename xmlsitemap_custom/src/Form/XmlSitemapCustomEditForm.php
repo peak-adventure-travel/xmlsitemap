@@ -17,6 +17,7 @@ use Drupal\Core\Path\AliasManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\xmlsitemap\XmlSitemapLinkStorageInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 
 /**
  * Provides a form for editing a custom link.
@@ -127,7 +128,7 @@ class XmlSitemapCustomEditForm extends ConfigFormBase {
     $form['loc'] = array(
       '#type' => 'textfield',
       '#title' => t('Path to link'),
-      '#field_prefix' => url('', array('absolute' => TRUE)),
+      '#field_prefix' => Url::fromRoute('<front>', [], array('absolute' => TRUE)),
       '#default_value' => $this->custom_link['loc'],
       '#required' => TRUE,
       '#size' => 30,
@@ -167,8 +168,9 @@ class XmlSitemapCustomEditForm extends ConfigFormBase {
       '#value' => t('Save'),
       '#weight' => 5,
     );
+    $cancel_link = Url::fromRoute('xmlsitemap_custom.list');
     $form['actions']['cancel'] = array(
-      '#markup' => l(t('Cancel'), 'admin/config/search/xmlsitemap/custom'),
+      '#markup' => l(t('Cancel'), $cancel_link),
       '#weight' => 10,
     );
 
@@ -185,7 +187,7 @@ class XmlSitemapCustomEditForm extends ConfigFormBase {
     $form_state->setValue('loc', $link['loc']);
     try {
       $client = new Client();
-      $res = $client->get(url(NULL, array('absolute' => TRUE)) . $link['loc']);
+      $res = $client->get(Url::fromRoute('<front>', [], array('absolute' => TRUE)) . $link['loc']);
     }
     catch (ClientException $e) {
       $form_state->setErrorByName('loc', t('The custom link @link is either invalid or it cannot be accessed by anonymous users.', array('@link' => $link['loc'])));

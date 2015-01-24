@@ -3,6 +3,7 @@
 use Drupal\Core\Routing\RouteMatchInterface;
 use GuzzleHttp\Exception\RequestException;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Url;
 
 /**
  * Implements hook_hook_info().
@@ -117,7 +118,7 @@ function xmlsitemap_engines_submit_engines(array $smids = array()) {
  */
 function xmlsitemap_engines_submit_sitemaps($url, array $sitemaps) {
   foreach ($sitemaps as $sitemap) {
-    $sitemap_url = url($sitemap->uri['path'], $sitemap->uri['options']);
+    $sitemap_url = Url::fromUri($sitemap->uri['path'], $sitemap->uri['options']);
     $submit_url = xmlsitemap_engines_prepare_url($url, $sitemap_url);
     try {
       $request = \Drupal::httpClient()->get($submit_url);

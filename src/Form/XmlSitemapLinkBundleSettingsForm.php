@@ -12,6 +12,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -73,7 +74,7 @@ class XmlSitemapLinkBundleSettingsForm extends ConfigFormBase implements Contain
       // If this is a non-ajax form, redirect to the bundle administration page.
       $destination = drupal_get_destination();
       $request->query->remove('destination');
-      $url = url($admin_path, array('query' => array($destination)));
+      $url = Url::fromUri($admin_path, array('query' => array($destination)));
       return new RedirectResponse($url);
     }
     else {

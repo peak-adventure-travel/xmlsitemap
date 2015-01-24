@@ -7,6 +7,8 @@
 
 namespace Drupal\xmlsitemap;
 
+use Drupal\Core\Url;
+
 /**
  * Extended class for writing XML sitemap indexes.
  */
@@ -55,7 +57,7 @@ class XmlSitemapIndexWriter extends XmlSitemapWriter {
     for ($i = 1; $i <= $this->sitemap->chunks; $i++) {
       $url_options['query']['page'] = $i;
       $element = array(
-        'loc' => url('sitemap.xml', $url_options),
+        'loc' => Url::fromRoute('xmlsitemap.sitemap_xml', [], $url_options),
         // @todo Use the actual lastmod value of the chunk file.
         'lastmod' => gmdate($lastmod_format, REQUEST_TIME),
       );

@@ -14,6 +14,7 @@ use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -108,10 +109,11 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
         ),
       );
       foreach ($bundles[$entity_type_id] as $bundle => $bundle_info) {
+        $url = Url::fromRoute('xmlsitemap.admin_settings_bundle', ['entity' => $entity_type_id, 'bundle' => $bundle], array('query' => drupal_get_destination()));
         $form['settings'][$entity_type_id][$bundle]['settings'] = array(
           '#type' => 'item',
           '#label' => $bundle_info['label'],
-          '#settings_link' => l($this->t('Configure'), 'admin/config/search/xmlsitemap/settings/' . $entity_type_id . '/' . $bundle, array('query' => drupal_get_destination())),
+          '#settings_link' => $this->l($this->t('Configure'), $url),
           'bundle' => array(
             '#type' => 'checkbox',
             '#default_value' => xmlsitemap_link_bundle_check_enabled($entity_type_id, $bundle)

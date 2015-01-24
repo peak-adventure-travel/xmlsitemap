@@ -11,6 +11,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\Url;
 
 /**
  * Builds the list table for all custom links.
@@ -78,7 +79,7 @@ class XmlSitemapCustomListController extends ControllerBase {
     foreach ($result as $link) {
       $language = $this->languageManager->getLanguage($link->language);
       $row = array();
-      $row['loc'] = l($link->loc, $link->loc);
+      $row['loc'] = $this->l($link->loc, Url::fromUri($link->loc));
       $row['priority'] = number_format($link->priority, 1);
       $row['changefreq'] = $link->changefreq ? drupal_ucfirst(xmlsitemap_get_changefreq($link->changefreq)) : t('None');
       if (isset($header['language'])) {
@@ -115,7 +116,7 @@ class XmlSitemapCustomListController extends ControllerBase {
       '#theme' => 'table',
       '#header' => $header,
       '#rows' => $rows,
-      '#empty' => $this->t('No custom links available. <a href="@custom_link">Add custom link</a>', array('@custom_link' => url('admin/config/search/xmlsitemap/custom/add', array('query' => $destination))))
+      '#empty' => $this->t('No custom links available. <a href="@custom_link">Add custom link</a>', array('@custom_link' => Url::fromRoute('xmlsitemap_custom.add', [], array('query' => $destination))))
     );
     $build['xmlsitemap_custom_pager'] = array('#theme' => 'pager');
 

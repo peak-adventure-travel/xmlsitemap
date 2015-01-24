@@ -2,6 +2,7 @@
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Drupal\Component\Utility\UrlHelper;
+use Drupal\Core\Url;
 
 /**
  * Implements hook_xmlsitemap_engine_info().
@@ -18,7 +19,7 @@ function xmlsitemap_engines_test_xmlsitemap_engine_info() {
  * Implements hook_xmlsitemap_engine_info_alter().
  */
 function xmlsitemap_engines_test_xmlsitemap_engine_info_alter(&$engines) {
-  $engines['simpletest']['url'] = url('ping', array('absolute' => TRUE, 'query' => array('sitemap' => ''))) . '[sitemap]';
+  $engines['simpletest']['url'] = Url::fromUri('base://ping', array('absolute' => TRUE, 'query' => array('sitemap' => ''))) . '[sitemap]';
 }
 
 function xmlsitemap_engines_test_pinged() {

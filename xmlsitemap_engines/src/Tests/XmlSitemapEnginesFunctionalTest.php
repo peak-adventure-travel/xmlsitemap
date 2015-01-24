@@ -8,6 +8,7 @@
 namespace Drupal\xmlsitemap_engines\Tests;
 
 use Drupal\xmlsitemap\Tests\XmlSitemapTestBase;
+use Drupal\Core\Url;
 
 /**
  * Test xmlsitemap_engines functionality.
@@ -50,7 +51,7 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
     // @todo For some reason the test client does not have clean URLs while
     // the test runner does, so it causes mismatches in watchdog assertions
     // later.
-    $this->submit_url = url('ping', array('absolute' => TRUE, 'query' => array('sitemap' => ''))) . '[sitemap]';
+    $this->submit_url = Url::fromUri('base://ping', array('absolute' => TRUE, 'query' => array('sitemap' => ''))) . '[sitemap]';
   }
 
   /**
@@ -135,7 +136,7 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
     $this->assertText('Invalid URL an-invalid-url.');
     $this->assertNoText('The configuration options have been saved.');
 
-    $url = url('ping', array('absolute' => TRUE));
+    $url = Url::fromUri('base://ping', array('absolute' => TRUE));
     $edit = array('custom_urls' => $url);
     $this->drupalPostForm('admin/config/search/xmlsitemap/engines', $edit, t('Save configuration'));
     $this->assertText(t('The configuration options have been saved.'));
@@ -145,9 +146,9 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
     $this->assertText(t('The configuration options have been saved.'));
 
     $this->submitEngines();
-    $url = xmlsitemap_engines_prepare_url($this->submit_url, url('sitemap.xml', array('absolute' => TRUE)));
+    $url = xmlsitemap_engines_prepare_url($this->submit_url, Url::fromRoute('xmlsitemap.sitemap_xml', [], array('absolute' => TRUE)));
     $this->assertWatchdogMessage(array('type' => 'xmlsitemap', 'message' => 'Submitted the sitemap to %url and received response @code.', 'variables' => array('%url' => $url, '@code' => '200')));
-    $this->assertWatchdogMessage(array('type' => 'xmlsitemap', 'message' => 'Recieved ping for @sitemap.', 'variables' => array('@sitemap' => url('sitemap.xml', array('absolute' => TRUE)))));
+    $this->assertWatchdogMessage(array('type' => 'xmlsitemap', 'message' => 'Recieved ping for @sitemap.', 'variables' => array('@sitemap' => Url::fromRoute('xmlsitemap.sitemap_xml', [], array('absolute' => TRUE)))));
   }
 
 }

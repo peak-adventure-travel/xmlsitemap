@@ -7,6 +7,8 @@
 
 namespace Drupal\xmlsitemap;
 
+use Drupal\Core\Url;
+
 /**
  * Extended class for writing XML sitemap files.
  */
@@ -124,7 +126,7 @@ class XmlSitemapWriter extends \XMLWriter {
    *   Returns TRUE on success.
    */
   public function writeXSL() {
-    $this->writePi('xml-stylesheet', 'type="text/xsl" href="' . url('sitemap.xsl') . '"');
+    $this->writePi('xml-stylesheet', 'type="text/xsl" href="' . Url::fromRoute('xmlsitemap.sitemap_xsl') . '"');
     $this->writeRaw(PHP_EOL);
   }
 

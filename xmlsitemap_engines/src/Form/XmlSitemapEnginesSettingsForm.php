@@ -9,6 +9,7 @@ namespace Drupal\xmlsitemap_engines\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Component\Utility\UrlHelper;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\State\StateInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -104,7 +105,7 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
     $form['custom_urls'] = array(
       '#type' => 'textarea',
       '#title' => t('Custom submission URLs'),
-      '#description' => t('Enter one URL per line. The token [sitemap] will be replaced with the URL to your sitemap. For example: %example-before would become %example-after.', array('%example-before' => 'http://example.com/ping?[sitemap]', '%example-after' => xmlsitemap_engines_prepare_url('http://example.com/ping?[sitemap]', url('sitemap.xml', array('absolute' => TRUE))))),
+      '#description' => t('Enter one URL per line. The token [sitemap] will be replaced with the URL to your sitemap. For example: %example-before would become %example-after.', array('%example-before' => 'http://example.com/ping?[sitemap]', '%example-after' => xmlsitemap_engines_prepare_url('http://example.com/ping?[sitemap]', Url::fromRoute('xmlsitemap.sitemap_xml', [], ['absolute' => TRUE])))),
       '#default_value' => $this->config('xmlsitemap_engines.settings')->get('custom_urls'),
       '#rows' => 2,
       '#wysiwyg' => FALSE

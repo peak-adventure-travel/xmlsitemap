@@ -13,6 +13,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\State\StateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\Url;
 
 /**
  * XmlSitemap generator service class.
@@ -230,13 +231,17 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
       if ($url_options['alias']) {
         $link['loc'] = $this->getPathAlias($link['loc'], $link['language']->getId());
       }
+      if ($url_options['base_url']) {
+        $link['loc'] = rtrim($url_options['base_url'], '/') . '/' . ltrim($link['loc'], '/');
+      }
       $link_options = array(
         'language' => $link['language'],
         'xmlsitemap_link' => $link,
         'xmlsitemap_sitemap' => $sitemap,
       );
       // @todo Add a separate hook_xmlsitemap_link_url_alter() here?
-      $link_url = url($link['loc'], $link_options + $url_options);
+      $link['loc'] = empty($link['loc']) ? '<front>' : $link['loc'];
+      $link_url = Url::fromRoute($link['loc'], [], $link_options + $url_options);
 
       // Skip this link if it was a duplicate of the last one.
       // @todo Figure out a way to do this before generation so we can report
@@ -311,7 +316,7 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
     }
     $sitemap = &$context['sandbox']['sitemap'];
     $links = $this->generatePage($sitemap, $sitemap->getChunks());
-    $context['message'] = t('Now generating %sitemap-url.', array('%sitemap-url' => url('sitemap.xml', $sitemap->uri['options'] + array('query' => array('page' => $sitemap->getChunks())))));
+    $context['message'] = t('Now generating %sitemap-url.', array('%sitemap-url' => Url::fromRoute('xmlsitemap.sitemap_xml', [], $sitemap->uri['options'] + array('query' => array('page' => $sitemap->getChunks())))));
 
     if ($links) {
       $sitemap->setLinks($sitemap->getLinks() + $links);
@@ -344,7 +349,7 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
     $sitemap = xmlsitemap_sitemap_load($smid);
     if ($sitemap != NULL && $sitemap->getChunks() > 1) {
       $this->generateIndex($sitemap);
-      $context['message'] = t('Now generating sitemap index %sitemap-url.', array('%sitemap-url' => url('sitemap.xml', $sitemap->uri['options'])));
+      $context['message'] = t('Now generating sitemap index %sitemap-url.', array('%sitemap-url' => Url::fromRoute('xmlsitemap.sitemap_xml', [], $sitemap->uri['options'])));
     }
   }
 

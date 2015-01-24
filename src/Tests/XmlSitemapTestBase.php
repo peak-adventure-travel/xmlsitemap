@@ -8,6 +8,7 @@
 namespace Drupal\xmlsitemap\Tests;
 
 use Drupal\simpletest\WebTestBase;
+use Drupal\Core\Url;
 
 /**
  * Helper test class with some added functions for testing.
@@ -135,7 +136,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
    * @param $context
    *   An optional array of the XML sitemap's context.
    * @param $options
-   *   Options to be forwarded to url(). These values will be merged with, but
+   *   Options to be forwarded to Url::fromUri(). These values will be merged with, but
    *   always override $sitemap->uri['options'].
    * @param $headers
    *   An array containing additional HTTP request headers, each formatted as
@@ -237,7 +238,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   protected function assertRawSitemapLinks() {
     $links = func_get_args();
     foreach ($links as $link) {
-      $path = url($link['loc'], array('language' => xmlsitemap_language_load($link['language']), 'absolute' => TRUE));
+      $path = Url::fromUri($link['loc'], array('language' => xmlsitemap_language_load($link['language']), 'absolute' => TRUE));
       $this->assertRaw($link['loc'], t('Link %path found in the sitemap.', array('%path' => $path)));
     }
   }
@@ -245,7 +246,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   protected function assertNoRawSitemapLinks() {
     $links = func_get_args();
     foreach ($links as $link) {
-      $path = url($link['loc'], array('language' => xmlsitemap_language_load($link['language']), 'absolute' => TRUE));
+      $path = Url::fromUri($link['loc'], array('language' => xmlsitemap_language_load($link['language']), 'absolute' => TRUE));
       $this->assertNoRaw($link['loc'], t('Link %path not found in the sitemap.', array('%path' => $path)));
     }
   }
@@ -403,7 +404,8 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   protected function verbose($verbose_message, $message = 'Verbose message') {
     if ($id = parent::verbose($verbose_message)) {
       $url = file_create_url($this->originalFileDirectory . '/simpletest/verbose/' . get_class($this) . '-' . $id . '.html');
-      $this->error(l($message, $url, array('attributes' => array('target' => '_blank'))), 'User notice');
+      $message_url = Url::fromUri($url, array('attributes' => array('target' => '_blank')));
+      $this->error($this->l($message, $message_url)), 'User notice');
     }
   }
 

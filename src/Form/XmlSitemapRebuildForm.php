@@ -11,6 +11,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\State\StateInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -65,7 +66,7 @@ class XmlSitemapRebuildForm extends ConfigFormBase {
       }
       else {
         $request->query->set('destination', 'admin/config/search/xmlsitemap');
-        drupal_set_message(t('A rebuild is not necessary. If you are just wanting to regenerate the XML sitemap files, you can <a href="@link-cron">run cron manually</a>.', array('@link-cron' => url('admin/reports/status/run-cron', array('query' => drupal_get_destination())))), 'warning');
+        drupal_set_message(t('A rebuild is not necessary. If you are just wanting to regenerate the XML sitemap files, you can <a href="@link-cron">run cron manually</a>.', array('@link-cron' => Url::fromRoute('system.run_cron', [], array('query' => drupal_get_destination())))), 'warning');
         $this->setRequest($request);
       }
     }
