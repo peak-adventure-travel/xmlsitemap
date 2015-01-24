@@ -1554,7 +1554,7 @@ function template_preprocess_xmlsitemap_content_settings_table(&$variables) {
  * @ingroup themable
  */
 function theme_xmlsitemap_content_settings_table($variables) {
-  return '<h4>' . $variables['build']['#title'] . '</h4>' . drupal_render($variables['build']);
+  return '<h4>' . $variables['build']['#title'] . '</h4>' . \Drupal::service('renderer')->render($variables['build']);
 }
 
 /**
@@ -2404,7 +2404,7 @@ function xmlsitemap_check_status() {
         '#type' => 'item_list',
         '#items' => array($messages)
       );
-      $message = t('One or more problems were detected with your XML sitemap configuration: !messages', array('!messages' => drupal_render($messages)));
+      $message = t('One or more problems were detected with your XML sitemap configuration: !messages', array('!messages' => \Drupal::service('renderer')->render($messages)));
       drupal_set_message($message, 'warning', FALSE);
       if (\Drupal::currentUser()->hasPermission('access site reports')) {
         drupal_set_message(t('Check the <a href="@status-report">status report</a> for more information.', array('@status-report' => Url::fromRoute('system.status'))), 'warning', FALSE);
