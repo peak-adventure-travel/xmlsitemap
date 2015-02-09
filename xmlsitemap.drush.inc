@@ -54,10 +54,13 @@ function drush_xmlsitemap_regenerate() {
  */
 function drush_xmlsitemap_rebuild() {
   // Build a list of rebuildable link types.
-  Timer::start('xmlsitemap_rebuild');
   $rebuild_types = xmlsitemap_get_rebuildable_link_types();
+  if (empty($rebuild_types)) {
+  	return drush_set_error("No link types are rebuildable.");
+  }
 
   // Run the batch process.
+  Timer::start('xmlsitemap_rebuild');
   xmlsitemap_run_unprogressive_batch('xmlsitemap_rebuild_batch', $rebuild_types, TRUE);
 
   $vars = array(
