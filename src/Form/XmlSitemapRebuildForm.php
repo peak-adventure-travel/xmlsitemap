@@ -58,6 +58,13 @@ class XmlSitemapRebuildForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
+  protected function getEditableConfigNames() {
+    return ['xmlsitemap.settings'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $request = $this->getRequest();
     if (!$request->request && !$this->state->get('xmlsitemap_rebuild_needed')) {

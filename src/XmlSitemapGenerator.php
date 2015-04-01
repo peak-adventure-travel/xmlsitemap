@@ -80,7 +80,7 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
    *   The state handler.
    */
   public function __construct(ConfigFactoryInterface $config_factory, EntityManagerInterface $entity_manager, StateInterface $state, LanguageManagerInterface $language_manager) {
-    $this->config = $config_factory->get('xmlsitemap.settings');
+    $this->config = $config_factory->getEditable('xmlsitemap.settings');
     $this->entityManager = $entity_manager;
     $this->state = $state;
     $this->languageManager = $language_manager;
@@ -241,7 +241,7 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
       );
       // @todo Add a separate hook_xmlsitemap_link_url_alter() here?
       $link['loc'] = empty($link['loc']) ? '<front>' : $link['loc'];
-      $link_url = Url::fromRoute($link['loc'], [], $link_options + $url_options);
+      $link_url = Url::fromRoute($link['loc'], [], $link_options + $url_options)->toString();
 
       // Skip this link if it was a duplicate of the last one.
       // @todo Figure out a way to do this before generation so we can report

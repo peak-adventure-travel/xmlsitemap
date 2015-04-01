@@ -33,8 +33,8 @@ use Drupal\xmlsitemap\XmlSitemapInterface;
  *     "label" = "label"
  *   },
  *   links = {
- *     "edit-form" = "xmlsitemap.admin_edit",
- *     "delete-form" = "xmlsitemap.admin_delete"
+ *     "edit-form" = "/admin/config/search/xmlsitemap/{xmlsitemap}/edit",
+ *     "delete-form" = "/admin/config/search/xmlsitemap/{xmlsitemap}/delete"
  *   }
  * )
  */

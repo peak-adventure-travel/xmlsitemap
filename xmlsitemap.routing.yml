@@ -14,7 +14,7 @@ xmlsitemap.admin_search_list:
   requirements:
     _permission: 'administer xmlsitemap'
     
-xmlsitemap.admin_add:
+entity.xmlsitemap.add_form:
   path: '/admin/config/search/xmlsitemap/add'
   defaults:
     _entity_form: 'xmlsitemap.add'
@@ -22,7 +22,7 @@ xmlsitemap.admin_add:
   requirements:
     _permission: 'administer xmlsitemap'
     
-xmlsitemap.admin_edit:
+entity.xmlsitemap.edit_form:
   path: '/admin/config/search/xmlsitemap/{xmlsitemap}/edit'
   defaults:
     _entity_form: 'xmlsitemap.edit'
@@ -30,7 +30,7 @@ xmlsitemap.admin_edit:
   requirements:
     _permission: 'administer xmlsitemap'
     
-xmlsitemap.admin_delete:
+entity.xmlsitemap.delete_form:
   path: '/admin/config/search/xmlsitemap/{xmlsitemap}/delete'
   defaults:
     _entity_form: 'xmlsitemap.delete'

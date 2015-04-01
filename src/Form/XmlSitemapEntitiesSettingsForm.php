@@ -61,6 +61,13 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
   /**
    * {@inheritdoc}
    */
+  protected function getEditableConfigNames() {
+    return ['xmlsitemap.settings'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('xmlsitemap.settings');
     $entity_types = $this->entityManager->getDefinitions();

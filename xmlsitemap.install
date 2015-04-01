@@ -315,8 +315,9 @@ function xmlsitemap_install() {
 function xmlsitemap_uninstall() {
   // Remove config variables.
   $variables = array_keys(xmlsitemap_config_variables());
+  $editable = \Drupal::configFactory()->getEditable('xmlsitemap.settings');
   foreach ($variables as $variable) {
-    \Drupal::config('xmlsitemap.settings')->clear($variable);
+    $editable->clear($variable);
   }
 
   $variables = array_keys(xmlsitemap_state_variables());

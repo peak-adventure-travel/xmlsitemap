@@ -64,6 +64,13 @@ class XmlSitemapLinkBundleSettingsForm extends ConfigFormBase implements Contain
   /**
    * {@inheritdoc}
    */
+  protected function getEditableConfigNames() {
+    return ['xmlsitemap.settings'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, FormStateInterface $form_state, $entity = NULL, $bundle = NULL) {
     $this->entity_type = $entity;
     $this->bundle_type = $bundle;

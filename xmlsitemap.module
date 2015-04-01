@@ -112,8 +112,8 @@ function xmlsitemap_help($route_name, RouteMatchInterface $route_match) {
     case 'help.page.xmlsitemap':
     case 'xmlsitemap.admin_settings':
     case 'xmlsitemap.entities_settings':
-    case 'xmlsitemap.admin_edit':
-    case 'xmlsitemap.admin_delete':
+    case 'entity.xmlsitemap.edit_form':
+    case 'entity.xmlsitemap.delete_form':
       return;
     case 'xmlsitemap.admin_search':
       break;
@@ -760,9 +760,9 @@ function xmlsitemap_link_bundle_settings_save($entity, $bundle, array $settings,
   }
 
   foreach ($settings as $key => $value) {
-    \Drupal::config("xmlsitemap.settings.{$entity}.{$bundle}")->set($key, $value);
+    \Drupal::configFactory()->getEditable("xmlsitemap.settings.{$entity}.{$bundle}")->set($key, $value);
   }
-  \Drupal::config("xmlsitemap.settings.{$entity}.{$bundle}")->save();
+  \Drupal::configFactory()->getEditable("xmlsitemap.settings.{$entity}.{$bundle}")->save();
 
   foreach (\Drupal::languageManager()->getLanguages() as $lang) {
     \Drupal::cache()->delete('xmlsitemap:link_info:' . $lang->getId());
@@ -784,7 +784,7 @@ function xmlsitemap_link_bundle_rename($entity, $bundle_old, $bundle_new) {
   if ($bundle_old != $bundle_new) {
     if (!\Drupal::config("xmlsitemap.settings.{$entity}.{$bundle_old}")->isNew()) {
       $settings = xmlsitemap_link_bundle_load($entity, $bundle_old);
-      \Drupal::config("xmlsitemap.settings.{$entity}.{$bundle_old}")->delete();
+      \Drupal::configFactory()->getEditable("xmlsitemap.settings.{$entity}.{$bundle_old}")->delete();
       xmlsitemap_link_bundle_settings_save($entity, $bundle_new, $settings, FALSE);
       \Drupal::service('xmlsitemap.link_storage')->updateMultiple(array('subtype' => $bundle_new), array('type' => $entity, 'subtype' => $bundle_old));
     }
@@ -807,10 +807,10 @@ function xmlsitemap_link_type_rename($entity_old, $entity_new, $bundles = NULL) 
     if (!strpos($key, "xmlsitemap_settings_{$entity_old}") && !strpos($key, "xmlsitemap_entity_{$entity_old}")) {
       continue;
     }
-    \Drupal::config('xmlsitemap.settings')->clear($key);
+    \Drupal::configFactory()->getEditable('xmlsitemap.settings')->clear($key);
     if (isset($value)) {
       $variable_new = str_replace('xmlsitemap_settings_' . $entity_old, 'xmlsitemap_settings_' . $entity_new, $key);
-      \Drupal::config('xmlsitemap.settings')->set($variable_new, $value)->save();
+      \Drupal::configFactory()->getEditable('xmlsitemap.settings')->set($variable_new, $value)->save();
     }
   }
 
@@ -864,7 +864,7 @@ function xmlsitemap_link_bundle_load($entity, $bundle, $load_bundle_info = TRUE)
  *   If TRUE, deletes bundle links from {xmlsitemap} table.
  */
 function xmlsitemap_link_bundle_delete($entity, $bundle, $delete_links = TRUE) {
-  \Drupal::config("xmlsitemap.settings.{$entity}.{$bundle}")->delete();
+  \Drupal::configFactory()->getEditable("xmlsitemap.settings.{$entity}.{$bundle}")->delete();
   if ($delete_links) {
     \Drupal::service('xmlsitemap.link_storage')->deleteMultiple(array('type' => $entity, 'subtype' => $bundle));
   }
@@ -940,8 +940,8 @@ function xmlsitemap_entity_bundle_rename($entity_type_id, $bundle_old, $bundle_n
 /**
  * Implements hook_entity_bundle_delete().
  */
-function xmlsitemap_entity_bundle_delete($entity_type, $bundle, $instances) {
-  xmlsitemap_link_bundle_delete($entity_type, $bundle, TRUE);
+function xmlsitemap_entity_bundle_delete($entity_type_id, $bundle) {
+  xmlsitemap_link_bundle_delete($entity_type_id, $bundle, TRUE);
 }
 
 /**
@@ -2391,7 +2391,7 @@ function xmlsitemap_check_status() {
     $messages = array();
     foreach ($modules as $module) {
       module_load_install($module);
-      $requirements = \Drupal::moduleHandler()->invoke($module, 'requirements', 'runtime');
+      $requirements = \Drupal::moduleHandler()->invoke($module, 'requirements', array('runtime'));
       foreach ($requirements as $requirement) {
         if (isset($requirement['severity']) && max(REQUIREMENT_OK, $requirement['severity'])) {
           $messages[] = $requirement['description'];

@@ -405,7 +405,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
     if ($id = parent::verbose($verbose_message)) {
       $url = file_create_url($this->originalFileDirectory . '/simpletest/verbose/' . get_class($this) . '-' . $id . '.html');
       $message_url = Url::fromUri($url, array('attributes' => array('target' => '_blank')));
-      $this->error($this->l($message, $message_url)), 'User notice');
+      $this->error($this->l($message, $message_url), 'User notice');
     }
   }
 

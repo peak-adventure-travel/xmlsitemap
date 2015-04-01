@@ -1,19 +1,19 @@
 xmlsitemap.add:
-  route_name: 'xmlsitemap.admin_add'
+  route_name: 'entity.xmlsitemap.add_form'
   title: 'Add XmlSitemap'
   appears_on:
     - xmlsitemap.admin_search
     - xmlsitemap.admin_search_list
     
 xmlsitemap.edit:
-  route_name: 'xmlsitemap.admin_edit'
+  route_name: 'entity.xmlsitemap.edit_form'
   title: 'Edit XmlSitemap'
   appears_on:
     - xmlsitemap.admin_search
     - xmlsitemap.admin_search_list
     
 xmlsitemap.delete:
-  route_name: 'xmlsitemap.admin_delete'
+  route_name: 'entity.xmlsitemap.delete_form'
   title: 'Delete XmlSitemap'
   appears_on:
     - xmlsitemap.admin_search
