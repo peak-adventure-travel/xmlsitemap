@@ -7,10 +7,12 @@
 
 namespace Drupal\xmlsitemap\Form;
 
+use Drupal\Component\Utility\String;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Routing\LinkGeneratorTrait;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -54,7 +56,7 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
    */
   public static function create(ContainerInterface $container) {
     return new static(
-        $container->get('config.factory'), $container->get('entity.manager')
+      $container->get('config.factory'), $container->get('entity.manager')
     );
   }
 
@@ -97,7 +99,6 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
       '#default_value' => $default,
     );
 
-
     $form['settings'] = array('#tree' => TRUE);
 
     foreach ($labels as $entity_type_id => $label) {
@@ -106,7 +107,6 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
       $form['settings'][$entity_type_id] = array(
         '#type' => 'container',
         '#entity_type' => $entity_type_id,
-        '#theme' => 'xmlsitemap_content_settings_table',
         '#bundle_label' => $entity_type->getBundleLabel() ? $entity_type->getBundleLabel() : $label,
         '#title' => $entity_type->getBundleLabel() ? $entity_type->getBundleLabel() : $label,
         '#states' => array(
@@ -114,18 +114,51 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
             ':input[name="entity_types[' . $entity_type_id . ']"]' => array('checked' => TRUE),
           ),
         ),
+
+        'types' => array(
+          '#type' => 'table',
+          '#tableselect' => true,
+          '#default_value' => array(),
+          '#header' => array(
+            array(
+              'data' => $entity_type->getBundleLabel() ? $entity_type->getBundleLabel() : $label,
+              'class' => array('bundle'),
+            ),
+            array(
+              'data' => $this->t('Sitemap settings'),
+              'class' => array('operations'),
+            ),
+          ),
+          '#empty' => $this->t('No content available.'),
+        ),
       );
+
       foreach ($bundles[$entity_type_id] as $bundle => $bundle_info) {
-        $url = Url::fromRoute('xmlsitemap.admin_settings_bundle', ['entity' => $entity_type_id, 'bundle' => $bundle], array('query' => drupal_get_destination()));
         $form['settings'][$entity_type_id][$bundle]['settings'] = array(
           '#type' => 'item',
           '#label' => $bundle_info['label'],
-          '#settings_link' => $this->l($this->t('Configure'), $url),
-          'bundle' => array(
-            '#type' => 'checkbox',
-            '#default_value' => xmlsitemap_link_bundle_check_enabled($entity_type_id, $bundle)
-          ),
         );
+
+        $form['settings'][$entity_type_id]['types'][$bundle] = array(
+          'bundle' => array(
+            '#markup' => String::checkPlain($bundle_info['label']),
+          ),
+          'operations' => [
+            '#type' => 'operations',
+            '#links' => [
+              'configure' => [
+                'title' => $this->t('Configure'),
+                'url' => Url::fromRoute('xmlsitemap.admin_settings_bundle', array(
+                  'entity' => $entity_type_id,
+                  'bundle' => $bundle,
+                  'query' => drupal_get_destination(),
+                )),
+              ]
+            ]
+          ],
+        );
+        $form['settings'][$entity_type_id]['types']['#default_value'][$bundle] = xmlsitemap_link_bundle_check_enabled($entity_type_id, $bundle);
+
         if (xmlsitemap_link_bundle_check_enabled($entity_type_id, $bundle)) {
           $default[$entity_type_id] = $entity_type_id;
         }
@@ -143,13 +176,14 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $bundles = $this->entityManager->getAllBundleInfo();
-    $entity_values = $form_state->getValue('entity_types');
+    $values = $form_state->getValues();
+    $entity_values = $values['entity_types'];
     $config = $this->config('xmlsitemap.settings');
     $settings = $form_state->getValue('settings');
     foreach ($entity_values as $key => $value) {
       if ($value) {
         foreach ($bundles[$key] as $bundle_key => $bundle_value) {
-          if (!$settings[$key][$bundle_key]['settings']['bundle']) {
+          if (!$values['settings'][$key]['types'][$bundle_key]) {
             xmlsitemap_link_bundle_delete($key, $bundle_key, TRUE);
           }
           else {

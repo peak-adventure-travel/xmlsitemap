@@ -1477,61 +1477,6 @@ function xmlsitemap_entity_info_alter(&$entity_info) {
 }
 
 /**
- * Implements hook_preprocess_HOOK() for theme_language_content_settings_table().
- */
-function template_preprocess_xmlsitemap_content_settings_table(&$variables) {
-  // Add a render element representing the bundle language settings table.
-  $element = $variables['element'];
-
-  $header = array(
-    array(
-      'data' => $element['#bundle_label'],
-      'class' => array('bundle'),
-    ),
-    array(
-      'data' => t('Configuration'),
-      'class' => array('operations'),
-    ),
-    array(
-      'data' => t('Sitemap settings'),
-      'class' => array('operations'),
-    ),
-  );
-
-  $rows = array();
-  foreach (Element::children($element) as $bundle) {
-    $rows[$bundle] = array(
-      'data' => array(
-        array(
-          'data' => array(
-            '#prefix' => '<label>',
-            '#suffix' => '</label>',
-            '#markup' => String::checkPlain($element[$bundle]['settings']['#label']),
-          ),
-          'class' => array('bundle'),
-        ),
-        array(
-          'data' => $element[$bundle]['settings'],
-          'class' => array('operations'),
-        ),
-        array(
-          'data' => $element[$bundle]['settings']['#settings_link'],
-          'class' => array('link'),
-        ),
-      ),
-      'class' => array('bundle-settings'),
-    );
-  }
-
-  $variables['build'] = array(
-    '#title' => $element['#title'],
-    '#header' => $header,
-    '#rows' => $rows,
-    '#type' => 'table',
-  );
-}
-
-/**
  * Returns HTML for an administration settings table.
  *
  * @param array $variables
