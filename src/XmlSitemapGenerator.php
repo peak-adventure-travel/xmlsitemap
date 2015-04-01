@@ -316,7 +316,7 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
     }
     $sitemap = &$context['sandbox']['sitemap'];
     $links = $this->generatePage($sitemap, $sitemap->getChunks());
-    $context['message'] = t('Now generating %sitemap-url.', array('%sitemap-url' => Url::fromRoute('xmlsitemap.sitemap_xml', [], $sitemap->uri['options'] + array('query' => array('page' => $sitemap->getChunks())))));
+    $context['message'] = t('Now generating %sitemap-url.', array('%sitemap-url' => Url::fromRoute('xmlsitemap.sitemap_xml', [], $sitemap->uri['options'] + array('query' => array('page' => $sitemap->getChunks())))->toString()));
 
     if ($links) {
       $sitemap->setLinks($sitemap->getLinks() + $links);
@@ -349,7 +349,7 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
     $sitemap = xmlsitemap_sitemap_load($smid);
     if ($sitemap != NULL && $sitemap->getChunks() > 1) {
       $this->generateIndex($sitemap);
-      $context['message'] = t('Now generating sitemap index %sitemap-url.', array('%sitemap-url' => Url::fromRoute('xmlsitemap.sitemap_xml', [], $sitemap->uri['options'])));
+      $context['message'] = t('Now generating sitemap index %sitemap-url.', array('%sitemap-url' => Url::fromRoute('xmlsitemap.sitemap_xml', [], $sitemap->uri['options'])->toString()));
     }
   }
 
