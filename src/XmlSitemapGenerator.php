@@ -261,17 +261,17 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
         $element['lastmod'] = gmdate($lastmod_format, $link['lastmod']);
         // If the link has a lastmod value, update the changefreq so that links
         // with a short changefreq but updated two years ago show decay.
-        // We use abs() here just incase items were created on this same cron run
-        // because lastmod would be greater than REQUEST_TIME.
+        // We use abs() here just incase items were created on this same cron
+        // run because lastmod would be greater than REQUEST_TIME.
         $link['changefreq'] = (abs(REQUEST_TIME - $link['lastmod']) + $link['changefreq']) / 2;
       }
       if ($link['changefreq']) {
         $element['changefreq'] = xmlsitemap_get_changefreq($link['changefreq']);
       }
       if (isset($link['priority']) && $link['priority'] != 0.5) {
-        // Don't output the priority value for links that have 0.5 priority. This
-        // is the default 'assumed' value if priority is not included as per the
-        // sitemaps.org specification.
+        // Don't output the priority value for links that have 0.5 priority.
+        // This is the default 'assumed' value if priority is not included as
+        // per the sitemaps.org specification.
         $element['priority'] = number_format($link['priority'], 1);
       }
       $writer->writeSitemapElement('url', $element);

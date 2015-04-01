@@ -1024,7 +1024,8 @@ function xmlsitemap_get_chunk_size($reset = FALSE) {
   if (!isset($size) || $reset) {
     $size = xmlsitemap_var('chunk_size');
     if ($size === 'auto') {
-      $count = max(xmlsitemap_get_link_count($reset), 1); // Prevent divide by zero.
+      // Prevent divide by zero.
+      $count = max(xmlsitemap_get_link_count($reset), 1);
       $size = min(ceil($count / 10000) * 5000, XMLSITEMAP_MAX_SITEMAP_LINKS);
     }
   }

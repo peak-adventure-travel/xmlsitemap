@@ -15,9 +15,9 @@ interface XmlSitemapGeneratorInterface {
   /**
    * Given an internal Drupal path, return the alias for the path.
    *
-   * This is similar to drupal_get_path_alias(), but designed to fetch all alises
-   * at once so that only one database query is executed instead of several or
-   * possibly thousands during sitemap generation.
+   * This is similar to drupal_get_path_alias(), but designed to fetch all
+   * aliases at once so that only one database query is executed instead of
+   * severa or possibly thousands during sitemap generation.
    *
    * @param string $path
    *   An internal Drupal path.

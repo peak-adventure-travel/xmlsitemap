@@ -39,8 +39,8 @@ interface XmlSitemapLinkStorageInterface {
    *   An array of the sitemap link.
    * @param array $original_link
    *   An optional array of the existing data. This should only contain the
-   *   fields necessary for comparison. If not provided the existing data will be
-   *   loaded from the database.
+   *   fields necessary for comparison. If not provided the existing data will
+   *   be loaded from the database.
    * @param bool $flag
    *   An optional boolean that if TRUE, will set the regenerate needed flag if
    *   there is a match. Defaults to FALSE.

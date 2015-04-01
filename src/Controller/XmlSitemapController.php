@@ -16,7 +16,8 @@ use Drupal\Core\Template\TwigEnvironment;
 use Drupal\Core\Entity\EntityManagerInterface;
 
 /**
- * Returns responses for xmlsitemap.sitemap_xml and xmlsitemap.sitemap_xsl routes.
+ * Returns responses for xmlsitemap.sitemap_xml and xmlsitemap.sitemap_xsl
+ * routes.
  */
 class XmlSitemapController extends ControllerBase {
 
@@ -68,7 +69,8 @@ class XmlSitemapController extends ControllerBase {
    * @throws NotFoundHttpException
    *
    * @return \Symfony\Component\HttpFoundation\Response
-   *  The sitemap in XML format or plain text if xmlsitemap_developer_mode flag is set.
+   *  The sitemap in XML format or plain text if xmlsitemap_developer_mode flag
+   *  is set.
    */
   public function renderSitemapXml() {
     $sitemap = $this->entityManager->getStorage('xmlsitemap')->loadByContext();
