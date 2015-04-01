@@ -2002,7 +2002,7 @@ function xmlsitemap_add_form_entity_summary(&$form, $entity, array $entity_info)
     }
     else {
       // Bundle labels are assumed to be un-escaped input.
-      $row[] = check_plain($bundle_info['label']);
+      $row[] = String::checkPlain($bundle_info['label']);
     }
     $row[] = $statuses[$bundle_info['xmlsitemap']['status'] ? 1 : 0];
     $row[] = $priorities[number_format($bundle_info['xmlsitemap']['priority'], 1)];
