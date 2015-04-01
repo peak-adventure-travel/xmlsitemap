@@ -241,7 +241,7 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
       );
       // @todo Add a separate hook_xmlsitemap_link_url_alter() here?
       $link['loc'] = empty($link['loc']) ? '<front>' : $link['loc'];
-      $link_url = Url::fromRoute($link['loc'], [], $link_options + $url_options)->toString();
+      $link_url = Url::fromUri($link['loc'], [], $link_options + $url_options)->toString();
 
       // Skip this link if it was a duplicate of the last one.
       // @todo Figure out a way to do this before generation so we can report
