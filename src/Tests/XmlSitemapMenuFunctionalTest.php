@@ -8,6 +8,7 @@
 namespace Drupal\xmlsitemap\Tests;
 
 use Drupal\system\Entity\Menu;
+use Drupal\Component\Utility\Unicode;
 
 /**
  * Tests the generation of menu links.
@@ -72,7 +73,7 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
 
     $edit = array(
       'label' => $this->randomMachineName(),
-      'id' => drupal_strtolower($this->randomMachineName()),
+      'id' => Unicode::strtolower($this->randomMachineName()),
       'xmlsitemap[status]' => '1',
       'xmlsitemap[priority]' => '1.0',
     );

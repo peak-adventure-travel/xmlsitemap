@@ -25,6 +25,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Response;
+use Drupal\Component\Utility\Unicode;
 
 /**
  * The maximum number of links in one sitemap chunk file.
@@ -1145,7 +1146,7 @@ function xmlsitemap_add_form_link_options(array &$form, $entity, $bundle, $id) {
     $form['xmlsitemap']['description'] = array(
       '#prefix' => '<div class="description">',
       '#suffix' => '</div>',
-      '#markup' => t('The default XML sitemap settings for this @bundle can be changed <a href="@link-type">here</a>.', array('@bundle' => drupal_strtolower($info['bundle label']), '@link-type' => Url::fromUri($path, array('query' => drupal_get_destination())))),
+      '#markup' => t('The default XML sitemap settings for this @bundle can be changed <a href="@link-type">here</a>.', array('@bundle' => Unicode::strtolower($info['bundle label']), '@link-type' => Url::fromUri($path, array('query' => drupal_get_destination())))),
     );
   }
 
@@ -1269,7 +1270,7 @@ function xmlsitemap_link_bundle_settings_form_submit($form, &$form_state) {
 
   $entity_info = $form['xmlsitemap']['#entity_info'];
   if (!empty($form['xmlsitemap']['#show_message'])) {
-    drupal_set_message(t('XML sitemap settings for the @bundle-label %bundle have been saved.', array('@bundle-label' => drupal_strtolower($entity_info['bundle label']), '%bundle' => $entity_info['bundles'][$bundle]['label'])));
+    drupal_set_message(t('XML sitemap settings for the @bundle-label %bundle have been saved.', array('@bundle-label' => Unicode::strtolower($entity_info['bundle label']), '%bundle' => $entity_info['bundles'][$bundle]['label'])));
   }
 
   // Unset the form values since we have already saved the bundle settings and
@@ -2188,7 +2189,7 @@ function xmlsitemap_get_status_options($default = NULL) {
 
   if (isset($default)) {
     $default = $default ? 1 : 0;
-    $options['default'] = t('Default (@value)', array('@value' => drupal_strtolower($statuses[$default])));
+    $options['default'] = t('Default (@value)', array('@value' => Unicode::strtolower($statuses[$default])));
   }
 
   $options += $statuses;

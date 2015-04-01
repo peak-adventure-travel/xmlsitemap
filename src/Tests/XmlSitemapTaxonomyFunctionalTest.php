@@ -7,6 +7,8 @@
 
 namespace Drupal\xmlsitemap\Tests;
 
+use Drupal\Component\Utility\Unicode;
+
 /**
  * Tests the generation of taxonomy links.
  */
@@ -54,7 +56,7 @@ class XmlSitemapTaxonomyFunctionalTest extends XmlSitemapTestBase {
     $this->assertField('xmlsitemap[priority]');
     $edit = array(
       'name' => $this->randomMachineName(),
-      'vid' => drupal_strtolower($this->randomMachineName()),
+      'vid' => Unicode::strtolower($this->randomMachineName()),
       'xmlsitemap[status]' => '1',
       'xmlsitemap[priority]' => '1.0',
     );
