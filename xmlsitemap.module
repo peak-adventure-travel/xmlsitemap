@@ -1994,10 +1994,10 @@ function xmlsitemap_add_form_entity_summary(&$form, $entity, array $entity_info)
     $totals['visible'] += $status['visible'];
 
     $row = array();
-    if (drupal_valid_path("admin/config/search/xmlsitemap/settings/$entity/$bundle")) {
-      $edit_link = xmlsitemap_get_operation_link("admin/config/search/xmlsitemap/settings/$entity/$bundle", array('title' => $bundle_info['label'], 'modal' => TRUE));
+    if (\Drupal::service('path.validator')->isValid("admin/config/search/xmlsitemap/settings/$entity/$bundle")) {
+      $edit_link = xmlsitemap_get_operation_link("internal://admin/config/search/xmlsitemap/settings/$entity/$bundle", array('title' => $bundle_info['label'], 'modal' => TRUE));
       $url = Url::fromUri($edit_link['href'], $edit_link);
-      $row[] = $this->l($edit_link['title'], $url);
+      $row[] = \Drupal::l($edit_link['title'], $url);
     }
     else {
       // Bundle labels are assumed to be un-escaped input.
