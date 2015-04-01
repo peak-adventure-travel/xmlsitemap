@@ -7,6 +7,7 @@
 
 namespace Drupal\xmlsitemap;
 
+use Drupal\Core\Database\Query\Merge;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\State\StateInterface;
@@ -115,21 +116,37 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
       $link['changecount'] = 0;
     }
 
-    $existing = db_query_range("SELECT loc, access, status, lastmod, priority, changefreq, changecount, language FROM {xmlsitemap} WHERE type = :type AND id = :id", 0, 1, array(':type' => $link['type'], ':id' => $link['id']))->fetchAssoc();
-
     // Check if this is a changed link and set the regenerate flag if necessary.
     if (!$this->state->get('xmlsitemap_regenerate_needed')) {
-      $this->checkChangedLink($link, $existing, TRUE);
+      $this->checkChangedLink($link, NULL, TRUE);
     }
 
-    // Save the link and allow other modules to respond to the link being saved.
-    if ($existing) {
-      drupal_write_record('xmlsitemap', $link, array('type', 'id'));
-      $this->moduleHandler->invokeAll('xmlsitemap_link_update', array($link));
-    }
-    else {
-      $result = drupal_write_record('xmlsitemap', $link);
-      $this->moduleHandler->invokeAll('xmlsitemap_link_insert', array($link));
+    $queryStatus = \Drupal::database()->merge('xmlsitemap')
+      ->key(array('type' => $link['type'], 'id' => $link['id']))
+      ->fields(array(
+        'loc' => $link['loc'],
+        'subtype' => $link['subtype'],
+        'access' => $link['access'],
+        'status' => $link['status'],
+        'status_override' => $link['status_override'],
+        'lastmod' => $link['lastmod'],
+        'priority' => $link['priority'],
+        'priority_override' => $link['priority_override'],
+        'changefreq' => $link['changefreq'],
+        'changecount' => $link['changecount'],
+        'language' => $link['language'],
+      ))
+      ->execute();
+
+    switch($queryStatus)
+    {
+      case Merge::STATUS_INSERT:
+        $this->moduleHandler->invokeAll('xmlsitemap_link_insert', array($link));
+        break;
+
+      case Merge::STATUS_UPDATE:
+        $this->moduleHandler->invokeAll('xmlsitemap_link_update', array($link));
+        break;
     }
 
     return $link;
