@@ -83,5 +83,5 @@ HOW CAN YOU CONTRIBUTE?
 - Write a review for this module at drupalmodules.com.
   http://drupalmodules.com/module/xml-sitemap
 
-- Help keep development active by dontating to the developer.
+- Help keep development active by donating to the developer.
   http://davereid.chipin.com/
