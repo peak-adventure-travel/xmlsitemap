@@ -55,7 +55,7 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
   }
 
   /**
-   * Check if sitemaps are sent to searching engines
+   * Check if sitemaps are sent to searching engines.
    */
   public function submitEngines() {
     $this->state->setMultiple(array(
@@ -68,7 +68,7 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
   }
 
   /**
-   * Check if an url is correctly prepared
+   * Check if an url is correctly prepared.
    */
   public function testPrepareURL() {
     $sitemap = 'http://example.com/sitemap.xml';
@@ -78,7 +78,7 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
   }
 
   /**
-   * Create sitemaps and send them to search engines
+   * Create sitemaps and send them to search engines.
    */
   public function testSubmitSitemaps() {
     $sitemaps = array();
@@ -115,7 +115,7 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
   }
 
   /**
-   * Check if ping works
+   * Check if ping works.
    */
   public function testPing() {
     $edit = array('engines[simpletest]' => TRUE);
@@ -128,7 +128,7 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
   }
 
   /**
-   * Check if custom urls are functional
+   * Check if custom urls are functional.
    */
   public function testCustomURL() {
     $edit = array('custom_urls' => 'an-invalid-url');

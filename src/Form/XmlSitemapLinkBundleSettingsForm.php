@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * Configure what entities will be included in sitemap
+ * Configure what entities will be included in sitemap.
  */
 class XmlSitemapLinkBundleSettingsForm extends ConfigFormBase implements ContainerInjectionInterface {
 

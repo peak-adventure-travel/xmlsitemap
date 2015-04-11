@@ -38,7 +38,7 @@ const XMLSITEMAP_MAX_SITEMAP_LINKS = 50000;
 const XMLSITEMAP_MAX_SITEMAP_FILESIZE = 10485760;
 
 /**
- * Xmlsitemap Frequencies
+ * Xmlsitemap Frequencies.
  */
 const XMLSITEMAP_FREQUENCY_YEARLY = 31449600;
 // 60 * 60 * 24 * 7 * 52
@@ -700,7 +700,7 @@ function xmlsitemap_get_link_type_enabled_bundles($entity_type) {
  * @param string $entity_type
  *   Entity type id.
  * @param string $bundle
- *   Bundle id;
+ *   Bundle id.
  *
  * @return array
  *   Array with statistics.

@@ -32,7 +32,7 @@ interface XmlSitemapGeneratorInterface {
   public function regenerateBefore();
 
   /**
-   * Get how much memory was used
+   * Get how much memory was used.
    *
    * @param bool $start
    *
@@ -77,7 +77,7 @@ interface XmlSitemapGeneratorInterface {
    * @param \Drupal\xmlsitemap\XmlSitemapInterface $sitemap
    *   An unserialized data array for an XML sitemap.
    * @param \Drupal\xmlsitemap\XmlSitemapWriter $writer
-   *   XML writer object
+   *   XML writer object.
    * @param int $pageAn integer of the specific page of the sitemap to generate.
    *   An integer of the specific page of the sitemap to generate.
    */

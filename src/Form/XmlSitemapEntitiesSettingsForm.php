@@ -20,7 +20,7 @@ use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Configure what entities will be included in sitemap
+ * Configure what entities will be included in sitemap.
  */
 class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements ContainerInjectionInterface {
 

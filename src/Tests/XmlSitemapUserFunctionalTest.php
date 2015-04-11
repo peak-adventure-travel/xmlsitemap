@@ -52,7 +52,7 @@ class XmlSitemapUserFunctionalTest extends XmlSitemapTestBase {
   }
 
   /**
-   * Test sitemap link for a blocked user
+   * Test sitemap link for a blocked user.
    */
   public function testBlockedUser() {
     $this->drupalLogin($this->admin_user);

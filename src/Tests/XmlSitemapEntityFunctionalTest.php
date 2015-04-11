@@ -42,7 +42,7 @@ class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
   }
 
   /**
-   * Test the form at admin/config/search/xmlsitemap/entities/settings
+   * Test the form at admin/config/search/xmlsitemap/entities/settings.
    */
   public function testEntitiesSettingsForms() {
     $this->drupalLogin($this->admin_user);
@@ -64,7 +64,7 @@ class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
   }
 
   /**
-   * Test the form at admin/config/search/xmlsitemap/settings/{entity_type_id}/{bundle_id}
+   * Test the form at admin/config/search/xmlsitemap/settings/{entity_type_id}/{bundle_id}.
    */
   public function testEntityLinkBundleSettingsForm() {
     xmlsitemap_link_bundle_enable('entity_test', 'entity_test');
