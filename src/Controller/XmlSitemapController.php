@@ -69,8 +69,8 @@ class XmlSitemapController extends ControllerBase {
    * @throws NotFoundHttpException
    *
    * @return \Symfony\Component\HttpFoundation\Response
-   *  The sitemap in XML format or plain text if xmlsitemap_developer_mode flag
-   *  is set.
+   *   The sitemap in XML format or plain text if xmlsitemap_developer_mode flag
+   *   is set.
    */
   public function renderSitemapXml() {
     $sitemap = $this->entityManager->getStorage('xmlsitemap')->loadByContext();
@@ -101,7 +101,7 @@ class XmlSitemapController extends ControllerBase {
    * Provides the sitemap in XSL format.
    *
    * @return \Symfony\Component\HttpFoundation\Response
-   *  Response object in XSL format.
+   *   Response object in XSL format.
    */
   public function renderSitemapXsl() {
     // Read the XSL content from the file.
