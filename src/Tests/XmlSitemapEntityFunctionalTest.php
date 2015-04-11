@@ -52,7 +52,7 @@ class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
     $this->assertField('settings[entity_test][entity_test][settings][bundle]');
     $edit = array(
       'entity_types[entity_test]' => 1,
-      'settings[entity_test][entity_test][settings][bundle]' => 1
+      'settings[entity_test][entity_test][settings][bundle]' => 1,
     );
     $this->drupalPostForm(NULL, $edit, t('Save'));
     $this->assertText(t('The configuration options have been saved.'));
@@ -78,11 +78,11 @@ class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
     $edit = array(
       'xmlsitemap[status]' => 0,
       'xmlsitemap[priority]' => 0.3,
-      'xmlsitemap[changefreq]' => XMLSITEMAP_FREQUENCY_WEEKLY
+      'xmlsitemap[changefreq]' => XMLSITEMAP_FREQUENCY_WEEKLY,
     );
     $this->drupalPostForm(NULL, $edit, t('Save configuration'));
     $entity = entity_create('entity_test', array(
-      'bundle' => 'entity_test'
+      'bundle' => 'entity_test',
     ));
     $entity->save();
     $this->assertSitemapLinkValues('entity_test', $entity->id(), array('status' => 0, 'priority' => 0.3, 'changefreq' => XMLSITEMAP_FREQUENCY_WEEKLY, 'access' => 1));
@@ -99,11 +99,11 @@ class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
     $edit = array(
       'xmlsitemap[status]' => 1,
       'xmlsitemap[priority]' => 0.6,
-      'xmlsitemap[changefreq]' => XMLSITEMAP_FREQUENCY_YEARLY
+      'xmlsitemap[changefreq]' => XMLSITEMAP_FREQUENCY_YEARLY,
     );
     $this->drupalPostForm('admin/config/search/xmlsitemap/settings/entity_test/entity_test', $edit, t('Save configuration'));
     $entity = entity_create('entity_test', array(
-      'bundle' => 'entity_test'
+      'bundle' => 'entity_test',
     ));
     $entity->save();
     $this->assertSitemapLinkValues('entity_test', $entity->id(), array('status' => 1, 'priority' => 0.6, 'changefreq' => XMLSITEMAP_FREQUENCY_YEARLY, 'access' => 1));
@@ -127,7 +127,7 @@ class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
     xmlsitemap_link_bundle_enable('entity_test', 'entity_test');
 
     $entity = entity_create('entity_test', array(
-      'bundle' => 'entity_test'
+      'bundle' => 'entity_test',
     ));
     $entity->save();
     $this->assertSitemapLinkValues('entity_test', $entity->id(), array('status' => 0, 'priority' => 0.5, 'changefreq' => 0, 'access' => 0));

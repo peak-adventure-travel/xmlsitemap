@@ -247,7 +247,6 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
     // 1  | testing | group1  | ''       | 1      | 1      | 0.5
     // 2  | testing | group1  | ''       | 1      | 1      | 0.5
     // 3  | testing | group2  | ''       | 1      | 1      | 0.5
-
     $updated = $this->linkStorage->updateMultiple(array('status' => 0), array('type' => 'testing', 'subtype' => 'group1', 'status_override' => 0));
     $this->assertEqual($updated, 2);
     $this->assertFlag('xmlsitemap_regenerate_needed', TRUE);
@@ -255,7 +254,6 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
     // 1  | testing | group1  | ''       | 0      | 0.5
     // 2  | testing | group1  | ''       | 0      | 0.5
     // 3  | testing | group2  | ''       | 1      | 0.5
-
     $updated = $this->linkStorage->updateMultiple(array('priority' => 0.0), array('type' => 'testing', 'subtype' => 'group1', 'priority_override' => 0));
     $this->assertEqual($updated, 2);
     $this->assertFlag('xmlsitemap_regenerate_needed', FALSE);
@@ -263,7 +261,6 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
     // 1  | testing | group1  | ''       | 0      | 0.0
     // 2  | testing | group1  | ''       | 0      | 0.0
     // 3  | testing | group2  | ''       | 1      | 0.5
-
     $updated = $this->linkStorage->updateMultiple(array('subtype' => 'group2'), array('type' => 'testing', 'subtype' => 'group1'));
     $this->assertEqual($updated, 2);
     $this->assertFlag('xmlsitemap_regenerate_needed', FALSE);
@@ -271,7 +268,6 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
     // 1  | testing | group2  | ''       | 0      | 0.0
     // 2  | testing | group2  | ''       | 0      | 0.0
     // 3  | testing | group2  | ''       | 1      | 0.5
-
     $updated = $this->linkStorage->updateMultiple(array('status' => 1), array('type' => 'testing', 'subtype' => 'group2', 'status_override' => 0, 'status' => 0));
     $this->assertEqual($updated, 2);
     $this->assertFlag('xmlsitemap_regenerate_needed', TRUE);

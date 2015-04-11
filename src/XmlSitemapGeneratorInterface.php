@@ -78,7 +78,7 @@ interface XmlSitemapGeneratorInterface {
    *   An unserialized data array for an XML sitemap.
    * @param \Drupal\xmlsitemap\XmlSitemapWriter $writer
    *   XML writer object
-   * @param integer $page
+   * @param int $pageAn integer of the specific page of the sitemap to generate.
    *   An integer of the specific page of the sitemap to generate.
    */
   public function generateChunk(XmlSitemapInterface $sitemap, XmlSitemapWriter $writer, $chunk);
@@ -120,7 +120,7 @@ interface XmlSitemapGeneratorInterface {
    *   Results for the regeneration process.
    * @param array $operations
    *   Operations performed.
-   * @param integer $elapsed
+   * @param int $elapsedTime elapsed.
    *   Time elapsed.
    */
   public function regenerateBatchFinished($success, $results, $operations, $elapsed);
@@ -156,7 +156,7 @@ interface XmlSitemapGeneratorInterface {
    *   Results for the regeneration process.
    * @param array $operations
    *   Operations performed.
-   * @param integer $elapsed
+   * @param int $elapsedTime elapsed.
    *   Time elapsed.
    */
   public function rebuildBatchFinished($success, $results, $operations, $elapsed);

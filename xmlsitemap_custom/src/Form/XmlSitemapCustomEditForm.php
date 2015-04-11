@@ -161,7 +161,7 @@ class XmlSitemapCustomEditForm extends ConfigFormBase {
     );
 
     $form['actions'] = array(
-      '#type' => 'actions'
+      '#type' => 'actions',
     );
     $form['actions']['submit'] = array(
       '#type' => 'submit',

@@ -100,7 +100,7 @@ class XmlSitemapLinkBundleSettingsForm extends ConfigFormBase implements Contain
       '#type' => 'link',
       '#title' => $this->t('Cancel'),
       '#href' => isset($destination) ? $destination : 'admin/config/search/xmlsitemap/settings',
-      '#weight' => 10
+      '#weight' => 10,
     );
     $form = parent::buildForm($form, $form_state);
 

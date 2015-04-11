@@ -74,7 +74,7 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
       'priority' => $settings['priority'],
       'priority_default' => $settings['priority'],
       'priority_override' => 0,
-      'changefreq' => isset($settings['changefreq']) ? $settings['changefreq'] : 0
+      'changefreq' => isset($settings['changefreq']) ? $settings['changefreq'] : 0,
     );
 
     $url = $entity->url();
@@ -235,7 +235,6 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
     }
 
     // @todo Add a hook_xmlsitemap_link_delete() hook invoked here.
-
     $query = db_delete('xmlsitemap');
     foreach ($conditions as $field => $value) {
       $query->condition($field, $value);

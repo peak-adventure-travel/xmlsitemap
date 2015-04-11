@@ -89,7 +89,7 @@ class XmlSitemapController extends ControllerBase {
         'sitemap' => print_r($sitemap, TRUE),
         'chunk' => $chunk,
         'cache_file_location' => $file,
-        'cache_file_exists' => file_exists($file) ? 'Yes' : 'No'
+        'cache_file_exists' => file_exists($file) ? 'Yes' : 'No',
       );
       return new Response($template->render($elements));
     }

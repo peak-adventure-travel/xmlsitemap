@@ -84,7 +84,7 @@ class XmlSitemapListBuilderTest extends XmlSitemapTestBase {
     $this->drupalLogin($this->admin_user);
     $edit = array(
       'label' => 'English',
-      'context[language]' => 'en'
+      'context[language]' => 'en',
     );
     $this->drupalPostForm('admin/config/search/xmlsitemap/add', $edit, t('Save'));
     $context = array('language' => 'en');
@@ -94,7 +94,7 @@ class XmlSitemapListBuilderTest extends XmlSitemapTestBase {
 
     $edit = array(
       'label' => 'French',
-      'context[language]' => 'fr'
+      'context[language]' => 'fr',
     );
     $this->drupalPostForm('admin/config/search/xmlsitemap/add', $edit, t('Save'));
     $context = array('language' => 'fr');
@@ -107,7 +107,7 @@ class XmlSitemapListBuilderTest extends XmlSitemapTestBase {
 
     $edit = array(
       'label' => 'Undefined',
-      'context[language]' => 'und'
+      'context[language]' => 'und',
     );
     $this->drupalPostForm('admin/config/search/xmlsitemap/add', $edit, t('Save'));
     $this->assertText(t('There is another sitemap saved with the same context.'));

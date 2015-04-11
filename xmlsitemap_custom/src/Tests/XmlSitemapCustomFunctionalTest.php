@@ -27,7 +27,7 @@ class XmlSitemapCustomFunctionalTest extends XmlSitemapTestBase {
    * @var \Drupal\Core\Path\AliasStorageInterface
    */
   protected $aliasStorage;
-  
+
   /**
    * The xmlsitemap link storage handler.
    *

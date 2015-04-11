@@ -108,7 +108,7 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
       '#description' => t('Enter one URL per line. The token [sitemap] will be replaced with the URL to your sitemap. For example: %example-before would become %example-after.', array('%example-before' => 'http://example.com/ping?[sitemap]', '%example-after' => xmlsitemap_engines_prepare_url('http://example.com/ping?[sitemap]', Url::fromRoute('xmlsitemap.sitemap_xml', [], ['absolute' => TRUE])))),
       '#default_value' => $this->config('xmlsitemap_engines.settings')->get('custom_urls'),
       '#rows' => 2,
-      '#wysiwyg' => FALSE
+      '#wysiwyg' => FALSE,
     );
 
     // Ensure the xmlsitemap_engines variable gets filterd to a simple array.
@@ -143,7 +143,7 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
       'engines',
       'minimum_lifetime',
       'xmlsitemap_engines_submit_updated',
-      'custom_urls'
+      'custom_urls',
     );
     $values = $form_state->getValues();
     foreach ($keys as $key) {

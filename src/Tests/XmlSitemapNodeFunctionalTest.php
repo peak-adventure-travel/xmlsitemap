@@ -43,14 +43,16 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
     parent::setUp();
 
     if ($this->profile != 'standard') {
-      $this->drupalCreateContentType(array('type' => 'page', 'name' => 'Basic page', 'settings' => array(
+      $this->drupalCreateContentType(array(
+      'type' => 'page',
+      'name' => 'Basic page',
+      'settings' => array(
           // Set proper default options for the page content type.
-          'node' => array(
-            'options' => array('promote' => FALSE),
-            'submitted' => FALSE,
-          ),
-      )));
-      $this->drupalCreateContentType(array('type' => 'article', 'name' => 'Article'));
+        'node' => array(
+          'options' => array('promote' => FALSE),
+          'submitted' => FALSE,
+        ), )));
+          $this->drupalCreateContentType(array('type' => 'article', 'name' => 'Article'));
     }
 
     $this->admin_user = $this->drupalCreateUser(array('administer nodes', 'bypass node access', 'administer content types', 'administer xmlsitemap', 'administer taxonomy'));
@@ -161,7 +163,7 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
 
     $edit = array(
       'title[0][value]' => 'Test node title',
-      'body[0][value]' => 'Test node body'
+      'body[0][value]' => 'Test node body',
     );
     $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save'));
     $this->assertText('Basic page Test node title has been updated.');
@@ -175,7 +177,7 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
     $edit = array(
       'xmlsitemap[status]' => 1,
       'xmlsitemap[priority]' => 0.9,
-      'xmlsitemap[changefreq]' => XMLSITEMAP_FREQUENCY_ALWAYS
+      'xmlsitemap[changefreq]' => XMLSITEMAP_FREQUENCY_ALWAYS,
     );
     $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
     $this->assertText('Basic page Test node title has been updated.');
@@ -183,7 +185,7 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
 
     $edit = array(
       'xmlsitemap[status]' => 'default',
-      'xmlsitemap[priority]' => 'default'
+      'xmlsitemap[priority]' => 'default',
     );
     $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
     $this->assertText('Basic page Test node title has been updated.');
@@ -210,7 +212,7 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
     $this->assertSitemapLinkValues('node', $node_old->id(), array('status' => 0, 'priority' => 0.0));
 
     $edit = array(
-      'type' => 'page2'
+      'type' => 'page2',
     );
     $this->drupalPostForm('admin/structure/types/manage/page', $edit, t('Save content type'));
     $this->assertText('Changed the content type of 2 posts from page to page2.');

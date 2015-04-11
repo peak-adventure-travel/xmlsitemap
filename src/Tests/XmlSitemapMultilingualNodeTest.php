@@ -23,7 +23,7 @@ class XmlSitemapMultilingualNodeTest extends XmlSitemapMultilingualTestBase {
     return array(
       'name' => 'XML sitemap i18n node tests',
       'description' => 'Functional and integration tests for the XML sitemap node and internationalization modules.',
-      'group' => 'XML sitemap'
+      'group' => 'XML sitemap',
     );
   }
 
@@ -34,14 +34,16 @@ class XmlSitemapMultilingualNodeTest extends XmlSitemapMultilingualTestBase {
     parent::setUp();
 
     if ($this->profile != 'standard') {
-      $this->drupalCreateContentType(array('type' => 'page', 'name' => 'Basic page', 'settings' => array(
+      $this->drupalCreateContentType(array(
+      'type' => 'page',
+      'name' => 'Basic page',
+      'settings' => array(
           // Set proper default options for the page content type.
-          'node' => array(
-            'options' => array('promote' => FALSE),
-            'submitted' => FALSE,
-          ),
-      )));
-      $this->drupalCreateContentType(array('type' => 'article', 'name' => 'Article'));
+        'node' => array(
+          'options' => array('promote' => FALSE),
+          'submitted' => FALSE,
+        ), )));
+          $this->drupalCreateContentType(array('type' => 'article', 'name' => 'Article'));
     }
 
     $this->admin_user = $this->drupalCreateUser(array('administer nodes', 'administer languages', 'administer content types', 'access administration pages', 'create page content', 'edit own page content'));

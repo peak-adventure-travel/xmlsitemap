@@ -207,7 +207,7 @@ function xmlsitemap_engines_config_variables() {
   $variables = array(
     'engines' => array(),
     'custom_urls' => '',
-    'minimum_lifetime' => 86400
+    'minimum_lifetime' => 86400,
   );
   return $variables;
 }
@@ -218,7 +218,7 @@ function xmlsitemap_engines_config_variables() {
 function xmlsitemap_engines_state_variables() {
   $variables = array(
     'xmlsitemap_engines_submit_last' => 0,
-    'xmlsitemap_engines_submit_updated' => TRUE
+    'xmlsitemap_engines_submit_updated' => TRUE,
   );
   return $variables;
 }

@@ -56,7 +56,7 @@ class XmlSitemapCustomListController extends ControllerBase {
     $build['xmlsitemap_add_custom'] = array(
       '#type' => 'link',
       '#title' => t('Add custom link'),
-      '#href' => 'admin/config/search/xmlsitemap/custom/add'
+      '#href' => 'admin/config/search/xmlsitemap/custom/add',
     );
     $header = array(
       'loc' => array('data' => t('Location'), 'field' => 'loc', 'sort' => 'asc'),
@@ -89,15 +89,15 @@ class XmlSitemapCustomListController extends ControllerBase {
         'title' => t('Edit'),
         'route_name' => 'xmlsitemap_custom.edit',
         'route_parameters' => array(
-          'link' => $link->id
-        )
+          'link' => $link->id,
+        ),
       );
       $operations['delete'] = array(
         'title' => t('Delete'),
         'route_name' => 'xmlsitemap_custom.delete',
         'route_parameters' => array(
-          'link' => $link->id
-        )
+          'link' => $link->id,
+        ),
       );
       $row['operations'] = array(
         'data' => array(
@@ -116,7 +116,7 @@ class XmlSitemapCustomListController extends ControllerBase {
       '#theme' => 'table',
       '#header' => $header,
       '#rows' => $rows,
-      '#empty' => $this->t('No custom links available. <a href="@custom_link">Add custom link</a>', array('@custom_link' => Url::fromRoute('xmlsitemap_custom.add', [], array('query' => $destination))))
+      '#empty' => $this->t('No custom links available. <a href="@custom_link">Add custom link</a>', array('@custom_link' => Url::fromRoute('xmlsitemap_custom.add', [], array('query' => $destination)))),
     );
     $build['xmlsitemap_custom_pager'] = array('#theme' => 'pager');
 

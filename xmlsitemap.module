@@ -40,11 +40,16 @@ const XMLSITEMAP_MAX_SITEMAP_FILESIZE = 10485760;
 /**
  * Xmlsitemap Frequencies
  */
-const XMLSITEMAP_FREQUENCY_YEARLY = 31449600; // 60 * 60 * 24 * 7 * 52
-const XMLSITEMAP_FREQUENCY_MONTHLY = 2419200; // 60 * 60 * 24 * 7 * 4
-const XMLSITEMAP_FREQUENCY_WEEKLY = 604800; // 60 * 60 * 24 * 7
-const XMLSITEMAP_FREQUENCY_DAILY = 86400; // 60 * 60 * 24
-const XMLSITEMAP_FREQUENCY_HOURLY = 3600; // 60 * 60
+const XMLSITEMAP_FREQUENCY_YEARLY = 31449600;
+// 60 * 60 * 24 * 7 * 52
+const XMLSITEMAP_FREQUENCY_MONTHLY = 2419200;
+// 60 * 60 * 24 * 7 * 4
+const XMLSITEMAP_FREQUENCY_WEEKLY = 604800;
+// 60 * 60 * 24 * 7
+const XMLSITEMAP_FREQUENCY_DAILY = 86400;
+// 60 * 60 * 24
+const XMLSITEMAP_FREQUENCY_HOURLY = 3600;
+// 60 * 60
 const XMLSITEMAP_FREQUENCY_ALWAYS = 60;
 
 /**
@@ -116,10 +121,13 @@ function xmlsitemap_help($route_name, RouteMatchInterface $route_match) {
     case 'entity.xmlsitemap.edit_form':
     case 'entity.xmlsitemap.delete_form':
       return;
+
     case 'xmlsitemap.admin_search':
       break;
+
     case 'xmlsitemap.admin_search_list':
       break;
+
     case 'xmlsitemap.admin_rebuild':
       $output .= '<p>' . t("This action rebuilds your site's XML sitemap and regenerates the cached files, and may be a lengthy process. If you just installed XML sitemap, this can be helpful to import all your site's content into the sitemap. Otherwise, this should only be used in emergencies.") . '</p>';
   }
@@ -226,7 +234,7 @@ function xmlsitemap_config_variables() {
     'regenerate_last' => NULL,
     'custom_links' => NULL,
     'priority_default' => NULL,
-    'languages' => NULL
+    'languages' => NULL,
   );
 }
 
@@ -244,7 +252,7 @@ function xmlsitemap_state_variables() {
     'xmlsitemap_generated_last' => 0,
     'xmlsitemap_developer_mode' => 0,
     'max_chunks' => NULL,
-    'max_filesize' => NULL
+    'max_filesize' => NULL,
   );
 }
 
@@ -442,7 +450,7 @@ function xmlsitemap_sitemap_uri(XmlSitemapInterface $sitemap) {
   \Drupal::moduleHandler()->alter('xmlsitemap_context_url_options', $uri['options'], $context);
   $uri['options'] += array(
     'absolute' => TRUE,
-    'base_url' => \Drupal::state()->get('xmlsitemap_base_url')
+    'base_url' => \Drupal::state()->get('xmlsitemap_base_url'),
   );
   return $uri;
 }
@@ -521,7 +529,7 @@ function xmlsitemap_clear_directory(XmlSitemapInterface $sitemap = NULL, $delete
  *   A string specifying the filepath or URI of the original directory.
  * @param string $new_dir
  *   A string specifying the filepath or URI of the new directory.
- * @param integer $replace
+ * @param int $replaceReplace behavior when the destination file already exists.
  *   Replace behavior when the destination file already exists.
  *
  * @return bool
@@ -621,7 +629,7 @@ function xmlsitemap_get_link_info($type = NULL, $reset = FALSE) {
           'label' => $entity_type->getLabel(),
           'type' => $entity_type->id(),
           'base table' => $entity_type->getBaseTable(),
-          'bundles' => \Drupal::entityManager()->getBundleInfo($entity_type->id())
+          'bundles' => \Drupal::entityManager()->getBundleInfo($entity_type->id()),
         );
         $uri_callback = $entity_type->getUriCallback();
         if (empty($uri_callback) || !isset($entity_type->xmlsitemap)) {
@@ -797,7 +805,7 @@ function xmlsitemap_link_bundle_rename($entity, $bundle_old, $bundle_new) {
  *
  * @param string $entity_old
  *   Old entity type id.
- * @param type $entity_new
+ * @param string or int or object... $entity_newNew entity type id.
  *   New entity type id.
  * @param array $bundles
  *   Bundles to be updated.
@@ -849,7 +857,7 @@ function xmlsitemap_link_bundle_load($entity, $bundle, $load_bundle_info = TRUE)
   $info += array(
     'status' => XMLSITEMAP_STATUS_DEFAULT,
     'priority' => XMLSITEMAP_PRIORITY_DEFAULT,
-    'changefreq' => 0
+    'changefreq' => 0,
   );
   return $info;
 }
@@ -1084,7 +1092,7 @@ function xmlsitemap_form_submit_flag_regenerate(array $form, FormStateInterface 
     }
     if ($stored_value != 'not_a_variable' && $stored_value != $value) {
       \Drupal::state()->set('xmlsitemap_regenerate_needed', TRUE);
-      drupal_set_message(t('XML sitemap settings have been modified and the files should be regenerated. You can <a href="@run-cron">run cron manually</a> to regenerate the cached files.', array('@run-cron' => Url::fromRoute('system.run_cron', [],  array('query' => drupal_get_destination()))->toString())), 'warning', FALSE);
+      drupal_set_message(t('XML sitemap settings have been modified and the files should be regenerated. You can <a href="@run-cron">run cron manually</a> to regenerate the cached files.', array('@run-cron' => Url::fromRoute('system.run_cron', [], array('query' => drupal_get_destination()))->toString())), 'warning', FALSE);
       return;
     }
   }
@@ -1119,7 +1127,7 @@ function xmlsitemap_add_form_link_options(array &$form, $entity, $bundle, $id) {
     'priority' => $bundle_info['priority'],
     'priority_default' => $bundle_info['priority'],
     'priority_override' => 0,
-    'changefreq' => $bundle_info['changefreq']
+    'changefreq' => $bundle_info['changefreq'],
   );
 
   $currentUser = \Drupal::currentUser();
@@ -1293,7 +1301,7 @@ function xmlsitemap_get_changefreq_options() {
 /**
  * Load a language object by its language code.
  *
- * @param  string $language
+ * @param string $language
  *   A language code. If not provided the default language will be returned.
  *
  * @return \Drupal\core\Language\LanguageInterface
@@ -1505,7 +1513,7 @@ function theme_xmlsitemap_content_settings_table($variables) {
  *   entity form.
  */
 function xmlsitemap_form_controller(FormStateInterface $form_state) {
-  return (null != $form_state->getFormObject()) && $form_state->getFormObject() instanceof EntityForm ? $form_state->getFormObject() : FALSE;
+  return (NULL != $form_state->getFormObject()) && $form_state->getFormObject() instanceof EntityForm ? $form_state->getFormObject() : FALSE;
 }
 
 /**
@@ -1771,14 +1779,17 @@ function xmlsitemap_query_xmlsitemap_generate_alter(AlterableInterface $query) {
       // Current language and language neutral.
       $query->condition('language', array($current, LanguageInterface::LANGCODE_NOT_SPECIFIED));
       break;
+
     case 'mixed':
       // Mixed current language (if available) or default language (if not) and language neutral.
       $query->condition('language', array($current, $default, LanguageInterface::LANGCODE_NOT_SPECIFIED));
       break;
+
     case 'default':
       // Only default language and language neutral.
       $query->condition('language', array($default, LanguageInterface::LANGCODE_NOT_SPECIFIED));
       break;
+
     case 'strict':
       // Only current language (for nodes), simple for all other types.
       $node_condition = db_and();
@@ -1792,6 +1803,7 @@ function xmlsitemap_query_xmlsitemap_generate_alter(AlterableInterface $query) {
       $condition->condition($normal_condition);
       $query->condition($condition);
       break;
+
     case 'off':
       // All content. No language conditions apply.
       break;
@@ -2247,7 +2259,7 @@ function xmlsitemap_file_transfer(Response $response, $uri, $headers) {
  * @static string $blurb
  *   Blurb message.
  *
- * @param type $check_version
+ * @param string or int or object... $check_version
  * @return string
  */
 function _xmlsitemap_get_blurb($check_version = TRUE) {
@@ -2329,7 +2341,7 @@ function xmlsitemap_check_status() {
     if ($messages) {
       $messages = array(
         '#type' => 'item_list',
-        '#items' => array($messages)
+        '#items' => array($messages),
       );
       $message = t('One or more problems were detected with your XML sitemap configuration: !messages', array('!messages' => \Drupal::service('renderer')->render($messages)));
       drupal_set_message($message, 'warning', FALSE);
@@ -2343,7 +2355,6 @@ function xmlsitemap_check_status() {
 }
 
 // BATCH OPERATIONS ------------------------------------------------------------
-
 /**
  * Perform operations before rebuilding the sitemap.
  */
@@ -2426,7 +2437,7 @@ function xmlsitemap_regenerate_batch_generate_index($smid, array &$context = arr
  *   Results for the regeneration process.
  * @param array $operations
  *   Operations performed.
- * @param integer $elapsed
+ * @param int $elapsedTime elapsed.
  *   Time elapsed.
  */
 function xmlsitemap_regenerate_batch_finished($success, $results, $operations, $elapsed) {
@@ -2564,7 +2575,7 @@ function xmlsitemap_rebuild_batch_fetch($entity, &$context) {
  *   Results for the regeneration process.
  * @param array $operations
  *   Operations performed.
- * @param integer $elapsed
+ * @param int $elapsedTime elapsed.
  *   Time elapsed.
  */
 function xmlsitemap_rebuild_batch_finished($success, $results, $operations, $elapsed) {
@@ -2615,7 +2626,7 @@ function xmlsitemap_link_bundle_enable($entity_type_id, $bundle_id) {
     $settings = array(
       'status' => XMLSITEMAP_STATUS_DEFAULT,
       'priority' => XMLSITEMAP_PRIORITY_DEFAULT,
-      'changefreq' => 0
+      'changefreq' => 0,
     );
     xmlsitemap_link_bundle_settings_save($entity_type_id, $bundle_id, $settings);
   }

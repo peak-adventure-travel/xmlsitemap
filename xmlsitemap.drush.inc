@@ -27,8 +27,8 @@ function xmlsitemap_drush_command() {
     'callback' => 'drush_xmlsitemap_index',
     'drupal dependencies' => array('xmlsitemap'),
     'options' => array(
-      'limit' => 'The limit of links of each type to process.'
-    )
+      'limit' => 'The limit of links of each type to process.',
+    ),
   );
   return $items;
 }
@@ -56,7 +56,7 @@ function drush_xmlsitemap_rebuild() {
   // Build a list of rebuildable link types.
   $rebuild_types = xmlsitemap_get_rebuildable_link_types();
   if (empty($rebuild_types)) {
-  	return drush_set_error("No link types are rebuildable.");
+    return drush_set_error("No link types are rebuildable.");
   }
 
   // Run the batch process.

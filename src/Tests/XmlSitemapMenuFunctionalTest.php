@@ -37,14 +37,16 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
     parent::setUp();
 
     if ($this->profile != 'standard') {
-      $this->drupalCreateContentType(array('type' => 'page', 'name' => 'Basic page', 'settings' => array(
+      $this->drupalCreateContentType(array(
+      'type' => 'page',
+      'name' => 'Basic page',
+      'settings' => array(
           // Set proper default options for the page content type.
-          'node' => array(
-            'options' => array('promote' => FALSE),
-            'submitted' => FALSE,
-          ),
-      )));
-      $this->drupalCreateContentType(array('type' => 'article', 'name' => 'Article'));
+        'node' => array(
+          'options' => array('promote' => FALSE),
+          'submitted' => FALSE,
+        ), )));
+          $this->drupalCreateContentType(array('type' => 'article', 'name' => 'Article'));
     }
 
     // allow anonymous user to administer menu links
