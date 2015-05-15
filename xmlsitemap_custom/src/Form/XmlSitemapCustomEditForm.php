@@ -206,4 +206,11 @@ class XmlSitemapCustomEditForm extends ConfigFormBase {
     $form_state->setRedirect('xmlsitemap_custom.list');
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  protected function getEditableConfigNames() {
+    return ['xmlsitemap.link_storage'];
+  }
+
 }
