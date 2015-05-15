@@ -12,10 +12,12 @@ function xmlsitemap_engines_install() {
   $state_variables = xmlsitemap_engines_state_variables();
   \Drupal::state()->setMultiple($state_variables);
   $config_variables = xmlsitemap_engines_config_variables();
+  $config = \Drupal::getContainer()->get('config.factory')
+    ->getEditable('xmlsitemap_engines.settings');
   foreach ($config_variables as $key => $value) {
-    \Drupal::config('xmlsitemap_engines.settings')->set($key, $value);
+    $config->set($key, $value);
   }
-  \Drupal::config('xmlsitemap_engines.settings')->save();
+  $config->save();
 }
 
 /**
@@ -25,8 +27,10 @@ function xmlsitemap_engines_uninstall() {
   $state_variables = xmlsitemap_engines_state_variables();
   \Drupal::state()->deleteMultiple($state_variables);
   $config_variables = xmlsitemap_engines_config_variables();
+  $config = \Drupal::getContainer()->get('config.factory')
+    ->getEditable('xmlsitemap_engines.settings');
   foreach ($config_variables as $key => $value) {
-    \Drupal::config('xmlsitemap_engines.settings')->clear($key);
+    $config->clear($key);
   }
-  \Drupal::config('xmlsitemap_engines.settings')->delete();
+  $config->delete();
 }
