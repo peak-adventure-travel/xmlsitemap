@@ -7,7 +7,7 @@
 
 namespace Drupal\xmlsitemap\Form;
 
-use Drupal\Component\Utility\String;
+use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
@@ -141,7 +141,7 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
 
         $form['settings'][$entity_type_id]['types'][$bundle] = array(
           'bundle' => array(
-            '#markup' => String::checkPlain($bundle_info['label']),
+            '#markup' => SafeMarkup::checkPlain($bundle_info['label']),
           ),
           'operations' => [
           '#type' => 'operations',
