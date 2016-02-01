@@ -26,11 +26,13 @@ function xmlsitemap_engines_test_pinged() {
   $query_sitemap = \Drupal::request()->query->get('sitemap');
   //$query_sitemap = $query->get('sitemap');
   if (empty($query_sitemap) || !UrlHelper::isValid($query_sitemap)) {
-    watchdog('xmlsitemap', 'No valid sitemap parameter provided.', array(), WATCHDOG_WARNING);
+    $message = t('No valid sitemap parameter provided.');
+      \Drupal::logger('xmlsitemap')->debug($message);
     // @todo Remove this? Causes an extra watchdog error to be handled.
     throw new NotFoundHttpException();
   }
   else {
-    watchdog('xmlsitemap', 'Recieved ping for @sitemap.', array('@sitemap' => $query_sitemap));
+    $message = t('Recieved ping for @sitemap.', array('@sitemap' => $query_sitemap));
+    \Drupal::logger('xmlsitemap')->debug($message);
   }
 }

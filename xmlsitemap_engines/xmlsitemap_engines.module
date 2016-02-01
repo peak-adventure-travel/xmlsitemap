@@ -123,10 +123,12 @@ function xmlsitemap_engines_submit_sitemaps($url, array $sitemaps) {
     try {
       $request = \Drupal::httpClient()->get($submit_url);
       $data = $request->getBody();
-      watchdog('xmlsitemap', 'Submitted the sitemap to %url and received response @code.', array('%url' => $submit_url, '@code' => $request->getStatusCode()));
+      $message = t('Submitted the sitemap to %url and received response @code.', array('%url' => $submit_url, '@code' => $request->getStatusCode()));
+      \Drupal::logger('xmlsitemap')->debug($message);
     }
     catch (RequestException $ex) {
-      watchdog('xmlsitemap', 'Submitted the sitemap to %url and received response @code.', array('%url' => $submit_url, '@code' => '404'));
+      $message = t('Submitted the sitemap to %url and received response @code.', array('%url' => $submit_url, '@code' => '404'));
+      \Drupal::logger('xmlsitemap')->debug($message);
       //watchdog_exception('xmlsitemap', 'Submitted the sitemap to %url failed with response @code.',array('%url' => $submit_url,'@code' => '404'));
     }
   }

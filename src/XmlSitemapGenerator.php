@@ -123,10 +123,10 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
     $this->setMemoryLimit();
 
     if ($this->state->get('xmlsitemap_developer_mode')) {
-      watchdog('xmlsitemap', 'Starting XML sitemap generation. Memory usage: @memory-peak.', array(
-        '@memory-peak' => format_size(memory_get_peak_usage(TRUE)),
-          ), WATCHDOG_DEBUG
-      );
+      $message = t('Starting XML sitemap generation. Memory usage: @memory-peak.',
+        array('@memory-peak' => format_size(memory_get_peak_usage(TRUE)),
+      ));
+      \Drupal::logger('xmlsitemap')->debug($message);
     }
   }
 
@@ -360,12 +360,15 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
     if ($success && $this->state->get('xmlsitemap_regenerate_needed') == FALSE) {
       $this->state->set('xmlsitemap_generated_last', REQUEST_TIME);
       drupal_set_message(t('The sitemaps were regenerated.'));
+
       // Show a watchdog message that the sitemap was regenerated.
-      watchdog('xmlsitemap', 'Finished XML sitemap generation in @elapsed. Memory usage: @memory-peak.', array(
-        '@elapsed' => $elapsed,
-        '@memory-peak' => format_size(memory_get_peak_usage(TRUE)),
-          ), WATCHDOG_NOTICE
+      $message = t('Finished XML sitemap generation in @elapsed. Memory usage: @memory-peak.',
+        array(
+          '@elapsed' => $elapsed,
+          '@memory-peak' => format_size(memory_get_peak_usage(TRUE)),
+        )
       );
+      \Drupal::logger('xmlsitemap')->notice($message);
     }
     else {
       drupal_set_message(t('The sitemaps were not successfully regenerated.'), 'error');

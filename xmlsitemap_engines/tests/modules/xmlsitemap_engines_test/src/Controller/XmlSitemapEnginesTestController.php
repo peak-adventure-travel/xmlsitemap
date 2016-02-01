@@ -29,12 +29,14 @@ class XmlSitemapEnginesTestController extends ControllerBase {
   public function render() {
     $query = \Drupal::request()->query->get('sitemap');
     if (empty($query) || !UrlHelper::isValid($query)) {
-      watchdog('xmlsitemap', 'No valid sitemap parameter provided.', array(), WATCHDOG_WARNING);
+      $message = t('No valid sitemap parameter provided.');
+      \Drupal::logger('xmlsitemap')->debug($message);
       // @todo Remove this? Causes an extra watchdog error to be handled.
       throw new NotFoundHttpException();
     }
     else {
-      watchdog('xmlsitemap', 'Recieved ping for @sitemap.', array('@sitemap' => $query));
+      $message = t('Recieved ping for @sitemap.', array('@sitemap' => $query));
+      \Drupal::logger('xmlsitemap')->debug($message);
     }
     return new Response('', 200);
   }
