@@ -9,28 +9,20 @@ namespace Drupal\xmlsitemap\Tests;
 
 /**
  * Tests the generation of sitemaps.
+ *
+ * @group xmlsitemap
  */
 class XmlSitemapFunctionalTest extends XmlSitemapTestBase {
 
   /**
-   * Modules to enable.
-   *
-   * @var array
+   * {@inheritdoc}
    */
-  public static $modules = array('xmlsitemap', 'path', 'node', 'system', 'user', 'help');
-
-  public static function getInfo() {
-    return array(
-      'name' => 'XML sitemap interface tests',
-      'description' => 'Functional tests for the XML sitemap module.',
-      'group' => 'XML sitemap',
-    );
-  }
+  public static $modules = ['path', 'node', 'system', 'user', 'help'];
 
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  protected function setUp() {
     parent::setUp();
 
     $this->admin_user = $this->drupalCreateUser(array('access content', 'administer site configuration', 'administer xmlsitemap', 'access administration pages', 'access site reports', 'administer permissions', 'view the administration theme'));

@@ -11,15 +11,15 @@ use Drupal\xmlsitemap\Tests\XmlSitemapTestBase;
 
 /**
  * Tests the functionality of xmlsitemap_custom module.
+ *
+ * @group xmlsitemap
  */
 class XmlSitemapCustomFunctionalTest extends XmlSitemapTestBase {
 
   /**
-   * Modules to enable.
-   *
-   * @var array
+   * {@inheritdoc}
    */
-  public static $modules = array('xmlsitemap_custom', 'path', 'node');
+  public static $modules = ['xmlsitemap_custom', 'path', 'node'];
 
   /**
    * The alias storage handler.
@@ -35,18 +35,10 @@ class XmlSitemapCustomFunctionalTest extends XmlSitemapTestBase {
    */
   protected $linkStorage;
 
-  public static function getInfo() {
-    return array(
-      'name' => 'XML sitemap custom interface tests',
-      'description' => 'Functional tests for the XML sitemap custom module.',
-      'group' => 'XML sitemap',
-    );
-  }
-
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  protected function setUp() {
     parent::setUp();
 
     $this->aliasStorage = \Drupal::service('path.alias_storage');

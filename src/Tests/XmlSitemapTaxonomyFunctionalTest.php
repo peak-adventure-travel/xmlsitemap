@@ -11,28 +11,20 @@ use Drupal\Component\Utility\Unicode;
 
 /**
  * Tests the generation of taxonomy links.
+ *
+ * @group xmlsitemap
  */
 class XmlSitemapTaxonomyFunctionalTest extends XmlSitemapTestBase {
 
   /**
-   * Modules to enable.
-   *
-   * @var array
+   * {@inheritdoc}
    */
-  public static $modules = array('taxonomy', 'xmlsitemap');
-
-  public static function getInfo() {
-    return array(
-      'name' => 'XML sitemap taxonomy',
-      'description' => 'Functional tests for the XML sitemap module taxonomy entity.',
-      'group' => 'XML sitemap',
-    );
-  }
+  public static $modules = ['taxonomy'];
 
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  protected function setUp() {
     parent::setUp();
 
     xmlsitemap_link_bundle_enable('taxonomy_vocabulary', 'taxonomy_vocabulary');

@@ -9,28 +9,20 @@ namespace Drupal\xmlsitemap\Tests;
 
 /**
  * Tests the rebuild process of sitemaps.
+ *
+ * @group xmlsitemap
  */
 class XmlSitemapRebuildTest extends XmlSitemapTestBase {
 
   /**
-   * Modules to enable.
-   *
-   * @var array
+   * {@inheritdoc}
    */
-  public static $modules = array('xmlsitemap', 'path', 'node', 'system', 'user', 'help', 'block');
-
-  public static function getInfo() {
-    return array(
-      'name' => 'XML sitemap rebuild tests',
-      'description' => 'Rebuild tests for the XML sitemap module.',
-      'group' => 'XML sitemap',
-    );
-  }
+  public static $modules = ['path', 'node', 'system', 'user', 'help', 'block'];
 
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  protected function setUp() {
     parent::setUp();
 
     $this->admin_user = $this->drupalCreateUser(array('administer xmlsitemap', 'access administration pages', 'access site reports', 'administer users', 'administer permissions'));

@@ -8,29 +8,21 @@
 namespace Drupal\xmlsitemap\Tests;
 
 /**
- * Unit testing class for xmlsitemap.
+ * Unit tests for the XML sitemap module.
+ *
+ * @group xmlsitemap
  */
 class XmlSitemapUnitTest extends XmlSitemapTestBase {
 
   /**
-   * Modules to enable.
-   *
-   * @var array
+   * {@inheritdoc}
    */
-  public static $modules = array('xmlsitemap', 'node', 'system');
-
-  public static function getInfo() {
-    return array(
-      'name' => 'XML sitemap unit tests',
-      'description' => 'Unit tests for the XML sitemap module.',
-      'group' => 'XML sitemap',
-    );
-  }
+  public static $modules = ['node', 'system'];
 
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  protected function setUp() {
     parent::setUp();
 
     $this->admin_user = $this->drupalCreateUser(array('access content', 'administer site configuration', 'administer xmlsitemap'));

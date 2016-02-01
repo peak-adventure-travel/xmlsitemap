@@ -9,28 +9,20 @@ namespace Drupal\xmlsitemap\Tests;
 
 /**
  * Tests the generation of multilingual nodes.
+ *
+ * @group xmlsitemap
  */
 class XmlSitemapMultilingualNodeTest extends XmlSitemapMultilingualTestBase {
 
   /**
-   * Modules to enable.
-   *
-   * @var array
+   * {@inheritdoc}
    */
-  public static $modules = array('xmlsitemap', 'language', 'content_translation', 'node', 'locale', 'config_translation', 'system');
-
-  public static function getInfo() {
-    return array(
-      'name' => 'XML sitemap i18n node tests',
-      'description' => 'Functional and integration tests for the XML sitemap node and internationalization modules.',
-      'group' => 'XML sitemap',
-    );
-  }
+  public static $modules = ['language', 'content_translation', 'node', 'locale', 'config_translation', 'system'];
 
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  protected function setUp() {
     parent::setUp();
 
     if ($this->profile != 'standard') {

@@ -12,28 +12,20 @@ use Drupal\Component\Utility\Unicode;
 
 /**
  * Tests the generation of menu links.
+ *
+ * @group xmlsitemap
  */
 class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
 
   /**
-   * Modules to enable.
-   *
-   * @var array
+   * {@inheritdoc}
    */
-  public static $modules = array('node', 'xmlsitemap', 'menu_link_content', 'menu_ui', 'system');
-
-  public static function getInfo() {
-    return array(
-      'name' => 'XML sitemap menu',
-      'description' => 'Functional tests for the XML sitemap menu module.',
-      'group' => 'XML sitemap',
-    );
-  }
+  public static $modules = ['node', 'menu_link_content', 'menu_ui', 'system'];
 
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  protected function setUp() {
     parent::setUp();
 
     if ($this->profile != 'standard') {

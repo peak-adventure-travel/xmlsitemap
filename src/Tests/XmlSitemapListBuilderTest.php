@@ -11,28 +11,20 @@ use Drupal\Core\Language\Language;
 
 /**
  * Tests the sitemaps list builder.
+ *
+ * @group xmlsitemap
  */
 class XmlSitemapListBuilderTest extends XmlSitemapTestBase {
 
   /**
-   * Modules to enable.
-   *
-   * @var array
+   * {@inheritdoc}
    */
-  public static $modules = array('language', 'xmlsitemap', 'node', 'locale', 'content_translation', 'system');
-
-  public static function getInfo() {
-    return array(
-      'name' => 'XML sitemap list builder tests',
-      'description' => 'List builder tests for the XML sitemap module.',
-      'group' => 'XML sitemap',
-    );
-  }
+  public static $modules = ['language', 'node', 'locale', 'content_translation', 'system'];
 
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  protected function setUp() {
     parent::setUp();
 
     $this->admin_user = $this->drupalCreateUser(array('administer languages', 'access administration pages', 'administer site configuration', 'administer xmlsitemap', 'access content'));

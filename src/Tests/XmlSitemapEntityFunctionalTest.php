@@ -9,28 +9,20 @@ namespace Drupal\xmlsitemap\Tests;
 
 /**
  * Tests the generation of a random content entity links.
+ *
+ * @group xmlsitemap
  */
 class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
 
   /**
-   * Modules to enable.
-   *
-   * @var array
+   * {@inheritdoc}
    */
-  public static $modules = array('system', 'xmlsitemap', 'entity_test');
-
-  public static function getInfo() {
-    return array(
-      'name' => 'XML sitemap random entity',
-      'description' => 'Functional tests for the XML sitemap random entity links.',
-      'group' => 'XML sitemap',
-    );
-  }
+  public static $modules = ['system', 'entity_test'];
 
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  protected function setUp() {
     parent::setUp();
 
     $this->admin_user = $this->drupalCreateUser(array('administer entity_test content', 'administer xmlsitemap'));

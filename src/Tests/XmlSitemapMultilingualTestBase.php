@@ -11,20 +11,20 @@ use Drupal\Core\Language\Language;
 
 /**
  * Common base test class for XML sitemap internationalization tests.
+ *
+ * @group xmlsitemap
  */
 abstract class XmlSitemapMultilingualTestBase extends XmlSitemapTestBase {
 
   /**
-   * Modules to enable.
-   *
-   * @var array
+   * {@inheritdoc}
    */
-  public static $modules = array('language', 'xmlsitemap', 'node', 'locale', 'content_translation', 'system');
+  public static $modules = ['language', 'node', 'locale', 'content_translation', 'system'];
 
   /**
    * Set up an administrative user account and testing keys.
    */
-  public function setUp() {
+  protected function setUp() {
     // Call parent::setUp() allowing test cases to pass further modules.
     parent::setUp();
 

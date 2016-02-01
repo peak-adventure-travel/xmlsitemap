@@ -11,28 +11,20 @@ use Drupal\Core\Language\LanguageInterface;
 
 /**
  * Tests the generation of multilingual sitemaps.
+ *
+ * @group xmlsitemap
  */
 class XmlSitemapMultilingualTest extends XmlSitemapMultilingualTestBase {
 
   /**
-   * Modules to enable.
-   *
-   * @var array
+   * {@inheritdoc}
    */
-  public static $modules = array('language', 'xmlsitemap', 'node', 'locale', 'content_translation', 'system');
-
-  public static function getInfo() {
-    return array(
-      'name' => 'XML sitemap i18n tests',
-      'description' => 'Functional and integration tests for the XML sitemap and internationalization modules.',
-      'group' => 'XML sitemap',
-    );
-  }
+  public static $modules = ['language', 'node', 'locale', 'content_translation', 'system'];
 
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  protected function setUp() {
     parent::setUp();
 
     $this->drupalLogin($this->admin_user);

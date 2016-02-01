@@ -12,6 +12,8 @@ use Drupal\Core\Url;
 
 /**
  * Test xmlsitemap_engines functionality.
+ *
+ * @group xmlsitemap
  */
 class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
 
@@ -23,27 +25,14 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
   protected $submit_url;
 
   /**
-   * Modules to enable.
-   *
-   * @var array
+   * {@inheritdoc}
    */
-  public static $modules = array('system', 'path', 'node', 'dblog', 'xmlsitemap', 'xmlsitemap_engines', 'xmlsitemap_engines_test');
+  public static $modules = ['system', 'path', 'node', 'dblog', 'xmlsitemap_engines', 'xmlsitemap_engines_test'];
 
   /**
    * {@inheritdoc}
    */
-  public static function getInfo() {
-    return array(
-      'name' => 'XML sitemap engines functional tests',
-      'description' => 'Functional tests for the XML sitemap engines module.',
-      'group' => 'XML sitemap',
-    );
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setUp() {
+  protected function setUp() {
     parent::setUp();
     $this->admin_user = $this->drupalCreateUser(array('access content', 'administer xmlsitemap'));
     $this->drupalLogin($this->admin_user);

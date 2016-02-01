@@ -20,7 +20,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
    *
    * @var array
    */
-  public static $modules = array('xmlsitemap');
+  public static $modules = ['xmlsitemap'];
 
   /**
    * The admin user account.
@@ -81,8 +81,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
-    array_unshift(self::$modules, 'xmlsitemap');
+  protected function setUp() {
     parent::setUp();
     $this->state = \Drupal::state();
     $this->config = \Drupal::configFactory()->get('xmlsitemap.settings');

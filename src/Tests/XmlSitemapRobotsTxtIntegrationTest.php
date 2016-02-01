@@ -11,31 +11,16 @@ use Drupal\Core\Url;
 
 /**
  * Tests the robots.txt file existance.
+ *
+ * @group xmlsitemap
+ * @dependencies robotstxt
  */
 class XmlSitemapRobotsTxtIntegrationTest extends XmlSitemapTestBase {
 
   /**
-   * Modules to enable.
-   *
-   * @var array
-   */
-  public static $modules = array('xmlsitemap', 'robotstxt');
-
-  public static function getInfo() {
-    return array(
-      'name' => 'XML sitemap robots.txt',
-      'description' => 'Integration tests for the XML sitemap and robots.txt module.',
-      'group' => 'XML sitemap',
-      'dependencies' => array('robotstxt'),
-    );
-  }
-
-  /**
    * {@inheritdoc}
    */
-  public function setUp() {
-    parent::setUp();
-  }
+  public static $modules = ['robotstxt'];
 
   /**
    * Test if sitemap link is included in robots.txt file.

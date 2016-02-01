@@ -9,30 +9,22 @@ namespace Drupal\xmlsitemap\Tests;
 
 /**
  * Tests the generation of user links.
+ *
+ * @group xmlsitemap
  */
 class XmlSitemapUserFunctionalTest extends XmlSitemapTestBase {
 
   protected $accounts = array();
 
   /**
-   * Modules to enable.
-   *
-   * @var array
+   * {@inheritdoc}
    */
-  public static $modules = array('xmlsitemap', 'user', 'node', 'system');
-
-  public static function getInfo() {
-    return array(
-      'name' => 'XML sitemap user',
-      'description' => 'Functional tests for the XML sitemap user module.',
-      'group' => 'XML sitemap',
-    );
-  }
+  public static $modules = ['user', 'node', 'system'];
 
   /**
    * {@inheritdoc}
    */
-  public function setUp($modules = array()) {
+  protected function setUp() {
     parent::setUp();
 
     // allow anonymous user to view user profiles

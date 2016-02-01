@@ -10,16 +10,16 @@ namespace Drupal\xmlsitemap\Tests;
 use Drupal\Core\Language\LanguageInterface;
 
 /**
- * Tests the generation of user links.
+ * Tests the generation of node links.
+ *
+ * @group xmlsitemap
  */
 class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
 
   /**
-   * Modules to enable.
-   *
-   * @var array
+   * {@inheritdoc}
    */
-  public static $modules = array('node', 'xmlsitemap', 'taxonomy');
+  public static $modules = ['node', 'taxonomy'];
 
   /**
    * Nodes created during the test for testCron() method.
@@ -28,18 +28,10 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
    */
   protected $nodes = array();
 
-  public static function getInfo() {
-    return array(
-      'name' => 'XML sitemap node',
-      'description' => 'Functional tests for the XML sitemap module node entity.',
-      'group' => 'XML sitemap',
-    );
-  }
-
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  protected function setUp() {
     parent::setUp();
 
     if ($this->profile != 'standard') {
