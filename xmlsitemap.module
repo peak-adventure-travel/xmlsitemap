@@ -230,11 +230,6 @@ function xmlsitemap_config_variables() {
     'frontpage_changefreq' => XMLSITEMAP_FREQUENCY_DAILY,
     'lastmod_format' => XMLSITEMAP_LASTMOD_MEDIUM,
     'gz' => FALSE,
-    // Removed variables are set to NULL so they can still be deleted.
-    'regenerate_last' => NULL,
-    'custom_links' => NULL,
-    'priority_default' => NULL,
-    'languages' => NULL,
   );
 }
 
