@@ -11,7 +11,7 @@
 use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\xmlsitemap\XmlSitemapInterface;
-use Drupal\Component\Utility\String;
+use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityInterface;
@@ -1945,7 +1945,7 @@ function xmlsitemap_add_form_entity_summary(&$form, $entity, array $entity_info)
     }
     else {
       // Bundle labels are assumed to be un-escaped input.
-      $row[] = String::checkPlain($bundle_info['label']);
+      $row[] = SafeMarkup::checkPlain($bundle_info['label']);
     }
     $row[] = $statuses[$bundle_info['xmlsitemap']['status'] ? 1 : 0];
     $row[] = $priorities[number_format($bundle_info['xmlsitemap']['priority'], 1)];
