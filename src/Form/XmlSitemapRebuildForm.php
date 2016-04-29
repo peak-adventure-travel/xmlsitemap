@@ -81,7 +81,7 @@ class XmlSitemapRebuildForm extends ConfigFormBase {
     // Build a list of rebuildable link types.
     $rebuild_types = xmlsitemap_get_rebuildable_link_types();
     $rebuild_types = array_combine($rebuild_types, $rebuild_types);
-    $form['entities'] = array(
+    $form['entity_type_ids'] = array(
       '#type' => 'select',
       '#title' => t('Select which link types you would like to rebuild'),
       '#description' => t('If no link types are selected, the sitemap files will just be regenerated.'),
@@ -103,9 +103,9 @@ class XmlSitemapRebuildForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     // Save any changes to the frontpage link.
-    $entities = $form_state->getValue('entities');
+    $entity_type_ids = $form_state->getValue('entity_type_ids');
     $save_custom = $form_state->getValue('save_custom');
-    $batch = xmlsitemap_rebuild_batch($entities, $save_custom);
+    $batch = xmlsitemap_rebuild_batch($entity_type_ids, $save_custom);
     batch_set($batch);
 
     $form_state->setRedirect('xmlsitemap.admin_search');

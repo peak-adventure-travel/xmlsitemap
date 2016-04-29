@@ -775,9 +775,8 @@ function xmlsitemap_link_bundle_settings_save($entity, $bundle, array $settings,
   }
 
   foreach ($settings as $key => $value) {
-    \Drupal::configFactory()->getEditable("xmlsitemap.settings.{$entity}.{$bundle}")->set($key, $value);
+    \Drupal::configFactory()->getEditable("xmlsitemap.settings.{$entity}.{$bundle}")->set($key, $value)->save();
   }
-  \Drupal::configFactory()->getEditable("xmlsitemap.settings.{$entity}.{$bundle}")->save();
 
   foreach (\Drupal::languageManager()->getLanguages() as $lang) {
     \Drupal::cache()->delete('xmlsitemap:link_info:' . $lang->getId());
@@ -1479,19 +1478,6 @@ function xmlsitemap_get_operation_link($url, $options = array()) {
 }
 
 /**
- * Implements hook_entity_info_alter().
- */
-function xmlsitemap_entity_info_alter(&$entity_info) {
-  if (!\Drupal::config('xmlsitemap.settings.user.user')->isNew()) {
-    return $entity_info;
-  }
-  $entity_info['user']['bundle label'] = t('User');
-  $entity_info['user']['xmlsitemap'] = array(
-    'process callback' => 'xmlsitemap_user_xmlsitemap_process_user_links',
-  );
-}
-
-/**
  * Returns HTML for an administration settings table.
  *
  * @param array $variables
@@ -2046,7 +2032,7 @@ function xmlsitemap_add_link_bundle_settings(array &$form, FormStateInterface $f
     '#type' => 'select',
     '#title' => t('Inclusion'),
     '#options' => xmlsitemap_get_status_options(),
-    '#default_value' => $bundle_info['status'],
+    '#default_value' => (int) $bundle_info['status'],
   );
   $form['xmlsitemap']['priority'] = array(
     '#type' => 'select',
@@ -2390,7 +2376,6 @@ function xmlsitemap_regenerate_batch(array $smids = array()) {
     'error_message' => $t('An error has occurred.'),
     'finished' => 'xmlsitemap_regenerate_batch_finished',
     'title' => t('Regenerating Sitemap'),
-    'file' => drupal_get_path('module', 'xmlsitemap') . '/xmlsitemap.generate.inc',
   );
 
   // Set the regenerate flag in case something fails during file generation.
@@ -2454,15 +2439,15 @@ function xmlsitemap_regenerate_batch_finished($success, $results, $operations, $
 /**
  * Batch information callback for rebuilding the sitemap data.
  *
- * @param array $entities
- *   Entities to be rebuild.
+ * @param array $entity_type_ids
+ *   Entity types to rebuild.
  * @param bool $save_custom
  *   Save custom data.
  *
  * @return array
  *   Batch array.
  */
-function xmlsitemap_rebuild_batch(array $entities, $save_custom = FALSE) {
+function xmlsitemap_rebuild_batch(array $entity_type_ids, $save_custom = FALSE) {
   $batch = array(
     'operations' => array(),
     'finished' => 'xmlsitemap_rebuild_batch_finished',
@@ -2474,12 +2459,12 @@ function xmlsitemap_rebuild_batch(array $entities, $save_custom = FALSE) {
   $batch['operations'][] = array('xmlsitemap_batch_variable_set', array(array('xmlsitemap_rebuild_needed' => TRUE)));
 
   // Purge any links first.
-  $batch['operations'][] = array('xmlsitemap_rebuild_batch_clear', array($entities, (bool) $save_custom));
+  $batch['operations'][] = array('xmlsitemap_rebuild_batch_clear', array($entity_type_ids, (bool) $save_custom));
 
   // Fetch all the sitemap links and save them to the {xmlsitemap} table.
-  foreach ($entities as $entity) {
-    $info = xmlsitemap_get_link_info($entity);
-    $batch['operations'][] = array($info['xmlsitemap']['rebuild callback'], array($entity));
+  foreach ($entity_type_ids as $entity_type_id) {
+    $info = xmlsitemap_get_link_info($entity_type_id);
+    $batch['operations'][] = array($info['xmlsitemap']['rebuild callback'], array($entity_type_id));
   }
 
   // Clear the rebuild flag.
@@ -2505,39 +2490,39 @@ function xmlsitemap_batch_variable_set(array $variables) {
 /**
  * Batch callback; clear sitemap links for entites.
  *
- * @param array $entities
- *   Entities to rebuild.
+ * @param array $entity_type_ids
+ *   Entity types to rebuild.
  * @param bool $save_custom
  *   Save custom data.
  * @param array $context
  *   Context to be rebuilt.
  */
-function xmlsitemap_rebuild_batch_clear(array $entities, $save_custom, &$context = array()) {
-  \Drupal::service('xmlsitemap_generator')->rebuildBatchClear($entities, $save_custom, $context);
+function xmlsitemap_rebuild_batch_clear(array $entity_type_ids, $save_custom, &$context = array()) {
+  \Drupal::service('xmlsitemap_generator')->rebuildBatchClear($entity_type_ids, $save_custom, $context);
 }
 
 /**
  * Batch callback; fetch and add the sitemap links for a specific entity type.
  *
- * @param string $entity
- *   Entity type id.
+ * @param string $entity_type_id
+ *   Entity type ID.
  * @param array context
  *   Sitemap context.
  */
-function xmlsitemap_rebuild_batch_fetch($entity, &$context) {
+function xmlsitemap_rebuild_batch_fetch($entity_type_id, &$context) {
   if (!isset($context['sandbox']['info'])) {
-    $context['sandbox']['info'] = xmlsitemap_get_link_info($entity);
+    $context['sandbox']['info'] = xmlsitemap_get_link_info($entity_type_id);
     $context['sandbox']['progress'] = 0;
     $context['sandbox']['last_id'] = 0;
   }
   $info = $context['sandbox']['info'];
+  $entity_type = \Drupal::entityTypeManager()->getDefinition($entity_type_id);
 
-  $query = new EntityFieldQuery();
-  $query->entityCondition('entity_type', $entity);
-  $query->entityCondition('entity_id', $context['sandbox']['last_id'], '>');
+  $query = \Drupal::entityQuery($entity_type_id);
+  $query->condition($entity_type->getKey('id'), $context['sandbox']['last_id'], '>');
   $query->addTag('xmlsitemap_link_bundle_access');
   $query->addTag('xmlsitemap_rebuild');
-  $query->addMetaData('entity', $entity);
+  $query->addMetaData('entity_type_id', $entity_type_id);
   $query->addMetaData('entity_info', $info);
 
   if (!isset($context['sandbox']['max'])) {
@@ -2551,19 +2536,19 @@ function xmlsitemap_rebuild_batch_fetch($entity, &$context) {
   }
 
   // PostgreSQL cannot have the ORDERED BY in the count query.
-  $query->entityOrderBy('entity_id');
+  $query->sort($entity_type->getKey('id'));
 
   // get batch limit
   $limit = \Drupal::config('xmlsitemap.settings')->get('batch_limit');
   $query->range(0, $limit);
 
   $result = $query->execute();
-  $ids = array_keys($result[$entity]);
+  $ids = array_keys($result[$entity_type_id]);
 
   $info['xmlsitemap']['process callback']($ids);
   $context['sandbox']['last_id'] = end($ids);
   $context['sandbox']['progress'] += count($ids);
-  $context['message'] = t('Now processing %entity @last_id (@progress of @count).', array('%entity' => $entity, '@last_id' => $context['sandbox']['last_id'], '@progress' => $context['sandbox']['progress'], '@count' => $context['sandbox']['max']));
+  $context['message'] = t('Now processing %entity_type_id @last_id (@progress of @count).', array('%entity_type_id' => $entity_type_id, '@last_id' => $context['sandbox']['last_id'], '@progress' => $context['sandbox']['progress'], '@count' => $context['sandbox']['max']));
 
   if ($context['sandbox']['progress'] >= $context['sandbox']['max']) {
     $context['finished'] = 1;

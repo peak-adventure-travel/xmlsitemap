@@ -128,24 +128,24 @@ interface XmlSitemapGeneratorInterface {
   /**
    * Batch callback; clear sitemap links for entites.
    *
-   * @param array $entities
-   *   Entities to rebuild.
+   * @param array $entity_type_ids
+   *   Entity types to rebuild.
    * @param bool $save_custom
    *   Save custom data.
    * @param array $context
    *   Context to be rebuilt.
    */
-  public function rebuildBatchClear(array $entities, $save_custom, &$context);
+  public function rebuildBatchClear(array $entity_type_ids, $save_custom, &$context);
 
   /**
    * Batch callback; fetch and add the sitemap links for a specific entity.
    *
-   * @param string $entity
+   * @param string $entity_type_id
    *   Entity type to be rebuilt.
    * @param array $context
    *   Context to be rebuilt.
    */
-  public function rebuildBatchFetch($entity, &$context);
+  public function rebuildBatchFetch($entity_type_id, &$context);
 
   /**
    * Batch callback; sitemap rebuild finished.
