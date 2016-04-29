@@ -1795,8 +1795,8 @@ function xmlsitemap_query_xmlsitemap_generate_alter(AlterableInterface $query) {
     case 'strict':
       // Only current language (for nodes), simple for all other types.
       $node_condition = db_and();
-      $node_condition->condition('type', 'node', 'IN');
-      $node_condition->condition('language', $current, 'IN');
+      $node_condition->condition('type', 'node', '=');
+      $node_condition->condition('language', $current, '=');
       $normal_condition = db_and();
       $normal_condition->condition('type', 'node', '<>');
       $normal_condition->condition('language', array($current, LanguageInterface::LANGCODE_NOT_SPECIFIED), 'IN');
