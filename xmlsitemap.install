@@ -329,7 +329,7 @@ function xmlsitemap_uninstall() {
   xmlsitemap_clear_directory(NULL, TRUE);
 
   $entities = \Drupal::entityTypeManager()->getDefinitions();
-  $bundles = \Drupal::entityTypeManager()->getAllBundleInfo();
+  $bundles = \Drupal::service('entity_type.bundle.info')->getAllBundleInfo();
 
   $state_variables = array();
   foreach ($entities as $entity_id => $entity) {

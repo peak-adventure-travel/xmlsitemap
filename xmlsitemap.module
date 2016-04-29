@@ -635,13 +635,13 @@ function xmlsitemap_get_link_info($type = NULL, $reset = FALSE) {
           'label' => $entity_type->getLabel(),
           'type' => $entity_type->id(),
           'base table' => $entity_type->getBaseTable(),
-          'bundles' => \Drupal::entityTypeManager()->getBundleInfo($entity_type->id()),
+          'bundles' => \Drupal::service('entity_type.bundle.info')->getBundleInfo($entity_type->id()),
         );
         $uri_callback = $entity_type->getUriCallback();
         if (empty($uri_callback) || !isset($entity_type->xmlsitemap)) {
           // Remove any non URL-able or XML sitemap un-supported entites.
         }
-        foreach (\Drupal::entityTypeManager()->getBundleInfo($entity_type->id()) as $bundle_key => $bundle) {
+        foreach (\Drupal::service('entity_type.bundle.info')->getBundleInfo($entity_type->id()) as $bundle_key => $bundle) {
           if (!isset($bundle['xmlsitemap'])) {
             // Remove any un-supported entity bundles.
           }
@@ -1554,7 +1554,7 @@ function xmlsitemap_form_alter(array &$form, FormStateInterface $form_state, $fo
  */
 function xmlsitemap_xmlsitemap_index_links($limit) {
   $entity_types = \Drupal::entityTypeManager()->getDefinitions();
-  $bundles = \Drupal::entityTypeManager()->getAllBundleInfo();
+  $bundles = \Drupal::service('entity_type.bundle.info')->getAllBundleInfo();
   foreach ($entity_types as $entity_type_id => $entity_type) {
     $entity_bundles = array();
     foreach ($bundles[$entity_type_id] as $bundle => $bundle_info) {
