@@ -1888,13 +1888,13 @@ function xmlsitemap_link_frontpage_settings(&$form) {
   if (\Drupal::currentUser()->hasPermission('administer site configuration')) {
     $form['#description'] = t('The front page path can be changed in the <a href="@url-frontpage">site information configuration</a>.', array('@url-frontpage' => Url::fromRoute('system.site_information_settings')->toString()));
   }
-  $form['xmlsitemap_frontpage_priority'] = array(
+  $form['frontpage_priority'] = array(
     '#type' => 'select',
     '#title' => t('Priority'),
     '#options' => xmlsitemap_get_priority_options(),
     '#default_value' => \Drupal::config('xmlsitemap.settings')->get('frontpage_priority'),
   );
-  $form['xmlsitemap_frontpage_changefreq'] = array(
+  $form['frontpage_changefreq'] = array(
     '#type' => 'select',
     '#title' => t('Change frequency'),
     '#options' => xmlsitemap_get_changefreq_options(),

@@ -252,19 +252,21 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     // Save any changes to the frontpage link.
     $config = $this->config('xmlsitemap.settings');
+
+    // Remove button and internal Form API values from submitted values.
+    $form_state->cleanValues();
+
     $values = $form_state->getValues();
+
     if (isset($form['frontpage'])) {
-      $frontpage_priority = $values['xmlsitemap_frontpage_priority'];
-      $frontpage_changefreq = $values['xmlsitemap_frontpage_changefreq'];
-      $config->set('frontpage_priority', $frontpage_priority);
-      $config->set('frontpage_changefreq', $frontpage_changefreq);
-      $config->save();
-      $this->linkStorage->save(array('type' => 'frontpage', 'id' => 0, 'loc' => '', 'subtype' => '', 'priority' => $frontpage_priority, 'changefreq' => $frontpage_changefreq));
+      $this->linkStorage->save(array('type' => 'frontpage', 'id' => 0, 'loc' => '', 'subtype' => '', 'priority' => $values['frontpage_priority'], 'changefreq' => $values['frontpage_changefreq']));
     }
     $this->state->set('xmlsitemap_developer_mode', $values['xmlsitemap_developer_mode']);
     $this->state->set('xmlsitemap_base_url', $values['xmlsitemap_base_url']);
+
     unset($values['xmlsitemap_developer_mode']);
     unset($values['xmlsitemap_base_url']);
+
     foreach ($values as $key => $value) {
       $config->set($key, $value);
     }
