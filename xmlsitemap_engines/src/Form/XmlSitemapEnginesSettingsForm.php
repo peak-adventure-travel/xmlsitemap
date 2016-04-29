@@ -70,6 +70,15 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
+  protected function getEditableConfigNames() {
+    return [
+      'xmlsitemap_engines.settings',
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, FormStateInterface $form_state) {
     // Build the list of support engines for the checkboxes options.
     $engines = xmlsitemap_engines_get_engine_info();
@@ -111,7 +120,7 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
       '#wysiwyg' => FALSE,
     );
 
-    // Ensure the xmlsitemap_engines variable gets filterd to a simple array.
+    // Ensure the xmlsitemap_engines variable gets filtered to a simple array.
     $form['array_filter'] = array('#type' => 'value', '#value' => TRUE);
     return parent::buildForm($form, $form_state);
   }
@@ -120,6 +129,7 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
+    parent::validateForm($form, $form_state);
     $custom_urls = $form_state->getValue('custom_urls');
     $custom_urls = preg_split('/[\r\n]+/', $custom_urls, -1, PREG_SPLIT_NO_EMPTY);
     foreach ($custom_urls as $custom_url) {
@@ -129,33 +139,32 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
       }
     }
     $custom_urls = implode("\n", $custom_urls);
-    $form_state->setValue('custom_urls', $custom_ruls);
-    parent::validateForm($form, $form_state);
+    $form_state->setValue('custom_urls', $custom_urls);
   }
 
   /**
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+    parent::submitForm($form, $form_state);
     $state_variables = xmlsitemap_engines_state_variables();
-    $config_variables = xmlsitemap_engines_config_variables();
     $keys = array(
       'engines',
       'minimum_lifetime',
       'xmlsitemap_engines_submit_updated',
       'custom_urls',
     );
+    $config = $this->config('xmlsitemap_engines.settings');
     $values = $form_state->getValues();
     foreach ($keys as $key) {
       if (isset($state_variables[$key])) {
         $this->state->set($key, $values[$key]);
       }
       else {
-        $this->config('xmlsitemap_engines.settings')->set($key, $values[$key]);
+        $config->set($key, $values[$key]);
       }
     }
-    $this->config('xmlsitemap_engines.settings')->save();
-    parent::submitForm($form, $form_state);
+    $config->save();
   }
 
 }

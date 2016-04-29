@@ -122,14 +122,10 @@ function xmlsitemap_engines_submit_sitemaps($url, array $sitemaps) {
     $submit_url = xmlsitemap_engines_prepare_url($url, $sitemap_url);
     try {
       $request = \Drupal::httpClient()->get($submit_url);
-      $data = $request->getBody();
-      $message = t('Submitted the sitemap to %url and received response @code.', array('%url' => $submit_url, '@code' => $request->getStatusCode()));
-      \Drupal::logger('xmlsitemap')->debug($message);
+      \Drupal::logger('xmlsitemap')->notice('Submitted the sitemap to %url and received response @code.', array('%url' => $submit_url, '@code' => $request->getStatusCode()));
     }
     catch (RequestException $ex) {
-      $message = t('Submitted the sitemap to %url and received response @code.', array('%url' => $submit_url, '@code' => '404'));
-      \Drupal::logger('xmlsitemap')->debug($message);
-      //watchdog_exception('xmlsitemap', 'Submitted the sitemap to %url failed with response @code.',array('%url' => $submit_url,'@code' => '404'));
+      \Drupal::logger('xmlsitemap')->alert('Submitted the sitemap to %url and received response @code.', array('%url' => $submit_url, '@code' => '404'));
     }
   }
 }
@@ -200,18 +196,6 @@ function xmlsitemap_engines_xmlsitemap_engine_info() {
     'help url' => 'http://www.bing.com/webmaster',
   );
   return $engines;
-}
-
-/**
- * Internal default config variables.
- */
-function xmlsitemap_engines_config_variables() {
-  $variables = array(
-    'engines' => array(),
-    'custom_urls' => '',
-    'minimum_lifetime' => 86400,
-  );
-  return $variables;
 }
 
 /**
