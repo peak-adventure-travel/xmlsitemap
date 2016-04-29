@@ -743,20 +743,6 @@ function xmlsitemap_get_link_type_indexed_status($entity_type_id, $bundle = '') 
 }
 
 /**
- * Implements hook_entity_query_alter().
- *
- * @todo Remove when http://drupal.org/node/1054168 is fixed.
- */
-function xmlsitemap_entity_query_alter($query) {
-  $conditions = &$query->entityConditions;
-
-  // Alter user entity queries only.
-  if (isset($conditions['entity_type']) && $conditions['entity_type']['value'] == 'user' && isset($conditions['bundle'])) {
-    unset($conditions['bundle']);
-  }
-}
-
-/**
  * Saves xmlsitemap settings for a specific bundle.
  *
  * @param string $entity
@@ -1863,15 +1849,19 @@ function xmlsitemap_xmlsitemap_sitemap_operations() {
 
 /**
  * Implements hook_query_TAG_alter().
+ *
+ * @todo Check if this query alter is still needed.
  */
 function xmlsitemap_query_xmlsitemap_link_bundle_access_alter(AlterableInterface $query) {
-  if ($query instanceof QueryInterface && $entity = $query->getMetaData('entity')) {
-    $info = $query->getMetaData('entity_info');
-    $bundle = $query->getMetaData('bundle');
-    if (empty($bundle)) {
-      $bundle = xmlsitemap_get_link_type_enabled_bundles($entity);
+  if ($query instanceof QueryInterface && $entity_type_id = $query->getMetaData('entity_type_id')) {
+    $entity_type = \Drupal::entityTypeManager()->getDefinition($entity_type_id);
+    if ($entity_type->hasKey('bundle')) {
+      $bundle = $query->getMetaData('bundle');
+      if (empty($bundle)) {
+        $bundle = xmlsitemap_get_link_type_enabled_bundles($entity_type_id);
+      }
+      $query->condition($entity_type->getKey('bundle'), $bundle, is_array($bundle) ? 'IN' : '=');
     }
-    $query->entityCondition('bundle', $bundle, is_array($bundle) ? 'IN' : '=');
   }
 }
 
