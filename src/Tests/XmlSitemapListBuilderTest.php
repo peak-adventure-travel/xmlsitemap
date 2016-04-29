@@ -7,7 +7,7 @@
 
 namespace Drupal\xmlsitemap\Tests;
 
-use Drupal\Core\Language\Language;
+use Drupal\language\Entity\ConfigurableLanguage;
 
 /**
  * Tests the sitemaps list builder.
@@ -33,25 +33,18 @@ class XmlSitemapListBuilderTest extends XmlSitemapTestBase {
     $this->languageManager = \Drupal::languageManager();
     if (!$this->languageManager->getLanguage('fr')) {
       // Add a new language.
-      $language = new Language(array(
-        'id' => 'fr',
-        'name' => 'French',
-      ));
-      language_save($language);
+      ConfigurableLanguage::createFromLangcode('fr')->save();
     }
 
     if (!$this->languageManager->getLanguage('en')) {
       // Add a new language.
-      $language = new Language(array(
-        'id' => 'en',
-        'name' => 'English',
-      ));
-      language_save($language);
+      ConfigurableLanguage::createFromLangcode('en')->save();
     }
     $edit = array(
       'site_default_language' => 'en',
     );
-    $this->drupalPostForm('admin/config/regional/settings', $edit, t('Save configuration'));
+    $this->drupalPostForm('admin/config/regional/language', $edit, t('Save configuration'));
+
     // Enable URL language detection and selection.
     $edit = array('language_interface[enabled][language-url]' => '1');
     $this->drupalPostForm('admin/config/regional/language/detection', $edit, t('Save settings'));

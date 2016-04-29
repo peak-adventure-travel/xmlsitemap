@@ -17,7 +17,7 @@ class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['system', 'entity_test'];
+  public static $modules = ['node', 'system', 'entity_test'];
 
   /**
    * {@inheritdoc}
@@ -41,10 +41,10 @@ class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
     $this->drupalGet('admin/config/search/xmlsitemap/entities/settings');
     $this->assertResponse(200);
     $this->assertField('entity_types[entity_test]');
-    $this->assertField('settings[entity_test][entity_test][settings][bundle]');
+    $this->assertField('settings[entity_test][types][entity_test]');
     $edit = array(
       'entity_types[entity_test]' => 1,
-      'settings[entity_test][entity_test][settings][bundle]' => 1,
+      'settings[entity_test][types][entity_test]' => 1,
     );
     $this->drupalPostForm(NULL, $edit, t('Save'));
     $this->assertText(t('The configuration options have been saved.'));
