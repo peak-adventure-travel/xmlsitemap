@@ -209,7 +209,7 @@ function xmlsitemap_modules_uninstalled(array $modules) {
  * Implements hook_robotstxt().
  */
 function xmlsitemap_robotstxt() {
-  $sitemap_storage = \Drupal::entityManager()->getStorage('xmlsitemap');
+  $sitemap_storage = \Drupal::entityTypeManager()->getStorage('xmlsitemap');
   if ($sitemap = $sitemap_storage->loadByContext()) {
     $uri = xmlsitemap_sitemap_uri($sitemap);
     $robotstxt[] = 'Sitemap: ' . Url::fromUri($uri['path'], $uri['options'])->toString();
@@ -317,7 +317,7 @@ function xmlsitemap_sitemap_load_multiple($smids = array(), array $conditions = 
   else {
     $conditions['smid'] = NULL;
   }
-  $storage = Drupal::entityManager()->getStorage('xmlsitemap');
+  $storage = Drupal::entityTypeManager()->getStorage('xmlsitemap');
 
   $sitemaps = $storage->loadMultiple($conditions['smid']);
   if (count($sitemaps) <= 0) {
@@ -622,21 +622,21 @@ function xmlsitemap_get_link_info($type = NULL, $reset = FALSE) {
       $link_info = $cache->data;
     }
     else {
-      \Drupal::entityManager()->clearCachedDefinitions();
+      \Drupal::entityTypeManager()->clearCachedDefinitions();
       $link_info = array();
-      $entity_types = \Drupal::entityManager()->getDefinitions();
+      $entity_types = \Drupal::entityTypeManager()->getDefinitions();
       foreach ($entity_types as $key => $entity_type) {
         $link_info[$key] = array(
           'label' => $entity_type->getLabel(),
           'type' => $entity_type->id(),
           'base table' => $entity_type->getBaseTable(),
-          'bundles' => \Drupal::entityManager()->getBundleInfo($entity_type->id()),
+          'bundles' => \Drupal::entityTypeManager()->getBundleInfo($entity_type->id()),
         );
         $uri_callback = $entity_type->getUriCallback();
         if (empty($uri_callback) || !isset($entity_type->xmlsitemap)) {
           // Remove any non URL-able or XML sitemap un-supported entites.
         }
-        foreach (\Drupal::entityManager()->getBundleInfo($entity_type->id()) as $bundle_key => $bundle) {
+        foreach (\Drupal::entityTypeManager()->getBundleInfo($entity_type->id()) as $bundle_key => $bundle) {
           if (!isset($bundle['xmlsitemap'])) {
             // Remove any un-supported entity bundles.
           }
@@ -1548,8 +1548,8 @@ function xmlsitemap_form_alter(array &$form, FormStateInterface $form_state, $fo
  * Implements hook_xmlsitemap_index_links().
  */
 function xmlsitemap_xmlsitemap_index_links($limit) {
-  $entity_types = \Drupal::entityManager()->getDefinitions();
-  $bundles = \Drupal::entityManager()->getAllBundleInfo();
+  $entity_types = \Drupal::entityTypeManager()->getDefinitions();
+  $bundles = \Drupal::entityTypeManager()->getAllBundleInfo();
   foreach ($entity_types as $entity_type_id => $entity_type) {
     $entity_bundles = array();
     foreach ($bundles[$entity_type_id] as $bundle => $bundle_info) {
@@ -1562,7 +1562,7 @@ function xmlsitemap_xmlsitemap_index_links($limit) {
       continue;
     }
     try {
-      $query = \Drupal::entityManager()->getStorage($entity_type_id)->getQuery();
+      $query = \Drupal::entityTypeManager()->getStorage($entity_type_id)->getQuery();
       $query->range(0, $limit);
       if ($entity_type->get('type')) {
         $query->condition('type', $entity_bundles, 'IN');
@@ -2373,7 +2373,7 @@ function _xmlsitemap_regenerate_before() {
  */
 function xmlsitemap_regenerate_batch(array $smids = array()) {
   if (empty($smids)) {
-    $sitemaps = \Drupal::entityManager()->getStorage('xmlsitemap')->loadMultiple();
+    $sitemaps = \Drupal::entityTypeManager()->getStorage('xmlsitemap')->loadMultiple();
     foreach ($sitemaps as $sitemap) {
       $smids[] = $sitemap->id();
     }

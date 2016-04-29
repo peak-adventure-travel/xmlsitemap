@@ -86,7 +86,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
     $this->state = \Drupal::state();
     $this->config = \Drupal::configFactory()->get('xmlsitemap.settings');
     $this->moduleHandler = \Drupal::moduleHandler();
-    $this->entityManager = \Drupal::entityManager();
+    $this->entityManager = \Drupal::entityTypeManager();
     $this->languageManager = \Drupal::languageManager();
     $this->linkStorage = \Drupal::service('xmlsitemap.link_storage');
   }

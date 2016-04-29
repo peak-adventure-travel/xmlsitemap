@@ -30,7 +30,7 @@ function xmlsitemap_requirements($phase) {
       'severity' => REQUIREMENT_ERROR,
       'description' => $t("The XML sitemap module requires you to enable the PHP extensions in the following list (see the <a href=\"@xmlsitemap_requirements\">module's system requirements page</a> for more information):", array(
         '@xmlsitemap_requirements' => 'http://drupal.org/documentation/modules/xmlsitemap/requirements',
-      )) . drupal_render($items),
+      )) . \Drupal::service('renderer')->render($items),
     );
   }
 
@@ -67,7 +67,7 @@ function xmlsitemap_requirements($phase) {
         $items = array('#type' => 'item_list', 'items' => array_keys($directories));
         $requirements['xmlsitemap_directory']['value'] = $t('Not found or not writable');
         $requirements['xmlsitemap_directory']['severity'] = REQUIREMENT_ERROR;
-        $requirements['xmlsitemap_directory']['description'] = $t('The following directories were not found or are not writable by the server. See <a href="@docpage">@docpage</a> for more information. @directories', array('@directories' => drupal_render($items), '@docpage' => 'http://drupal.org/node/34025'));
+        $requirements['xmlsitemap_directory']['description'] = $t('The following directories were not found or are not writable by the server. See <a href="@docpage">@docpage</a> for more information. @directories', array('@directories' => \Drupal::service('renderer')->render($items), '@docpage' => 'http://drupal.org/node/34025'));
       }
     }
     $sitemaps = xmlsitemap_sitemap_load_multiple();
@@ -298,7 +298,7 @@ function xmlsitemap_install() {
   \Drupal::state()->setMultiple($state_variables);
   \Drupal::state()->set('xmlsitemap_base_url', Url::fromRoute('<front>', [], array('absolute' => TRUE))->toString());
   $context = xmlsitemap_get_current_context();
-  $sitemap = \Drupal::entityManager()->getStorage('xmlsitemap')->create(array(
+  $sitemap = \Drupal::entityTypeManager()->getStorage('xmlsitemap')->create(array(
     'id' => xmlsitemap_sitemap_get_context_hash($context),
   ));
   $sitemap->context = xmlsitemap_get_current_context();
@@ -328,8 +328,8 @@ function xmlsitemap_uninstall() {
   // Remove the file cache directory.
   xmlsitemap_clear_directory(NULL, TRUE);
 
-  $entities = \Drupal::entityManager()->getDefinitions();
-  $bundles = \Drupal::entityManager()->getAllBundleInfo();
+  $entities = \Drupal::entityTypeManager()->getDefinitions();
+  $bundles = \Drupal::entityTypeManager()->getAllBundleInfo();
 
   $state_variables = array();
   foreach ($entities as $entity_id => $entity) {
