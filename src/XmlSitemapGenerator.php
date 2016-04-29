@@ -440,11 +440,10 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
     $query->range(0, $limit);
 
     $result = $query->execute();
-    $ids = array_keys($result[$entity_type_id]);
 
-    $info['xmlsitemap']['process callback']($ids);
-    $context['sandbox']['last_id'] = end($ids);
-    $context['sandbox']['progress'] += count($ids);
+    $info['xmlsitemap']['process callback']($entity_type_id, $result);
+    $context['sandbox']['last_id'] = end($result);
+    $context['sandbox']['progress'] += count($result);
     $context['message'] = t('Now processing %entity_type_id @last_id (@progress of @count).', array('%entity_type_id' => $entity_type_id, '@last_id' => $context['sandbox']['last_id'], '@progress' => $context['sandbox']['progress'], '@count' => $context['sandbox']['max']));
 
     if ($context['sandbox']['progress'] >= $context['sandbox']['max']) {

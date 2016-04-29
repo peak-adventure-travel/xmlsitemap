@@ -89,6 +89,12 @@ abstract class XmlSitemapTestBase extends WebTestBase {
     $this->entityManager = \Drupal::entityTypeManager();
     $this->languageManager = \Drupal::languageManager();
     $this->linkStorage = \Drupal::service('xmlsitemap.link_storage');
+
+    // Create the Article and Page content types.
+    if ($this->profile != 'standard') {
+      $this->drupalCreateContentType(['type' => 'article', 'name' => 'Article']);
+      $this->drupalCreateContentType(['type' => 'page', 'name' => 'Page']);
+    }
   }
 
   /**
