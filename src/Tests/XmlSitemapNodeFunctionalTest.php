@@ -44,9 +44,6 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
 
     xmlsitemap_link_bundle_enable('node', 'article');
     xmlsitemap_link_bundle_enable('node', 'page');
-//    $this->config->set('xmlsitemap_entity_taxonomy_vocabulary', 1);
-//    $this->config->set('xmlsitemap_entity_taxonomy_term', 1);
-//    $this->config->save();
     xmlsitemap_link_bundle_settings_save('node', 'page', array('status' => 1, 'priority' => 0.6, 'changefreq' => XMLSITEMAP_FREQUENCY_WEEKLY));
 
     // Add a vocabulary so we can test different view modes.
