@@ -3,6 +3,9 @@
 namespace Drupal\xmlsitemap\Tests;
 
 use Drupal\Component\Utility\Unicode;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\taxonomy\Entity\Vocabulary;
+use Drupal\user\Entity\Role;
 
 /**
  * Tests the generation of taxonomy links.
@@ -25,7 +28,7 @@ class XmlSitemapTaxonomyFunctionalTest extends XmlSitemapTestBase {
     xmlsitemap_link_bundle_enable('taxonomy_vocabulary', 'taxonomy_vocabulary');
 
     // allow anonymous user to view user profiles
-    $user_role = entity_load('user_role', DRUPAL_ANONYMOUS_RID);
+    $user_role = Role::load(AccountInterface::ANONYMOUS_ROLE);
     $user_role->grantPermission('administer taxonomy');
     $user_role->save();
 
@@ -50,7 +53,7 @@ class XmlSitemapTaxonomyFunctionalTest extends XmlSitemapTestBase {
     $this->drupalPostForm(NULL, $edit, t('Save'));
     $this->assertText("Created new vocabulary {$edit['name']}.");
 
-    $vocabulary = \Drupal\taxonomy\Entity\Vocabulary::load($edit['vid']);
+    $vocabulary = Vocabulary::load($edit['vid']);
 
     xmlsitemap_link_bundle_enable('taxonomy_term', $vocabulary->id());
 

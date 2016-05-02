@@ -16,7 +16,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
    *
    * @var array
    */
-  public static $modules = ['xmlsitemap'];
+  public static $modules = ['node', 'system', 'user', 'xmlsitemap'];
 
   /**
    * The admin user account.
@@ -72,16 +72,29 @@ abstract class XmlSitemapTestBase extends WebTestBase {
    */
   protected function setUp() {
     parent::setUp();
+
     $this->state = \Drupal::state();
-    $this->config = \Drupal::configFactory()->get('xmlsitemap.settings');
+    $this->config = \Drupal::configFactory()->getEditable('xmlsitemap.settings');
     $this->moduleHandler = \Drupal::moduleHandler();
     $this->languageManager = \Drupal::languageManager();
     $this->linkStorage = \Drupal::service('xmlsitemap.link_storage');
 
     // Create the Article and Page content types.
     if ($this->profile != 'standard') {
-      $this->drupalCreateContentType(['type' => 'article', 'name' => 'Article']);
-      $this->drupalCreateContentType(['type' => 'page', 'name' => 'Page']);
+      $this->drupalCreateContentType([
+        'type' => 'article',
+        'name' => 'Article',
+      ]);
+      $this->drupalCreateContentType([
+      'type' => 'page',
+      'name' => 'Basic page',
+      'settings' => [
+        // Set proper default options for the page content type.
+        'node' => [
+          'options' => ['promote' => FALSE],
+          'submitted' => FALSE,
+        ],
+      ]]);
     }
   }
 
@@ -231,7 +244,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   protected function assertRawSitemapLinks() {
     $links = func_get_args();
     foreach ($links as $link) {
-      $path = Url::fromUri($link['loc'], array('language' => xmlsitemap_language_load($link['language']), 'absolute' => TRUE));
+      $path = Url::fromUri('base://' . $link['loc'], array('language' => xmlsitemap_language_load($link['language']), 'absolute' => TRUE))->toString();
       $this->assertRaw($link['loc'], t('Link %path found in the sitemap.', array('%path' => $path)));
     }
   }
@@ -239,7 +252,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   protected function assertNoRawSitemapLinks() {
     $links = func_get_args();
     foreach ($links as $link) {
-      $path = Url::fromUri($link['loc'], array('language' => xmlsitemap_language_load($link['language']), 'absolute' => TRUE));
+      $path = Url::fromUri('base://' . $link['loc'], array('language' => xmlsitemap_language_load($link['language']), 'absolute' => TRUE))->toString();
       $this->assertNoRaw($link['loc'], t('Link %path not found in the sitemap.', array('%path' => $path)));
     }
   }
@@ -249,6 +262,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
 
     $link += array(
       'type' => 'testing',
+      'subtype' => '',
       'id' => $last_id,
       'access' => 1,
       'status' => 1,

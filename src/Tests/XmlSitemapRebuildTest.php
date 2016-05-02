@@ -1,6 +1,8 @@
 <?php
 
 namespace Drupal\xmlsitemap\Tests;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\user\Entity\Role;
 
 /**
  * Tests the rebuild process of sitemaps.
@@ -12,7 +14,7 @@ class XmlSitemapRebuildTest extends XmlSitemapTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['path', 'node', 'system', 'user', 'help', 'block'];
+  public static $modules = ['path', 'help', 'block'];
 
   /**
    * {@inheritdoc}
@@ -22,10 +24,10 @@ class XmlSitemapRebuildTest extends XmlSitemapTestBase {
 
     $this->admin_user = $this->drupalCreateUser(array('administer xmlsitemap', 'access administration pages', 'access site reports', 'administer users', 'administer permissions'));
 
-    $this->drupalPlaceBlock('system_help_block', array('region' => 'help'));
+    $this->drupalPlaceBlock('help_block', array('region' => 'help'));
 
     // allow anonymous user to view user profiles
-    $user_role = entity_load('user_role', DRUPAL_ANONYMOUS_RID);
+    $user_role = Role::load(AccountInterface::ANONYMOUS_ROLE);
     $user_role->grantPermission('access user profiles');
     $user_role->save();
   }

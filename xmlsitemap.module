@@ -1538,6 +1538,11 @@ function xmlsitemap_xmlsitemap_index_links($limit) {
   $entity_types = \Drupal::entityTypeManager()->getDefinitions();
   $bundles = \Drupal::service('entity_type.bundle.info')->getAllBundleInfo();
   foreach ($entity_types as $entity_type_id => $entity_type) {
+    // Don't try to loop over entity types with no bundle defined.
+    if (!isset($bundles[$entity_type_id])) {
+      continue;
+    }
+
     $entity_bundles = array();
     foreach ($bundles[$entity_type_id] as $bundle => $bundle_info) {
       if (!xmlsitemap_link_bundle_check_enabled($entity_type_id, $bundle)) {

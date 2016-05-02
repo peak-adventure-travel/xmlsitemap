@@ -2,6 +2,9 @@
 
 namespace Drupal\xmlsitemap\Tests;
 
+use Drupal\Core\Session\AccountInterface;
+use Drupal\user\Entity\Role;
+
 /**
  * Tests the generation of user links.
  *
@@ -14,16 +17,11 @@ class XmlSitemapUserFunctionalTest extends XmlSitemapTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['user', 'node', 'system'];
-
-  /**
-   * {@inheritdoc}
-   */
   protected function setUp() {
     parent::setUp();
 
     // allow anonymous user to view user profiles
-    $user_role = entity_load('user_role', DRUPAL_ANONYMOUS_RID);
+    $user_role = Role::load(AccountInterface::ANONYMOUS_ROLE);
     $user_role->grantPermission('access user profiles');
     $user_role->save();
 

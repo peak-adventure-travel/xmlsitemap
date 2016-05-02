@@ -87,7 +87,7 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
     $bundles = $this->entityTypeBundleInfo->getAllBundleInfo();
 
     foreach ($entity_types as $entity_type_id => $entity_type) {
-      if (!$entity_type instanceof ContentEntityTypeInterface) {
+      if (!$entity_type instanceof ContentEntityTypeInterface || !isset($bundles[$entity_type_id])) {
         continue;
       }
 

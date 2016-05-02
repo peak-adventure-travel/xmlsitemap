@@ -2,7 +2,12 @@
 
 namespace Drupal\xmlsitemap\Tests;
 
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\user\Entity\Role;
 
 /**
  * Tests the generation of node links.
@@ -14,7 +19,7 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['node', 'taxonomy'];
+  public static $modules = ['taxonomy'];
 
   /**
    * Nodes created during the test for testCron() method.
@@ -29,32 +34,19 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
   protected function setUp() {
     parent::setUp();
 
-    if ($this->profile != 'standard') {
-      $this->drupalCreateContentType(array(
-      'type' => 'page',
-      'name' => 'Basic page',
-      'settings' => array(
-          // Set proper default options for the page content type.
-        'node' => array(
-          'options' => array('promote' => FALSE),
-          'submitted' => FALSE,
-        ), )));
-          $this->drupalCreateContentType(array('type' => 'article', 'name' => 'Article'));
-    }
-
     $this->admin_user = $this->drupalCreateUser(array('administer nodes', 'bypass node access', 'administer content types', 'administer xmlsitemap', 'administer taxonomy'));
     $this->normal_user = $this->drupalCreateUser(array('create page content', 'edit any page content', 'access content', 'view own unpublished content'));
 
     // allow anonymous user to view user profiles
-    $user_role = entity_load('user_role', DRUPAL_ANONYMOUS_RID);
+    $user_role = Role::load(AccountInterface::ANONYMOUS_ROLE);
     $user_role->grantPermission('access content');
     $user_role->save();
 
     xmlsitemap_link_bundle_enable('node', 'article');
     xmlsitemap_link_bundle_enable('node', 'page');
-    $this->config->set('xmlsitemap_entity_taxonomy_vocabulary', 1);
-    $this->config->set('xmlsitemap_entity_taxonomy_term', 1);
-    $this->config->save();
+//    $this->config->set('xmlsitemap_entity_taxonomy_vocabulary', 1);
+//    $this->config->set('xmlsitemap_entity_taxonomy_term', 1);
+//    $this->config->save();
     xmlsitemap_link_bundle_settings_save('node', 'page', array('status' => 1, 'priority' => 0.6, 'changefreq' => XMLSITEMAP_FREQUENCY_WEEKLY));
 
     // Add a vocabulary so we can test different view modes.
@@ -70,41 +62,37 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
     xmlsitemap_link_bundle_enable('taxonomy_term', 'tags');
     // Set up a field and instance.
     $field_name = 'tags';
-    entity_create('field_storage_config', array(
-      'name' => $field_name,
+    FieldStorageConfig::create([
+      'field_name' => $field_name,
       'entity_type' => 'node',
-      'type' => 'taxonomy_term_reference',
+      'type' => 'entity_reference',
       'settings' => array(
-        'allowed_values' => array(
-          array(
-            'vocabulary' => $vocabulary->vid,
-            'parent' => '0',
-          ),
-        ),
+        'target_type' => 'taxonomy_term',
       ),
-      'cardinality' => '-1',
-    ))->save();
-    entity_create('field_instance_config', array(
+      'cardinality' => FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED,
+    ])->save();
+    FieldConfig::create([
       'field_name' => $field_name,
       'entity_type' => 'node',
       'bundle' => 'page',
-    ))->save();
+
+    ])->save();
 
     entity_get_form_display('node', 'page', 'default')
         ->setComponent($field_name, array(
-          'type' => 'taxonomy_autocomplete',
+          'type' => 'entity_reference_autocomplete_tags',
         ))
         ->save();
 
     // Show on default display and teaser.
     entity_get_display('node', 'page', 'default')
         ->setComponent($field_name, array(
-          'type' => 'taxonomy_term_reference_link',
+          'type' => 'entity_reference_label',
         ))
         ->save();
     entity_get_display('node', 'page', 'teaser')
         ->setComponent($field_name, array(
-          'type' => 'taxonomy_term_reference_link',
+          'type' => 'entity_reference_label',
         ))
         ->save();
   }
@@ -119,7 +107,7 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
     $edit = array();
     $edit[$title_key] = $this->randomMachineName(8);
     $edit[$body_key] = $this->randomMachineName(16);
-    $edit['tags'] = 'tag1, tag2, tag3';
+    $edit['tags[target_id]'] = 'tag1, tag2, tag3';
     $this->drupalPostForm('node/add/page', $edit, t('Save and publish'));
 
     $tags = entity_load_multiple('taxonomy_term');
@@ -198,25 +186,13 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
     $this->assertSitemapLinkValues('node', $node->id(), array('status' => 0, 'priority' => 0.0));
     $this->assertSitemapLinkValues('node', $node_old->id(), array('status' => 0, 'priority' => 0.0));
 
-    $edit = array(
-      'type' => 'page2',
-    );
-    $this->drupalPostForm('admin/structure/types/manage/page', $edit, t('Save content type'));
-    $this->assertText('Changed the content type of 2 posts from page to page2.');
-    $this->assertText('The content type Basic page has been updated.');
-
-    $this->assertSitemapLinkValues('node', $node->id(), array('subtype' => 'page2', 'status' => 0, 'priority' => 0.0));
-    $this->assertSitemapLinkValues('node', $node_old->id(), array('subtype' => 'page2', 'status' => 0, 'priority' => 0.0));
-    $this->assertEqual(count($this->linkStorage->loadMultiple(array('type' => 'node', 'subtype' => 'page'))), 0);
-    $this->assertEqual(count($this->linkStorage->loadMultiple(array('type' => 'node', 'subtype' => 'page2'))), 2);
-
-    // delete all pages in order to allow content type deletion
+    // Delete all pages in order to allow content type deletion.
     $node->delete();
     $node_old->delete();
 
-    $this->drupalPostForm('admin/structure/types/manage/page2/delete', array(), t('Delete'));
+    $this->drupalPostForm('admin/structure/types/manage/page/delete', array(), t('Delete'));
     $this->assertText('The content type Basic page has been deleted.');
-    $this->assertFalse($this->linkStorage->loadMultiple(array('type' => 'node', 'subtype' => 'page2')), 'Nodes with deleted node type removed from {xmlsitemap}.');
+    $this->assertFalse($this->linkStorage->loadMultiple(array('type' => 'node', 'subtype' => 'page')), 'Nodes with deleted node type removed from {xmlsitemap}.');
   }
 
   /**

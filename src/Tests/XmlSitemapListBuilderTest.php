@@ -14,7 +14,7 @@ class XmlSitemapListBuilderTest extends XmlSitemapTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['language', 'node', 'locale', 'content_translation', 'system'];
+  public static $modules = ['language', 'locale', 'content_translation'];
 
   /**
    * {@inheritdoc}
@@ -96,7 +96,7 @@ class XmlSitemapListBuilderTest extends XmlSitemapTestBase {
     foreach ($sitemaps as $sitemap) {
       $label = $sitemap->label();
       $this->drupalPostForm("admin/config/search/xmlsitemap/{$sitemap->id()}/delete", array(), t('Delete'));
-      $this->assertRaw(t("Sitemap :label has been deleted.", array(':label' => $label)));
+      $this->assertRaw(t("Sitemap %label has been deleted.", array('%label' => $label)));
     }
 
     $sitemaps = entity_load_multiple('xmlsitemap');

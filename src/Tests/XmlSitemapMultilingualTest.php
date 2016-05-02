@@ -14,11 +14,6 @@ class XmlSitemapMultilingualTest extends XmlSitemapMultilingualTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['language', 'node', 'locale', 'content_translation', 'system'];
-
-  /**
-   * {@inheritdoc}
-   */
   protected function setUp() {
     parent::setUp();
 
@@ -26,7 +21,8 @@ class XmlSitemapMultilingualTest extends XmlSitemapMultilingualTestBase {
     $edit = array(
       'site_default_language' => 'en',
     );
-    $this->drupalPostForm('admin/config/regional/settings', $edit, t('Save configuration'));
+    $this->drupalPostForm('admin/config/regional/language', $edit, t('Save configuration'));
+
     // Enable URL language detection and selection.
     $edit = array('language_interface[enabled][language-url]' => '1');
     $this->drupalPostForm('admin/config/regional/language/detection', $edit, t('Save settings'));

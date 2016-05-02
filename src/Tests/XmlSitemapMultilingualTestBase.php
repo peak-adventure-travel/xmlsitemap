@@ -2,20 +2,18 @@
 
 namespace Drupal\xmlsitemap\Tests;
 
-use Drupal\Core\Language\Language;
+use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\xmlsitemap\Entity\XmlSitemap;
 
 /**
  * Common base test class for XML sitemap internationalization tests.
- *
- * @group xmlsitemap
  */
 abstract class XmlSitemapMultilingualTestBase extends XmlSitemapTestBase {
 
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['language', 'node', 'locale', 'content_translation', 'system'];
+  public static $modules = ['language', 'locale', 'content_translation'];
 
   /**
    * Set up an administrative user account and testing keys.
@@ -29,23 +27,16 @@ abstract class XmlSitemapMultilingualTestBase extends XmlSitemapTestBase {
 
     if (!$this->languageManager->getLanguage('fr')) {
       // Add a new language.
-      $language = new Language(array(
-        'id' => 'fr',
-        'name' => 'French',
-      ));
-      language_save($language);
+      ConfigurableLanguage::createFromLangcode('fr')->save();
     }
 
     if (!$this->languageManager->getLanguage('en')) {
       // Add a new language.
-      $language = new Language(array(
-        'id' => 'en',
-        'name' => 'English',
-      ));
-      language_save($language);
+      ConfigurableLanguage::createFromLangcode('en')->save();
     }
+
     // Create the two different language-context sitemaps.
-    $previous_sitemaps = entity_load_multiple('xmlsitemap');
+    $previous_sitemaps = XmlSitemap::loadMultiple();
     foreach ($previous_sitemaps as $previous_sitemap) {
       $previous_sitemap->delete();
     }

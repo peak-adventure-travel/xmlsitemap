@@ -2,7 +2,9 @@
 
 namespace Drupal\xmlsitemap\Tests;
 
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Component\Utility\Unicode;
+use Drupal\user\Entity\Role;
 
 /**
  * Tests the generation of menu links.
@@ -14,7 +16,7 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['node', 'menu_link_content', 'menu_ui', 'system'];
+  public static $modules = ['menu_link_content', 'menu_ui'];
 
   /**
    * {@inheritdoc}
@@ -22,21 +24,8 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
   protected function setUp() {
     parent::setUp();
 
-    if ($this->profile != 'standard') {
-      $this->drupalCreateContentType(array(
-      'type' => 'page',
-      'name' => 'Basic page',
-      'settings' => array(
-          // Set proper default options for the page content type.
-        'node' => array(
-          'options' => array('promote' => FALSE),
-          'submitted' => FALSE,
-        ), )));
-          $this->drupalCreateContentType(array('type' => 'article', 'name' => 'Article'));
-    }
-
     // allow anonymous user to administer menu links
-    $user_role = entity_load('user_role', DRUPAL_ANONYMOUS_RID);
+    $user_role = Role::load(AccountInterface::ANONYMOUS_ROLE);
     $user_role->grantPermission('administer menu');
     $user_role->grantPermission('access content');
     $user_role->save();
@@ -74,7 +63,7 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
     $menu_id = $edit['id'];
     $this->clickLink('Add link');
     $edit = array(
-      'url' => 'node',
+      'link[0][uri]' => 'node',
       'title[0][value]' => $this->randomMachineName(),
       'description[0][value]' => '',
       'enabled[value]' => 1,

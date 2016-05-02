@@ -12,7 +12,7 @@ class XmlSitemapFunctionalTest extends XmlSitemapTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['path', 'node', 'system', 'user', 'help'];
+  public static $modules = ['path', 'help'];
 
   /**
    * {@inheritdoc}

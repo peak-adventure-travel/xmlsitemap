@@ -12,11 +12,6 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['node', 'system'];
-
-  /**
-   * {@inheritdoc}
-   */
   protected function setUp() {
     parent::setUp();
 
@@ -150,7 +145,7 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
    * Tests for XmlSitemapLinkStorage::save().
    */
   public function testSaveLink() {
-    $link = array('type' => 'testing', 'id' => 1, 'loc' => 'testing', 'status' => 1);
+    $link = array('type' => 'testing', 'subtype' => '', 'id' => 1, 'loc' => 'testing', 'status' => 1);
     $this->linkStorage->save($link);
     $this->assertFlag('xmlsitemap_regenerate_needed', TRUE);
 

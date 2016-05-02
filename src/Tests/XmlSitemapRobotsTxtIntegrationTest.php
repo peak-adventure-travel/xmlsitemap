@@ -5,7 +5,7 @@ namespace Drupal\xmlsitemap\Tests;
 use Drupal\Core\Url;
 
 /**
- * Tests the robots.txt file existance.
+ * Tests the robots.txt file existence.
  *
  * @group xmlsitemap
  * @dependencies robotstxt
@@ -28,7 +28,7 @@ class XmlSitemapRobotsTxtIntegrationTest extends XmlSitemapTestBase {
       return;
     }
     $this->drupalGet('/robots.txt');
-    $this->assertRaw('Sitemap: ' . Url::fromRoute('xmlsitemap.sitemap_xml', [], array('absolute' => TRUE)));
+    $this->assertRaw('Sitemap: ' . Url::fromRoute('xmlsitemap.sitemap_xml', [], ['absolute' => TRUE])->toString());
   }
 
 }
