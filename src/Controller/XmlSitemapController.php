@@ -3,6 +3,7 @@
 namespace Drupal\xmlsitemap\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\xmlsitemap\Entity\XmlSitemap;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -68,7 +69,7 @@ class XmlSitemapController extends ControllerBase {
    *   is set.
    */
   public function renderSitemapXml() {
-    $sitemap = $this->entityManager->getStorage('xmlsitemap')->loadByContext();
+    $sitemap = XmlSitemap::loadByContext();
     if (!$sitemap) {
       throw new NotFoundHttpException();
     }

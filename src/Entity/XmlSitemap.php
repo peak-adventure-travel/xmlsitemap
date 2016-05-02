@@ -12,7 +12,6 @@ use Drupal\xmlsitemap\XmlSitemapInterface;
  *   id = "xmlsitemap",
  *   label = @Translation("XmlSitemap"),
  *   handlers = {
- *     "storage" = "Drupal\xmlsitemap\XmlSitemapStorage",
  *     "list_builder" = "Drupal\xmlsitemap\XmlSitemapListBuilder",
  *     "form" = {
  *       "add" = "Drupal\xmlsitemap\Form\XmlSitemapForm",
@@ -187,6 +186,23 @@ class XmlSitemap extends ConfigEntityBase implements XmlSitemapInterface {
   public function setUpdated($updated) {
     $this->updated = $updated;
     return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function loadByContext(array $context = NULL) {
+    if (!isset($context)) {
+      $context = xmlsitemap_get_current_context();
+    }
+    $sitemaps = static::loadMultiple();
+    foreach ($sitemaps as $sitemap) {
+      if ($sitemap->context == $context) {
+        return $sitemap;
+      }
+    }
+
+    return NULL;
   }
 
 }

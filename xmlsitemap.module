@@ -8,10 +8,10 @@
  * @file
  * Main file for the xmlsitemap module.
  */
+
 use Drupal\Component\Utility\Crypt;
-use Drupal\Core\Language\LanguageInterface;
-use Drupal\xmlsitemap\XmlSitemapInterface;
 use Drupal\Component\Utility\SafeMarkup;
+use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityInterface;
@@ -22,10 +22,13 @@ use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Entity\Query\QueryException;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Url;
+use Drupal\xmlsitemap\Entity\XmlSitemap;
+use Drupal\xmlsitemap\XmlSitemapInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Response;
-use Drupal\Component\Utility\Unicode;
+
 
 /**
  * The maximum number of links in one sitemap chunk file.
@@ -214,8 +217,7 @@ function xmlsitemap_modules_uninstalled(array $modules) {
  * Implements hook_robotstxt().
  */
 function xmlsitemap_robotstxt() {
-  $sitemap_storage = \Drupal::entityTypeManager()->getStorage('xmlsitemap');
-  if ($sitemap = $sitemap_storage->loadByContext()) {
+  if ($sitemap = XmlSitemap::loadByContext()) {
     $uri = xmlsitemap_sitemap_uri($sitemap);
     $robotstxt[] = 'Sitemap: ' . Url::fromUri($uri['path'], $uri['options'])->toString();
     return $robotstxt;

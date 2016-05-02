@@ -4,6 +4,7 @@ namespace Drupal\xmlsitemap\Tests;
 
 use Drupal\simpletest\WebTestBase;
 use Drupal\Core\Url;
+use Drupal\xmlsitemap\Entity\XmlSitemap;
 
 /**
  * Helper test class with some added functions for testing.
@@ -145,7 +146,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
    *   The retrieved HTML string, also available as $this->drupalGetContent()
    */
   protected function drupalGetSitemap(array $context = array(), array $options = array(), array $headers = array()) {
-    $sitemap = $this->entityManager->getStorage('xmlsitemap')->loadByContext($context);
+    $sitemap = XmlSitemap::loadByContext($context);
     if (!$sitemap) {
       return $this->fail('Could not load sitemap by context.');
     }

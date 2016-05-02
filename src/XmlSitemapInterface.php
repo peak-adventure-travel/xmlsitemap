@@ -60,7 +60,7 @@ interface XmlSitemapInterface extends ConfigEntityInterface {
   /**
    * Sets the id of the sitemap.
    *
-   * @param string id
+   * @param string $id
    *   The sitemap id.
    *
    * @return \Drupal\xmlsitemap\XmlSitemapInterface
@@ -71,7 +71,7 @@ interface XmlSitemapInterface extends ConfigEntityInterface {
   /**
    * Sets the label of the sitemap.
    *
-   * @param string label
+   * @param string $label
    *   The sitemap label.
    *
    * @return \Drupal\xmlsitemap\XmlSitemapInterface
@@ -82,7 +82,7 @@ interface XmlSitemapInterface extends ConfigEntityInterface {
   /**
    * Sets the number of chunks.
    *
-   * @param string chunks
+   * @param string $chunks
    *   The number of chunks.
    *
    * @return \Drupal\xmlsitemap\XmlSitemapInterface
@@ -93,7 +93,7 @@ interface XmlSitemapInterface extends ConfigEntityInterface {
   /**
    * Sets the number of links.
    *
-   * @param string links
+   * @param string $links
    *   The number of links.
    *
    * @return \Drupal\xmlsitemap\XmlSitemapInterface
@@ -104,7 +104,7 @@ interface XmlSitemapInterface extends ConfigEntityInterface {
   /**
    * Sets the maximum file size of the sitemap.
    *
-   * @param string max_filesize
+   * @param string $max_filesize
    *   The maximum file size.
    *
    * @return \Drupal\xmlsitemap\XmlSitemapInterface
@@ -115,7 +115,7 @@ interface XmlSitemapInterface extends ConfigEntityInterface {
   /**
    * Sets the context for the sitemap.
    *
-   * @param string context
+   * @param string $context
    *   The context.
    *
    * @return \Drupal\xmlsitemap\XmlSitemapInterface
@@ -133,4 +133,17 @@ interface XmlSitemapInterface extends ConfigEntityInterface {
    *   The class instance that this method is called on.
    */
   public function setUpdated($updated);
+
+  /**
+   * Returns the sitemap with the context specified as parameter.
+   *
+   * @param array $context
+   *   An optional XML sitemap context array to use to find the correct XML
+   *   sitemap. If not provided, the current site's context will be used.
+   *
+   * @return \Drupal\xmlsitemap\XmlSitemapInterface
+   *   Sitemap with the specified context or NULL.
+   */
+  public static function loadByContext(array $context = NULL);
+
 }
