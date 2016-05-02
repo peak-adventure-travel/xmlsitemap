@@ -34,7 +34,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
   /**
    * The xmlsitemap.link_storage service.
    *
-   * @var \Drupal\xmlsitemap\XmlSitemapLinkInterface
+   * @var \Drupal\xmlsitemap\XmlSitemapLinkStorageInterface
    */
   protected $linkStorage;
 
@@ -52,6 +52,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
    */
   public function __construct(ConfigFactoryInterface $config_factory, StateInterface $state, DateFormatter $date, XmlSitemapLinkStorageInterface $link_storage) {
     parent::__construct($config_factory);
+
     $this->state = $state;
     $this->date = $date;
     $this->linkStorage = $link_storage;
@@ -62,7 +63,10 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-        $container->get('config.factory'), $container->get('state'), $container->get('date.formatter'), $container->get('xmlsitemap.link_storage')
+      $container->get('config.factory'),
+      $container->get('state'),
+      $container->get('date.formatter'),
+      $container->get('xmlsitemap.link_storage')
     );
   }
 

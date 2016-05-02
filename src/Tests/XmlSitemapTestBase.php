@@ -54,13 +54,6 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   protected $moduleHandler;
 
   /**
-   * The entity manager object.
-   *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
-   */
-  protected $entityManager;
-
-  /**
    * The language manager object.
    *
    * @var \Drupal\Core\Language\LanguageManagerInterface
@@ -82,7 +75,6 @@ abstract class XmlSitemapTestBase extends WebTestBase {
     $this->state = \Drupal::state();
     $this->config = \Drupal::configFactory()->get('xmlsitemap.settings');
     $this->moduleHandler = \Drupal::moduleHandler();
-    $this->entityManager = \Drupal::entityTypeManager();
     $this->languageManager = \Drupal::languageManager();
     $this->linkStorage = \Drupal::service('xmlsitemap.link_storage');
 

@@ -3,6 +3,7 @@
 namespace Drupal\xmlsitemap\Tests;
 
 use Drupal\Core\Language\Language;
+use Drupal\xmlsitemap\Entity\XmlSitemap;
 
 /**
  * Common base test class for XML sitemap internationalization tests.
@@ -49,10 +50,10 @@ abstract class XmlSitemapMultilingualTestBase extends XmlSitemapTestBase {
       $previous_sitemap->delete();
     }
 
-    $sitemap = $this->entityManager->getStorage('xmlsitemap')->create(array());
+    $sitemap = XmlSitemap::create();
     $sitemap->context = array('language' => 'en');
     xmlsitemap_sitemap_save($sitemap);
-    $sitemap = $this->entityManager->getStorage('xmlsitemap')->create(array());
+    $sitemap = XmlSitemap::create();
     $sitemap->context = array('language' => 'fr');
     xmlsitemap_sitemap_save($sitemap);
   }

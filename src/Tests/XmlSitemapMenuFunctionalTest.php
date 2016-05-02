@@ -41,7 +41,7 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
     $user_role->grantPermission('access content');
     $user_role->save();
 
-    $bundles = $this->entityManager->getAllBundleInfo();
+    $bundles = \Drupal::service('entity_type.bundle.info')->getAllBundleInfo();
     foreach ($bundles['menu_link_content'] as $bundle_id => $bundle) {
       xmlsitemap_link_bundle_enable('menu_link_content', $bundle_id);
     }
@@ -89,7 +89,7 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
    * {@inheritdoc}
    */
   public function tearDown() {
-    $bundles = $this->entityManager->getAllBundleInfo();
+    $bundles = \Drupal::service('entity_type.bundle.info')->getAllBundleInfo();
     foreach ($bundles['menu_link_content'] as $bundle_id => $bundle) {
       xmlsitemap_link_bundle_delete('menu_link_content', $bundle_id);
     }

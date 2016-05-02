@@ -68,7 +68,7 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
     $sitemaps = array();
 
     $context = array(1);
-    $sitemap = $this->entityManager->getStorage('xmlsitemap')->create(array(
+    $sitemap = XmlSitemap::create(array(
       'id' => xmlsitemap_sitemap_get_context_hash($context),
     ));
     $sitemap->setContext(serialize($context));
@@ -81,7 +81,7 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
     $sitemaps[] = $sitemap;
 
     $context = array(2);
-    $sitemap = $this->entityManager->getStorage('xmlsitemap')->create(array(
+    $sitemap = XmlSitemap::create(array(
       'id' => xmlsitemap_sitemap_get_context_hash($context),
     ));
     $sitemap->setContext(serialize($context));

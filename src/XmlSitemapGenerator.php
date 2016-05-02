@@ -5,7 +5,6 @@ namespace Drupal\xmlsitemap;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Component\Utility\Bytes;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\State\StateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Url;
@@ -48,13 +47,6 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
   protected $config;
 
   /**
-   * The entity manager object.
-   *
-   * @var \Drupal\Core\Entity\EntityManager
-   */
-  protected $entityManager;
-
-  /**
    * The language manager object.
    *
    * @var \Drupal\Core\Language\LanguageManager
@@ -80,16 +72,13 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory object.
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager handler.
    * @param \Drupal\Core\State\StateInterface $state
    *   The state handler.
    * @param \Psr\Log\LoggerInterface $logger
    *   A logger instance.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, EntityManagerInterface $entity_manager, StateInterface $state, LanguageManagerInterface $language_manager, LoggerInterface $logger) {
+  public function __construct(ConfigFactoryInterface $config_factory, StateInterface $state, LanguageManagerInterface $language_manager, LoggerInterface $logger) {
     $this->config = $config_factory->getEditable('xmlsitemap.settings');
-    $this->entityManager = $entity_manager;
     $this->state = $state;
     $this->languageManager = $language_manager;
     $this->logger = $logger;

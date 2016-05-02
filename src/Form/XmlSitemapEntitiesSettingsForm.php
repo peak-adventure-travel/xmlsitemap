@@ -3,9 +3,10 @@
 namespace Drupal\xmlsitemap\Form;
 
 use Drupal\Component\Utility\SafeMarkup;
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
@@ -19,11 +20,18 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements ContainerInjectionInterface {
 
   /**
-   * The entity manager.
+   * The entity type manager.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityManager;
+  protected $entityTypeManager;
+
+  /**
+   * The entity type bundle info.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface
+   */
+  protected $entityTypeBundleInfo;
 
   /**
    * {@inheritdoc}
@@ -37,12 +45,16 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entity_type_bundle_info
+   *   The entity type bundle info.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, EntityManagerInterface $entity_manager) {
+  public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, EntityTypeBundleInfoInterface $entity_type_bundle_info) {
     parent::__construct($config_factory);
-    $this->entityManager = $entity_manager;
+
+    $this->entityTypeManager = $entity_type_manager;
+    $this->entityTypeBundleInfo = $entity_type_bundle_info;
   }
 
   /**
@@ -50,7 +62,9 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('config.factory'), $container->get('entity.manager')
+      $container->get('config.factory'),
+      $container->get('entity_type.manager'),
+      $container->get('entity_type.bundle.info')
     );
   }
 
@@ -66,11 +80,11 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('xmlsitemap.settings');
-    $entity_types = $this->entityManager->getDefinitions();
+    $entity_types = $this->entityTypeManager->getDefinitions();
     $labels = array();
     $default = array();
     $anonymous_user = new AnonymousUserSession();
-    $bundles = $this->entityManager->getAllBundleInfo();
+    $bundles = $this->entityTypeBundleInfo->getAllBundleInfo();
 
     foreach ($entity_types as $entity_type_id => $entity_type) {
       if (!$entity_type instanceof ContentEntityTypeInterface) {
@@ -169,7 +183,7 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $bundles = $this->entityManager->getAllBundleInfo();
+    $bundles = $this->entityTypeBundleInfo->getAllBundleInfo();
     $values = $form_state->getValues();
     $entity_values = $values['entity_types'];
     $config = $this->config('xmlsitemap.settings');

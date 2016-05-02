@@ -3,56 +3,23 @@
 namespace Drupal\xmlsitemap\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
-use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
-use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Configure what entities will be included in sitemap.
  */
-class XmlSitemapLinkBundleSettingsForm extends ConfigFormBase implements ContainerInjectionInterface {
+class XmlSitemapLinkBundleSettingsForm extends ConfigFormBase {
 
   private $entity_type;
   private $bundle_type;
-
-  /**
-   * The entity manager.
-   *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
-   */
-  protected $entityManager;
 
   /**
    * {@inheritdoc}
    */
   public function getFormId() {
     return 'xmlsitemap_link_bundle_settings_form';
-  }
-
-  /**
-   * Constructs a XmlSitemapLinkBundleSettingsForm object.
-   *
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The config factory.
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager.
-   */
-  public function __construct(ConfigFactoryInterface $config_factory, EntityManagerInterface $entity_manager) {
-    parent::__construct($config_factory);
-    $this->entityManager = $entity_manager;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-        $container->get('config.factory'), $container->get('entity.manager')
-    );
   }
 
   /**
