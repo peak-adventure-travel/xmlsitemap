@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\xmlsitemap\Form\XmlSitemapEntitiesSettingsForm.
- */
-
 namespace Drupal\xmlsitemap\Form;
 
 use Drupal\Component\Utility\SafeMarkup;
@@ -201,4 +196,5 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
     \Drupal::state()->set('xmlsitemap_regenerate_needed', TRUE);
     parent::submitForm($form, $form_state);
   }
+
 }

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\xmlsitemap\Form\XmlSitemapRebuildForm.
- */
-
 namespace Drupal\xmlsitemap\Form;
 
 use Drupal\Core\Form\ConfigFormBase;

@@ -1,15 +1,8 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\xmlsitemap\XmlSitemapException.
- */
-
 namespace Drupal\xmlsitemap;
 
 /**
- * Basic XmlSitemapException class.
+ * Base XmlSitemapException class.
  */
-class XmlSitemapException extends \Exception {
-
-}
+class XmlSitemapException extends \Exception { }

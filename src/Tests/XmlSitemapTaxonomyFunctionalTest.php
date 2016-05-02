@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\xmlsitemap\Tests\XmlSitemapTaxonomyFunctionalTest.
- */
-
 namespace Drupal\xmlsitemap\Tests;
 
 use Drupal\Component\Utility\Unicode;

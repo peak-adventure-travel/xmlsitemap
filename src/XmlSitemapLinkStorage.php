@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Definition of Drupal\xmlsitemap\XmlSitemapLinkStorage.
- */
-
 namespace Drupal\xmlsitemap;
 
 use Drupal\Core\Database\Query\Merge;

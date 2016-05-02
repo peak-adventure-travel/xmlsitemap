@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\xmlsitemap\Tests\XmlSitemapListBuilderTest.
- */
-
 namespace Drupal\xmlsitemap\Tests;
 
 use Drupal\language\Entity\ConfigurableLanguage;

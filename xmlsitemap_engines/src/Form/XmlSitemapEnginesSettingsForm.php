@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\xmlsitemap_engines\Form\XmlSitemapEnginesSettingsForm.
- */
-
 namespace Drupal\xmlsitemap_engines\Form;
 
 use Drupal\Core\Form\ConfigFormBase;

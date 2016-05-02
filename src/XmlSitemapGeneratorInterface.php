@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\xmlsitemap\XmlSitemapGeneratorInterface.
- */
-
 namespace Drupal\xmlsitemap;
 
 /**

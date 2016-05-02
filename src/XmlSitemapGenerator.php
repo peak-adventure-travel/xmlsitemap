@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Definition of Drupal\xmlsitemap\XmlSitemapGenerator.
- */
-
 namespace Drupal\xmlsitemap;
 
 use Drupal\Core\Language\LanguageInterface;

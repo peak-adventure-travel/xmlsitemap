@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\xmlsitemap_engines_test\XmlSitemapEnginesFunctionalTest.
- */
-
 namespace Drupal\xmlsitemap_engines\Tests;
 
 use Drupal\xmlsitemap\Tests\XmlSitemapTestBase;

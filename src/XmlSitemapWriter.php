@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\xmlsitemap\XmlSitemapWriter.
- */
-
 namespace Drupal\xmlsitemap;
 
 use Drupal\Core\Url;

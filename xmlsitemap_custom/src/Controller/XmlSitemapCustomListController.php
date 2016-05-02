@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\xmlsitemap_custom\Controller\XmlSitemapCustomListController.
- */
-
 namespace Drupal\xmlsitemap_custom\Controller;
 
 use Drupal\Core\Controller\ControllerBase;

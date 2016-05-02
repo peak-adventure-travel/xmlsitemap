@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\xmlsitemap_custom\Form\XmlSitemapCustomEditForm.
- */
-
 namespace Drupal\xmlsitemap_custom\Form;
 
 use Drupal\Core\Form\ConfigFormBase;

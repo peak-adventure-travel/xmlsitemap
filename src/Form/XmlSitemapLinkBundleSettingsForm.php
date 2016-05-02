@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\xmlsitemap\Form\XmlSitemapLinkBundleSettingsForm.
- */
-
 namespace Drupal\xmlsitemap\Form;
 
 use Drupal\Core\Form\ConfigFormBase;

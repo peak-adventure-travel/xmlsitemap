@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\xmlsitemap\Form\XmlSitemapForm.
- */
-
 namespace Drupal\xmlsitemap\Form;
 
 use Drupal\Core\Entity\EntityForm;
@@ -13,6 +8,9 @@ use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Form\FormStateInterface;
 
+/**
+ * Provides a form for creating and editing xmlsitemap entities.
+ */
 class XmlSitemapForm extends EntityForm {
 
   /**

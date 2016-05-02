@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\xmlsitemap\Tests\XmlSitemapRobotsTxtIntegrationTest.
- */
-
 namespace Drupal\xmlsitemap\Tests;
 
 use Drupal\Core\Url;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Definition of Drupal\xmlsitemap_custom\Tests\XmlSitemapCustomFunctionalTest.
- */
-
 namespace Drupal\xmlsitemap_custom\Tests;
 
 use Drupal\xmlsitemap\Tests\XmlSitemapTestBase;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\xmlsitemap_custom\Form\XmlSitemapCustomDeleteForm.
- */
-
 namespace Drupal\xmlsitemap_custom\Form;
 
 use Drupal\Core\Form\ConfirmFormBase;

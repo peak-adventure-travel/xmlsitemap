@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\xmlsitemap\Form\XmlSitemapDeleteForm.
- */
-
 namespace Drupal\xmlsitemap\Form;
 
 use Drupal\Core\Entity\EntityConfirmFormBase;

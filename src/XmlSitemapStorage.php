@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Definition of Drupal\xmlsitemap\XmlSitemapStorage.
- */
-
 namespace Drupal\xmlsitemap;
 
 use Drupal\Core\Config\Entity\ConfigEntityStorage;

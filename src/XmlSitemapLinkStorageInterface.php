@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Definition of Drupal\xmlsitemap\XmlSitemapLinkStorageInterface.
- */
-
 namespace Drupal\xmlsitemap;
 
 use Drupal\Core\Entity\EntityInterface;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\xmlsitemap\Tests\XmlSitemapNodeFunctionalTest.
- */
-
 namespace Drupal\xmlsitemap\Tests;
 
 use Drupal\Core\Language\LanguageInterface;

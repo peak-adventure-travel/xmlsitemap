@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\xmlsitemap\XmlSitemapStorageInterface.
- */
-
 namespace Drupal\xmlsitemap;
 
 use Drupal\Core\Config\Entity\ConfigEntityStorageInterface;
@@ -25,4 +20,5 @@ interface XmlSitemapStorageInterface extends ConfigEntityStorageInterface {
    *   Sitemap with the specified context or NULL.
    */
   public function loadByContext(array $context = NULL);
+
 }

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Definition of Drupal\xmlsitemap\Tests\XmlSitemapTestBase.
- */
-
 namespace Drupal\xmlsitemap\Tests;
 
 use Drupal\simpletest\WebTestBase;

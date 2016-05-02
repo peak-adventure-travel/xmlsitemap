@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\xmlsitemap\XmlSitemapInterface.
- */
-
 namespace Drupal\xmlsitemap;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;

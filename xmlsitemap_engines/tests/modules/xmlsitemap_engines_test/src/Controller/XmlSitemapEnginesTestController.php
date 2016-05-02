@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\xmlsitemap\Controller\XmlSitemapController.
- */
-
 namespace Drupal\xmlsitemap_engines_test\Controller;
 
 use Drupal\Core\Controller\ControllerBase;

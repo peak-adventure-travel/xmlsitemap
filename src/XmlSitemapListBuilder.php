@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\xmlsitemap\XmlSitemapListBuilder.
- */
-
 namespace Drupal\xmlsitemap;
 
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;

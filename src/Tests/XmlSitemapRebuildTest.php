@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\xmlsitemap\Tests\XmlSitemapRebuildTest.
- */
-
 namespace Drupal\xmlsitemap\Tests;
 
 /**
