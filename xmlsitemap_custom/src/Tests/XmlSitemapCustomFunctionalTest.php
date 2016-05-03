@@ -14,7 +14,7 @@ class XmlSitemapCustomFunctionalTest extends XmlSitemapTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['xmlsitemap_custom', 'path', 'node'];
+  public static $modules = ['xmlsitemap_custom', 'path'];
 
   /**
    * The alias storage handler.
@@ -48,8 +48,7 @@ class XmlSitemapCustomFunctionalTest extends XmlSitemapTestBase {
   public function testCustomLinks() {
     $language = $this->languageManager->getCurrentLanguage();
     // Set a path alias for the node page.
-    $alias = array('source' => 'system/files', 'alias' => 'public-files');
-    $this->aliasStorage->save('system/files', 'public-files', $language->getId());
+    $this->aliasStorage->save('/system/files', '/public-files', $language->getId());
 
     $this->drupalGet('admin/config/search/xmlsitemap/custom');
     $this->clickLink(t('Add custom link'));

@@ -1,7 +1,7 @@
 name: XML sitemap custom
 type: module
-description: Adds user configurable links to the sitemap.
-package: XML sitemap
+description: 'Adds user configurable links to the sitemap.'
+package: 'XML sitemap'
 core: 8.x
 configure: xmlsitemap_custom.list
 dependencies:

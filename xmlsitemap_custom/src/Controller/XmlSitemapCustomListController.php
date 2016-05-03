@@ -2,44 +2,14 @@
 
 namespace Drupal\xmlsitemap_custom\Controller;
 
+use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Controller\ControllerBase;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Url;
 
 /**
  * Builds the list table for all custom links.
  */
 class XmlSitemapCustomListController extends ControllerBase {
-
-  /**
-   * The language manager.
-   *
-   * @var \Drupal\language\ConfigurableLanguageManagerInterface
-   */
-  protected $languageManager;
-
-  /**
-   * Constructs a new XmlSitemapController object.
-   *
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The factory for configuration objects.
-   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
-   *   The language manager service.
-   */
-  public function __construct(ConfigFactoryInterface $config_factory, LanguageManagerInterface $language_manager) {
-    $this->languageManager = $language_manager;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-        $container->get('config.factory'), $container->get('language_manager')
-    );
-  }
 
   /**
    * Renders a list with all custom links.
@@ -62,7 +32,6 @@ class XmlSitemapCustomListController extends ControllerBase {
     );
 
     $rows = array();
-    $destination = drupal_get_destination();
 
     $query = db_select('xmlsitemap');
     $query->fields('xmlsitemap');
@@ -72,34 +41,26 @@ class XmlSitemapCustomListController extends ControllerBase {
     $result = $query->execute();
 
     foreach ($result as $link) {
-      $language = $this->languageManager->getLanguage($link->language);
+      $language = $this->languageManager()->getLanguage($link->language);
       $row = array();
-      $row['loc'] = $this->l($link->loc, Url::fromUri($link->loc));
+      $row['loc'] = $this->l($link->loc, Url::fromUri('base://' . $link->loc));
       $row['priority'] = number_format($link->priority, 1);
-      $row['changefreq'] = $link->changefreq ? drupal_ucfirst(xmlsitemap_get_changefreq($link->changefreq)) : t('None');
+      $row['changefreq'] = $link->changefreq ? Unicode::ucfirst(xmlsitemap_get_changefreq($link->changefreq)) : t('None');
       if (isset($header['language'])) {
-        $row['language'] = t($language->name);
+        $row['language'] = $language->getName();
       }
       $operations['edit'] = array(
         'title' => t('Edit'),
-        'route_name' => 'xmlsitemap_custom.edit',
-        'route_parameters' => array(
-          'link' => $link->id,
-        ),
+        'url' => Url::fromRoute('xmlsitemap_custom.edit', ['link' => $link->id]),
       );
       $operations['delete'] = array(
         'title' => t('Delete'),
-        'route_name' => 'xmlsitemap_custom.delete',
-        'route_parameters' => array(
-          'link' => $link->id,
-        ),
+        'url' => Url::fromRoute('xmlsitemap_custom.delete', ['link' => $link->id]),
       );
       $row['operations'] = array(
         'data' => array(
           '#type' => 'operations',
-          '#theme' => 'links',
           '#links' => $operations,
-          '#attributes' => array('class' => array('links', 'inline')),
         ),
       );
       $rows[] = $row;
@@ -107,13 +68,12 @@ class XmlSitemapCustomListController extends ControllerBase {
 
     // @todo Convert to tableselect
     $build['xmlsitemap_custom_table'] = array(
-      '#type' => 'tableselect',
-      '#theme' => 'table',
+      '#type' => 'table',
       '#header' => $header,
       '#rows' => $rows,
-      '#empty' => $this->t('No custom links available. <a href="@custom_link">Add custom link</a>', array('@custom_link' => Url::fromRoute('xmlsitemap_custom.add', [], array('query' => $destination)))),
+      '#empty' => $this->t('No custom links available. <a href="@custom_link">Add custom link</a>', array('@custom_link' => Url::fromRoute('xmlsitemap_custom.add', [], array('query' => $this->getDestinationArray()))->toString())),
     );
-    $build['xmlsitemap_custom_pager'] = array('#theme' => 'pager');
+    $build['xmlsitemap_custom_pager'] = array('#type' => 'pager');
 
     return $build;
   }

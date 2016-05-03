@@ -4,7 +4,6 @@
  * @file
  * Install and uninstall schema and functions for the xmlsitemap_custom module.
  */
-use Drupal\xmlsitemap\XmlSitemapLinkStorage;
 
 /**
  * Implements hook_uninstall().
