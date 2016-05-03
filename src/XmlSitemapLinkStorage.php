@@ -221,14 +221,6 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
    * {@inheritdoc}
    */
   public function deleteMultiple(array $conditions) {
-    // Because this function is called from sub-module uninstall hooks, we have
-    // to manually check if the table exists since it could have been removed
-    // in xmlsitemap_uninstall().
-    // @todo Remove this check when http://drupal.org/node/151452 is fixed.
-    if (!db_table_exists('xmlsitemap')) {
-      return FALSE;
-    }
-
     if (!$this->state->get('xmlsitemap_regenerate_needed')) {
       $this->checkChangedLinks($conditions, array(), TRUE);
     }
