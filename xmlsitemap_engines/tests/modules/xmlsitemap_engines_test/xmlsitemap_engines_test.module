@@ -19,20 +19,5 @@ function xmlsitemap_engines_test_xmlsitemap_engine_info() {
  * Implements hook_xmlsitemap_engine_info_alter().
  */
 function xmlsitemap_engines_test_xmlsitemap_engine_info_alter(&$engines) {
-  $engines['simpletest']['url'] = Url::fromUri('base://ping', array('absolute' => TRUE, 'query' => array('sitemap' => ''))) . '[sitemap]';
-}
-
-function xmlsitemap_engines_test_pinged() {
-  $query_sitemap = \Drupal::request()->query->get('sitemap');
-  //$query_sitemap = $query->get('sitemap');
-  if (empty($query_sitemap) || !UrlHelper::isValid($query_sitemap)) {
-    $message = t('No valid sitemap parameter provided.');
-      \Drupal::logger('xmlsitemap')->debug($message);
-    // @todo Remove this? Causes an extra watchdog error to be handled.
-    throw new NotFoundHttpException();
-  }
-  else {
-    $message = t('Recieved ping for @sitemap.', array('@sitemap' => $query_sitemap));
-    \Drupal::logger('xmlsitemap')->debug($message);
-  }
+  $engines['simpletest']['url'] = Url::fromUri('internal:/ping', array('absolute' => TRUE, 'query' => array('sitemap' => '')))->toString() . '[sitemap]';
 }

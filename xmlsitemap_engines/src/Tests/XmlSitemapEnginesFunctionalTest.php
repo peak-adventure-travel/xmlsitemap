@@ -2,6 +2,7 @@
 
 namespace Drupal\xmlsitemap_engines\Tests;
 
+use Drupal\xmlsitemap\Entity\XmlSitemap;
 use Drupal\xmlsitemap\Tests\XmlSitemapTestBase;
 use Drupal\Core\Url;
 
@@ -22,7 +23,7 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['system', 'path', 'node', 'dblog', 'xmlsitemap_engines', 'xmlsitemap_engines_test'];
+  public static $modules = ['path', 'dblog', 'xmlsitemap_engines', 'xmlsitemap_engines_test'];
 
   /**
    * {@inheritdoc}
@@ -35,7 +36,7 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
     // @todo For some reason the test client does not have clean URLs while
     // the test runner does, so it causes mismatches in watchdog assertions
     // later.
-    $this->submit_url = Url::fromUri('base://ping', array('absolute' => TRUE, 'query' => array('sitemap' => ''))) . '[sitemap]';
+    $this->submit_url = Url::fromUri('base://ping', array('absolute' => TRUE, 'query' => array('sitemap' => '')))->toString() . '[sitemap]';
   }
 
   /**
@@ -46,9 +47,9 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
       'xmlsitemap_engines_submit_last' => REQUEST_TIME - 10000,
       'xmlsitemap_generated_last' => REQUEST_TIME - 100,
     ));
-    \Drupal::config('xmlsitemap_engines.settings')->set('minimum_lifetime', 0)->save();
+    \Drupal::configFactory()->getEditable('xmlsitemap_engines.settings')->set('minimum_lifetime', 0)->save();
     xmlsitemap_engines_cron();
-    $this->assertTrue($this->state->get('xmlsitemap_engines_submit_last') > (REQUEST_TIME - 100), 'Submitted the sitemaps to search engines. {}');
+    $this->assertTrue($this->state->get('xmlsitemap_engines_submit_last') > (REQUEST_TIME - 100), 'Submitted the sitemaps to search engines.');
   }
 
   /**
@@ -120,7 +121,7 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
     $this->assertText('Invalid URL an-invalid-url.');
     $this->assertNoText('The configuration options have been saved.');
 
-    $url = Url::fromUri('base://ping', array('absolute' => TRUE));
+    $url = Url::fromUri('base://ping', array('absolute' => TRUE))->toString();
     $edit = array('custom_urls' => $url);
     $this->drupalPostForm('admin/config/search/xmlsitemap/engines', $edit, t('Save configuration'));
     $this->assertText(t('The configuration options have been saved.'));
@@ -130,9 +131,9 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
     $this->assertText(t('The configuration options have been saved.'));
 
     $this->submitEngines();
-    $url = xmlsitemap_engines_prepare_url($this->submit_url, Url::fromRoute('xmlsitemap.sitemap_xml', [], array('absolute' => TRUE)));
-    $this->assertWatchdogMessage(array('type' => 'xmlsitemap', 'message' => 'Submitted the sitemap to %url and received response @code.', 'variables' => array('%url' => $url, '@code' => '200')));
-    $this->assertWatchdogMessage(array('type' => 'xmlsitemap', 'message' => 'Recieved ping for @sitemap.', 'variables' => array('@sitemap' => Url::fromRoute('xmlsitemap.sitemap_xml', [], array('absolute' => TRUE)))));
+    $url = xmlsitemap_engines_prepare_url($this->submit_url, Url::fromRoute('xmlsitemap.sitemap_xml', [], array('absolute' => TRUE))->toString());
+    $this->assertWatchdogMessage(array('type' => 'xmlsitemap', 'message' => 'Submitted the sitemap to %url and received response @code.', 'variables' => array('%url' => $url, '@code' => 200)));
+    $this->assertWatchdogMessage(array('type' => 'xmlsitemap', 'message' => 'Recieved ping for @sitemap.', 'variables' => array('@sitemap' => Url::fromRoute('xmlsitemap.sitemap_xml', [], array('absolute' => TRUE))->toString())));
   }
 
 }

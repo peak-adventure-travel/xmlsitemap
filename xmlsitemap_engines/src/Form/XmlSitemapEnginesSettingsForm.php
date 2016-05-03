@@ -42,6 +42,7 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
    */
   public function __construct(ConfigFactoryInterface $config_factory, DateFormatter $date, StateInterface $state) {
     parent::__construct($config_factory);
+
     $this->date = $date;
     $this->state = $state;
   }
@@ -51,7 +52,9 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-        $container->get('config.factory'), $container->get('date.formatter'), $container->get('state')
+      $container->get('config.factory'),
+      $container->get('date.formatter'),
+      $container->get('state')
     );
   }
 
@@ -85,7 +88,7 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
 
     $form['engines'] = array(
       '#type' => 'checkboxes',
-      '#title' => t('Submit the sitemap to the following engines'),
+      '#title' => $this->t('Submit the sitemap to the following engines'),
       '#default_value' => $this->config('xmlsitemap_engines.settings')->get('engines'),
       '#options' => $engine_options,
     );
@@ -97,19 +100,19 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
     }
     $form['minimum_lifetime'] = array(
       '#type' => 'select',
-      '#title' => t('Do not submit more often than every'),
+      '#title' => $this->t('Do not submit more often than every'),
       '#options' => $format_lifetimes,
       '#default_value' => $this->config('xmlsitemap_engines.settings')->get('minimum_lifetime'),
     );
     $form['xmlsitemap_engines_submit_updated'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Only submit if the sitemap has been updated since the last submission.'),
+      '#title' => $this->t('Only submit if the sitemap has been updated since the last submission.'),
       '#default_value' => $this->state->get('xmlsitemap_engines_submit_updated'),
     );
     $form['custom_urls'] = array(
       '#type' => 'textarea',
-      '#title' => t('Custom submission URLs'),
-      '#description' => t('Enter one URL per line. The token [sitemap] will be replaced with the URL to your sitemap. For example: %example-before would become %example-after.', array('%example-before' => 'http://example.com/ping?[sitemap]', '%example-after' => xmlsitemap_engines_prepare_url('http://example.com/ping?[sitemap]', Url::fromRoute('xmlsitemap.sitemap_xml', [], ['absolute' => TRUE])))),
+      '#title' => $this->t('Custom submission URLs'),
+      '#description' => $this->t('Enter one URL per line. The token [sitemap] will be replaced with the URL to your sitemap. For example: %example-before would become %example-after.', array('%example-before' => 'http://example.com/ping?[sitemap]', '%example-after' => xmlsitemap_engines_prepare_url('http://example.com/ping?[sitemap]', Url::fromRoute('xmlsitemap.sitemap_xml', [], ['absolute' => TRUE])->toString()))),
       '#default_value' => $this->config('xmlsitemap_engines.settings')->get('custom_urls'),
       '#rows' => 2,
       '#wysiwyg' => FALSE,
@@ -130,7 +133,7 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
     foreach ($custom_urls as $custom_url) {
       $url = xmlsitemap_engines_prepare_url($custom_url, '');
       if (!UrlHelper::isValid($url, TRUE)) {
-        $form_state->setErrorByName($custom_url, t('Invalid URL %url.', array('%url' => $custom_url)));
+        $form_state->setErrorByName($custom_url, $this->t('Invalid URL %url.', array('%url' => $custom_url)));
       }
     }
     $custom_urls = implode("\n", $custom_urls);

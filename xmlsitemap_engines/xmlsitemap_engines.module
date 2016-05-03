@@ -1,5 +1,6 @@
 <?php
 
+use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Routing\RouteMatchInterface;
 use GuzzleHttp\Exception\RequestException;
 use Drupal\Core\Cache\Cache;
@@ -80,7 +81,7 @@ function xmlsitemap_engines_submit_access() {
 /**
  * Submit the sitemaps to all the specified search engines.
  *
- * @param $smids
+ * @param array $smids
  *   An optional array of XML sitemap IDs. If not provided, it will load all
  *   existing XML sitemaps.
  */
@@ -111,14 +112,15 @@ function xmlsitemap_engines_submit_engines(array $smids = array()) {
 /**
  * Submit the sitemaps to a specific URL.
  *
- * @param $url
+ * @param string $url
  *   The URL for sitemap submission.
- * @param $sitemaps
+ * @param array $sitemaps
  *   An array of URLs of the sitemaps to submit.
  */
 function xmlsitemap_engines_submit_sitemaps($url, array $sitemaps) {
   foreach ($sitemaps as $sitemap) {
-    $sitemap_url = Url::fromUri($sitemap->uri['path'], $sitemap->uri['options']);
+    $sitemap_path = UrlHelper::isExternal($sitemap->uri['path']) ? $sitemap->uri['path'] : 'base://' . $sitemap->uri['path'];
+    $sitemap_url = Url::fromUri($sitemap_path, $sitemap->uri['options'])->toString();
     $submit_url = xmlsitemap_engines_prepare_url($url, $sitemap_url);
     try {
       $request = \Drupal::httpClient()->get($submit_url);
@@ -133,9 +135,10 @@ function xmlsitemap_engines_submit_sitemaps($url, array $sitemaps) {
 /**
  * Replace valid tokens in the URL with their appropriate values.
  *
- * @param $url
+ * @param string $url
  *   An un-tokenized URL.
- * @return
+ *
+ * @return string
  *   A tokenized URL.
  */
 function xmlsitemap_engines_prepare_url($url, $sitemap) {
@@ -145,12 +148,12 @@ function xmlsitemap_engines_prepare_url($url, $sitemap) {
 /**
  * Returns information about supported search engines.
  *
- * @param $engine
+ * @param string $engine
  *   (optional) The engine to return information for. If omitted, information
  *   for all engines is returned.
- * @param $reset
- *   (optional) Boolean whether to reset the static cache and do nothing. Only
- *   used for tests.
+ *
+ * @return string[]
+ *   An array of supported search engines.
  *
  * @see hook_xmlsitemap_engines_info()
  * @see hook_xmlsitemap_engines_info_alter()

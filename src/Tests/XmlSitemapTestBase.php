@@ -2,8 +2,9 @@
 
 namespace Drupal\xmlsitemap\Tests;
 
-use Drupal\simpletest\WebTestBase;
+use Drupal\Core\Logger\RfcLogLevel;
 use Drupal\Core\Url;
+use Drupal\simpletest\WebTestBase;
 use Drupal\xmlsitemap\Entity\XmlSitemap;
 
 /**
@@ -354,7 +355,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
 
     foreach ($messages as $message) {
       $message->text = $this->formatWatchdogMessage($message);
-      if (in_array($message->severity, array(WATCHDOG_EMERGENCY, WATCHDOG_ALERT, WATCHDOG_CRITICAL, WATCHDOG_ERROR, WATCHDOG_WARNING))) {
+      if (in_array($message->severity, array(RfcLogLevel::EMERGENCY, RfcLogLevel::ALERT, RfcLogLevel::CRITICAL, RfcLogLevel::ERROR, RfcLogLevel::WARNING))) {
         $this->fail($message->text);
       }
       $verbose[] = $message->text;
@@ -383,7 +384,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
 
     if (!isset($levels)) {
       module_load_include('admin.inc', 'dblog');
-      $levels = watchdog_severity_levels();
+      $levels = RfcLogLevel::getLevels();
     }
 
     return t('@timestamp - @severity - @type - @message', array(
