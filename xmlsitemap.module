@@ -12,6 +12,7 @@
 use Drupal\Component\Utility\Crypt;
 use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Component\Utility\Unicode;
+use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityInterface;
@@ -219,7 +220,8 @@ function xmlsitemap_modules_uninstalled(array $modules) {
 function xmlsitemap_robotstxt() {
   if ($sitemap = XmlSitemap::loadByContext()) {
     $uri = xmlsitemap_sitemap_uri($sitemap);
-    $robotstxt[] = 'Sitemap: ' . Url::fromUri($uri['path'], $uri['options'])->toString();
+    $path = UrlHelper::isExternal($uri['path']) ? $uri['path'] : 'base://' . $uri['path'];
+    $robotstxt[] = 'Sitemap: ' . Url::fromUri($path, $uri['options'])->toString();
     return $robotstxt;
   }
 }
