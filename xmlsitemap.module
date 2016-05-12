@@ -171,6 +171,11 @@ function _xmlsitemap_rebuild_form_access() {
  * @todo Regenerate one at a time?
  */
 function xmlsitemap_cron() {
+  // If cron sitemap file regeneration is disabled, stop.
+  if (\Drupal::config('xmlsitemap.settings')->get('disable_cron_regeneration')) {
+    return;
+  }
+
   // If there were no new or changed links, skip.
   if (!\Drupal::state()->get('xmlsitemap_regenerate_needed')) {
     return;
@@ -230,6 +235,7 @@ function xmlsitemap_config_variables() {
     'frontpage_changefreq' => XMLSITEMAP_FREQUENCY_DAILY,
     'lastmod_format' => XMLSITEMAP_LASTMOD_MEDIUM,
     'gz' => FALSE,
+    'disable_cron_regeneration' => FALSE,
   );
 }
 

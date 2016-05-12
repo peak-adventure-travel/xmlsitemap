@@ -43,6 +43,9 @@ xmlsitemap.settings:
     cron_threshold_warning:
       type: integer
       label: 'Threshold warning for cron job'
+    disable_cron_regeneration:
+      type: boolean
+      label: 'Disable cron generation of sitemap files'
 
 xmlsitemap.*:
   type: config_entity

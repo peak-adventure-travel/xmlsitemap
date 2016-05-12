@@ -186,6 +186,13 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
       '#default_value' => $this->state->get('xmlsitemap_developer_mode'),
     );
 
+    $form['advanced']['disable_cron_regeneration'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Disable cron generation of sitemap files.'),
+      '#default_value' => $config->get('disable_cron_regeneration'),
+      '#description' => t('This can be disabled if other methods are being used to generate the sitemap files, like %drush_regenerate.', ['%drush_regenerate' => 'drush xmlsitemap-regenerate']),
+    );
+
     $form['xmlsitemap_settings'] = array(
       '#type' => 'vertical_tabs',
       '#weight' => 20,
