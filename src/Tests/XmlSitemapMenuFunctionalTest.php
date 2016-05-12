@@ -7,7 +7,6 @@
 
 namespace Drupal\xmlsitemap\Tests;
 
-use Drupal\system\Entity\Menu;
 use Drupal\Component\Utility\Unicode;
 
 /**
