@@ -185,11 +185,6 @@ function xmlsitemap_cron() {
     return;
   }
 
-  // If cron sitemap file regeneration is disabled, stop.
-  if (\Drupal::config('xmlsitemap.settings')->get('disable_cron_regeneration')) {
-    return;
-  }
-
   // If the minimum sitemap lifetime hasn't been passed, skip.
   $lifetime = REQUEST_TIME - \Drupal::state()->get('xmlsitemap_generated_last');
   if ($lifetime < \Drupal::config('xmlsitemap.settings')->get('minimum_lifetime')) {
