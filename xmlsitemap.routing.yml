@@ -5,7 +5,7 @@ xmlsitemap.admin_search:
     _title: 'XML sitemap'
   requirements:
     _permission: 'administer xmlsitemap'
-    
+
 xmlsitemap.admin_search_list:
   path: '/admin/config/search/xmlsitemap/list'
   defaults:
@@ -13,7 +13,7 @@ xmlsitemap.admin_search_list:
     _title: 'XML sitemap'
   requirements:
     _permission: 'administer xmlsitemap'
-    
+
 entity.xmlsitemap.add_form:
   path: '/admin/config/search/xmlsitemap/add'
   defaults:
@@ -21,7 +21,7 @@ entity.xmlsitemap.add_form:
     _title: 'Add new XML sitemap'
   requirements:
     _permission: 'administer xmlsitemap'
-    
+
 entity.xmlsitemap.edit_form:
   path: '/admin/config/search/xmlsitemap/{xmlsitemap}/edit'
   defaults:
@@ -29,7 +29,7 @@ entity.xmlsitemap.edit_form:
     _title: 'Edit XML sitemap'
   requirements:
     _permission: 'administer xmlsitemap'
-    
+
 entity.xmlsitemap.delete_form:
   path: '/admin/config/search/xmlsitemap/{xmlsitemap}/delete'
   defaults:
@@ -37,7 +37,7 @@ entity.xmlsitemap.delete_form:
     _title: 'Delete XML sitemap'
   requirements:
     _permission: 'administer xmlsitemap'
-    
+
 xmlsitemap.admin_settings:
   path: '/admin/config/search/xmlsitemap/settings'
   defaults:
@@ -53,7 +53,7 @@ xmlsitemap.entities_settings:
     _title: 'Custom Entities Settings'
   requirements:
     _permission: 'administer xmlsitemap'
-    
+
 xmlsitemap.admin_settings_bundle:
   path: '/admin/config/search/xmlsitemap/settings/{entity}/{bundle}'
   defaults:
@@ -61,7 +61,7 @@ xmlsitemap.admin_settings_bundle:
     _title: 'Link Bundle Settings'
   requirements:
     _permission: 'administer xmlsitemap'
-    
+
 xmlsitemap.admin_rebuild:
   path: '/admin/config/search/xmlsitemap/rebuild'
   defaults:
@@ -77,7 +77,7 @@ xmlsitemap.sitemap_xml:
     _title: 'Sitemap XML'
   requirements:
     _access: 'TRUE'
-    
+
 xmlsitemap.sitemap_xsl:
   path: '/sitemap.xsl'
   defaults:
