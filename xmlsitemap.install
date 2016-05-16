@@ -347,18 +347,3 @@ function xmlsitemap_uninstall() {
 function xmlsitemap_update_last_removed() {
   return 7203;
 }
-
-function _xmlsitemap_sitemap_rehash_all() {
-  // Reload the schema cache and reprocess all sitemap hashes into smids.
-  drupal_get_schema(NULL, TRUE);
-
-  // Force a rehash of all sitemaps.
-  $sitemaps = xmlsitemap_sitemap_load_multiple(FALSE);
-  foreach ($sitemaps as $sitemap) {
-    $context = $sitemap->context;
-    $hash = xmlsitemap_sitemap_get_context_hash($context);
-    if ($hash != $sitemap->id()) {
-      xmlsitemap_sitemap_save($sitemap);
-    }
-  }
-}
