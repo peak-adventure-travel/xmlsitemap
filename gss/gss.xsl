@@ -15,6 +15,7 @@
     <html>
       <head>
         <title>Sitemap file</title>
+        <script type="text/javascript" src="[jquery]"></script>
         <script type="text/javascript" src="[xsl-js]"></script>
         <link href="[xsl-css]" type="text/css" rel="stylesheet"/>
       </head>

@@ -23,9 +23,9 @@ function initXsl(tabName,fileType) {
     initTable(tabName);
   }
 
-  var theURL = document.getElementById("head1");
-  theURL.innerHTML += ' ' + location;
-  document.title += ': ' + location;
+  var theURL = $("#head1");
+  theURL.text(theURL.text() + ': ' + location);
+  document.title = theURL.text();
 }
 
 function initTable(tabName) {

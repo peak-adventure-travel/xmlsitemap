@@ -287,6 +287,7 @@ function xmlsitemap_output_xsl() {
     'URL location' => t('URL location'),
     'Change frequency' => t('Change frequency'),
     'Priority' => t('Priority'),
+    '[jquery]' => base_path() . 'misc/jquery.js',
     '[xsl-js]' => base_path() . $module_path . '/gss/gss.js',
     '[xsl-css]' => base_path() . $module_path . '/gss/gss.css',
   );
