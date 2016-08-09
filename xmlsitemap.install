@@ -6,6 +6,8 @@
  *
  * @ingroup xmlsitemap
  */
+
+use Drupal\Core\Database\Database;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\Core\Url;
@@ -261,12 +263,11 @@ function xmlsitemap_schema() {
         'default' => 0,
       ),
     ),
-    'primary key' => array('id', 'type'),
+    'primary key' => array('id', 'type', 'language'),
     'indexes' => array(
       'loc' => array('loc'),
       'access_status_loc' => array('access', 'status', 'loc'),
       'type_subtype' => array('type', 'subtype'),
-      'language' => array('language'),
     ),
   );
 
@@ -342,8 +343,10 @@ function xmlsitemap_uninstall() {
 }
 
 /**
- * Implements hook_update_last_removed().
+ * Change the primary key of the 'xmlsitemap' table to include the language.
  */
-function xmlsitemap_update_last_removed() {
-  return 7203;
+function xmlsitemap_update_8001() {
+  Database::getConnection()->schema()->dropPrimaryKey('xmlsitemap');
+  Database::getConnection()->schema()->addPrimaryKey('xmlsitemap', array('id', 'type', 'language'));
+  Database::getConnection()->schema()->dropIndex('xmlsitemap', 'language');
 }

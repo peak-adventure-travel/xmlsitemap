@@ -121,7 +121,7 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
     }
 
     $queryStatus = \Drupal::database()->merge('xmlsitemap')
-      ->key(array('type' => $link['type'], 'id' => $link['id']))
+      ->key(array('type' => $link['type'], 'id' => $link['id'], 'language' => $link['language']))
       ->fields(array(
         'loc' => $link['loc'],
         'subtype' => $link['subtype'],
@@ -133,7 +133,6 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
         'priority_override' => $link['priority_override'],
         'changefreq' => $link['changefreq'],
         'changecount' => $link['changecount'],
-        'language' => $link['language'],
       ))
       ->execute();
 
@@ -212,8 +211,11 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
   /**
    * {@inheritdoc}
    */
-  public function delete($entity_type, $entity_id) {
+  public function delete($entity_type, $entity_id, $langcode = NULL) {
     $conditions = array('type' => $entity_type, 'id' => $entity_id);
+    if ($langcode) {
+      $conditions['language'] = $langcode;
+    }
     return $this->deleteMultiple($conditions);
   }
 
