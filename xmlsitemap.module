@@ -10,9 +10,9 @@
  */
 
 use Drupal\Component\Utility\Crypt;
-use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Component\Utility\UrlHelper;
+use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityInterface;
@@ -1937,22 +1937,14 @@ function xmlsitemap_add_form_entity_summary(&$form, $entity, array $entity_info)
     $totals['indexed'] += $status['indexed'];
     $totals['visible'] += $status['visible'];
 
-    $row = array();
-    if (\Drupal::service('path.validator')->isValid("admin/config/search/xmlsitemap/settings/$entity/$bundle")) {
-      $edit_link = xmlsitemap_get_operation_link("internal://admin/config/search/xmlsitemap/settings/$entity/$bundle", array('title' => $bundle_info['label'], 'modal' => TRUE));
-      $url = Url::fromUri($edit_link['href'], $edit_link);
-      $row[] = \Drupal::l($edit_link['title'], $url);
-    }
-    else {
-      // Bundle labels are assumed to be un-escaped input.
-      $row[] = SafeMarkup::checkPlain($bundle_info['label']);
-    }
-    $row[] = $statuses[$bundle_info['xmlsitemap']['status'] ? 1 : 0];
-    $row[] = $priorities[number_format($bundle_info['xmlsitemap']['priority'], 1)];
-    $row[] = $status['total'];
-    $row[] = $status['indexed'];
-    $row[] = $status['visible'];
-    $rows[] = $row;
+    $rows[] = [
+      Link::createFromRoute($bundle_info['label'], 'xmlsitemap.admin_settings_bundle', ['entity' => $entity, 'bundle' => $bundle]),
+      $statuses[$bundle_info['xmlsitemap']['status'] ? 1 : 0],
+      $priorities[number_format($bundle_info['xmlsitemap']['priority'], 1)],
+      $status['total'],
+      $status['indexed'],
+      $status['visible'],
+    ];
   }
 
   if ($rows) {
