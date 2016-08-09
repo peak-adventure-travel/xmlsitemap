@@ -89,9 +89,28 @@ class XmlSitemapCustomAddForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+    // Take into account that databases use wildly different names for their
+    // data types.
+    $db_type = $this->connection->databaseType();
+    switch ($db_type) {
+      case 'mysql':
+        $type = 'UNSIGNED';
+        break;
+      case 'pgsql':
+        $type = 'BIGINT';
+        break;
+      case 'sqlite':
+        $type = 'INTEGER';
+        break;
+      default:
+        $type = 'INT';
+        break;
+    }
+
     $query = $this->connection->select('xmlsitemap', 'x');
-    $query->addExpression('MAX(id)');
-    $id = $query->execute()->fetchField();
+    $query->addExpression("MAX(CAST(id AS $type))");
+    $query->condition('type', 'custom');
+    $id = (int) $query->execute()->fetchField();
     $link = array(
       'id' => $id + 1,
       'loc' => '',
