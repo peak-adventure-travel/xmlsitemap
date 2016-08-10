@@ -230,7 +230,8 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
     // @todo Add a hook_xmlsitemap_link_delete() hook invoked here.
     $query = db_delete('xmlsitemap');
     foreach ($conditions as $field => $value) {
-      $query->condition($field, $value);
+      $operator = is_array($value) ? 'IN' : '=';
+      $query->condition($field, $value, $operator);
     }
 
     return $query->execute();

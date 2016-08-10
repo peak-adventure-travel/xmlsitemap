@@ -1626,11 +1626,25 @@ function xmlsitemap_entity_update(EntityInterface $entity) {
   /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
   $link_storage = \Drupal::service('xmlsitemap.link_storage');
   // Generate an entry for each translation.
-  foreach ($entity->getTranslationLanguages() as $langcode => $language) {
+  $translation_languages = $entity->getTranslationLanguages();
+  foreach ($translation_languages as $langcode => $language) {
     $translation = $entity->getTranslation($langcode);
 
     $link = $link_storage->create($translation);
     $link_storage->save($link);
+  }
+
+  // Check if we have differences between the translations from the link
+  // storage and the current translations of the entity.
+  $link_storage_languages = [];
+  $links = $link_storage->loadMultiple(['type' => $entity->getEntityTypeId(), 'id' => $entity->id()]);
+  foreach ($links as $link) {
+    $link_storage_languages[] = $link['language'];
+  }
+
+  // If so, remove the translations that no longer exist.
+  if ($languge_differences = array_diff($link_storage_languages, array_keys($translation_languages))) {
+    $link_storage->deleteMultiple(['type' => $entity->getEntityTypeId(), 'id' => $entity->id(), 'language' => $languge_differences]);
   }
 }
 
