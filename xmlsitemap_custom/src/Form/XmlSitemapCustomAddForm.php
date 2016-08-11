@@ -4,8 +4,8 @@ namespace Drupal\xmlsitemap_custom\Form;
 
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Form\FormBase;
+use Drupal\Core\Http\ClientFactory;
 use Drupal\Core\Language\LanguageInterface;
-use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
@@ -41,6 +41,13 @@ class XmlSitemapCustomAddForm extends FormBase {
   protected $aliasManager;
 
   /**
+   * The HTTP client to fetch the feed data with.
+   *
+   * @var \Drupal\Core\Http\ClientFactory
+   */
+  protected $httpClientFactory;
+
+  /**
    * The xmlsitemap link storage handler.
    *
    * @var \Drupal\xmlsitemap\XmlSitemapLinkStorageInterface
@@ -56,13 +63,16 @@ class XmlSitemapCustomAddForm extends FormBase {
    *   The language manager service.
    * @param \Drupal\Core\Path\AliasManagerInterface $alias_manager
    *   The path alias manager service.
+   * @param \Drupal\Core\Http\ClientFactory $http_client_factory
+   *   A Guzzle client object.
    * @param \Drupal\xmlsitemap\XmlSitemapLinkStorageInterface $link_storage
    *   The xmlsitemap link storage service.
    */
-  public function __construct(Connection $connection, LanguageManagerInterface $language_manager, AliasManagerInterface $alias_manager, XmlSitemapLinkStorageInterface $link_storage) {
+  public function __construct(Connection $connection, LanguageManagerInterface $language_manager, AliasManagerInterface $alias_manager, ClientFactory $http_client_factory, XmlSitemapLinkStorageInterface $link_storage) {
     $this->connection = $connection;
     $this->languageManager = $language_manager;
     $this->aliasManager = $alias_manager;
+    $this->httpClientFactory = $http_client_factory;
     $this->linkStorage = $link_storage;
   }
 
@@ -74,6 +84,7 @@ class XmlSitemapCustomAddForm extends FormBase {
       $container->get('database'),
       $container->get('language_manager'),
       $container->get('path.alias_manager'),
+      $container->get('http_client_factory'),
       $container->get('xmlsitemap.link_storage')
     );
   }
@@ -205,8 +216,8 @@ class XmlSitemapCustomAddForm extends FormBase {
       $form_state->setErrorByName('loc', $this->t('There is already an existing link in the sitemap with the path %link.', array('%link' => $link['loc'])));
     }
     try {
-      $client = new Client();
-      $client->get(Url::fromRoute('<front>', [], array('absolute' => TRUE))->toString() . $link['loc']);
+      $client = $this->httpClientFactory->fromOptions(['config/curl', array(CURLOPT_FOLLOWLOCATION => FALSE)]);
+      $client->get(Url::fromUserInput('/' . ltrim($link['loc'], '/'), ['absolute' => TRUE])->toString());
     }
     catch (ClientException $e) {
       $form_state->setErrorByName('loc', $this->t('The custom link @link is either invalid or it cannot be accessed by anonymous users.', array('@link' => $link['loc'])));
