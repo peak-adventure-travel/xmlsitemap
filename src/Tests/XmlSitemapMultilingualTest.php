@@ -3,6 +3,7 @@
 namespace Drupal\xmlsitemap\Tests;
 
 use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Url;
 
 /**
  * Tests the generation of multilingual sitemaps.
@@ -26,6 +27,22 @@ class XmlSitemapMultilingualTest extends XmlSitemapMultilingualTestBase {
     // Enable URL language detection and selection.
     $edit = array('language_interface[enabled][language-url]' => '1');
     $this->drupalPostForm('admin/config/regional/language/detection', $edit, t('Save settings'));
+  }
+
+  /**
+   * Tests the frontpage link for multiple languages.
+   */
+  public function testFrontpageLink() {
+    $this->regenerateSitemap();
+
+    // Check that the frontpage link is correct for default and non-default
+    // languages.
+    $frontpage_link = Url::fromRoute('<front>', [], ['absolute' => TRUE])->toString();
+    $this->drupalGet('sitemap.xml');
+    $this->assertRaw($frontpage_link, "English frontpage link found in the sitemap.");
+
+    $this->drupalGet('fr/sitemap.xml');
+    $this->assertRaw($frontpage_link . '/fr', "French frontpage link found in the sitemap.");
   }
 
   /**
