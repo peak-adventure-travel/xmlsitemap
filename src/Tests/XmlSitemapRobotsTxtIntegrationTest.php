@@ -21,20 +21,15 @@ class XmlSitemapRobotsTxtIntegrationTest extends XmlSitemapTestBase {
    * Test if sitemap link is included in robots.txt file.
    */
   public function testRobotsTxt() {
-    // Move the robots.txt file shipped by core out of the way for the duration
-    // of this test.
-    $new_path = FALSE;
-    if (file_exists(DRUPAL_ROOT . '/robots.txt')) {
-      $new_path = file_unmanaged_move(DRUPAL_ROOT . '/robots.txt', DRUPAL_ROOT . '/robots.txt.tmp');
-    }
+    // Request the un-clean robots.txt path so this will work in case there is
+    // still the robots.txt file in the root directory. In order to bypass the
+    // local robots.txt file we need to rebuild the container and use a Request
+    // with clean URLs disabled.
+    $this->container = $this->kernel->rebuildContainer();
+    $this->prepareRequestForGenerator(FALSE);
 
     $this->drupalGet('robots.txt');
     $this->assertRaw('Sitemap: ' . Url::fromRoute('xmlsitemap.sitemap_xml', [], ['absolute' => TRUE])->toString());
-
-    // Put back the original robots.txt file.
-    if ($new_path) {
-      file_unmanaged_move($new_path, DRUPAL_ROOT . '/robots.txt');
-    }
   }
 
 }
