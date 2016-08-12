@@ -245,7 +245,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   protected function assertRawSitemapLinks() {
     $links = func_get_args();
     foreach ($links as $link) {
-      $path = Url::fromUri('base://' . $link['loc'], array('language' => xmlsitemap_language_load($link['language']), 'absolute' => TRUE))->toString();
+      $path = Url::fromUri('internal:' . $link['loc'], array('language' => xmlsitemap_language_load($link['language']), 'absolute' => TRUE))->toString();
       $this->assertRaw($link['loc'], t('Link %path found in the sitemap.', array('%path' => $path)));
     }
   }
@@ -253,7 +253,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   protected function assertNoRawSitemapLinks() {
     $links = func_get_args();
     foreach ($links as $link) {
-      $path = Url::fromUri('base://' . $link['loc'], array('language' => xmlsitemap_language_load($link['language']), 'absolute' => TRUE))->toString();
+      $path = Url::fromUri('internal:' . $link['loc'], array('language' => xmlsitemap_language_load($link['language']), 'absolute' => TRUE))->toString();
       $this->assertNoRaw($link['loc'], t('Link %path not found in the sitemap.', array('%path' => $path)));
     }
   }
@@ -270,7 +270,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
     );
 
     // Make the default path easier to read than a random string.
-    $link += array('loc' => $link['type'] . '-' . $link['id']);
+    $link += array('loc' => '/' . $link['type'] . '-' . $link['id']);
 
     $last_id = max($last_id, $link['id']) + 1;
     $this->linkStorage->save($link);

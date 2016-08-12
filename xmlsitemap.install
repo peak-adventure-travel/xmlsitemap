@@ -288,7 +288,7 @@ function xmlsitemap_install() {
       ->fields(array(
         'type' => 'frontpage',
         'id' => 0,
-        'loc' => '',
+        'loc' => '/',
         'priority' => \Drupal::config('xmlsitemap.settings')->get('frontpage_priority'),
         'changefreq' => \Drupal::config('xmlsitemap.settings')->get('frontpage_changefreq'),
         'language' => LanguageInterface::LANGCODE_NOT_SPECIFIED,
@@ -346,7 +346,17 @@ function xmlsitemap_uninstall() {
  * Change the primary key of the 'xmlsitemap' table to include the language.
  */
 function xmlsitemap_update_8001() {
-  Database::getConnection()->schema()->dropPrimaryKey('xmlsitemap');
-  Database::getConnection()->schema()->addPrimaryKey('xmlsitemap', array('id', 'type', 'language'));
-  Database::getConnection()->schema()->dropIndex('xmlsitemap', 'language');
+  \Drupal::database()->schema()->dropPrimaryKey('xmlsitemap');
+  \Drupal::database()->schema()->addPrimaryKey('xmlsitemap', array('id', 'type', 'language'));
+  \Drupal::database()->schema()->dropIndex('xmlsitemap', 'language');
+}
+
+/**
+ * Update the path of the frontpage link.
+ */
+function xmlsitemap_update_8002() {
+  \Drupal::database()->update('xmlsitemap')
+    ->fields(['loc' => '/'])
+    ->condition('type', 'frontpage')
+    ->execute();
 }

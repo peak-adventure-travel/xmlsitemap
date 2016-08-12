@@ -4,6 +4,7 @@ namespace Drupal\xmlsitemap_custom\Controller;
 
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Link;
 use Drupal\Core\Url;
 
 /**
@@ -43,7 +44,7 @@ class XmlSitemapCustomListController extends ControllerBase {
     foreach ($result as $link) {
       $language = $this->languageManager()->getLanguage($link->language);
       $row = array();
-      $row['loc'] = $this->l($link->loc, Url::fromUri('base://' . $link->loc));
+      $row['loc'] = Link::fromTextAndUrl($link->loc, Url::fromUri('internal:' . $link->loc));
       $row['priority'] = number_format($link->priority, 1);
       $row['changefreq'] = $link->changefreq ? Unicode::ucfirst(xmlsitemap_get_changefreq($link->changefreq)) : t('None');
       if (isset($header['language'])) {

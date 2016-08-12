@@ -195,14 +195,14 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
    */
   public function testLinkDelete() {
     // Add our testing data.
-    $link1 = $this->addSitemapLink(array('loc' => 'testing1', 'status' => 0));
-    $link2 = $this->addSitemapLink(array('loc' => 'testing1', 'status' => 1));
+    $link1 = $this->addSitemapLink(array('loc' => '/testing1', 'status' => 0));
+    $link2 = $this->addSitemapLink(array('loc' => '/testing1', 'status' => 1));
     $link3 = $this->addSitemapLink(array('status' => 0));
     $this->state->set('xmlsitemap_regenerate_needed', FALSE);
 
     // Test delete multiple links.
     // Test that the regenerate flag is set when visible links are deleted.
-    $deleted = $this->linkStorage->deleteMultiple(array('loc' => 'testing1'));
+    $deleted = $this->linkStorage->deleteMultiple(array('loc' => '/testing1'));
     $this->assertEqual($deleted, 2);
     $this->assertFalse($this->linkStorage->load($link1['type'], $link1['id']));
     $this->assertFalse($this->linkStorage->load($link2['type'], $link2['id']));
@@ -264,8 +264,8 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
    */
   public function testDuplicatePaths() {
     $this->drupalLogin($this->admin_user);
-    $link1 = $this->addSitemapLink(array('loc' => 'duplicate'));
-    $link2 = $this->addSitemapLink(array('loc' => 'duplicate'));
+    $link1 = $this->addSitemapLink(array('loc' => '/duplicate'));
+    $link2 = $this->addSitemapLink(array('loc' => '/duplicate'));
     $this->regenerateSitemap();
     $this->drupalGetSitemap();
     $this->assertUniqueText('duplicate');
@@ -279,7 +279,7 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
     $this->config->set('minimum_lifetime', 300)->save();
     $this->regenerateSitemap();
 
-    $link = $this->addSitemapLink(array('loc' => 'lifetime-test'));
+    $link = $this->addSitemapLink(array('loc' => '/lifetime-test'));
     $this->cronRun();
     $this->drupalGetSitemap();
     $this->assertResponse(200);

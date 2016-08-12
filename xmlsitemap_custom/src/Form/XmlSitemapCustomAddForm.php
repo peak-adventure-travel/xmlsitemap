@@ -2,6 +2,7 @@
 
 namespace Drupal\xmlsitemap_custom\Form;
 
+use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Http\ClientFactory;
@@ -147,8 +148,9 @@ class XmlSitemapCustomAddForm extends FormBase {
     $form['loc'] = array(
       '#type' => 'textfield',
       '#title' => $this->t('Path to link'),
-      '#field_prefix' => Url::fromRoute('<front>', [], array('absolute' => TRUE)),
+      '#field_prefix' => rtrim(Url::fromRoute('<front>', [], array('absolute' => TRUE))->toString(), '/'),
       '#default_value' => $link['loc'] ? $this->aliasManager->getPathByAlias($link['loc'], $link['language']) : '',
+      '#description' => $this->t('Use a relative path with a slash in front. For example, "/about".'),
       '#required' => TRUE,
       '#size' => 30,
     );
@@ -198,6 +200,11 @@ class XmlSitemapCustomAddForm extends FormBase {
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $link = $form_state->getValues();
 
+    if (Unicode::substr($link['loc'], 0, 1) !== '/') {
+      $form_state->setErrorByName('loc', $this->t('The path should start with /.'));
+      return;
+    }
+
     // Make sure we trim and normalize the path first.
     $link['loc'] = trim($link['loc']);
     $link['loc'] = $this->aliasManager->getPathByAlias($link['loc'], $link['language']);
@@ -217,7 +224,7 @@ class XmlSitemapCustomAddForm extends FormBase {
     }
     try {
       $client = $this->httpClientFactory->fromOptions(['config/curl', array(CURLOPT_FOLLOWLOCATION => FALSE)]);
-      $client->get(Url::fromUserInput('/' . ltrim($link['loc'], '/'), ['absolute' => TRUE])->toString());
+      $client->get(Url::fromUserInput($link['loc'], ['absolute' => TRUE])->toString());
     }
     catch (ClientException $e) {
       $form_state->setErrorByName('loc', $this->t('The custom link @link is either invalid or it cannot be accessed by anonymous users.', array('@link' => $link['loc'])));

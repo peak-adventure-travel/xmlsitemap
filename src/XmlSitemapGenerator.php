@@ -201,7 +201,7 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
     $url_options = $sitemap->uri['options'];
     $url_options += array(
       'absolute' => TRUE,
-      'xmlsitemap_base_url' => $this->state->get('xmlsitemap_base_url'),
+      'base_url' => rtrim($this->state->get('xmlsitemap_base_url'), '/'),
       'language' => $this->languageManager->getDefaultLanguage(),
       'alias' => $this->config->get('prefetch_aliases'),
     );
@@ -225,11 +225,8 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
 
     while ($link = $links->fetchAssoc()) {
       $link['language'] = $link['language'] != LanguageInterface::LANGCODE_NOT_SPECIFIED ? xmlsitemap_language_load($link['language']) : $url_options['language'];
-      if ($url_options['alias']) {
+      if (!empty($link['loc']) && $url_options['alias']) {
         $link['loc'] = $this->getPathAlias($link['loc'], $link['language']->getId());
-      }
-      if ($url_options['base_url']) {
-        $link['loc'] = rtrim($url_options['base_url'], '/') . '/' . ltrim($link['loc'], '/');
       }
       $link_options = array(
         'language' => $link['language'],
@@ -237,8 +234,8 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
         'xmlsitemap_sitemap' => $sitemap,
       );
       // @todo Add a separate hook_xmlsitemap_link_url_alter() here?
-      $link['loc'] = empty($link['loc']) ? '<front>' : $link['loc'];
-      $link_url = Url::fromUri($link['loc'], [], $link_options + $url_options)->toString();
+      $link['loc'] = empty($link['loc']) ? '/' : $link['loc'];
+      $link_url = Url::fromUri('internal:' . $link['loc'], $link_options + $url_options)->toString();
 
       // Skip this link if it was a duplicate of the last one.
       // @todo Figure out a way to do this before generation so we can report
