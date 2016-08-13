@@ -49,6 +49,9 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
     $this->anonymousUser = new AnonymousUserSession();
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function create(EntityInterface $entity) {
     if (!isset($entity->xmlsitemap)) {
       $entity->xmlsitemap = array();
@@ -63,8 +66,8 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
       'type' => $entity->getEntityTypeId(),
       'id' => (string) $entity->id(),
       'subtype' => $entity->bundle(),
-      'status' => $settings['status'],
-      'status_default' => $settings['status'],
+      'status' => (int) $settings['status'],
+      'status_default' => (int) $settings['status'],
       'status_override' => 0,
       'priority' => $settings['priority'],
       'priority_default' => $settings['priority'],
