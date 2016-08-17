@@ -61,7 +61,6 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
     }
 
     $settings = xmlsitemap_link_bundle_load($entity->getEntityTypeId(), $entity->bundle());
-    $uri = $entity->url();
     $entity->xmlsitemap += array(
       'type' => $entity->getEntityTypeId(),
       'id' => (string) $entity->id(),
@@ -79,10 +78,9 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
       $entity->xmlsitemap['lastmod'] = $entity->getChangedTime();
     }
 
-    $url = $entity->url();
     // The following values must always be checked because they are volatile.
-    $entity->xmlsitemap['loc'] = $uri;
-    $entity->xmlsitemap['access'] = isset($url) && $entity->access('view', $this->anonymousUser);
+    $entity->xmlsitemap['loc'] = '/' . $entity->toUrl()->getInternalPath();
+    $entity->xmlsitemap['access'] = $entity->access('view', $this->anonymousUser);
     $language = $entity->language();
     $entity->xmlsitemap['language'] = !empty($language) ? $language->getId() : LanguageInterface::LANGCODE_NOT_SPECIFIED;
 

@@ -203,7 +203,9 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
       'absolute' => TRUE,
       'base_url' => rtrim($this->state->get('xmlsitemap_base_url'), '/'),
       'language' => $this->languageManager->getDefaultLanguage(),
-      'alias' => $this->config->get('prefetch_aliases'),
+      // @todo Figure out a way to bring back the alias preloading optimization.
+      //'alias' => $this->config->get('prefetch_aliases'),
+      'alias' => FALSE,
     );
 
     $last_url = '';
@@ -225,9 +227,10 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
 
     while ($link = $links->fetchAssoc()) {
       $link['language'] = $link['language'] != LanguageInterface::LANGCODE_NOT_SPECIFIED ? xmlsitemap_language_load($link['language']) : $url_options['language'];
-      if (!empty($link['loc']) && $url_options['alias']) {
-        $link['loc'] = $this->getPathAlias($link['loc'], $link['language']->getId());
-      }
+      // @todo Figure out a way to bring back the alias preloading optimization.
+//      if (!empty($link['loc']) && $url_options['alias']) {
+//        $link['loc'] = $this->getPathAlias($link['loc'], $link['language']->getId());
+//      }
       $link_options = array(
         'language' => $link['language'],
         'xmlsitemap_link' => $link,
