@@ -79,8 +79,9 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
     }
 
     // The following values must always be checked because they are volatile.
-    $entity->xmlsitemap['loc'] = '/' . $entity->toUrl()->getInternalPath();
-    $entity->xmlsitemap['access'] = $entity->access('view', $this->anonymousUser);
+    $loc = ($entity->id() !== NULL && $entity->hasLinkTemplate('canonical')) ? '/' . $entity->toUrl()->getInternalPath() : '';
+    $entity->xmlsitemap['loc'] = $loc;
+    $entity->xmlsitemap['access'] = $loc && $entity->access('view', $this->anonymousUser);
     $language = $entity->language();
     $entity->xmlsitemap['language'] = !empty($language) ? $language->getId() : LanguageInterface::LANGCODE_NOT_SPECIFIED;
 
