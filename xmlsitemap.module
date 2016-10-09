@@ -2639,3 +2639,17 @@ function xmlsitemap_link_bundle_enable($entity_type_id, $bundle_id) {
 function xmlsitemap_link_bundle_check_enabled($entity_type_id, $bundle_id) {
   return !\Drupal::config("xmlsitemap.settings.{$entity_type_id}.{$bundle_id}")->isNew();
 }
+
+/**
+ * Check if an entity is enabled and configuration exists for the entity type.
+ *
+ * @param string $entity_type_id
+ *   Entity type id.
+ *
+ * @return bool
+ *   Returns TRUE if bundle is enabled, FALSE otherwise.
+ */
+function xmlsitemap_link_entity_check_enabled($entity_type_id) {
+  $configuration = \Drupal::configFactory()->listAll("xmlsitemap.settings.{$entity_type_id}.");
+  return !empty($configuration);
+}
