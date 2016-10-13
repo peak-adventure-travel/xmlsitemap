@@ -8,6 +8,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\State\StateInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AnonymousUserSession;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 /**
  * XmlSitemap link storage service class.
@@ -79,7 +80,12 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
     }
 
     // The following values must always be checked because they are volatile.
-    $loc = ($entity->id() !== NULL && $entity->hasLinkTemplate('canonical')) ? '/' . $entity->toUrl()->getInternalPath() : '';
+    try {
+      $loc = ($entity->id() !== NULL && $entity->hasLinkTemplate('canonical')) ? '/' . $entity->toUrl()->getInternalPath() : '';
+    }
+    catch (RouteNotFoundException $e) {
+      $loc = '';
+    }
     $entity->xmlsitemap['loc'] = $loc;
     $entity->xmlsitemap['access'] = $loc && $entity->access('view', $this->anonymousUser);
     $language = $entity->language();
