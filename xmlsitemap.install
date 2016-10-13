@@ -66,7 +66,7 @@ function xmlsitemap_requirements($phase) {
         }
       }
       if (!empty($directories)) {
-        $items = array('#type' => 'item_list', 'items' => array_keys($directories));
+        $items = array('#theme' => 'item_list', '#items' => array_keys($directories));
         $requirements['xmlsitemap_directory']['value'] = $t('Not found or not writable');
         $requirements['xmlsitemap_directory']['severity'] = REQUIREMENT_ERROR;
         $requirements['xmlsitemap_directory']['description'] = $t('The following directories were not found or are not writable by the server. See <a href="@docpage">@docpage</a> for more information. @directories', array('@directories' => \Drupal::service('renderer')->render($items), '@docpage' => 'http://drupal.org/node/34025'));
