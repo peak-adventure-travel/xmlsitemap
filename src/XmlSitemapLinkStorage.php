@@ -3,6 +3,7 @@
 namespace Drupal\xmlsitemap;
 
 use Drupal\Core\Database\Query\Merge;
+use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\State\StateInterface;
@@ -75,7 +76,7 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
       'changefreq' => isset($settings['changefreq']) ? $settings['changefreq'] : 0,
     );
 
-    if (method_exists($entity, 'getChangedTime')) {
+    if ($entity instanceof EntityChangedInterface) {
       $entity->xmlsitemap['lastmod'] = $entity->getChangedTime();
     }
 
