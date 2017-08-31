@@ -31,7 +31,7 @@ interface XmlSitemapGeneratorInterface {
    *
    * @param bool $start
    *
-   * @return integer
+   * @return int
    *   Used memory.
    */
   public function getMemoryUsage($start = FALSE);
@@ -42,7 +42,7 @@ interface XmlSitemapGeneratorInterface {
    * This function just makes a guess. It does not take into account
    * the currently loaded modules.
    *
-   * @return integer
+   * @return int
    *   Optimal memory limit.
    */
   public function getOptimalMemoryLimit();
@@ -73,7 +73,8 @@ interface XmlSitemapGeneratorInterface {
    *   An unserialized data array for an XML sitemap.
    * @param \Drupal\xmlsitemap\XmlSitemapWriter $writer
    *   XML writer object.
-   * @param int $pageAn integer of the specific page of the sitemap to generate.
+   * @param int $pageAn
+   *   integer of the specific page of the sitemap to generate.
    *   An integer of the specific page of the sitemap to generate.
    */
   public function generateChunk(XmlSitemapInterface $sitemap, XmlSitemapWriter $writer, $chunk);
@@ -115,7 +116,8 @@ interface XmlSitemapGeneratorInterface {
    *   Results for the regeneration process.
    * @param array $operations
    *   Operations performed.
-   * @param int $elapsedTime elapsed.
+   * @param int $elapsedTime
+   *   elapsed.
    *   Time elapsed.
    */
   public function regenerateBatchFinished($success, $results, $operations, $elapsed);
@@ -151,7 +153,8 @@ interface XmlSitemapGeneratorInterface {
    *   Results for the regeneration process.
    * @param array $operations
    *   Operations performed.
-   * @param int $elapsedTime elapsed.
+   * @param int $elapsedTime
+   *   elapsed.
    *   Time elapsed.
    */
   public function rebuildBatchFinished($success, $results, $operations, $elapsed);
@@ -163,4 +166,5 @@ interface XmlSitemapGeneratorInterface {
    *   Variables to be set.
    */
   public function batchVariableSet(array $variables);
+
 }

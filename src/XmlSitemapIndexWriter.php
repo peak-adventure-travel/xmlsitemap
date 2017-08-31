@@ -42,20 +42,20 @@ class XmlSitemapIndexWriter extends XmlSitemapWriter {
     $lastmod_format = \Drupal::config('xmlsitemap.settings')->get('lastmod_format');
 
     $url_options = $this->sitemap->uri['options'];
-    $url_options += array(
+    $url_options += [
       'absolute' => TRUE,
       'xmlsitemap_base_url' => \Drupal::state()->get('xmlsitemap_base_url'),
       'language' => \Drupal::languageManager()->getDefaultLanguage(),
       'alias' => TRUE,
-    );
+    ];
 
     for ($i = 1; $i <= $this->sitemap->chunks; $i++) {
       $url_options['query']['page'] = $i;
-      $element = array(
+      $element = [
         'loc' => Url::fromRoute('xmlsitemap.sitemap_xml', [], $url_options),
         // @todo Use the actual lastmod value of the chunk file.
         'lastmod' => gmdate($lastmod_format, REQUEST_TIME),
-      );
+      ];
       $this->writeSitemapElement('sitemap', $element);
     }
   }

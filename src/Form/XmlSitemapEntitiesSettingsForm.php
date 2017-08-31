@@ -81,8 +81,8 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('xmlsitemap.settings');
     $entity_types = $this->entityTypeManager->getDefinitions();
-    $labels = array();
-    $default = array();
+    $labels = [];
+    $default = [];
     $anonymous_user = new AnonymousUserSession();
     $bundles = $this->entityTypeBundleInfo->getAllBundleInfo();
 
@@ -96,75 +96,75 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
 
     asort($labels);
 
-    $form = array(
+    $form = [
       '#labels' => $labels,
-    );
+    ];
 
-    $form['entity_types'] = array(
+    $form['entity_types'] = [
       '#title' => $this->t('Custom sitemap entities settings'),
       '#type' => 'checkboxes',
       '#options' => $labels,
       '#default_value' => $default,
-    );
+    ];
 
-    $form['settings'] = array('#tree' => TRUE);
+    $form['settings'] = ['#tree' => TRUE];
 
     foreach ($labels as $entity_type_id => $label) {
       $entity_type = $entity_types[$entity_type_id];
 
-      $form['settings'][$entity_type_id] = array(
+      $form['settings'][$entity_type_id] = [
         '#type' => 'container',
         '#entity_type' => $entity_type_id,
         '#bundle_label' => $entity_type->getBundleLabel() ? $entity_type->getBundleLabel() : $label,
         '#title' => $entity_type->getBundleLabel() ? $entity_type->getBundleLabel() : $label,
-        '#states' => array(
-          'visible' => array(
-            ':input[name="entity_types[' . $entity_type_id . ']"]' => array('checked' => TRUE),
-          ),
-        ),
+        '#states' => [
+          'visible' => [
+            ':input[name="entity_types[' . $entity_type_id . ']"]' => ['checked' => TRUE],
+          ],
+        ],
 
-        'types' => array(
+        'types' => [
           '#type' => 'table',
           '#tableselect' => TRUE,
-          '#default_value' => array(),
-          '#header' => array(
-            array(
+          '#default_value' => [],
+          '#header' => [
+            [
               'data' => $entity_type->getBundleLabel() ? $entity_type->getBundleLabel() : $label,
-              'class' => array('bundle'),
-            ),
-            array(
+              'class' => ['bundle'],
+            ],
+            [
               'data' => $this->t('Sitemap settings'),
-              'class' => array('operations'),
-            ),
-          ),
+              'class' => ['operations'],
+            ],
+          ],
           '#empty' => $this->t('No content available.'),
-        ),
-      );
+        ],
+      ];
 
       foreach ($bundles[$entity_type_id] as $bundle => $bundle_info) {
-        $form['settings'][$entity_type_id][$bundle]['settings'] = array(
+        $form['settings'][$entity_type_id][$bundle]['settings'] = [
           '#type' => 'item',
           '#label' => $bundle_info['label'],
-        );
+        ];
 
-        $form['settings'][$entity_type_id]['types'][$bundle] = array(
-          'bundle' => array(
+        $form['settings'][$entity_type_id]['types'][$bundle] = [
+          'bundle' => [
             '#markup' => SafeMarkup::checkPlain($bundle_info['label']),
-          ),
+          ],
           'operations' => [
             '#type' => 'operations',
             '#links' => [
               'configure' => [
                 'title' => $this->t('Configure'),
-                'url' => Url::fromRoute('xmlsitemap.admin_settings_bundle', array(
+                'url' => Url::fromRoute('xmlsitemap.admin_settings_bundle', [
                   'entity' => $entity_type_id,
                   'bundle' => $bundle,
                   'query' => drupal_get_destination(),
-                )),
-              ]
-            ]
+                ]),
+              ],
+            ],
           ],
-        );
+        ];
         $form['settings'][$entity_type_id]['types']['#default_value'][$bundle] = xmlsitemap_link_bundle_check_enabled($entity_type_id, $bundle);
 
         if (xmlsitemap_link_bundle_check_enabled($entity_type_id, $bundle)) {

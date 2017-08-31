@@ -97,11 +97,11 @@ class XmlSitemapStorage extends ConfigEntityStorage {
   protected function doSave($id, EntityInterface $entity) {
     // Store the xmlsitemap auxiliar data.
     $this->state->set('xmlsitemap.' . $entity->id(), [
-        'chunks' => $entity->getChunks(),
-        'links' => $entity->getLinks(),
-        'max_filesize' => $entity->getMaxFileSize(),
-        'updated' => $entity->getUpdated(),
-      ]);
+      'chunks' => $entity->getChunks(),
+      'links' => $entity->getLinks(),
+      'max_filesize' => $entity->getMaxFileSize(),
+      'updated' => $entity->getUpdated(),
+    ]);
     $is_new = parent::doSave($id, $entity);
 
     return $is_new ? SAVED_NEW : SAVED_UPDATED;

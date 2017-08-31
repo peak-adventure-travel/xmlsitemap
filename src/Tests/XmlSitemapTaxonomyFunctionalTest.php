@@ -33,7 +33,7 @@ class XmlSitemapTaxonomyFunctionalTest extends XmlSitemapTestBase {
     ]);
     $vocabulary->save();
 
-    $this->admin_user = $this->drupalCreateUser(array('administer taxonomy', 'administer xmlsitemap'));
+    $this->admin_user = $this->drupalCreateUser(['administer taxonomy', 'administer xmlsitemap']);
   }
 
   /**
@@ -43,10 +43,10 @@ class XmlSitemapTaxonomyFunctionalTest extends XmlSitemapTestBase {
     $this->drupalLogin($this->admin_user);
 
     // Enable XML Sitemap settings for our vocabulary.
-    $settings = array(
+    $settings = [
       'status' => '1',
       'priority' => '1.0',
-    );
+    ];
     xmlsitemap_link_bundle_settings_save('taxonomy_term', 'tags', $settings);
 
     $this->drupalGet('admin/structure/taxonomy/manage/tags/add');
@@ -56,11 +56,11 @@ class XmlSitemapTaxonomyFunctionalTest extends XmlSitemapTestBase {
     $this->assertField('xmlsitemap[changefreq]');
 
     $term_name = $this->randomMachineName();
-    $edit = array(
+    $edit = [
       'name[0][value]' => $term_name,
       'xmlsitemap[status]' => 'default',
       'xmlsitemap[priority]' => 'default',
-    );
+    ];
     $this->drupalPostForm(NULL, $edit, t('Save'));
 
     $term = taxonomy_term_load_multiple_by_name($term_name, 'tags')[1];

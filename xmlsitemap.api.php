@@ -6,6 +6,7 @@
  *
  * @ingroup xmlsitemap
  */
+
 use Drupal\xmlsitemap\XmlSitemapInterface;
 
 /**
@@ -20,32 +21,32 @@ use Drupal\xmlsitemap\XmlSitemapInterface;
  * @see hook_entity_info_alter()
  */
 function hook_xmlsitemap_link_info() {
-  return array(
-    'mymodule' => array(
+  return [
+    'mymodule' => [
       'label' => 'My module',
       'base table' => 'mymodule',
-      'entity keys' => array(
-        // Primary ID key on {base table}
+      'entity keys' => [
+        // Primary ID key on {base table}.
         'id' => 'myid',
-        // Subtype key on {base table}
+        // Subtype key on {base table}.
         'bundle' => 'mysubtype',
-      ),
+      ],
       'path callback' => 'mymodule_path',
       'bundle label' => t('Subtype name'),
-      'bundles' => array(
-        'mysubtype1' => array(
+      'bundles' => [
+        'mysubtype1' => [
           'label' => t('My subtype 1'),
-          'admin' => array(
+          'admin' => [
             'real path' => 'admin/settings/mymodule/mysubtype1/edit',
-            'access arguments' => array('administer mymodule'),
-          ),
-          'xmlsitemap' => array(
+            'access arguments' => ['administer mymodule'],
+          ],
+          'xmlsitemap' => [
             'status' => XMLSITEMAP_STATUS_DEFAULT,
             'priority' => XMLSITEMAP_PRIORITY_DEFAULT,
-          ),
-        ),
-      ),
-      'xmlsitemap' => array(
+          ],
+        ],
+      ],
+      'xmlsitemap' => [
         // Callback function to take an array of IDs and save them as sitemap
         // links.
         'process callback' => '',
@@ -53,9 +54,9 @@ function hook_xmlsitemap_link_info() {
         'rebuild callback' => '',
         // Callback function called from the XML sitemap settings page.
         'settings callback' => '',
-      ),
-    ),
-  );
+      ],
+    ],
+  ];
 }
 
 /**
@@ -81,12 +82,12 @@ function hook_xmlsitemap_link_alter(&$link) {
  */
 function hook_xmlsitemap_link_insert(array $link) {
   db_insert('mytable')
-      ->fields(array(
-        'link_type' => $link['type'],
-        'link_id' => $link['id'],
-        'link_status' => $link['status'],
-      ))
-      ->execute();
+    ->fields([
+      'link_type' => $link['type'],
+      'link_id' => $link['id'],
+      'link_status' => $link['status'],
+    ])
+    ->execute();
 }
 
 /**
@@ -100,12 +101,12 @@ function hook_xmlsitemap_link_insert(array $link) {
  */
 function hook_xmlsitemap_link_update(array $link) {
   db_update('mytable')
-      ->fields(array(
-        'link_type' => $link['type'],
-        'link_id' => $link['id'],
-        'link_status' => $link['status'],
-      ))
-      ->execute();
+    ->fields([
+      'link_type' => $link['type'],
+      'link_id' => $link['id'],
+      'link_status' => $link['status'],
+    ])
+    ->execute();
 }
 
 /**
@@ -118,21 +119,21 @@ function hook_xmlsitemap_index_links($limit) {
 /**
  * Provide information about contexts available to XML sitemap.
  *
- * @see hook_xmlsitemap_context_info_alter().
+ * @see hook_xmlsitemap_context_info_alter()
  */
 function hook_xmlsitemap_context_info() {
-  $info['vocabulary'] = array(
+  $info['vocabulary'] = [
     'label' => t('Vocabulary'),
     'summary callback' => 'mymodule_xmlsitemap_vocabulary_context_summary',
     'default' => 0,
-  );
+  ];
   return $info;
 }
 
 /**
  * Alter XML sitemap context info.
  *
- * @see hook_xmlsitemap_context_info().
+ * @see hook_xmlsitemap_context_info()
  */
 function hook_xmlsitemap_context_info_alter(&$info) {
   $info['vocabulary']['label'] = t('Site vocabularies');
@@ -144,7 +145,7 @@ function hook_xmlsitemap_context_info_alter(&$info) {
  * @see hook_xmlsitemap_context_alter()
  */
 function hook_xmlsitemap_context() {
-  $context = array();
+  $context = [];
   if ($vid = mymodule_get_current_vocabulary()) {
     $context['vocabulary'] = $vid;
   }

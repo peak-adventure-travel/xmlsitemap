@@ -42,11 +42,11 @@ class XmlSitemapLinkBundleSettingsForm extends ConfigFormBase {
       // If this is a non-ajax form, redirect to the bundle administration page.
       $destination = drupal_get_destination();
       $request->query->remove('destination');
-      $url = Url::fromUri($admin_path, array('query' => array($destination)));
+      $url = Url::fromUri($admin_path, ['query' => [$destination]]);
       return new RedirectResponse($url);
     }
     else {
-      $form['#title'] = $this->t('@bundle XML sitemap settings', array('@bundle' => $bundle));
+      $form['#title'] = $this->t('@bundle XML sitemap settings', ['@bundle' => $bundle]);
     }
 
     xmlsitemap_add_link_bundle_settings($form, $form_state, $entity, $bundle);
@@ -57,12 +57,12 @@ class XmlSitemapLinkBundleSettingsForm extends ConfigFormBase {
 
     $destination = $request->get('destination');
 
-    $form['actions']['cancel'] = array(
+    $form['actions']['cancel'] = [
       '#type' => 'link',
       '#title' => $this->t('Cancel'),
       '#href' => isset($destination) ? $destination : 'admin/config/search/xmlsitemap/settings',
       '#weight' => 10,
-    );
+    ];
     $form = parent::buildForm($form, $form_state);
 
     return $form;
@@ -94,7 +94,7 @@ class XmlSitemapLinkBundleSettingsForm extends ConfigFormBase {
 
     $entity_info = $form['xmlsitemap']['#entity_info'];
     if (!empty($form['xmlsitemap']['#show_message'])) {
-      drupal_set_message($this->t('XML sitemap settings for the %bundle have been saved.', array('%bundle' => $entity_info['bundles'][$bundle]['label'])));
+      drupal_set_message($this->t('XML sitemap settings for the %bundle have been saved.', ['%bundle' => $entity_info['bundles'][$bundle]['label']]));
     }
 
     // Unset the form values since we have already saved the bundle settings and

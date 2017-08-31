@@ -56,14 +56,14 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
    */
   public function create(EntityInterface $entity) {
     if (!isset($entity->xmlsitemap)) {
-      $entity->xmlsitemap = array();
+      $entity->xmlsitemap = [];
       if ($entity->id() && $link = $this->load($entity->getEntityTypeId(), $entity->id())) {
         $entity->xmlsitemap = $link;
       }
     }
 
     $settings = xmlsitemap_link_bundle_load($entity->getEntityTypeId(), $entity->bundle());
-    $entity->xmlsitemap += array(
+    $entity->xmlsitemap += [
       'type' => $entity->getEntityTypeId(),
       'id' => (string) $entity->id(),
       'subtype' => $entity->bundle(),
@@ -74,7 +74,7 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
       'priority_default' => $settings['priority'],
       'priority_override' => 0,
       'changefreq' => isset($settings['changefreq']) ? $settings['changefreq'] : 0,
-    );
+    ];
 
     if ($entity instanceof EntityChangedInterface) {
       $entity->xmlsitemap['lastmod'] = $entity->getChangedTime();
@@ -99,7 +99,7 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
    * {@inheritdoc}
    */
   public function save(array $link) {
-    $link += array(
+    $link += [
       'access' => 1,
       'status' => 1,
       'status_override' => 0,
@@ -109,7 +109,7 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
       'changefreq' => 0,
       'changecount' => 0,
       'language' => LanguageInterface::LANGCODE_NOT_SPECIFIED,
-    );
+    ];
 
     // Allow other modules to alter the link before saving.
     $this->moduleHandler->alter('xmlsitemap_link', $link);
@@ -117,10 +117,10 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
     // Temporary validation checks.
     // @todo Remove in final?
     if ($link['priority'] < 0 || $link['priority'] > 1) {
-      trigger_error(t('Invalid sitemap link priority %priority.<br />@link', array('%priority' => $link['priority'], '@link' => var_export($link, TRUE))), E_USER_ERROR);
+      trigger_error(t('Invalid sitemap link priority %priority.<br />@link', ['%priority' => $link['priority'], '@link' => var_export($link, TRUE)]), E_USER_ERROR);
     }
     if ($link['changecount'] < 0) {
-      trigger_error(t('Negative changecount value. Please report this to <a href="@516928">@516928</a>.<br />@link', array('@516928' => 'http://drupal.org/node/516928', '@link' => var_export($link, TRUE))), E_USER_ERROR);
+      trigger_error(t('Negative changecount value. Please report this to <a href="@516928">@516928</a>.<br />@link', ['@516928' => 'http://drupal.org/node/516928', '@link' => var_export($link, TRUE)]), E_USER_ERROR);
       $link['changecount'] = 0;
     }
 
@@ -130,8 +130,8 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
     }
 
     $queryStatus = \Drupal::database()->merge('xmlsitemap')
-      ->key(array('type' => $link['type'], 'id' => $link['id'], 'language' => $link['language']))
-      ->fields(array(
+      ->key(['type' => $link['type'], 'id' => $link['id'], 'language' => $link['language']])
+      ->fields([
         'loc' => $link['loc'],
         'subtype' => $link['subtype'],
         'access' => (int) $link['access'],
@@ -142,17 +142,16 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
         'priority_override' => $link['priority_override'],
         'changefreq' => $link['changefreq'],
         'changecount' => $link['changecount'],
-      ))
+      ])
       ->execute();
 
-    switch($queryStatus)
-    {
+    switch ($queryStatus) {
       case Merge::STATUS_INSERT:
-        $this->moduleHandler->invokeAll('xmlsitemap_link_insert', array($link));
+        $this->moduleHandler->invokeAll('xmlsitemap_link_insert', [$link]);
         break;
 
       case Merge::STATUS_UPDATE:
-        $this->moduleHandler->invokeAll('xmlsitemap_link_update', array($link));
+        $this->moduleHandler->invokeAll('xmlsitemap_link_update', [$link]);
         break;
     }
 
@@ -167,7 +166,7 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
 
     if ($original_link === NULL) {
       // Load only the fields necessary for data to be changed in the sitemap.
-      $original_link = db_query_range("SELECT loc, access, status, lastmod, priority, changefreq, changecount, language FROM {xmlsitemap} WHERE type = :type AND id = :id", 0, 1, array(':type' => $link['type'], ':id' => $link['id']))->fetchAssoc();
+      $original_link = db_query_range("SELECT loc, access, status, lastmod, priority, changefreq, changecount, language FROM {xmlsitemap} WHERE type = :type AND id = :id", 0, 1, [':type' => $link['type'], ':id' => $link['id']])->fetchAssoc();
     }
 
     if (!$original_link) {
@@ -182,7 +181,7 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
         $changed = TRUE;
       }
       elseif ($original_link['access'] && $original_link['status'] && array_diff_assoc($original_link, $link)) {
-        // Changing a visible link
+        // Changing a visible link.
         $changed = TRUE;
       }
     }
@@ -197,7 +196,7 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
   /**
    * {@inheritdoc}
    */
-  public function checkChangedLinks(array $conditions = array(), array $updates = array(), $flag = FALSE) {
+  public function checkChangedLinks(array $conditions = [], array $updates = [], $flag = FALSE) {
     // If we are changing status or access, check for negative current values.
     $conditions['status'] = (!empty($updates['status']) && empty($conditions['status'])) ? 0 : 1;
     $conditions['access'] = (!empty($updates['access']) && empty($conditions['access'])) ? 0 : 1;
@@ -221,7 +220,7 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
    * {@inheritdoc}
    */
   public function delete($entity_type, $entity_id, $langcode = NULL) {
-    $conditions = array('type' => $entity_type, 'id' => $entity_id);
+    $conditions = ['type' => $entity_type, 'id' => $entity_id];
     if ($langcode) {
       $conditions['language'] = $langcode;
     }
@@ -233,7 +232,7 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
    */
   public function deleteMultiple(array $conditions) {
     if (!$this->state->get('xmlsitemap_regenerate_needed')) {
-      $this->checkChangedLinks($conditions, array(), TRUE);
+      $this->checkChangedLinks($conditions, [], TRUE);
     }
 
     // @todo Add a hook_xmlsitemap_link_delete() hook invoked here.
@@ -249,7 +248,7 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
   /**
    * {@inheritdoc}
    */
-  public function updateMultiple($updates = array(), $conditions = array(), $check_flag = TRUE) {
+  public function updateMultiple($updates = [], $conditions = [], $check_flag = TRUE) {
     // If we are going to modify a visible sitemap link, we will need to set
     // the regenerate needed flag.
     if ($check_flag && !$this->state->get('xmlsitemap_regenerate_needed')) {
@@ -270,14 +269,14 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
    * {@inheritdoc}
    */
   public function load($entity_type, $entity_id) {
-    $link = $this->loadMultiple(array('type' => $entity_type, 'id' => $entity_id));
+    $link = $this->loadMultiple(['type' => $entity_type, 'id' => $entity_id]);
     return $link ? reset($link) : FALSE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function loadMultiple(array $conditions = array()) {
+  public function loadMultiple(array $conditions = []) {
     $query = db_select('xmlsitemap');
     $query->fields('xmlsitemap');
 

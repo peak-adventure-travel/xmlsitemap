@@ -39,6 +39,7 @@ interface XmlSitemapLinkStorageInterface {
    * @param bool $flag
    *   An optional boolean that if TRUE, will set the regenerate needed flag if
    *   there is a match. Defaults to FALSE.
+   *
    * @return
    *   TRUE if the link is changed, or FALSE otherwise.
    */
@@ -58,7 +59,7 @@ interface XmlSitemapLinkStorageInterface {
    * @return
    *   TRUE if there is a visible link, or FALSE otherwise.
    */
-  public function checkChangedLinks(array $conditions = array(), array $updates = array(), $flag = FALSE);
+  public function checkChangedLinks(array $conditions = [], array $updates = [], $flag = FALSE);
 
   /**
    * Delete a specific sitemap link from the database.
@@ -106,7 +107,7 @@ interface XmlSitemapLinkStorageInterface {
    * @return
    *   The number of links that were updated.
    */
-  public function updateMultiple($updates = array(), $conditions = array(), $check_flag = TRUE);
+  public function updateMultiple($updates = [], $conditions = [], $check_flag = TRUE);
 
   /**
    * Load a specific sitemap link from the database.
@@ -131,5 +132,6 @@ interface XmlSitemapLinkStorageInterface {
    * @return
    *   An array of sitemap link arrays.
    */
-  public function loadMultiple(array $conditions = array());
+  public function loadMultiple(array $conditions = []);
+
 }
