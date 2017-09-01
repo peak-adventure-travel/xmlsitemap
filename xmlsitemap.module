@@ -1588,6 +1588,7 @@ function xmlsitemap_xmlsitemap_process_entity_links($entity_type_id, array $enti
       $link_storage->save($link);
     }
   }
+  \Drupal::entityTypeManager()->getStorage($entity_type_id)->resetCache();
 }
 
 /**
