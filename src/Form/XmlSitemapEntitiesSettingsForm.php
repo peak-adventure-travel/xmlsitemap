@@ -149,7 +149,7 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
 
         $form['settings'][$entity_type_id]['types'][$bundle] = [
           'bundle' => [
-            '#markup' => SafeMarkup::checkPlain($bundle_info['label']),
+            '#markup' => $bundle_info['label'],
           ],
           'operations' => [
             '#type' => 'operations',
