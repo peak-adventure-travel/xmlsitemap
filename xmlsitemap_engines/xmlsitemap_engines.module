@@ -2,6 +2,7 @@
 
 /**
  * @file
+ * Main file for the XML sitemap engines.
  */
 
 use Drupal\Component\Utility\UrlHelper;

@@ -17,13 +17,22 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
    * The path of the custom link.
    *
    * @var string
+   *
+   * @codingStandardsIgnoreStart
    */
   protected $submit_url;
 
   /**
    * {@inheritdoc}
+   *
+   * @codingStandardsIgnoreEnd
    */
-  public static $modules = ['path', 'dblog', 'xmlsitemap_engines', 'xmlsitemap_engines_test'];
+  public static $modules = [
+    'path',
+    'dblog',
+    'xmlsitemap_engines',
+    'xmlsitemap_engines_test',
+  ];
 
   /**
    * {@inheritdoc}
@@ -54,8 +63,11 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
 
   /**
    * Check if an url is correctly prepared.
+   *
+   * @codingStandardsIgnoreStart
    */
   public function testPrepareURL() {
+    // @codingStandardsIgnoreEnd
     $sitemap = 'http://example.com/sitemap.xml';
     $input = 'http://example.com/ping?sitemap=[sitemap]&foo=bar';
     $output = 'http://example.com/ping?sitemap=http://example.com/sitemap.xml&foo=bar';
@@ -95,8 +107,20 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
 
     xmlsitemap_engines_submit_sitemaps($this->submit_url, $sitemaps);
 
-    $this->assertWatchdogMessage(['type' => 'xmlsitemap', 'message' => 'Recieved ping for @sitemap.', 'variables' => ['@sitemap' => 'http://example.com/sitemap.xml']]);
-    $this->assertWatchdogMessage(['type' => 'xmlsitemap', 'message' => 'Recieved ping for @sitemap.', 'variables' => ['@sitemap' => 'http://example.com/sitemap-2.xml']]);
+    $this->assertWatchdogMessage([
+      'type' => 'xmlsitemap',
+      'message' => 'Recieved ping for @sitemap.',
+      'variables' => [
+        '@sitemap' => 'http://example.com/sitemap.xml',
+      ],
+    ]);
+    $this->assertWatchdogMessage([
+      'type' => 'xmlsitemap',
+      'message' => 'Recieved ping for @sitemap.',
+      'variables' => [
+        '@sitemap' => 'http://example.com/sitemap-2.xml',
+      ],
+    ]);
   }
 
   /**
@@ -114,8 +138,11 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
 
   /**
    * Check if custom urls are functional.
+   *
+   * @codingStandardsIgnoreStart
    */
   public function testCustomURL() {
+    // @codingStandardsIgnoreEnd
     $edit = ['custom_urls' => 'an-invalid-url'];
     $this->drupalPostForm('admin/config/search/xmlsitemap/engines', $edit, t('Save configuration'));
     $this->assertText('Invalid URL an-invalid-url.');
@@ -132,8 +159,23 @@ class XmlSitemapEnginesFunctionalTest extends XmlSitemapTestBase {
 
     $this->submitEngines();
     $url = xmlsitemap_engines_prepare_url($this->submit_url, Url::fromRoute('xmlsitemap.sitemap_xml', [], ['absolute' => TRUE])->toString());
-    $this->assertWatchdogMessage(['type' => 'xmlsitemap', 'message' => 'Submitted the sitemap to %url and received response @code.', 'variables' => ['%url' => $url, '@code' => 200]]);
-    $this->assertWatchdogMessage(['type' => 'xmlsitemap', 'message' => 'Recieved ping for @sitemap.', 'variables' => ['@sitemap' => Url::fromRoute('xmlsitemap.sitemap_xml', [], ['absolute' => TRUE])->toString()]]);
+    $this->assertWatchdogMessage([
+      'type' => 'xmlsitemap',
+      'message' => 'Submitted the sitemap to %url and received response @code.',
+      'variables' => [
+        '%url' => $url,
+        '@code' => 200,
+      ],
+    ]);
+    $this->assertWatchdogMessage([
+      'type' => 'xmlsitemap',
+      'message' => 'Recieved ping for @sitemap.',
+      'variables' => [
+        '@sitemap' => Url::fromRoute('xmlsitemap.sitemap_xml', [], [
+          'absolute' => TRUE,
+        ])->toString(),
+      ],
+    ]);
   }
 
 }
