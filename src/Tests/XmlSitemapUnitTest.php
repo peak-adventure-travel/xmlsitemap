@@ -220,6 +220,7 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
    */
   public function testUpdateLinks() {
     // Add our testing data.
+    // @codingStandardsIgnoreLine
     $links = [];
     $links[1] = $this->addSitemapLink(['subtype' => 'group1']);
     $links[2] = $this->addSitemapLink(['subtype' => 'group1']);
@@ -264,8 +265,10 @@ class XmlSitemapUnitTest extends XmlSitemapTestBase {
    */
   public function testDuplicatePaths() {
     $this->drupalLogin($this->admin_user);
+    // @codingStandardsIgnoreStart
     $link1 = $this->addSitemapLink(['loc' => '/duplicate']);
     $link2 = $this->addSitemapLink(['loc' => '/duplicate']);
+    // @codingStandardsIgnoreEnd
     $this->regenerateSitemap();
     $this->drupalGetSitemap();
     $this->assertUniqueText('duplicate');

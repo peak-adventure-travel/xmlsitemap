@@ -35,7 +35,6 @@ class XmlSitemapLinkBundleSettingsForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state, $entity = NULL, $bundle = NULL) {
     $this->entity_type = $entity;
     $this->bundle_type = $bundle;
-    $config = $this->config('xmlsitemap.settings');
     $request = $this->getRequest();
 
     if (!$request->isXmlHttpRequest() && $admin_path = xmlsitemap_get_bundle_path($entity, $bundle)) {
@@ -72,7 +71,6 @@ class XmlSitemapLinkBundleSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $entity = $form['xmlsitemap']['#entity'];
     $bundle = $form['xmlsitemap']['#bundle'];
 
     // Handle new bundles by fetching the proper bundle key value from the form

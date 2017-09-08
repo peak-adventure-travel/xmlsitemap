@@ -457,7 +457,6 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
    */
   public function batchVariableSet(array $variables) {
     $state_variables = xmlsitemap_state_variables();
-    $config_variables = xmlsitemap_config_variables();
     foreach ($variables as $variable => $value) {
       if (isset($state_variables[$variable])) {
         $this->state->set($variable, $value);

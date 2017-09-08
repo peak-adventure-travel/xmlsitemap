@@ -493,7 +493,7 @@ function xmlsitemap_check_all_directories() {
   $directories = array();
 
   $sitemaps = xmlsitemap_sitemap_load_multiple(FALSE);
-  foreach ($sitemaps as $smid => $sitemap) {
+  foreach ($sitemaps as $sitemap) {
     $directory = xmlsitemap_get_directory($sitemap);
     $directories[$directory] = $directory;
   }
@@ -640,7 +640,7 @@ function xmlsitemap_get_link_info($type = NULL, $reset = FALSE) {
         if (empty($uri_callback) || !isset($entity_type->xmlsitemap)) {
           // Remove any non URL-able or XML sitemap un-supported entites.
         }
-        foreach (\Drupal::service('entity_type.bundle.info')->getBundleInfo($entity_type->id()) as $bundle_key => $bundle) {
+        foreach (\Drupal::service('entity_type.bundle.info')->getBundleInfo($entity_type->id()) as $bundle) {
           if (!isset($bundle['xmlsitemap'])) {
             // Remove any un-supported entity bundles.
           }
@@ -1509,7 +1509,6 @@ function xmlsitemap_form_alter(array &$form, FormStateInterface $form_state, $fo
   $entity = $form_controller ? $form_controller->getEntity() : NULL;
   $entity_type = $entity ? $entity->getEntityTypeId() : NULL;
   $bundle = $entity ? $entity->bundle() : NULL;
-  $anonymous_user = new AnonymousUserSession();
 
   if (!$form_controller) {
     return;
@@ -1931,7 +1930,6 @@ function xmlsitemap_sitemap_multiple_update(array $smids) {
 function xmlsitemap_add_form_entity_summary(&$form, $entity, array $entity_info) {
   $priorities = xmlsitemap_get_priority_options(NULL, FALSE);
   $statuses = xmlsitemap_get_status_options(NULL);
-  $destination = drupal_get_destination();
 
   $rows = array();
   $totals = array('total' => 0, 'indexed' => 0, 'visible' => 0);

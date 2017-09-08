@@ -247,10 +247,12 @@ class XmlSitemapWriter extends \XMLWriter {
       throw new XmlSitemapGenerationException(t('Unknown error occurred while writing to file @file.', ['@file' => $this->uri]));
     }
 
+    // @codingStandardsIgnoreStart
     if (xmlsitemap_var('gz')) {
       $file_gz = $file . '.gz';
       file_put_contents($file_gz, gzencode(file_get_contents($file), 9));
     }
+    // @codingStandardsIgnoreEnd
 
     return $return;
   }

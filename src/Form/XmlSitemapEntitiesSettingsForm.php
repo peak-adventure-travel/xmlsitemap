@@ -79,11 +79,9 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $config = $this->config('xmlsitemap.settings');
     $entity_types = $this->entityTypeManager->getDefinitions();
     $labels = [];
     $default = [];
-    $anonymous_user = new AnonymousUserSession();
     $bundles = $this->entityTypeBundleInfo->getAllBundleInfo();
 
     foreach ($entity_types as $entity_type_id => $entity_type) {
@@ -186,8 +184,6 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
     $bundles = $this->entityTypeBundleInfo->getAllBundleInfo();
     $values = $form_state->getValues();
     $entity_values = $values['entity_types'];
-    $config = $this->config('xmlsitemap.settings');
-    $settings = $form_state->getValue('settings');
     foreach ($entity_values as $key => $value) {
       if ($value) {
         foreach ($bundles[$key] as $bundle_key => $bundle_value) {

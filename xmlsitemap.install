@@ -332,7 +332,6 @@ function xmlsitemap_uninstall() {
   $entity_types = \Drupal::entityTypeManager()->getDefinitions();
   $bundles = \Drupal::service('entity_type.bundle.info')->getAllBundleInfo();
 
-  $state_variables = [];
   foreach ($entity_types as $entity_type_id => $entity_type) {
     if (isset($bundles[$entity_type_id])) {
       foreach ($bundles[$entity_type_id] as $bundle_id => $bundle) {

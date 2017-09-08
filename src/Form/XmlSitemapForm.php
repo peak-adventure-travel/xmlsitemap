@@ -95,10 +95,8 @@ class XmlSitemapForm extends EntityForm {
    * {@inheritdoc}
    */
   public function delete(array $form, FormStateInterface $form_state) {
-    $destination = [];
     $request = $this->getRequest();
     if ($request->query->has('destination')) {
-      $destination = drupal_get_destination();
       $request->query->remove('destination');
     }
     $form_state->setRedirect('xmlsitemap.admin_delete', ['xmlsitemap' => $this->entity->id()]);
