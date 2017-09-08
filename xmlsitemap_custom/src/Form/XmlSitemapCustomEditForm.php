@@ -23,6 +23,8 @@ class XmlSitemapCustomEditForm extends FormBase {
    * The path of the custom link.
    *
    * @var string
+   *
+   * @codingStandardsIgnoreStart
    */
   protected $custom_link;
 
@@ -30,6 +32,8 @@ class XmlSitemapCustomEditForm extends FormBase {
    * The language manager.
    *
    * @var \Drupal\language\ConfigurableLanguageManagerInterface
+   *
+   * @codingStandardsIgnoreEnd
    */
   protected $languageManager;
 

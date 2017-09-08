@@ -72,7 +72,11 @@ class XmlSitemapCustomListController extends ControllerBase {
       '#type' => 'table',
       '#header' => $header,
       '#rows' => $rows,
-      '#empty' => $this->t('No custom links available. <a href="@custom_link">Add custom link</a>', ['@custom_link' => Url::fromRoute('xmlsitemap_custom.add', [], ['query' => $this->getDestinationArray()])->toString()]),
+      '#empty' => $this->t('No custom links available. <a href="@custom_link">Add custom link</a>', [
+        '@custom_link' => Url::fromRoute('xmlsitemap_custom.add', [], [
+          'query' => $this->getDestinationArray(),
+        ])->toString(),
+      ]),
     ];
     $build['xmlsitemap_custom_pager'] = ['#type' => 'pager'];
 

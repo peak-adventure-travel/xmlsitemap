@@ -25,6 +25,8 @@ class XmlSitemapCustomDeleteForm extends ConfirmFormBase {
    * The path of the custom link.
    *
    * @var string
+   *
+   * @codingStandardsIgnoreStart
    */
   protected $custom_link;
 
@@ -33,6 +35,8 @@ class XmlSitemapCustomDeleteForm extends ConfirmFormBase {
    *
    * @param \Drupal\xmlsitemap\XmlSitemapLinkStorageInterface $link_storage
    *   The xmlsitemap link storage service.
+   *
+   * @codingStandardsIgnoreEnd
    */
   public function __construct(XmlSitemapLinkStorageInterface $link_storage) {
     $this->linkStorage = $link_storage;
