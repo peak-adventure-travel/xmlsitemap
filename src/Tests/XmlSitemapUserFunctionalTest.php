@@ -48,7 +48,7 @@ class XmlSitemapUserFunctionalTest extends XmlSitemapTestBase {
       'xmlsitemap[status]' => 1,
     ];
 
-    // This will pass when http://drupal.org/node/360925 is fixed.
+    // This will pass when https://www.drupal.org/node/360925 is fixed.
     $this->drupalPostForm('user/' . $this->normal_user->id() . '/edit', $edit, t('Save'));
     $this->assertText('The changes have been saved.');
     $this->assertSitemapLinkVisible('user', $this->normal_user->id());

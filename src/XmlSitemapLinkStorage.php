@@ -120,7 +120,7 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
       trigger_error(t('Invalid sitemap link priority %priority.<br />@link', ['%priority' => $link['priority'], '@link' => var_export($link, TRUE)]), E_USER_ERROR);
     }
     if ($link['changecount'] < 0) {
-      trigger_error(t('Negative changecount value. Please report this to <a href="@516928">@516928</a>.<br />@link', ['@516928' => 'http://drupal.org/node/516928', '@link' => var_export($link, TRUE)]), E_USER_ERROR);
+      trigger_error(t('Negative changecount value. Please report this to <a href="@516928">@516928</a>.<br />@link', ['@516928' => 'https://www.drupal.org/node/516928', '@link' => var_export($link, TRUE)]), E_USER_ERROR);
       $link['changecount'] = 0;
     }
 

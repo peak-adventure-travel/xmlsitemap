@@ -131,7 +131,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   /**
    * Check the files directory is created (massive fails if not done).
    *
-   * @todo This can be removed when http://drupal.org/node/654752 is fixed.
+   * @todo This can be removed when https://www.drupal.org/node/654752 is fixed.
    */
   protected function checkFilesDirectory() {
     if (!xmlsitemap_check_directory()) {
@@ -454,7 +454,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
    *
    * @see simpletest_verbose()
    *
-   * @todo Remove when http://drupal.org/node/800426 is fixed.
+   * @todo Remove when https://www.drupal.org/node/800426 is fixed.
    */
   protected function verbose($verbose_message, $message = 'Verbose message') {
     if ($id = parent::verbose($verbose_message)) {

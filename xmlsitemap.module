@@ -1305,7 +1305,7 @@ function xmlsitemap_get_changefreq_options() {
  * @return \Drupal\core\Language\LanguageInterface
  *   A language object.
  *
- * @todo Remove when http://drupal.org/node/660736 is fixed in Drupal core.
+ * @todo Remove when https://www.drupal.org/node/660736 is fixed in Drupal core.
  */
 function xmlsitemap_language_load($language = LanguageInterface::LANGCODE_NOT_SPECIFIED) {
   $languages = &drupal_static(__FUNCTION__);
@@ -1433,7 +1433,7 @@ function xmlsitemap_run_unprogressive_batch() {
   batch_set($batch);
 
   // We need to manually set the progressive variable again.
-  // @todo Remove when http://drupal.org/node/638712 is fixed.
+  // @todo Remove when https://www.drupal.org/node/638712 is fixed.
   $batch = & batch_get();
   $batch['progressive'] = FALSE;
 
