@@ -29,6 +29,8 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
    * Last used language.
    *
    * @var string
+   *
+   * @codingStandardsIgnoreStart
    */
   public static $last_language;
 
@@ -43,6 +45,8 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
    * The xmlsitemap.settings config object.
    *
    * @var \Drupal\Core\Config\Config
+   *
+   * @codingStandardsIgnoreEnd
    */
   protected $config;
 
@@ -74,6 +78,8 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
    *   The config factory object.
    * @param \Drupal\Core\State\StateInterface $state
    *   The state handler.
+   * @param Drupal\Core\Language\LanguageManagerInterface $language_manager
+   *   Language Manager.
    * @param \Psr\Log\LoggerInterface $logger
    *   A logger instance.
    */
@@ -214,7 +220,9 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
     $link_count = 0;
 
     $query = db_select('xmlsitemap', 'x');
-    $query->fields('x', ['loc', 'lastmod', 'changefreq', 'changecount', 'priority', 'language', 'access', 'status']);
+    $query->fields('x', [
+      'loc', 'lastmod', 'changefreq', 'changecount', 'priority', 'language', 'access', 'status',
+    ]);
     $query->condition('x.access', 1);
     $query->condition('x.status', 1);
     $query->orderBy('x.language', 'DESC');
@@ -230,9 +238,11 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
     while ($link = $links->fetchAssoc()) {
       $link['language'] = $link['language'] != LanguageInterface::LANGCODE_NOT_SPECIFIED ? xmlsitemap_language_load($link['language']) : $url_options['language'];
       // @todo Figure out a way to bring back the alias preloading optimization.
+      // @codingStandardsIgnoreStart
       //   if (!empty($link['loc']) && $url_options['alias']) {
-      //        $link['loc'] = $this->getPathAlias($link['loc'], $link['language']->getId());
-      //      }
+      //     $link['loc'] = $this->getPathAlias($link['loc'], $link['language']->getId());
+      //   }
+      // @codingStandardsIgnoreEnd
       $link_options = [
         'language' => $link['language'],
         'xmlsitemap_link' => $link,
@@ -292,7 +302,6 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
     catch (Exception $e) {
       $this->logger->error($e);
       throw $e;
-      return FALSE;
     }
 
     return $writer->getSitemapElementCount();
@@ -315,7 +324,9 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
     }
     $sitemap = &$context['sandbox']['sitemap'];
     $links = $this->generatePage($sitemap, $sitemap->getChunks());
-    $context['message'] = t('Now generating %sitemap-url.', ['%sitemap-url' => Url::fromRoute('xmlsitemap.sitemap_xml', [], $sitemap->uri['options'] + ['query' => ['page' => $sitemap->getChunks()]])->toString()]);
+    $context['message'] = t('Now generating %sitemap-url.', [
+      '%sitemap-url' => Url::fromRoute('xmlsitemap.sitemap_xml', [], $sitemap->uri['options'] + ['query' => ['page' => $sitemap->getChunks()]])->toString(),
+    ]);
 
     if ($links) {
       $sitemap->setLinks($sitemap->getLinks() + $links);
@@ -348,7 +359,9 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
     $sitemap = xmlsitemap_sitemap_load($smid);
     if ($sitemap != NULL && $sitemap->getChunks() > 1) {
       $this->generateIndex($sitemap);
-      $context['message'] = t('Now generating sitemap index %sitemap-url.', ['%sitemap-url' => Url::fromRoute('xmlsitemap.sitemap_xml', [], $sitemap->uri['options'])->toString()]);
+      $context['message'] = t('Now generating sitemap index %sitemap-url.', [
+        '%sitemap-url' => Url::fromRoute('xmlsitemap.sitemap_xml', [], $sitemap->uri['options'])->toString(),
+      ]);
     }
   }
 
@@ -430,7 +443,12 @@ class XmlSitemapGenerator implements XmlSitemapGeneratorInterface {
     $info['xmlsitemap']['process callback']($entity_type_id, $result);
     $context['sandbox']['last_id'] = end($result);
     $context['sandbox']['progress'] += count($result);
-    $context['message'] = t('Now processing %entity_type_id @last_id (@progress of @count).', ['%entity_type_id' => $entity_type_id, '@last_id' => $context['sandbox']['last_id'], '@progress' => $context['sandbox']['progress'], '@count' => $context['sandbox']['max']]);
+    $context['message'] = t('Now processing %entity_type_id @last_id (@progress of @count).', [
+      '%entity_type_id' => $entity_type_id,
+      '@last_id' => $context['sandbox']['last_id'],
+      '@progress' => $context['sandbox']['progress'],
+      '@count' => $context['sandbox']['max'],
+    ]);
 
     if ($context['sandbox']['progress'] >= $context['sandbox']['max']) {
       $context['finished'] = 1;
