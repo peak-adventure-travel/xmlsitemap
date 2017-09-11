@@ -13,8 +13,12 @@ class XmlSitemapDeleteForm extends EntityConfirmFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @codingStandardsIgnoreStart
    */
   public function getBaseFormID() {
+    
+    // @codingStandardsIgnoreEnd
     return 'xmlsitemap_delete_form';
   }
 

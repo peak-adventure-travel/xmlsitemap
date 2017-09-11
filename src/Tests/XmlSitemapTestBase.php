@@ -23,6 +23,8 @@ abstract class XmlSitemapTestBase extends WebTestBase {
    * The admin user account.
    *
    * @var \Drupal\Core\Session\AccountInterface
+   *
+   * @codingStandardsIgnoreStart
    */
   protected $admin_user;
 
@@ -32,6 +34,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
    * @var \Drupal\Core\Session\AccountInterface
    */
   protected $normal_user;
+  // @codingStandardsIgnoreEnd
 
   /**
    * The state store.
@@ -90,7 +93,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
         'type' => 'page',
         'name' => 'Basic page',
         'settings' => [
-        // Set proper default options for the page content type.
+          // Set proper default options for the page content type.
           'node' => [
             'options' => ['promote' => FALSE],
             'submitted' => FALSE,
@@ -113,13 +116,15 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   /**
    * Assert the page does not respond with the specified response code.
    *
-   * @param $code
+   * @param string $code
    *   Response code. For example 200 is a successful page request. For a list
    *   of all codes see http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html.
-   * @param $message
+   * @param string $message
    *   Message to display.
+   * @param string $group
+   *   Name of the group.
    *
-   * @return
+   * @return mixed
    *   Assertion result.
    */
   protected function assertNoResponse($code, $message = '', $group = 'Browser') {
@@ -142,16 +147,16 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   /**
    * Retrieves an XML sitemap.
    *
-   * @param $context
+   * @param array $context
    *   An optional array of the XML sitemap's context.
-   * @param $options
-   *   Options to be forwarded to Url::fromUri(). These values will be merged with, but
-   *   always override $sitemap->uri['options'].
-   * @param $headers
+   * @param array $options
+   *   Options to be forwarded to Url::fromUri(). These values will be merged
+   *   with, but always override $sitemap->uri['options'].
+   * @param array $headers
    *   An array containing additional HTTP request headers, each formatted as
    *   "name: value".
    *
-   * @return
+   * @return string
    *   The retrieved HTML string, also available as $this->drupalGetContent()
    */
   protected function drupalGetSitemap(array $context = [], array $options = [], array $headers = []) {
@@ -174,7 +179,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   }
 
   /**
-   *
+   * Assert Sitemap Link.
    */
   protected function assertSitemapLink($entity_type, $entity_id = NULL) {
     if (is_array($entity_type)) {
@@ -189,7 +194,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   }
 
   /**
-   *
+   * Assert No Sitemap Link.
    */
   protected function assertNoSitemapLink($entity_type, $entity_id = NULL) {
     if (is_array($entity_type)) {
@@ -204,7 +209,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   }
 
   /**
-   *
+   * Assert Sitemap Link Visible.
    */
   protected function assertSitemapLinkVisible($entity_type, $entity_id) {
     $link = $this->linkStorage->load($entity_type, $entity_id);
@@ -212,7 +217,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   }
 
   /**
-   *
+   * Assert Sitemap Link Not Visible.
    */
   protected function assertSitemapLinkNotVisible($entity_type, $entity_id) {
     $link = $this->linkStorage->load($entity_type, $entity_id);
@@ -220,7 +225,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   }
 
   /**
-   *
+   * Assert Sitemap Link Values.
    */
   protected function assertSitemapLinkValues($entity_type, $entity_id, array $conditions) {
     $link = $this->linkStorage->load($entity_type, $entity_id);
@@ -232,17 +237,27 @@ abstract class XmlSitemapTestBase extends WebTestBase {
     foreach ($conditions as $key => $value) {
       if ($value === NULL || $link[$key] === NULL) {
         // For nullable fields, always check for identical values (===).
-        $this->assertIdentical($link[$key], $value, t('Identical values for @type @id link field @key.', ['@type' => $entity_type, '@id' => $entity_id, '@key' => $key]));
+        $this->assertIdentical($link[$key], $value, t('Identical values for @type @id link field @key.', [
+          '@type' => $entity_type,
+          '@id' => $entity_id,
+          '@key' => $key,
+        ]));
       }
       else {
         // Otherwise check simple equality (==).
-        $this->assertEqual($link[$key], $value, t('Equal values for @type @id link field @key - @a - @b.', ['@type' => $entity_type, '@id' => $entity_id, '@key' => $key, '@a' => $link[$key], '@b' => $value]));
+        $this->assertEqual($link[$key], $value, t('Equal values for @type @id link field @key - @a - @b.', [
+          '@type' => $entity_type,
+          '@id' => $entity_id,
+          '@key' => $key,
+          '@a' => $link[$key],
+          '@b' => $value,
+        ]));
       }
     }
   }
 
   /**
-   *
+   * Assert Not Sitemap Link Values.
    */
   protected function assertNotSitemapLinkValues($entity_type, $entity_id, array $conditions) {
     $link = $this->linkStorage->load($entity_type, $entity_id);
@@ -254,17 +269,25 @@ abstract class XmlSitemapTestBase extends WebTestBase {
     foreach ($conditions as $key => $value) {
       if ($value === NULL || $link[$key] === NULL) {
         // For nullable fields, always check for identical values (===).
-        $this->assertNotIdentical($link[$key], $value, t('Not identical values for @type @id link field @key.', ['@type' => $entity_type, '@id' => $entity_id, '@key' => $key]));
+        $this->assertNotIdentical($link[$key], $value, t('Not identical values for @type @id link field @key.', [
+          '@type' => $entity_type,
+          '@id' => $entity_id,
+          '@key' => $key,
+        ]));
       }
       else {
         // Otherwise check simple equality (==).
-        $this->assertNotEqual($link[$key], $value, t('Not equal values for link @type @id field @key.', ['@type' => $entity_type, '@id' => $entity_id, '@key' => $key]));
+        $this->assertNotEqual($link[$key], $value, t('Not equal values for link @type @id field @key.', [
+          '@type' => $entity_type,
+          '@id' => $entity_id,
+          '@key' => $key,
+        ]));
       }
     }
   }
 
   /**
-   *
+   * Assert Raw Sitemap Links.
    */
   protected function assertRawSitemapLinks() {
     $links = func_get_args();
@@ -275,7 +298,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   }
 
   /**
-   *
+   * Assert No Raw Sitemap Links.
    */
   protected function assertNoRawSitemapLinks() {
     $links = func_get_args();
@@ -286,7 +309,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   }
 
   /**
-   *
+   * Add Sitemap Link.
    */
   protected function addSitemapLink(array $link = []) {
     $last_id = &drupal_static(__FUNCTION__, 1);
@@ -308,7 +331,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   }
 
   /**
-   *
+   * Assert Flag.
    */
   protected function assertFlag($variable, $assert_value = TRUE, $reset_if_true = TRUE) {
     $value = xmlsitemap_var($variable);
@@ -327,9 +350,12 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   }
 
   /**
+   * Assert XML Sitemap Problems.
    *
+   * @codingStandardsIgnoreStart
    */
   protected function assertXMLSitemapProblems($problem_text = FALSE) {
+    // @codingStandardsIgnoreEnd
     $this->drupalGet('admin/config/search/xmlsitemap');
     $this->assertText(t('One or more problems were detected with your XML sitemap configuration'));
     if ($problem_text) {
@@ -339,9 +365,12 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   }
 
   /**
+   * Assert No XML Sitemap Problems.
    *
+   * @codingStandardsIgnoreStart
    */
   protected function assertNoXMLSitemapProblems() {
+    // @codingStandardsIgnoreEnd
     $this->drupalGet('admin/config/search/xmlsitemap');
     $this->assertNoText(t('One or more problems were detected with your XML sitemap configuration'));
   }
@@ -360,7 +389,14 @@ abstract class XmlSitemapTestBase extends WebTestBase {
     }
 
     $query = db_select('watchdog');
-    $query->fields('watchdog', ['wid', 'type', 'severity', 'message', 'variables', 'timestamp']);
+    $query->fields('watchdog', [
+      'wid',
+      'type',
+      'severity',
+      'message',
+      'variables',
+      'timestamp',
+    ]);
     foreach ($conditions as $field => $value) {
       if ($field == 'variables' && !is_string($value)) {
         $value = serialize($value);
@@ -378,14 +414,14 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   }
 
   /**
-   *
+   * Assert Watchdog Message.
    */
   protected function assertWatchdogMessage(array $conditions, $message = 'Watchdog message found.') {
     $this->assertTrue($this->getWatchdogMessages($conditions), $message);
   }
 
   /**
-   *
+   * Assert No Watchdog Message.
    */
   protected function assertNoWatchdogMessage(array $conditions, $message = 'Watchdog message not found.') {
     $this->assertFalse($this->getWatchdogMessages($conditions), $message);
@@ -400,7 +436,9 @@ abstract class XmlSitemapTestBase extends WebTestBase {
 
     foreach ($messages as $message) {
       $message->text = $this->formatWatchdogMessage($message);
-      if (in_array($message->severity, [RfcLogLevel::EMERGENCY, RfcLogLevel::ALERT, RfcLogLevel::CRITICAL, RfcLogLevel::ERROR, RfcLogLevel::WARNING])) {
+      if (in_array($message->severity, [
+        RfcLogLevel::EMERGENCY, RfcLogLevel::ALERT, RfcLogLevel::CRITICAL, RfcLogLevel::ERROR, RfcLogLevel::WARNING,
+      ])) {
         $this->fail($message->text);
       }
       $verbose[] = $message->text;
@@ -418,10 +456,10 @@ abstract class XmlSitemapTestBase extends WebTestBase {
   /**
    * Format a watchdog message in a one-line summary.
    *
-   * @param $message
+   * @param string $message
    *   A watchdog messsage object.
    *
-   * @return
+   * @return string
    *   A string containing the watchdog message's timestamp, severity, type,
    *   and actual message.
    */
@@ -437,6 +475,7 @@ abstract class XmlSitemapTestBase extends WebTestBase {
       '@timestamp' => $message->timestamp,
       '@severity' => $levels[$message->severity],
       '@type' => $message->type,
+        // @codingStandardsIgnoreLine
         // '@message' => theme_dblog_message(array('event' => $message, 'link' => FALSE)),.
     ]);
   }
@@ -447,9 +486,9 @@ abstract class XmlSitemapTestBase extends WebTestBase {
    * This is a copy of DrupalWebTestCase->verbose() but allows a customizable
    * summary message rather than hard-coding 'Verbose message'.
    *
-   * @param $verbose_message
+   * @param string $verbose_message
    *   The verbose message to be stored.
-   * @param $message
+   * @param string $message
    *   Message to display.
    *
    * @see simpletest_verbose()

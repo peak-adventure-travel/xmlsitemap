@@ -23,7 +23,9 @@ class XmlSitemapRebuildTest extends XmlSitemapTestBase {
   protected function setUp() {
     parent::setUp();
 
-    $this->admin_user = $this->drupalCreateUser(['administer xmlsitemap', 'access administration pages', 'access site reports', 'administer users', 'administer permissions']);
+    $this->admin_user = $this->drupalCreateUser([
+      'administer xmlsitemap', 'access administration pages', 'access site reports', 'administer users', 'administer permissions',
+    ]);
 
     $this->drupalPlaceBlock('help_block', ['region' => 'help']);
 
@@ -50,13 +52,22 @@ class XmlSitemapRebuildTest extends XmlSitemapTestBase {
    * Test if user links are included in sitemap after rebuild.
    */
   public function testUserLinksRebuild() {
-    xmlsitemap_link_bundle_settings_save('user', 'user', ['status' => 1, 'priority' => 0.4, 'changefreq' => XMLSITEMAP_FREQUENCY_MONTHLY]);
+    xmlsitemap_link_bundle_settings_save('user', 'user', [
+      'status' => 1,
+      'priority' => 0.4,
+      'changefreq' => XMLSITEMAP_FREQUENCY_MONTHLY,
+    ]);
 
     $dummy_user = $this->drupalCreateUser([]);
     $this->drupalLogin($this->admin_user);
     $this->drupalPostForm('admin/config/search/xmlsitemap/rebuild', [], t('Save configuration'));
     $this->assertText('The sitemap links were rebuilt.');
-    $this->assertSitemapLinkValues('user', $dummy_user->id(), ['status' => 1, 'priority' => 0.4, 'changefreq' => XMLSITEMAP_FREQUENCY_MONTHLY, 'access' => 1]);
+    $this->assertSitemapLinkValues('user', $dummy_user->id(), [
+      'status' => 1,
+      'priority' => 0.4,
+      'changefreq' => XMLSITEMAP_FREQUENCY_MONTHLY,
+      'access' => 1,
+    ]);
     $this->drupalGet('sitemap.xml');
     $this->assertRaw("user/{$dummy_user->id()}");
   }

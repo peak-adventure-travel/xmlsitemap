@@ -46,7 +46,10 @@ class XmlSitemapMultilingualTest extends XmlSitemapMultilingualTestBase {
   }
 
   /**
-   * Test how links are included in a sitemap depending on the i18n_selection_mode config variable.
+   * Test Language Selection.
+   *
+   * Test how links are included in a sitemap depending on the
+   * i18n_selection_mode config variable.
    */
   public function testLanguageSelection() {
     $this->drupalLogin($this->admin_user);

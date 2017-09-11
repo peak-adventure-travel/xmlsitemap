@@ -2,13 +2,11 @@
 
 namespace Drupal\xmlsitemap\Form;
 
-use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -89,7 +87,7 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
         continue;
       }
 
-      $labels[$entity_type_id] = $entity_type->getLabel() ? : $entity_type_id;
+      $labels[$entity_type_id] = $entity_type->getLabel() ?: $entity_type_id;
     }
 
     asort($labels);

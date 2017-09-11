@@ -28,7 +28,11 @@ class XmlSitemapUserFunctionalTest extends XmlSitemapTestBase {
     xmlsitemap_link_bundle_enable('user', 'user');
 
     // Create the users.
-    $this->admin_user = $this->drupalCreateUser(['administer users', 'administer permissions', 'administer xmlsitemap']);
+    $this->admin_user = $this->drupalCreateUser([
+      'administer users',
+      'administer permissions',
+      'administer xmlsitemap',
+    ]);
     $this->normal_user = $this->drupalCreateUser(['access content']);
 
     // Update the normal user to make its sitemap link visible.

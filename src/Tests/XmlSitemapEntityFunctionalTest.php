@@ -49,11 +49,19 @@ class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
     $this->assertText(t('The configuration options have been saved.'));
     $entity = EntityTestMul::create();
     $entity->save();
-    $this->assertSitemapLinkValues('entity_test_mul', $entity->id(), ['status' => 0, 'priority' => 0.5, 'changefreq' => 0, 'access' => 1]);
+    $this->assertSitemapLinkValues('entity_test_mul', $entity->id(), [
+      'status' => 0,
+      'priority' => 0.5,
+      'changefreq' => 0,
+      'access' => 1,
+    ]);
   }
 
   /**
-   * Test the form at admin/config/search/xmlsitemap/settings/{entity_type_id}/{bundle_id}.
+   * Test Entity Link Bundle Settings Form.
+   *
+   * Test the form at
+   * admin/config/search/xmlsitemap/settings/{entity_type_id}/{bundle_id}.
    */
   public function testEntityLinkBundleSettingsForm() {
     xmlsitemap_link_bundle_enable('entity_test_mul', 'entity_test_mul');
@@ -72,7 +80,12 @@ class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
     $this->drupalPostForm(NULL, $edit, t('Save configuration'));
     $entity = EntityTestMul::create();
     $entity->save();
-    $this->assertSitemapLinkValues('entity_test_mul', $entity->id(), ['status' => 0, 'priority' => 0.3, 'changefreq' => XMLSITEMAP_FREQUENCY_WEEKLY, 'access' => 1]);
+    $this->assertSitemapLinkValues('entity_test_mul', $entity->id(), [
+      'status' => 0,
+      'priority' => 0.3,
+      'changefreq' => XMLSITEMAP_FREQUENCY_WEEKLY,
+      'access' => 1,
+    ]);
 
     $this->regenerateSitemap();
     $this->drupalGet('sitemap.xml');
@@ -90,7 +103,12 @@ class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
     $this->drupalPostForm('admin/config/search/xmlsitemap/settings/entity_test_mul/entity_test_mul', $edit, t('Save configuration'));
     $entity = EntityTestMul::create();
     $entity->save();
-    $this->assertSitemapLinkValues('entity_test_mul', $entity->id(), ['status' => 1, 'priority' => 0.6, 'changefreq' => XMLSITEMAP_FREQUENCY_YEARLY, 'access' => 1]);
+    $this->assertSitemapLinkValues('entity_test_mul', $entity->id(), [
+      'status' => 1,
+      'priority' => 0.6,
+      'changefreq' => XMLSITEMAP_FREQUENCY_YEARLY,
+      'access' => 1,
+    ]);
 
     $this->regenerateSitemap();
     $this->drupalGet('sitemap.xml');
@@ -103,7 +121,7 @@ class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
   }
 
   /**
-   *
+   * Test User Cannot View Entity.
    */
   public function testUserCannotViewEntity() {
     // Disallow anonymous users to view test entities.
@@ -115,7 +133,12 @@ class XmlSitemapEntityFunctionalTest extends XmlSitemapTestBase {
 
     $entity = EntityTestMul::create();
     $entity->save();
-    $this->assertSitemapLinkValues('entity_test_mul', $entity->id(), ['status' => 0, 'priority' => 0.5, 'changefreq' => 0, 'access' => 0]);
+    $this->assertSitemapLinkValues('entity_test_mul', $entity->id(), [
+      'status' => 0,
+      'priority' => 0.5,
+      'changefreq' => 0,
+      'access' => 0,
+    ]);
   }
 
 }

@@ -12,8 +12,10 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 class XmlSitemapLinkBundleSettingsForm extends ConfigFormBase {
 
+  // @codingStandardsIgnoreStart
   private $entity_type;
   private $bundle_type;
+  // @codingStandardsIgnoreEnd
 
   /**
    * {@inheritdoc}
@@ -96,8 +98,8 @@ class XmlSitemapLinkBundleSettingsForm extends ConfigFormBase {
     }
 
     // Unset the form values since we have already saved the bundle settings and
-    // we don't want these values to get saved as configuration, depending on how
-    // the form saves the form values.
+    // we don't want these values to get saved as configuration, depending on
+    // how the form saves the form values.
     $form_state->unsetValue('xmlsitemap');
     parent::submitForm($form, $form_state);
   }

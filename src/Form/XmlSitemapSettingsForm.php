@@ -63,10 +63,7 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('config.factory'),
-      $container->get('state'),
-      $container->get('date.formatter'),
-      $container->get('xmlsitemap.link_storage')
+        $container->get('config.factory'), $container->get('state'), $container->get('date.formatter'), $container->get('xmlsitemap.link_storage')
     );
   }
 
@@ -89,7 +86,19 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('xmlsitemap.settings');
-    $intervals = [300, 900, 1800, 3600, 10800, 21600, 43200, 86400, 172800, 259200, 604800];
+    $intervals = [
+      300,
+      900,
+      1800,
+      3600,
+      10800,
+      21600,
+      43200,
+      86400,
+      172800,
+      259200,
+      604800,
+    ];
     $intervals = array_combine($intervals, $intervals);
     $format_intervals = [];
     foreach ($intervals as $key => $value) {
@@ -128,7 +137,16 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('gz'),
       '#disabled' => !function_exists('gzencode'),
     ];
-    $chunk_sizes = [100, 500, 1000, 2500, 5000, 10000, 25000, XMLSITEMAP_MAX_SITEMAP_LINKS];
+    $chunk_sizes = [
+      100,
+      500,
+      1000,
+      2500,
+      5000,
+      10000,
+      25000,
+      XMLSITEMAP_MAX_SITEMAP_LINKS,
+    ];
     $form['advanced']['chunk_size'] = [
       '#type' => 'select',
       '#title' => t('Number of links in each sitemap page'),
@@ -258,7 +276,14 @@ class XmlSitemapSettingsForm extends ConfigFormBase {
     $values = $form_state->getValues();
 
     if (isset($form['frontpage'])) {
-      $this->linkStorage->save(['type' => 'frontpage', 'id' => 0, 'loc' => '', 'subtype' => '', 'priority' => $values['frontpage_priority'], 'changefreq' => $values['frontpage_changefreq']]);
+      $this->linkStorage->save([
+        'type' => 'frontpage',
+        'id' => 0,
+        'loc' => '',
+        'subtype' => '',
+        'priority' => $values['frontpage_priority'],
+        'changefreq' => $values['frontpage_changefreq'],
+      ]);
     }
     $this->state->set('xmlsitemap_developer_mode', $values['xmlsitemap_developer_mode']);
     $this->state->set('xmlsitemap_base_url', $values['xmlsitemap_base_url']);

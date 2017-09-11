@@ -41,8 +41,11 @@ class XmlSitemapWriter extends \XMLWriter {
    * Sitemap page to be written.
    *
    * @var string
+   *
+   * @codingStandardsIgnoreStart
    */
   protected $sitemap_page = NULL;
+  // @codingStandardsIgnoreEnd
 
   /**
    * Name of the root element of the document.
@@ -118,10 +121,13 @@ class XmlSitemapWriter extends \XMLWriter {
   /**
    * Adds the XML stylesheet to the XML page.
    *
-   * @return bool
+   * @return mixed
    *   Returns TRUE on success.
+   *
+   * @codingStandardsIgnoreStart
    */
   public function writeXSL() {
+    // @codingStandardsIgnoreEnd
     $this->writePi('xml-stylesheet', 'type="text/xsl" href="' . Url::fromRoute('xmlsitemap.sitemap_xsl')->toString() . '"');
     $this->writeRaw(PHP_EOL);
   }
@@ -146,8 +152,11 @@ class XmlSitemapWriter extends \XMLWriter {
    *
    * @return int
    *   Number of XML elements written.
+   *
+   * @codingStandardsIgnoreStart
    */
   public function generateXML() {
+    // @codingStandardsIgnoreEnd
     return \Drupal::service('xmlsitemap_generator')->generateChunk($this->sitemap, $this, $this->sitemap_page);
   }
 
@@ -156,7 +165,6 @@ class XmlSitemapWriter extends \XMLWriter {
    *
    * @param string $name
    *   Element name.
-   *
    * @param bool $root
    *   Specify if it is root element or not.
    */
@@ -217,8 +225,11 @@ class XmlSitemapWriter extends \XMLWriter {
    *
    * @return string
    *   Document uri.
+   *
+   * @codingStandardsIgnoreStart
    */
   public function getURI() {
+    // @codingStandardsIgnoreEnd
     return $this->uri;
   }
 

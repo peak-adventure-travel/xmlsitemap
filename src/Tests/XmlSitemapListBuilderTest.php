@@ -22,7 +22,13 @@ class XmlSitemapListBuilderTest extends XmlSitemapTestBase {
   protected function setUp() {
     parent::setUp();
 
-    $this->admin_user = $this->drupalCreateUser(['administer languages', 'access administration pages', 'administer site configuration', 'administer xmlsitemap', 'access content']);
+    $this->admin_user = $this->drupalCreateUser([
+      'administer languages',
+      'access administration pages',
+      'administer site configuration',
+      'administer xmlsitemap',
+      'access content',
+    ]);
     $this->drupalLogin($this->admin_user);
 
     $this->languageManager = \Drupal::languageManager();

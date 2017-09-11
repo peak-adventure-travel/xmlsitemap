@@ -37,8 +37,11 @@ class XmlSitemapIndexWriter extends XmlSitemapWriter {
 
   /**
    * {@inheritdoc}
+   *
+   * @codingStandardsIgnoreStart
    */
   public function generateXML() {
+    // @codingStandardsIgnoreEnd
     $lastmod_format = \Drupal::config('xmlsitemap.settings')->get('lastmod_format');
 
     $url_options = $this->sitemap->uri['options'];

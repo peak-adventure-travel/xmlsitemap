@@ -37,7 +37,11 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
       xmlsitemap_link_bundle_enable('menu', $bundle_id);
     }
 
-    $this->admin_user = $this->drupalCreateUser(['administer menu', 'administer xmlsitemap', 'access administration pages']);
+    $this->admin_user = $this->drupalCreateUser([
+      'administer menu',
+      'administer xmlsitemap',
+      'access administration pages',
+    ]);
     $this->normal_user = $this->drupalCreateUser(['access content']);
   }
 
@@ -48,6 +52,7 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
    *   menu links. Should we bring back this behavior in D8?
    */
   public function testMenuSettings() {
+    // @codingStandardsIgnoreStart
     // $this->drupalLogin($this->admin_user);
     //
     //    $edit = array(
@@ -74,6 +79,7 @@ class XmlSitemapMenuFunctionalTest extends XmlSitemapTestBase {
     //      'weight[0][value]' => 0,
     //    );
     //    $this->drupalPostForm(NULL, $edit, 'Save');.
+    // @codingStandardsIgnoreEnd
   }
 
   /**

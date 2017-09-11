@@ -40,8 +40,10 @@ interface XmlSitemapLinkStorageInterface {
    *   An optional boolean that if TRUE, will set the regenerate needed flag if
    *   there is a match. Defaults to FALSE.
    *
-   * @return
+   * @return bool
    *   TRUE if the link is changed, or FALSE otherwise.
+   *
+   * @codingStandardsIgnoreStart
    */
   public function checkChangedLink(array $link, $original_link = NULL, $flag = FALSE);
 
@@ -56,8 +58,10 @@ interface XmlSitemapLinkStorageInterface {
    *   An optional boolean that if TRUE, will set the regenerate needed flag if
    *   there is a match. Defaults to FALSE.
    *
-   * @return
+   * @return bool
    *   TRUE if there is a visible link, or FALSE otherwise.
+   *
+   * @codingStandardsIgnoreEnd
    */
   public function checkChangedLinks(array $conditions = [], array $updates = [], $flag = FALSE);
 
@@ -69,19 +73,20 @@ interface XmlSitemapLinkStorageInterface {
    *
    * @param string $entity_type
    *   A string with the entity type.
-   * @param $entity_id
+   * @param string $entity_id
    *   Entity ID to be deleted.
    * @param string $langcode
    *   (optional) The language code for the link that should be deleted.
    *   If omitted, links for that entity will be removed in all languages.
    *
-   * @return
+   * @return int
    *   The number of links that were deleted.
    */
   public function delete($entity_type, $entity_id, $langcode = NULL);
 
   /**
    * Delete multiple sitemap links from the database.
+   *
    * If visible sitemap links were deleted, this will automatically set the
    * regenerate needed flag.
    *
@@ -89,13 +94,14 @@ interface XmlSitemapLinkStorageInterface {
    *   An array of conditions on the {xmlsitemap} table in the form
    *   'field' => $value.
    *
-   * @return
+   * @return int
    *   The number of links that were deleted.
    */
   public function deleteMultiple(array $conditions);
 
   /**
    * Perform a mass update of sitemap data.
+   *
    * If visible links are updated, this will automatically set the regenerate
    * needed flag to TRUE.
    *
@@ -103,9 +109,13 @@ interface XmlSitemapLinkStorageInterface {
    *   An array of values to update fields to, keyed by field name.
    * @param array $conditions
    *   An array of values to match keyed by field.
+   * @param bool $check_flag
+   *   An bool with check flag.
    *
-   * @return
+   * @return int
    *   The number of links that were updated.
+   *
+   * @codingStandardsIgnoreStart
    */
   public function updateMultiple($updates = [], $conditions = [], $check_flag = TRUE);
 
@@ -114,11 +124,13 @@ interface XmlSitemapLinkStorageInterface {
    *
    * @param string $entity_type
    *   A string with the entity type id.
-   * @param $entity_id
+   * @param string $entity_id
    *   Entity ID.
    *
-   * @return
+   * @return array
    *   A sitemap link (array) or FALSE if the conditions were not found.
+   *
+   * @codingStandardsIgnoreEnd
    */
   public function load($entity_type, $entity_id);
 
@@ -129,7 +141,7 @@ interface XmlSitemapLinkStorageInterface {
    *   An array of conditions on the {xmlsitemap} table in the form
    *   'field' => $value.
    *
-   * @return
+   * @return array
    *   An array of sitemap link arrays.
    */
   public function loadMultiple(array $conditions = []);

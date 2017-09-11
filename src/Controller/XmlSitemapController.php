@@ -11,6 +11,8 @@ use Drupal\Core\State\StateInterface;
 use Drupal\Core\Template\TwigEnvironment;
 
 /**
+ * Class for Xml Sitemap Controller.
+ *
  * Returns responses for xmlsitemap.sitemap_xml and xmlsitemap.sitemap_xsl
  * routes.
  */
@@ -35,6 +37,8 @@ class XmlSitemapController extends ControllerBase {
    *
    * @param \Drupal\Core\State\StateInterface $state
    *   The state service.
+   * @param Drupal\Core\Template\TwigEnvironment $twig
+   *   Twig environment for Drupal.
    */
   public function __construct(StateInterface $state, TwigEnvironment $twig) {
     $this->state = $state;

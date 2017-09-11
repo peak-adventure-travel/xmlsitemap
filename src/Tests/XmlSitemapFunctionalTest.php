@@ -20,7 +20,9 @@ class XmlSitemapFunctionalTest extends XmlSitemapTestBase {
   protected function setUp() {
     parent::setUp();
 
-    $this->admin_user = $this->drupalCreateUser(['access content', 'administer site configuration', 'administer xmlsitemap', 'access administration pages', 'access site reports', 'administer permissions', 'view the administration theme']);
+    $this->admin_user = $this->drupalCreateUser([
+      'access content', 'administer site configuration', 'administer xmlsitemap', 'access administration pages', 'access site reports', 'administer permissions', 'view the administration theme',
+    ]);
   }
 
   /**
@@ -42,8 +44,11 @@ class XmlSitemapFunctionalTest extends XmlSitemapTestBase {
 
   /**
    * Test base URL functionality.
+   *
+   * @codingStandardsIgnoreStart
    */
   public function testBaseURL() {
+    // @codingStandardsIgnoreEnd
     $this->drupalLogin($this->admin_user);
     $edit = ['xmlsitemap_base_url' => ''];
     $this->drupalPostForm('admin/config/search/xmlsitemap/settings', $edit, t('Save configuration'));
@@ -66,7 +71,10 @@ class XmlSitemapFunctionalTest extends XmlSitemapTestBase {
   }
 
   /**
-   * Test that configuration problems are reported properly in the status report.
+   * Test Status Report.
+   *
+   * Test that configuration problems are reported properly in the status
+   * report.
    */
   public function testStatusReport() {
     // Test the rebuild flag.

@@ -23,7 +23,14 @@ class XmlSitemapMultilingualNodeTest extends XmlSitemapMultilingualTestBase {
   protected function setUp() {
     parent::setUp();
 
-    $this->admin_user = $this->drupalCreateUser(['administer nodes', 'administer languages', 'administer content types', 'access administration pages', 'create page content', 'edit own page content']);
+    $this->admin_user = $this->drupalCreateUser([
+      'administer nodes',
+      'administer languages',
+      'administer content types',
+      'access administration pages',
+      'create page content',
+      'edit own page content',
+    ]);
     $this->drupalLogin($this->admin_user);
 
     xmlsitemap_link_bundle_enable('node', 'article');
@@ -50,7 +57,9 @@ class XmlSitemapMultilingualNodeTest extends XmlSitemapMultilingualTestBase {
     $this->drupalLogin($this->admin_user);
     $node = $this->drupalCreateNode([]);
 
-    $this->drupalPostForm('node/' . $node->id() . '/edit', ['langcode[0][value]' => 'en'], t('Save and keep published'));
+    $this->drupalPostForm('node/' . $node->id() . '/edit', [
+      'langcode[0][value]' => 'en',
+    ], t('Save and keep published'));
     $link = $this->assertSitemapLink('node', $node->id(), ['status' => 0, 'access' => 1]);
     $this->assertIdentical($link['language'], 'en');
 

@@ -117,10 +117,16 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
     // Temporary validation checks.
     // @todo Remove in final?
     if ($link['priority'] < 0 || $link['priority'] > 1) {
-      trigger_error(t('Invalid sitemap link priority %priority.<br />@link', ['%priority' => $link['priority'], '@link' => var_export($link, TRUE)]), E_USER_ERROR);
+      trigger_error(t('Invalid sitemap link priority %priority.<br />@link', [
+        '%priority' => $link['priority'],
+        '@link' => var_export($link, TRUE),
+      ]), E_USER_ERROR);
     }
     if ($link['changecount'] < 0) {
-      trigger_error(t('Negative changecount value. Please report this to <a href="@516928">@516928</a>.<br />@link', ['@516928' => 'https://www.drupal.org/node/516928', '@link' => var_export($link, TRUE)]), E_USER_ERROR);
+      trigger_error(t('Negative changecount value. Please report this to <a href="@516928">@516928</a>.<br />@link', [
+        '@516928' => 'https://www.drupal.org/node/516928',
+        '@link' => var_export($link, TRUE),
+      ]), E_USER_ERROR);
       $link['changecount'] = 0;
     }
 
@@ -130,7 +136,11 @@ class XmlSitemapLinkStorage implements XmlSitemapLinkStorageInterface {
     }
 
     $queryStatus = \Drupal::database()->merge('xmlsitemap')
-      ->key(['type' => $link['type'], 'id' => $link['id'], 'language' => $link['language']])
+      ->key([
+        'type' => $link['type'],
+        'id' => $link['id'],
+        'language' => $link['language'],
+      ])
       ->fields([
         'loc' => $link['loc'],
         'subtype' => $link['subtype'],
