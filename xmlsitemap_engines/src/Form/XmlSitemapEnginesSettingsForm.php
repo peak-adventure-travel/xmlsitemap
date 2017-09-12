@@ -92,7 +92,19 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
       '#default_value' => $this->config('xmlsitemap_engines.settings')->get('engines'),
       '#options' => $engine_options,
     ];
-    $lifetimes = [3600, 10800, 21600, 32400, 43200, 86400, 172800, 259200, 604800, 604800 * 2, 604800 * 4];
+    $lifetimes = [
+      3600,
+      10800,
+      21600,
+      32400,
+      43200,
+      86400,
+      172800,
+      259200,
+      604800,
+      604800 * 2,
+      604800 * 4,
+    ];
     $lifetimes = array_combine($lifetimes, $lifetimes);
     $format_lifetimes = [];
     foreach ($lifetimes as $value) {
@@ -112,7 +124,10 @@ class XmlSitemapEnginesSettingsForm extends ConfigFormBase {
     $form['custom_urls'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Custom submission URLs'),
-      '#description' => $this->t('Enter one URL per line. The token [sitemap] will be replaced with the URL to your sitemap. For example: %example-before would become %example-after.', ['%example-before' => 'http://example.com/ping?[sitemap]', '%example-after' => xmlsitemap_engines_prepare_url('http://example.com/ping?[sitemap]', Url::fromRoute('xmlsitemap.sitemap_xml', [], ['absolute' => TRUE])->toString())]),
+      '#description' => $this->t('Enter one URL per line. The token [sitemap] will be replaced with the URL to your sitemap. For example: %example-before would become %example-after.', [
+        '%example-before' => 'http://example.com/ping?[sitemap]',
+        '%example-after' => xmlsitemap_engines_prepare_url('http://example.com/ping?[sitemap]', Url::fromRoute('xmlsitemap.sitemap_xml', [], ['absolute' => TRUE])->toString()),
+      ]),
       '#default_value' => $this->config('xmlsitemap_engines.settings')->get('custom_urls'),
       '#rows' => 2,
       '#wysiwyg' => FALSE,

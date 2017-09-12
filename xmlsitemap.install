@@ -123,7 +123,10 @@ function xmlsitemap_requirements($phase) {
     $generated_ago = REQUEST_TIME - $generated_last;
     $requirements['xmlsitemap_generated'] = [
       'title' => $t('XML sitemap'),
-      'value' => $generated_last ? $t('Last attempted generation on @date (@interval ago).', ['@date' => format_date($generated_last, 'small'), '@interval' => \Drupal::service('date.formatter')->formatInterval($generated_ago)]) : $t('Cached files have not been generated yet.'),
+      'value' => $generated_last ? $t('Last attempted generation on @date (@interval ago).', [
+        '@date' => format_date($generated_last, 'small'),
+        '@interval' => \Drupal::service('date.formatter')->formatInterval($generated_ago),
+      ]) : $t('Cached files have not been generated yet.'),
       'severity' => REQUIREMENT_OK,
     ];
     if (\Drupal::state()->get('xmlsitemap_rebuild_needed')) {
@@ -142,7 +145,9 @@ function xmlsitemap_requirements($phase) {
         $requirements['xmlsitemap_generated']['severity'] = REQUIREMENT_WARNING;
       }
       if ($requirements['xmlsitemap_generated']['severity']) {
-        $requirements['xmlsitemap_generated']['description'] = $t('The XML cached files are out of date and need to be regenerated. You can <a href="@link-cron">run cron manually</a> to regenerate the sitemap files.', ['@link-cron' => Url::fromRoute('system.run_cron', [], ['query' => drupal_get_destination()])->toString()]);
+        $requirements['xmlsitemap_generated']['description'] = $t('The XML cached files are out of date and need to be regenerated. You can <a href="@link-cron">run cron manually</a> to regenerate the sitemap files.', [
+          '@link-cron' => Url::fromRoute('system.run_cron', [], ['query' => drupal_get_destination()])->toString(),
+        ]);
       }
     }
     $anonymous_accout = new AnonymousUserSession();
@@ -151,7 +156,9 @@ function xmlsitemap_requirements($phase) {
       $requirements['xmlsitemap_user_anonymous_permission'] = [
         'title' => $t('XML sitemap user'),
         'value' => $t('Anonymous access to user profiles'),
-        'description' => $t('In order to list user profile links in the sitemap, the anonymous user must have the <a href="@perm-link"><em>View user profiles</em> permission</a>.', ['@perm-link' => Url::fromRoute('entity.user_role.edit_permissions_form', ['user_role' => DRUPAL_ANONYMOUS_RID], ['fragment' => 'module-user'])->toString()]),
+        'description' => $t('In order to list user profile links in the sitemap, the anonymous user must have the <a href="@perm-link"><em>View user profiles</em> permission</a>.', [
+          '@perm-link' => Url::fromRoute('entity.user_role.edit_permissions_form', ['user_role' => DRUPAL_ANONYMOUS_RID], ['fragment' => 'module-user'])->toString(),
+        ]),
         'severity' => REQUIREMENT_ERROR,
       ];
     }
@@ -346,7 +353,11 @@ function xmlsitemap_uninstall() {
  */
 function xmlsitemap_update_8001() {
   \Drupal::database()->schema()->dropPrimaryKey('xmlsitemap');
-  \Drupal::database()->schema()->addPrimaryKey('xmlsitemap', ['id', 'type', 'language']);
+  \Drupal::database()->schema()->addPrimaryKey('xmlsitemap', [
+    'id',
+    'type',
+    'language',
+  ]);
   \Drupal::database()->schema()->dropIndex('xmlsitemap', 'language');
 }
 

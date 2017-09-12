@@ -62,10 +62,13 @@ function hook_xmlsitemap_link_info() {
 /**
  * Alter the data of a sitemap link before the link is saved.
  *
- * @param $link
+ * @param array $link
  *   An array with the data of the sitemap link.
+ *
+ * @codingStandardsIgnoreStart
  */
 function hook_xmlsitemap_link_alter(&$link) {
+  // @codingStandardsIgnoreEnd
   if ($link['type'] == 'mymodule') {
     $link['priority'] += 0.5;
   }
@@ -74,7 +77,7 @@ function hook_xmlsitemap_link_alter(&$link) {
 /**
  * Inform modules that an XML sitemap link has been created.
  *
- * @param $link
+ * @param array $link
  *   Associative array defining an XML sitemap link as passed into
  *   \Drupal\xmlsitemap\XmlSitemapLinkStorageInterface::save().
  *
@@ -93,7 +96,7 @@ function hook_xmlsitemap_link_insert(array $link) {
 /**
  * Inform modules that an XML sitemap link has been updated.
  *
- * @param $link
+ * @param array $link
  *   Associative array defining an XML sitemap link as passed into
  *   \Drupal\xmlsitemap\XmlSitemapLinkStorageInterface::save().
  *
@@ -181,7 +184,7 @@ function hook_xmlsitemap_context_url_options_alter(array &$options, array $conte
 /**
  * Alter the query selecting data from {xmlsitemap} during sitemap generation.
  *
- * @param $query
+ * @param QueryAlterableInterface $query
  *   A Query object describing the composite parts of a SQL query.
  *
  * @see hook_query_TAG_alter()
@@ -214,7 +217,7 @@ function hook_xmlsitemap_sitemap_operations() {
  * This hook is invoked from xmlsitemap_sitemap_delete_multiple() after the XML
  * sitemap has been removed from the table in the database.
  *
- * @param $sitemap
+ * @param Drupal\xmlsitemap\XmlSitemapInterface $sitemap
  *   The XML sitemap object that was deleted.
  */
 function hook_xmlsitemap_sitemap_delete(XmlSitemapInterface $sitemap) {
