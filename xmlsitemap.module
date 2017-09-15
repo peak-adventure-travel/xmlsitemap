@@ -564,7 +564,7 @@ function xmlsitemap_directory_move($old_dir, $new_dir, $replace = FILE_EXISTS_RE
   }
 
   // The remove the directory.
-  $success &= drupal_rmdir($old_dir);
+  $success &= \Drupal::service('file_system')->rmdir($old_dir);
   return $success;
 }
 
@@ -596,7 +596,7 @@ function _xmlsitemap_delete_recursive($path, $delete_root = FALSE) {
       file_unmanaged_delete_recursive($entry_path, NULL);
     }
     $dir->close();
-    return $delete_root ? drupal_rmdir($path) : TRUE;
+    return $delete_root ? \Drupal::service('file_system')->rmdir($path) : TRUE;
   }
   return file_unmanaged_delete($path);
 }
