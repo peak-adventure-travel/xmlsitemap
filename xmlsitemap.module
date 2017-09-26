@@ -2256,7 +2256,7 @@ function xmlsitemap_output_file(Response $response, $file, array $headers = []) 
     'Cache-Control' => 'must-revalidate',
     'X-Robots-Tag' => 'noindex, follow',
   ];
-  $response = xmlsitemap_file_transfer($response, $file, $headers);
+  $response = xmlsitemap_transfer_file($response, $file, $headers);
   return $response;
 }
 
@@ -2278,7 +2278,7 @@ function xmlsitemap_output_file(Response $response, $file, array $headers = []) 
  *
  * @codingStandardsIgnoreStart
  */
-function xmlsitemap_file_transfer(Response $response, $uri, $headers) {
+function xmlsitemap_transfer_file(Response $response, $uri, $headers) {
   // @codingStandardsIgnoreEnd
   if (ob_get_level()) {
     ob_end_clean();
