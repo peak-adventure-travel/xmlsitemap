@@ -55,7 +55,7 @@ class XmlSitemapIndexWriter extends XmlSitemapWriter {
     for ($i = 1; $i <= $this->sitemap->chunks; $i++) {
       $url_options['query']['page'] = $i;
       $element = [
-        'loc' => Url::fromRoute('xmlsitemap.sitemap_xml', [], $url_options),
+        'loc' => Url::fromRoute('xmlsitemap.sitemap_xml', [], $url_options)->toString(),
         // @todo Use the actual lastmod value of the chunk file.
         'lastmod' => gmdate($lastmod_format, REQUEST_TIME),
       ];
