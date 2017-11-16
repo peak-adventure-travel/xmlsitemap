@@ -1251,7 +1251,7 @@ function xmlsitemap_add_form_link_options(array &$form, $entity, $bundle, $id) {
   ];
 
   array_unshift($form['actions']['submit']['#submit'], 'xmlsitemap_process_form_link_options');
-  if (isset($form['actions']['publish'])) {
+  if (!empty($form['actions']['publish']['#submit'])) {
     array_unshift($form['actions']['publish']['#submit'], 'xmlsitemap_process_form_link_options');
   }
 }
