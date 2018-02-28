@@ -130,7 +130,7 @@ function xmlsitemap_engines_submit_engines(array $smids = []) {
  */
 function xmlsitemap_engines_submit_sitemaps($url, array $sitemaps) {
   foreach ($sitemaps as $sitemap) {
-    $sitemap_path = UrlHelper::isExternal($sitemap->uri['path']) ? $sitemap->uri['path'] : 'base://' . $sitemap->uri['path'];
+    $sitemap_path = UrlHelper::isExternal($sitemap->uri['path']) ? $sitemap->uri['path'] : 'base:/' . $sitemap->uri['path'];
     $sitemap_url = Url::fromUri($sitemap_path, $sitemap->uri['options'])->toString();
     $submit_url = xmlsitemap_engines_prepare_url($url, $sitemap_url);
     try {
