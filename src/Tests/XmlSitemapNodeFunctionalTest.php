@@ -122,7 +122,8 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
     $edit[$title_key] = $this->randomMachineName(8);
     $edit[$body_key] = $this->randomMachineName(16);
     $edit['tags[target_id]'] = 'tag1, tag2, tag3';
-    $this->drupalPostForm('node/add/page', $edit, t('Save and publish'));
+    $edit['status[value]'] = TRUE;
+    $this->drupalPostForm('node/add/page', $edit, t('Save'));
 
     $tags = entity_load_multiple('taxonomy_term');
     foreach ($tags as $tag) {
@@ -140,7 +141,7 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
       'changefreq' => XMLSITEMAP_FREQUENCY_HOURLY,
     ]);
 
-    $this->drupalPostForm('node/add/page', $edit, t('Save and publish'));
+    $this->drupalPostForm('node/add/page', $edit, t('Save'));
 
     $tags = entity_load_multiple('taxonomy_term');
     foreach ($tags as $tag) {
@@ -197,7 +198,7 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
       'xmlsitemap[priority]' => 0.9,
       'xmlsitemap[changefreq]' => XMLSITEMAP_FREQUENCY_ALWAYS,
     ];
-    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save'));
     $this->assertText('Basic page Test node title has been updated.');
     $this->assertSitemapLinkValues('node', $node->id(), [
       'access' => 1,
@@ -212,7 +213,7 @@ class XmlSitemapNodeFunctionalTest extends XmlSitemapTestBase {
       'xmlsitemap[status]' => 'default',
       'xmlsitemap[priority]' => 'default',
     ];
-    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save'));
     $this->assertText('Basic page Test node title has been updated.');
     $this->assertSitemapLinkValues('node', $node->id(), [
       'access' => 1,
