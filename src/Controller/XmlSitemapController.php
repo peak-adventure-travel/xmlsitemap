@@ -112,7 +112,7 @@ class XmlSitemapController extends ControllerBase {
       'URL location' => t('URL location'),
       'Change frequency' => t('Change frequency'),
       'Priority' => t('Priority'),
-      '[jquery]' => base_path() . 'misc/jquery.js',
+      '[jquery]' => base_path() . 'core/assets/vendor/jquery/jquery.js',
       '[jquery-tablesort]' => base_path() . $module_path . '/xsl/jquery.tablesorter.min.js',
       '[xsl-js]' => base_path() . $module_path . '/xsl/xmlsitemap.xsl.js',
       '[xsl-css]' => base_path() . $module_path . '/xsl/xmlsitemap.xsl.css',
