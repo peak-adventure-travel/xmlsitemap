@@ -155,8 +155,8 @@ class XmlSitemapEntitiesSettingsForm extends ConfigFormBase implements Container
                 'url' => Url::fromRoute('xmlsitemap.admin_settings_bundle', [
                   'entity' => $entity_type_id,
                   'bundle' => $bundle,
-                  'query' => drupal_get_destination(),
                 ]),
+                'query' => drupal_get_destination(),
               ],
             ],
           ],
