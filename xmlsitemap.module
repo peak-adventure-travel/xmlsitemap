@@ -358,7 +358,7 @@ function xmlsitemap_sitemap_save(XmlSitemapInterface $sitemap) {
   // If the context was changed, we need to perform additional actions.
   if (!$sitemap->isNew() && $sitemap->getId() != $sitemap->getOriginalId()) {
     // Rename the files directory so the sitemap does not break.
-    $old_sitemap = (object) ['smid' => $sitemap->old_smid];
+    $old_sitemap = xmlsitemap_sitemap_load($sitemap->getOriginalId());
     $old_dir = xmlsitemap_get_directory($old_sitemap);
     $new_dir = xmlsitemap_get_directory($sitemap);
     xmlsitemap_directory_move($old_dir, $new_dir);
