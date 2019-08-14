@@ -1,0 +1,7 @@
+{
+    "name": "peak-adventure-travel/xmlsitemap",
+    "type": "drupal-module",
+    "require": {
+        "composer/installers": "~1.0"
+    }
+}
