@@ -1,6 +1,7 @@
 CONTENTS OF THIS FILE
 ---------------------
 
+ * Versioning
  * Introduction
  * Requirements
  * Installation
@@ -11,6 +12,14 @@ CONTENTS OF THIS FILE
  * More Information
  * How Can You Contribute?
  * Maintainers
+
+VERSIONING
+----------
+
+The versioning of this fork matches the composer drupal requirements for versioning
+found at
+
+https://www.drupal.org/docs/develop/using-composer/using-composer-to-install-drupal-and-manage-dependencies#about-semantic-versioning
 
 
 INTRODUCTION
