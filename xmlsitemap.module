@@ -58,11 +58,6 @@ define('XMLSITEMAP_STATUS_DEFAULT', 0);
 define('XMLSITEMAP_PRIORITY_DEFAULT', 0.5);
 
 /**
- * The default batch limit.
- */
-define('XMLSITEMAP_BATCH_LIMIT', 100);
-
-/**
  * Implements hook_hook_info().
  */
 function xmlsitemap_hook_info() {
@@ -299,6 +294,7 @@ function xmlsitemap_robotstxt() {
  * Internal default variables for xmlsitemap_var().
  */
 function xmlsitemap_variables() {
+  global $base_url;
   return array(
     'xmlsitemap_rebuild_needed' => FALSE,
     'xmlsitemap_regenerate_needed' => FALSE,
@@ -309,7 +305,7 @@ function xmlsitemap_variables() {
     'xmlsitemap_chunk_size' => 'auto',
     'xmlsitemap_batch_limit' => 100,
     'xmlsitemap_path' => 'xmlsitemap',
-    'xmlsitemap_base_url' => $GLOBALS['base_url'],
+    'xmlsitemap_base_url' => $base_url,
     'xmlsitemap_developer_mode' => 0,
     'xmlsitemap_frontpage_priority' => 1.0,
     'xmlsitemap_frontpage_changefreq' => XMLSITEMAP_FREQUENCY_DAILY,
@@ -550,12 +546,13 @@ function xmlsitemap_sitemap_get_context_hash(array &$context) {
  *   the XML sitemap, and matching the signature of url().
  */
 function xmlsitemap_sitemap_uri(stdClass $sitemap) {
+  global $base_url;
   $uri['path'] = 'sitemap.xml';
   $uri['options'] = module_invoke_all('xmlsitemap_context_url_options', $sitemap->context);
   drupal_alter('xmlsitemap_context_url_options', $uri['options'], $sitemap->context);
   $uri['options'] += array(
     'absolute' => TRUE,
-    'base_url' => variable_get('xmlsitemap_base_url', $GLOBALS['base_url']),
+    'base_url' => variable_get('xmlsitemap_base_url', $base_url),
   );
   return $uri;
 }
@@ -597,6 +594,26 @@ function xmlsitemap_link_load_multiple(array $conditions = array()) {
   $links = $query->execute()->fetchAll(PDO::FETCH_ASSOC);
 
   return $links;
+}
+
+/**
+ * Presave a sitemap link.
+ *
+ * @param array $link
+ *   An array with a sitemap link.
+ * @param array $context
+ *   An optional context array containing data related to the link.
+ */
+function xmlsitemap_link_presave(array $link, array $context = array()) {
+  // Force link access to 0 in presave so that the link is saved with revoked
+  // access until the node permissions are checked in the cron.
+  $link['access'] = 0;
+
+  // Allow other modules to alter the sitemap link presave.
+  drupal_alter('xmlsitemap_link_presave', $link, $context);
+
+  // Save or update a sitemap link which will be overwritten in Drupal cron job.
+  xmlsitemap_link_save($link, $context);
 }
 
 /**

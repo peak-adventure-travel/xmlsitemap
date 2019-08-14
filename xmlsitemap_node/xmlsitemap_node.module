@@ -67,10 +67,19 @@ function xmlsitemap_node_xmlsitemap_index_links($limit) {
  *   An array of node IDs.
  */
 function xmlsitemap_node_xmlsitemap_process_node_links(array $nids) {
-  $nodes = node_load_multiple($nids, array(), TRUE);
-  foreach ($nodes as $node) {
-    $link = xmlsitemap_node_create_link($node);
-    xmlsitemap_link_save($link, array($link['type'] => $node));
+  // Load no more than 15 nodes at a time.
+  if (count($nids) >= 1) {
+    $nids_chunks = array_chunk($nids, 15);
+    foreach ($nids_chunks as $chunk) {
+      $nodes = node_load_multiple($chunk);
+      foreach ($nodes as $node) {
+        $link = xmlsitemap_node_create_link($node);
+        xmlsitemap_link_save($link, array($link['type'] => $node));
+      }
+      // Flush each entity from the load cache after processing, to avoid
+      // exceeding PHP memory limits if $nids is large.
+      entity_get_controller('node')->resetCache($chunk);
+    }
   }
 }
 
@@ -85,9 +94,13 @@ function xmlsitemap_node_node_insert(stdClass $node) {
  * Implements hook_node_update().
  */
 function xmlsitemap_node_node_update(stdClass $node) {
+  // Save a sitemap link with revoked access until the node permissions are
+  // checked in the cron.
+  $link = xmlsitemap_node_create_link($node);
+  xmlsitemap_link_presave($link, array($link['type'] => $node));
   // Node access can not be accurately determined in hook_node_update() because
-  // node grants have not yet been written to the table, so we defer creation of
-  // a sitemap link and process during cron.
+  // node grants have not yet been written to the table, so we defer checking
+  // node access permissions and process the sitemap link during cron.
   $queue = DrupalQueue::get('xmlsitemap_node');
   $queue->createItem($node->nid);
 }
@@ -103,7 +116,7 @@ function xmlsitemap_node_node_delete(stdClass $node) {
  * Implements hook_comment_update().
  */
 function xmlsitemap_node_comment_update(stdClass $comment) {
-  if ($node = node_load($comment->nid, NULL, TRUE)) {
+  if ($node = entity_load_unchanged('node', $comment->nid)) {
     xmlsitemap_node_node_update($node);
   }
 }

@@ -159,6 +159,7 @@ function xmlsitemap_generate_page(stdClass $sitemap, $page) {
  * Generate chunk.
  */
 function xmlsitemap_generate_chunk(stdClass $sitemap, XMLSitemapWriter $writer, $chunk) {
+  global $base_url;
   $output_elements = drupal_map_assoc(variable_get('xmlsitemap_output_elements', array(
     'lastmod',
     'changefreq',
@@ -169,7 +170,7 @@ function xmlsitemap_generate_chunk(stdClass $sitemap, XMLSitemapWriter $writer, 
   $url_options = $sitemap->uri['options'];
   $url_options += array(
     'absolute' => TRUE,
-    'base_url' => variable_get('xmlsitemap_base_url', $GLOBALS['base_url']),
+    'base_url' => variable_get('xmlsitemap_base_url', $base_url),
     'language' => language_default(),
     'alias' => variable_get('xmlsitemap_prefetch_aliases', TRUE),
   );
@@ -257,8 +258,9 @@ function xmlsitemap_generate_chunk(stdClass $sitemap, XMLSitemapWriter $writer, 
 
     // @todo Should this be moved to XMLSitemapWritier::writeSitemapElement()?
     drupal_alter('xmlsitemap_element', $element, $link, $sitemap);
-
-    $writer->writeSitemapElement('url', $element);
+    if (!empty($element)) {
+      $writer->writeSitemapElement('url', $element);
+    }  
   }
 
   return $link_count;
@@ -298,11 +300,8 @@ function xmlsitemap_regenerate_batch(array $smids = array()) {
   if (empty($smids)) {
     $smids = db_query("SELECT smid FROM {xmlsitemap_sitemap}")->fetchCol();
   }
-
-  // $t = get_t();
   $batch = array(
     'operations' => array(),
-    // 'error_message' => $t('An error has occurred.'),.
     'finished' => 'xmlsitemap_regenerate_batch_finished',
     'title' => t('Regenerating Sitemap'),
     'file' => drupal_get_path('module', 'xmlsitemap') . '/xmlsitemap.generate.inc',
@@ -495,8 +494,6 @@ function xmlsitemap_rebuild_batch_fetch($entity, &$context) {
 
   // PostgreSQL cannot have the ORDERED BY in the count query.
   $query->entityOrderBy('entity_id');
-
-  // variable_get('xmlsitemap_batch_limit', 100)
   $limit = 20;
   $query->range(0, $limit);
 
