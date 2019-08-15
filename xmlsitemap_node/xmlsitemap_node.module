@@ -73,8 +73,14 @@ function xmlsitemap_node_xmlsitemap_process_node_links(array $nids) {
     foreach ($nids_chunks as $chunk) {
       $nodes = node_load_multiple($chunk);
       foreach ($nodes as $node) {
-        $link = xmlsitemap_node_create_link($node);
-        xmlsitemap_link_save($link, array($link['type'] => $node));
+        $process = true;
+        if ($node->metatags != [] && isset($node->metatags['en']['robots']) && $node->metatags['en']['robots']['value']['noindex'] == 1) {
+          $process = false;
+        }
+        if ($process) {
+          $link = xmlsitemap_node_create_link($node);
+          xmlsitemap_link_save($link, array($link['type'] => $node));
+        }
       }
       // Flush each entity from the load cache after processing, to avoid
       // exceeding PHP memory limits if $nids is large.
