@@ -73,6 +73,11 @@ function xmlsitemap_node_xmlsitemap_process_node_links(array $nids) {
     foreach ($nids_chunks as $chunk) {
       $nodes = node_load_multiple($chunk);
       foreach ($nodes as $node) {
+        // Skip saving sitemap for nodes that has robots noindex
+        if ($this->validateRobotsNoIndex($node) === true) {
+          continue;
+        }
+
         $link = xmlsitemap_node_create_link($node);
         xmlsitemap_link_save($link, array($link['type'] => $node));
       }
@@ -81,6 +86,20 @@ function xmlsitemap_node_xmlsitemap_process_node_links(array $nids) {
       entity_get_controller('node')->resetCache($chunk);
     }
   }
+}
+
+/**
+ * @param stdClass $node
+ * @return bool
+ */
+function validateRobotsNoIndex(stdClass $node) {
+  $lang = isset($node->language) ? $node->language : LANGUAGE_NONE;
+
+  if (isset($node->metatags[$lang]['robots']['value']['noindex']) && $node->metatags[$lang]['robots']['value']['noindex'] == 'noindex') {
+    return true;
+  }
+
+  return false;
 }
 
 /**

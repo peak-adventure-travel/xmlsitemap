@@ -3,5 +3,14 @@
     "type": "drupal-module",
     "require": {
         "composer/installers": "~1.0"
+    },
+    "require-dev": {
+      "phpunit/phpunit": "^6.5"
+    },
+    "scripts": {
+      "build": [
+        "@composer install",
+        "vendor/bin/phpunit tests/*"
+      ]
     }
 }
